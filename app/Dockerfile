@@ -10,6 +10,10 @@ RUN cd node-v0.10.26-linux-x64; cp -R bin/* /usr/local/bin; cp -R lib/* /usr/loc
 RUN rm -r node-v0.10.26-linux-x64
 RUN rm node-v0.10.26-linux-x64.tar.gz
 
+ADD nodeapp /srv
+
+RUN cd /srv; npm install;
+
 # Define default command.
 CMD ["/bin/bash"]
 
