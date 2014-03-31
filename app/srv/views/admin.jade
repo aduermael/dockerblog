@@ -1,0 +1,27 @@
+extends layout
+
+block head
+	script(src='/js/nicEdit.js')
+	script(src='/js/functions-common.js')
+	script(src='/js/functions-admin.js')
+	link(rel='stylesheet', href='/admin.css')
+
+block content
+	.navigation
+		ul
+			li 
+				a(href="/admin/new") NEW POST
+			li 
+				a(href="/admin/comments") COMMENTS
+			li 
+				a(href="/admin/posts/en") POSTS (EN)
+			li 
+				a(href="/admin/posts/fr") POSTS (FR)
+			li 
+				a(href="/admin/config/en") CONFIG (EN)
+			li 
+				a(href="/admin/config/fr") CONFIG (FR)
+
+	.clearboth
+	
+	block pagecontent

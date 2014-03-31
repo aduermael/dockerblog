@@ -1,0 +1,181 @@
+extends layout
+
+block head
+	if (lang == "fr")
+		script.
+			var LANG = "fr";
+	else
+		script.
+			var LANG = "en";
+
+	script(src='/js/nicEdit.js')
+	script(src='/js/functions-common.js')
+	script(src='/js/functions-blog.js')
+	link(rel='stylesheet', href='/style.css')
+	
+block content
+
+	//.redline
+
+
+	#topbanner
+		h1
+			a(href='/')
+				img(src="/img/title.png" alt="laurel comics blog bloglaurel")
+
+	#infos
+		#avatar
+
+	#social
+		#networks
+			.network
+				a(href="/")
+					img(src="/img/networks/facebook.png").facebook
+				h2.facebook
+					a(href="#{fbLink}") Facebook
+			.network
+				a(href="/")
+					img(src="/img/networks/twitter.png").twitter
+				h2.twitter
+					a(href="#{twLink}") Twitter
+			.network
+				a(href="/")
+					img(src="/img/networks/pinterest.png").pinterest
+				h2.pinterest
+					a(href="http://www.pinterest.com/bloglaurel") Pinterest
+			.network
+				a(href="/")
+					img(src="/img/networks/tumblr.png").tumblr
+				h2.tumblr
+					a(href="http://bloglaurel.tumblr.com") Tumblr
+			.network
+				a(href="/")
+					img(src="/img/networks/deviantart.png").deviantart
+				h2.deviantart
+					a(href="http://bloglaurel.deviantart.com") Deviantart
+			.network
+				a(href="https://vine.co/bloglaurel")
+					img(src="/img/networks/vine.png").vine
+				h2.vine
+					a(href="https://vine.co/bloglaurel") Vine
+			.network
+				a(href="/")
+					img(src="/img/networks/vimeo.png").vimeo
+				h2.vimeo
+					a(href="http://vimeo.com/bloglaurel") Vimeo
+			.network
+				a(href="/")
+					img(src="/img/networks/instagram.png").instagram
+				h2.instagram
+					a(href="http://instagram.com/bloglaurel") Instagram
+			.network
+				a(href="/")
+					img(src="/img/networks/etsy.png").etsy
+				h2.etsy
+					a(href="/") Etsy
+			.network
+				a(href="/")
+					img(src="/img/networks/society6.jpg")
+				h2.society6
+					a(href="http://society6.com/Bloglaurel") Society6
+
+			.clearboth
+
+	.right_column
+		.zone
+			.lang
+				.floatspace
+				a(href='/lang/en')
+					img(src="/img/langs/en.png" style="float:left;") 
+				.floatspace
+				a(href='/lang/fr')
+					img(src="/img/langs/fr.png" style="float:right;")
+				.floatspace
+				.clearboth
+		.zone
+			p #{myInfos}		
+
+		.zone
+			img(src="/img/banners/contact.jpg")
+			h2
+				a(href="/") Contact me
+
+		.zone
+			img(src="/img/banners/youridea.jpg")
+			h2
+				a(href="/") Work with me
+			img(src="/img/banners/card.jpg")
+			h2
+				a(href="/") Business cards
+			img(src="/img/banners/books.jpg")
+			h2
+				a(href="/") Books
+			img(src="/img/banners/apps.jpg")
+			h2
+				a(href="/") Apps
+			img(src="/img/banners/archives.jpg")
+			h2
+				a(href="/") Archives
+
+
+	.left_column
+		- each post in posts
+			#div.post
+				- each block in post.blocks
+					if (block.type == "title")
+						#div.block.title
+							h2 #{block.text} 
+							.date(style="float:right;") #{post.stringdate}
+							.clearboth
+			
+					else if (block.type == "text")
+						#div.block.text
+							p !{block.text}
+
+					else if (block.type == "image")
+						#div.block_img.image
+							if (block.url != "")
+								a(href=block.url)
+									img(src=block.path alt="bloglaurel comics")
+							else
+								img(src=block.path alt="bloglaurel comics")
+
+		#pages
+			p
+				| Pages:
+				- var i = pages
+				- for (var i = 1; i < pages + 1; ++i)
+					a(href="/page" + i) #{i}
+
+		#socialfooter
+			#networks
+				.network
+					img(src="/img/networks/facebook.png").facebook
+					h2.facebook
+						a(href="/") Facebook
+				.network
+					img(src="/img/networks/twitter.png").twitter
+					h2.twitter
+						a(href="/") Twitter
+				.network
+					img(src="/img/networks/pinterest.png").pinterest
+					h2.pinterest
+						a(href="/") Pinterest
+				.network
+					img(src="/img/networks/tumblr.png").tumblr
+					h2.tumblr
+						a(href="/") Tumblr
+				.network
+					img(src="/img/networks/deviantart.png").deviantart
+					h2.deviantart
+						a(href="/") Deviantart
+				.network
+					img(src="/img/networks/vine.png").vine
+					h2.vine
+						a(href="/") Vine
+		.clearboth
+
+		#footer
+			p bloglaurel.com is © 2003-2014 Laurel | powered by @a_duermael
+
+

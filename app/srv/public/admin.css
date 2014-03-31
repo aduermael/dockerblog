@@ -1,0 +1,401 @@
+
+
+html
+{
+  font-family: 'Helvetica Neue';
+  background-color: #fff;
+}
+
+body
+{
+  width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333;
+}
+
+h2
+{
+  color: #333;
+  padding-left: 10px;
+}
+
+
+.config p
+{
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  color: #666;
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+.config input
+{
+  display: block;
+
+  color: #666;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+
+.navigation ul
+{
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.navigation ul li
+{
+  display: block;
+  float: left;
+
+  padding: 0;
+  margin: 0;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+
+  border-radius: 5px;
+  border: none;
+  background-color: #00b5c5;
+  color: #FFF;
+  font-size: 16px;
+  overflow: hidden !important;
+}
+
+.navigation ul li a
+{
+  text-decoration: none;
+  color: #FFF;
+}
+
+.postlist h2
+{
+  display: block;
+
+  padding: 10px;
+
+  border-radius: 5px;
+  border: none;
+  background-color: #EEE;
+  color: #FFF;
+  font-size: 16px;
+  overflow: hidden !important;
+  
+}
+
+.postlist h2 a
+{
+  text-decoration: none;
+  color: #777;
+}
+
+.edit_post_zone
+{
+  margin: 0;
+  padding: 0;
+
+  position: relative;
+  width: 96%;
+  
+  margin-top: 0px;
+  margin-bottom: 10px;
+  
+  border-radius: 5px;
+  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 2%;
+  padding-right: 2%;
+  
+  border: none;
+  outline: none;
+  line-height: 0px;
+}
+
+
+.edit_post_zone h2
+{
+  float: left;
+  padding-left: 0px;
+}
+
+
+.edit_post_zone .title_field
+{
+  color: #333;
+  font-size: 24px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+
+.edit_post_zone img
+{
+  display: block;
+  margin:0;
+  padding: 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+}
+
+
+.edit_img_url_field
+{
+  width: 340px;
+  color: #FFF;
+  font-size: 15px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  background-color: #000;
+  border-radius: 5px;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
+.edit_post_zone .edit_img_url_zone
+{
+  width: 400px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.8;
+  background-color: #555;
+  border-radius: 5px;
+  color: #FFF;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: none;
+  outline: none;
+}
+
+.clearboth
+{
+  clear: both;
+}
+
+
+#content_blocks
+{
+  margin: 0;
+  padding: 0;
+  width: 720px;
+}
+
+.trash
+{
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  padding: 5px;
+
+  width: 100%;
+  height: 60px;
+
+  border-radius: 5px;
+  border: none;
+  background-color: #fcc;
+  font-size: 16px;
+  line-height: 16px;
+  margin-bottom: 10px;
+
+  border: 2px dashed #f00;
+  color: #f00;
+
+  display: none;
+}
+
+
+.edit_post_add_content_button
+{
+  display: block !important;
+  float: left;
+
+  padding: 0;
+  margin: 0;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 10px;
+
+  border-radius: 5px;
+  border: none;
+  background-color: #00b5c5;
+  color: #FFF;
+  font-size: 16px;
+  line-height: 16px;
+
+  overflow: hidden !important;
+}
+
+.edit_post_add_content_zone
+{
+  display: block !important;
+  float: left;
+
+  padding: 0;
+  margin: 0;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 10px;
+
+  border-radius: 5px;
+  border: none;
+  background-color: #333;
+  color: #FFF;
+  font-size: 16px;
+  overflow: hidden !important;
+}
+
+
+.edit_post_add_content_zone p
+{
+  display: block;
+  float: left;
+
+  padding: 0;
+  margin: 0;
+  
+  margin-right: 5px;
+  margin-left: 5px;
+  
+
+  color: #FFF;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.edit_post_add_content_zone input
+{
+  display: block;
+  float: left;
+
+  padding: 0;
+  margin: 0;
+
+  margin-right: 5px;
+  margin-left: 5px;
+
+  color: #FFF;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+
+.edit_post_add_content_button:hover
+{
+  background-color: #333;
+  cursor:pointer;
+}
+
+
+.form_button
+{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
+
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #333;
+  color: #FFF;
+  font-size: 16px;
+}
+
+.form_button:hover
+.important_with_background:hover
+{
+  background-color: #333 !important;
+  cursor:pointer;
+}
+
+
+
+
+.important
+{
+  color: #7dc500;
+}
+.important_with_background
+{
+  background-color: #7dc500;
+  color: #fff;
+}
+
+.less_important
+{
+  background-color: #555;
+  color: #fff;
+}
+
+
+
+/* backgrounds */
+
+.backgroundLevel_10
+{
+  background-color: #E0E0E0;
+}
+
+.backgroundLevel_8
+{
+  background-color: #EEEEEE;
+}
+
+.backgroundLevel_2
+{
+  background-color: #F7F7F7;
+}
+
+.backgroundLevel_1
+{
+  background-color: #FBFBFB;
+}
+
+
+
+
+/* nicEdit panel*/
+
+.nicEdit-panel
+{
+  border: none !important;
+  outline: none !important;
+  background-color: transparent !important;
+}
+
+.nicEdit-panelContain
+{
+  border: none !important;
+  outline: none !important;
+  padding: 10px !important;
+  border-radius: 5px !important;
+}
+
+.nicEdit-buttonContain
+{
+
+}
+
+#myNicPanel
+{
+  position: absolute;
+  top: 20px;
+  left: -120px;
+  width: 90px;
+  opacity: 0;
+}
+

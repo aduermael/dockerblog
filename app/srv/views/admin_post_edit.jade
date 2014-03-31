@@ -1,0 +1,71 @@
+extends admin
+
+block pagecontent
+
+	h2 Edit post
+
+	#postzone(style="position:relative")
+
+		form(name="edit_post_form" id="edit_post_form" action="" method="POST")
+			input(id="postID" type="text" style="display:none" value="#{post.ID}")
+
+
+			#content_blocks
+				- var block_number = 0	
+
+				each block in post.blocks
+					- var block_name = "block" + block_number
+					if (block.type == "title")
+						div(id="#{block_name}").edit_post_zone.backgroundLevel_10.block_title
+							input(class="title_field" type="text" value="#{block.text}")
+
+					else if (block.type == "text")
+						div(id="#{block_name}" style="width: 700px;margin-bottom: 10px;background-color: #EEEEEE;border-radius: 5px;padding: 10px;border: none;outline: none;").block_text.sortable
+							| !{block.text}
+
+					else if (block.type == "image")
+						div(id="#{block_name}").edit_post_zone.backgroundLevel_8.block_image.sortable
+							img(src=block.path)
+							div.edit_img_url_zone
+								| url: 
+								input#imageurl.edit_img_url_field(name="imageurl" type="text" value="#{block.url}")
+
+					- block_number++
+
+
+			div(id="trash" class="trash")
+				| Trash
+
+			div#add_content_block.edit_post_zone.backgroundLevel_2
+				h2 +
+				input(class="edit_post_add_content_button" type="button" value="Text" onclick="addTextBlock(this)")
+				input(class="edit_post_add_content_button" type="button" value="Image" onclick="addImageBlock(this)")
+				input(class="edit_post_add_content_button" type="button" value="Video")
+				.clearboth
+
+			div.edit_post_zone.backgroundLevel_1
+				div.edit_post_add_content_zone
+					p English
+					if (post.lang == "en")
+						input(id="lang_en" style="float:left;" name="lang" type="radio" value="en" checked)
+					else
+						input(id="lang_en" style="float:left;" name="lang" type="radio" value="en")
+					p Français
+					if (post.lang == "fr")
+						input(id="lang_fr" style="float:left;" name="lang"  type="radio" value="fr" checked)
+					else
+						input(id="lang_fr" style="float:left;" name="lang"  type="radio" value="fr")
+
+				div(id="reorderBtn" class="edit_post_add_content_button less_important")
+					| reorder/delete blocks
+
+				input(class="edit_post_add_content_button important_with_background" type="button" value="Edit post" onclick="editPost(this)")
+
+				.clearboth
+
+
+
+		form(name="upload_file_form" id="upload_file_form" action="" method="POST" enctype="multipart/form-data" style="display:none")
+			input(id="upload_file_input" name="upload_file_input" type="file" style="display:none" onChange="sendImage(this)")
+
+		#myNicPanel
