@@ -3,23 +3,21 @@ extends admin
 
 block pagecontent
 
-	h2 Config (#{lang})
+	h2 Preferences (#{lang})
 
-		.config
-			form#config_form(name="config_form" action="" method="POST")
-				
-				p Bio
-				input#config_bio.title_field(type="text" value="").title_field.edit_post_zone.backgroundLevel_10
-				
-				div.edit_post_zone.backgroundLevel_1
-					input(class="edit_post_add_content_button" type="button" value="Update" onclick="alert('work in progress')")
-					.clearboth
-				
-				div.edit_post_zone.backgroundLevel_10
-					input#configKey(type="text" value="" style="background-color:#555;color:#FFF").title_field.edit_post_zone
-					input.edit_post_add_content_button(type="button" value="Add key" onclick="configAddKey(this)")
-					.clearboth
+	- each pref,prefKey in prefs
+		p #{prefKey}
+		input.title_field(type="text" value="#{pref}").title_field.edit_post_zone.backgroundLevel_10
+	
+	
+	div.edit_post_zone.backgroundLevel_1
+		input(class="edit_post_add_content_button" type="button" value="Update" onclick="alert('work in progress')")
+		.clearboth
+	
+	div.edit_post_zone.backgroundLevel_10
+		input#configKey(type="text" value="" style="background-color:#555;color:#FFF").title_field.edit_post_zone
+		input.edit_post_add_content_button(type="button" value="Add key" onclick="configAddKey(this)")
+		.clearboth
 					
-
 	#myNicPanel
 	div(style="height:20px;")

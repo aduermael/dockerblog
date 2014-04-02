@@ -3,41 +3,44 @@ extends admin
 block pagecontent
 
 	h2 New post
-
-	#postzone(style="position:relative")
-
-		form(name="edit_post_form" id="edit_post_form" action="" method="POST")
 		
-			#content_blocks
-				div#block0.edit_post_zone.backgroundLevel_10.block_title
-					input(class="title_field" type="text" value="Title")
+	#content_blocks
+		div#block0.edit_post_zone.backgroundLevel_8.block_title
+			input(class="title_field" type="text" value="Title")
 
-			div(id="trash" class="trash")
-				| Trash
+	div(id="trash" class="trash")
+		| Trash
 
-			div#add_content_block.edit_post_zone.backgroundLevel_2
-				h2 +
-				input(class="edit_post_add_content_button" type="button" value="Text" onclick="addTextBlock(this)")
-				input(class="edit_post_add_content_button" type="button" value="Image" onclick="addImageBlock(this)")
-				input(class="edit_post_add_content_button" type="button" value="Video")
-				.clearboth
-
-
-			div.edit_post_zone.backgroundLevel_1
-				div.edit_post_add_content_zone
-					p English
-					input(id="lang_en" style="float:left;" name="lang" type="radio" value="en")
-					p Français
-					input(id="lang_fr" style="float:left;" name="lang"  type="radio" value="fr")
+	div#add_content_block.backgroundLevel_1
+	
+		.navigation
+			ul
+				li
+					a(href="#" onclick="addTextBlock(this)") Text
+				li
+					a(href="#" onclick="addImageBlock(this)") Image
+				li
+					a(href="#") Video
+		.clearboth
 
 
-				div(id="reorderBtn" class="edit_post_add_content_button less_important")
-					| reorder/delete blocks
+	div.edit_post_zone.backgroundLevel_1
+		div.edit_post_add_content_zone
+			p English
+			input(id="lang_en" style="float:left;" name="lang" type="radio" value="en")
+			p Français
+			input(id="lang_fr" style="float:left;" name="lang"  type="radio" value="fr")
 
-				input(class="edit_post_add_content_button important_with_background" type="button" value="Post note" onclick="sendPost(this)")
-				.clearboth
 
-		form(name="upload_file_form" id="upload_file_form" action="" method="POST" enctype="multipart/form-data" style="display:none")
-			input(id="upload_file_input" name="upload_file_input" type="file" style="display:none" onChange="sendImage(this)")
+		div(id="reorderBtn" class="edit_post_add_content_button less_important")
+			| reorder/delete blocks
 
-		#myNicPanel
+		input(class="edit_post_add_content_button important_with_background" type="button" value="Post note" onclick="sendPost(this)")
+		.clearboth
+		
+		
+
+	form(name="upload_file_form" id="upload_file_form" action="" method="POST" enctype="multipart/form-data" style="display:none")
+		input(id="upload_file_input" name="upload_file_input" type="file" style="display:none" onChange="sendImage(this)")
+
+	#myNicPanel

@@ -94,7 +94,7 @@ function addTextBlock(sender)
   nextBlock++;
   var blockName = "block" + nextBlock;
 
-  $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_text sortable\" style=\"width: 700px;margin-bottom: 10px;background-color: #EEEEEE;border-radius: 5px;padding: 10px;border: none;outline: none;\">Text</div>");
+  $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_text sortable\" style=\"margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;\">Text</div>");
   
   console.log(blockName);
   myNicEditor.addInstance(blockName);
@@ -190,14 +190,16 @@ var editPostCallBack = function(data)
 function sendPost(sender)
 {
 
-  if (!$('input[name=lang]:checked', '#edit_post_form').val())
+  if (!$('input[name=lang]:checked').val())
   {
     alert("Langue requise!");
     return;
   }
+  
+  return;
 
   var postContent = new Object()
-  postContent.lang = $('input[name=lang]:checked', '#edit_post_form').val();
+  postContent.lang = $('input[name=lang]:checked').val();
   var blocks = new Array();
   var i = 0;
 

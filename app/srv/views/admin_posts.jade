@@ -5,14 +5,13 @@ block pagecontent
 
 	h2 Posts (#{lang})
 
-	.postlist
-		- each post in posts
-			#div.post
+	.list
+		ul
+			- each post in posts
 				- each block in post.blocks
 					if (block.type == "title")
-						h2 
+						li 
 							a(href="/admin/edit/" + post.ID) #{block.text} 
-						.clearboth
 
 
 	#myNicPanel

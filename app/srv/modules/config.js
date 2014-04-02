@@ -20,8 +20,27 @@ module.exports = function()
 function page(req,res)
 {
 	var lang = req.params.lang;
-	tools.renderJade(res,'admin_config',{ siteName: 'Blog | Admin - Config',lang:lang });
+	
+	db.hgetall('config_' + lang,function(error,values)
+	{
+		if (!error)
+		{
+			var options = {};
+			options.siteName = 'Blog | Admin - Config';
+			options.lang = lang;
+			options.prefs = values;
+			
+			
+			console.log(JSON.stringify(options));
+			
+			tools.renderJade(res,'admin_config',options);	
+		}
+		
+	});
 }
+
+
+
 
 function get(lang,callback)
 {
