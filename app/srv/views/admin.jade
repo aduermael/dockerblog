@@ -9,19 +9,27 @@ block head
 block content
 	.navigation
 		ul
+			li
+				.styled-select
+					select#langSelector
+						option(value="en") en
+						option(value="fr") fr
 			li 
-				a(href="/admin/new") NEW POST
+				a(href="/admin/new") + Post
 			li 
-				a(href="/admin/comments") COMMENTS
+				a(href="/admin/posts/en") Posts
 			li 
-				a(href="/admin/posts/en") POSTS (EN)
+				a(href="/admin") + Page
 			li 
-				a(href="/admin/posts/fr") POSTS (FR)
+				a(href="/admin") Pages
 			li 
-				a(href="/admin/config/en") CONFIG (EN)
+				a(href="/admin/comments") Comments
+
 			li 
-				a(href="/admin/config/fr") CONFIG (FR)
+				a(href="/admin/config/en") Prefs
 
 	.clearboth
 	
+
 	block pagecontent
+	

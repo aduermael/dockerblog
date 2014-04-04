@@ -11,7 +11,7 @@ block pagecontent
 	div(id="trash" class="trash")
 		| Trash
 
-	div#add_content_block.backgroundLevel_1
+	div.edit_post_zone.backgroundLevel_1
 	
 		.navigation
 			ul
@@ -25,20 +25,22 @@ block pagecontent
 
 
 	div.edit_post_zone.backgroundLevel_1
-		div.edit_post_add_content_zone
-			p English
-			input(id="lang_en" style="float:left;" name="lang" type="radio" value="en")
-			p Français
-			input(id="lang_fr" style="float:left;" name="lang"  type="radio" value="fr")
-
-
-		div(id="reorderBtn" class="edit_post_add_content_button less_important")
-			| reorder/delete blocks
-
-		input(class="edit_post_add_content_button important_with_background" type="button" value="Post note" onclick="sendPost(this)")
+		//p English
+		//input(id="lang_en" style="float:left;" name="lang" type="radio" value="en")
+		//p Français
+		//input(id="lang_fr" style="float:left;" name="lang"  type="radio" value="fr")
+		
+		
+		.navigation
+			ul
+				li
+					a(href="#" onclick="reorder(this)") reorder/delete blocks
+				li
+					a(href="#" onclick="sendPost(this)") Post
+					
 		.clearboth
 		
-		
+				
 
 	form(name="upload_file_form" id="upload_file_form" action="" method="POST" enctype="multipart/form-data" style="display:none")
 		input(id="upload_file_input" name="upload_file_input" type="file" style="display:none" onChange="sendImage(this)")

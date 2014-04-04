@@ -113,14 +113,8 @@ function addImageBlock(sender)
 
 function editPost(sender)
 {
-  if (!$('input[name=lang]:checked', '#edit_post_form').val())
-  {
-    alert("Langue requise!");
-    return;
-  }
-
   var postContent = new Object()
-  postContent.lang = $('input[name=lang]:checked', '#edit_post_form').val();
+  postContent.lang =$('#langSelector').val();
   postContent.ID = $('#postID').attr('value');
   var blocks = new Array();
   var i = 0;
@@ -189,17 +183,8 @@ var editPostCallBack = function(data)
 
 function sendPost(sender)
 {
-
-  if (!$('input[name=lang]:checked').val())
-  {
-    alert("Langue requise!");
-    return;
-  }
-  
-  return;
-
   var postContent = new Object()
-  postContent.lang = $('input[name=lang]:checked').val();
+  postContent.lang = $('#langSelector').val();
   var blocks = new Array();
   var i = 0;
 
@@ -272,7 +257,67 @@ var configAddKeyCallBack = function(data)
 
 
 
+function reorder(sender)
+{
+	if (!reorder_mode)
+    {
+      $( "#content_blocks" ).sortable(
+      {
+        items: '.sortable',
+        cursorAt: { top: 25 , left: 25 },
+        start: function(event,ui)
+        {
+           ui.item.width(50.0);
+           ui.item.height(50.0);
+           ui.item.css("overflow","hidden");
+        }
+      });
 
+      $('#trash').css("display","block");
+
+      $( "#trash" ).droppable(
+      {
+        drop: function( event, ui )
+        {
+          ui.draggable.remove();
+          $('#trash').css("background-color","#fcc");
+        },
+        out: function( event, ui )
+        {
+          $('#trash').css("background-color","#fcc");
+        },
+        over: function( event, ui )
+        {
+          $('#trash').css("background-color","#f88");
+        }
+      });
+
+      //$( "#content_blocks" ).sortable();
+      //$( "#content_blocks" ).disableSelection();
+      $("input").prop('disabled', true);
+      $("input").css('opacity', 0.1);
+      $(".block_image").css('border','1px dashed #000');
+      $(".block_text").css('border','1px dashed #000');
+      reorder_mode = true;
+    }
+    else
+    {
+      $('#trash').css("display","none");
+      
+
+      $('#content_blocks').sortable('destroy');
+      //$('#content_blocks').disableSelection('cancel'); 
+      //$('#content_blocks').unbind('click');
+      //$('#content_blocks').unbind('mousedown');
+      //$('#content_blocks').unbind('mouseup');
+      //$('#content_blocks').unbind('selectstart');
+      $("input").prop('disabled', false);
+      $("input").css('opacity', 1.0);
+      $(".block_image").css('border','none');
+      $(".block_text").css('border','none');
+      reorder_mode = false;
+    }
+}
 
 
 
@@ -360,20 +405,31 @@ $(document).ready(function()
       if (!reorder_mode)
       {
         var id = myNicEditor.selectedInstance.e.id;
-        //$("#"+id).empty();
-        $("#myNicPanel").css({top:($("#"+id).position().top - 8) +'px',opacity:1});
+        
+		$("#myNicPanel").show();
+		
+		$("#myNicPanel").css({
+								top:($("#"+id).offset().top - 10) +'px',
+								left:(-$("#myNicPanel").outerWidth()) +'px',
+							});
+		
+
       }
+  });
+  
+  myNicEditor.addEvent('panel', function(e) 
+  {
+  	console.log("PANEL");
   });
 
 
   myNicEditor.addEvent('blur', function(e) 
   {
-      $("#myNicPanel").css({opacity:0});
+	  $("#myNicPanel").hide();
   });
 
   $('.block_text').each(function (i, obj)
   {
-    //console.log("myNicEditor add ID:" + $(obj).attr('id'));
     myNicEditor.addInstance($(obj).attr('id'));
   });
 

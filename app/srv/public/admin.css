@@ -8,30 +8,85 @@ html
 
 body
 {
-  width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333;
+	width: 680px;
+	margin-left: auto;
+	margin-right: auto;
+	/*background-color: #cfe9ff;*/
+	color: #333;
+	
+  	padding:10px;
+  	
+  	position: relative;
+}
+
+
+body,div,li,ul,h2,p,a
+{
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+
+
+div
+{
+	padding:10px;
+	margin:0;	
+	width: 100%;
+	
+	position: relative;
 }
 
 h2
 {
-  color: #333;
-  padding-left: 10px;
+	padding:0;
+	margin:0;
+	
+	margin-top: 10px;
+	margin-bottom: 10px;
+
+	color: #333;
 }
 
-
-.config p
+a
 {
-  margin: 0;
-  padding: 0;
-  font-weight: normal;
-  color: #666;
-  margin-top: 5px;
-  font-size: 18px;
+	padding:0;
+	margin:0;
+	color: #1087ee;
+	text-decoration: none;
 }
 
-.config input
+
+
+
+a:hover
+{
+	text-decoration: underline;
+}
+
+
+p
+{
+	padding:0;
+	margin:0;
+	
+	font-weight: normal;
+	color: #666;
+	margin-top: 5px;
+	font-size: 18px;
+}
+
+
+.clearboth
+{
+	padding:0;
+	margin:0;
+	clear: both;
+}
+
+
+input[type=text]
 {
   display: block;
 
@@ -41,95 +96,175 @@ h2
 }
 
 
-.navigation ul
-{
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.navigation ul li
+input[type=button]
 {
   display: block;
-  float: left;
 
-  padding: 0;
-  margin: 0;
-  margin-right: 5px;
-  margin-left: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-
-  border-radius: 5px;
-  border: none;
-  background-color: #00b5c5;
   color: #FFF;
   font-size: 16px;
-  overflow: hidden !important;
+  line-height: 16px;
 }
+
+
+
+
+
+
+/* LISTS */
+
+ul
+{
+	padding:0;
+	margin:0;	
+	list-style-type: none;
+}
+
+
+
+
+/* LISTS - DEFAULT */
+
+.list
+{
+	padding:0;
+	margin:0;
+	
+}
+
+
+.list ul
+{
+	padding:0;
+	margin:0;	
+}
+
+
+.list ul li
+{ 
+	padding:10px;
+	margin:0 0 5px 0;	
+	width: 100%;
+	
+	border-radius: 5px;
+
+	border: none;
+	background-color: #F7F7F7;
+  
+	font-size: 16px;
+	overflow: hidden !important;
+}
+
+
+
+/* LISTS - NAVIGATION */
+
+.navigation
+{
+	padding:0;
+	margin:0;
+}
+
 
 .navigation ul li a
 {
-  text-decoration: none;
-  color: #FFF;
-}
-
-.postlist h2
-{
   display: block;
+  float: left;
 
-  padding: 10px;
+  padding:10px;
+  margin:0 5px 5px 0px;
 
+  
   border-radius: 5px;
+
   border: none;
-  background-color: #EEE;
+  background-color: #77c0ff;
   color: #FFF;
   font-size: 16px;
   overflow: hidden !important;
   
+  text-decoration: none;
 }
 
-.postlist h2 a
+.navigation ul li a:hover
 {
-  text-decoration: none;
-  color: #777;
+	background-color: #1087ee;
 }
+
+.navigation ul li .styled-select
+{
+  display: block;
+  float: left;
+
+  padding:0px;
+  margin:0 5px 5px 0px;
+  width:auto;
+  
+  border-radius: 5px;
+
+  border: none;
+  background-color: #77c0ff;
+  color: #FFF;
+  font-size: 16px;
+  overflow: hidden !important;
+}
+
+.navigation ul li .styled-select:hover
+{
+	background-color: #1087ee;
+}
+
+.navigation ul li .styled-select select
+{
+	margin: 0;
+	padding: 10px;
+	background: transparent;
+	-webkit-appearance: none;
+	font-size: 16px;
+	border: 0;
+	border-radius: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	color: #fff;
+}
+
+
+.navigation ul li .styled-select select:hover
+{
+	cursor: pointer;
+}
+
+.navigation ul li .styled-select select option
+{
+
+}
+
+
+
+
+
+
+
+
+
+
 
 .edit_post_zone
-{
-  margin: 0;
-  padding: 0;
-
-  position: relative;
-  width: 96%;
-  
-  margin-top: 0px;
+{ 
   margin-bottom: 10px;
   
   border-radius: 5px;
   
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 2%;
-  padding-right: 2%;
-  
   border: none;
   outline: none;
-  line-height: 0px;
 }
 
-
-.edit_post_zone h2
-{
-  float: left;
-  padding-left: 0px;
-}
 
 
 .edit_post_zone .title_field
 {
   color: #333;
-  font-size: 24px;
+  font-size: 20px;
   background-color: transparent;
   border: none;
   outline: none;
@@ -181,17 +316,11 @@ h2
   outline: none;
 }
 
-.clearboth
-{
-  clear: both;
-}
-
 
 #content_blocks
 {
   margin: 0;
   padding: 0;
-  width: 720px;
 }
 
 .trash
@@ -217,129 +346,6 @@ h2
   display: none;
 }
 
-
-.edit_post_add_content_button
-{
-  display: block !important;
-  float: left;
-
-  padding: 0;
-  margin: 0;
-  margin-right: 5px;
-  margin-left: 5px;
-  padding: 10px;
-
-  border-radius: 5px;
-  border: none;
-  background-color: #00b5c5;
-  color: #FFF;
-  font-size: 16px;
-  line-height: 16px;
-
-  overflow: hidden !important;
-}
-
-.edit_post_add_content_zone
-{
-  display: block !important;
-  float: left;
-
-  padding: 0;
-  margin: 0;
-  margin-right: 5px;
-  margin-left: 5px;
-  padding: 10px;
-
-  border-radius: 5px;
-  border: none;
-  background-color: #333;
-  color: #FFF;
-  font-size: 16px;
-  overflow: hidden !important;
-}
-
-
-.edit_post_add_content_zone p
-{
-  display: block;
-  float: left;
-
-  padding: 0;
-  margin: 0;
-  
-  margin-right: 5px;
-  margin-left: 5px;
-  
-
-  color: #FFF;
-  font-size: 16px;
-  line-height: 16px;
-}
-
-.edit_post_add_content_zone input
-{
-  display: block;
-  float: left;
-
-  padding: 0;
-  margin: 0;
-
-  margin-right: 5px;
-  margin-left: 5px;
-
-  color: #FFF;
-  font-size: 16px;
-  line-height: 16px;
-}
-
-
-.edit_post_add_content_button:hover
-{
-  background-color: #333;
-  cursor:pointer;
-}
-
-
-.form_button
-{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-
-
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background-color: #333;
-  color: #FFF;
-  font-size: 16px;
-}
-
-.form_button:hover
-.important_with_background:hover
-{
-  background-color: #333 !important;
-  cursor:pointer;
-}
-
-
-
-
-.important
-{
-  color: #7dc500;
-}
-.important_with_background
-{
-  background-color: #7dc500;
-  color: #fff;
-}
-
-.less_important
-{
-  background-color: #555;
-  color: #fff;
-}
 
 
 
@@ -370,19 +376,41 @@ h2
 
 /* nicEdit panel*/
 
-.nicEdit-panel
+.nicEdit-panel div
 {
-  border: none !important;
-  outline: none !important;
-  background-color: transparent !important;
+	padding:0;
+	margin:0;	
+	width: auto;
+}
+
+
+.nicEdit-panel
+{	
+	border: none !important;
+	outline: none !important;
+	background-color: transparent !important;
 }
 
 .nicEdit-panelContain
 {
-  border: none !important;
-  outline: none !important;
-  padding: 10px !important;
-  border-radius: 5px !important;
+	border: none !important;
+	outline: none !important;
+	padding: 5px !important;
+	border-radius: 5px !important;
+}
+
+.nicEdit-paneContainer
+{
+	padding:0;
+	margin:0;	
+	width: auto;
+}
+
+.nicEdit-paneContainer div
+{	
+	padding:0;
+	margin:0;	
+	width: auto;
 }
 
 .nicEdit-buttonContain
@@ -392,10 +420,14 @@ h2
 
 #myNicPanel
 {
-  position: absolute;
-  top: 20px;
-  left: -120px;
-  width: 90px;
-  opacity: 0;
+	padding:0;
+	margin:0;	
+
+	position: absolute;
+	top: 20px;
+	left: -20px;
+	width: auto;
+
+	display:none;
 }
 
