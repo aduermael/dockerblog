@@ -60,7 +60,7 @@ var app = express();
 app.use(express.compress());
 app.use(express.cookieParser());
 
-app.use(express.bodyParser({ uploadDir:__dirname + '/public/uploads' }));
+app.use(express.bodyParser({ uploadDir:__dirname + '/uploads' }));
 app.use(express.static(__dirname + '/public'));
 
 app.use('/admin', adminManager.app);
