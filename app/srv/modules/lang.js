@@ -1,27 +1,31 @@
+var tools = require('./tools');
+
 var _lang = "en"; // default lang
 var _justSet = false;
 
 exports.app = function()
 {
 	var express = require('express');
-  var app = express();
+	var app = express();
 
-  app.get('/:lang', setLang );
+	app.get('/:lang', setLang );
 
-  return app;
+	return app;
 }();
 
 
 function setLang(req,res,next)
 {
+	console.log("SET LANG: " + req.params.lang);
 	_lang = req.params.lang
-  var hour = 3600000;
-  res.cookie('lang', _lang, { maxAge: 365 * 24 * hour, httpOnly: false});
+	var hour = 3600000;
+	res.cookie('lang', _lang, { maxAge: 365 * 24 * hour, httpOnly: false});
 
-  _justSet = true;
+	_justSet = true;
 
 	next();
 }
+
 
 
 exports.use = function(req,res,next)

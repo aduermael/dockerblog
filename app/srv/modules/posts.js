@@ -1,3 +1,6 @@
+var langManager = require('./lang');
+var tools = require('./tools');
+
 var db = require('./db').connect();
 
 
@@ -152,8 +155,9 @@ exports.editPost = function(req,res)
     {
       var content = JSON.parse(value);
 
-      res.render('admin_post_edit',{ siteName: 'Blog | Admin - Edit post',
-      post: content
+      tools.renderJade(res,'admin_post_edit',{ siteName: 'Blog | Admin - Edit post',
+      post: content,
+      lang: langManager.get()
       });
     }
   });

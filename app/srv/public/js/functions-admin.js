@@ -4,13 +4,7 @@ var reorder_mode = false;
   
 
 
-var SERVER = "http://192.241.237.140";
 
-
-var errorCallback = function()
-{
-  alert("error");
-}
 
 
 function PostFiles(path,formData,callback,errorCallback)
@@ -36,55 +30,6 @@ function PostFiles(path,formData,callback,errorCallback)
     }
   );
 }
-
-
-
-
-function Post(path,obj,callback,errorCallback)
-{
-  $.ajax
-  (
-    {
-      url: SERVER + path,
-      type:"POST",
-      data:JSON.stringify(obj),
-      contentType: "application/json",
-      cache: false,
-      processData:false,
-      
-      success: function(data, textStatus, jqXHR)
-      {
-        callback(data);
-      },
-      error: function(jqXHR, textStatus, errorThrown) 
-      {
-        errorCallback();
-      }
-    });
-}
-
-
-function Get(path,callback,errorCallback)
-{
-  $.ajax
-  (
-    {
-      url: SERVER + path,
-      type:"GET",
-      cache: false,
-      processData:false,
-      
-      success: function(data, textStatus, jqXHR)
-      {
-        callback(data);
-      },
-      error: function(jqXHR, textStatus, errorThrown) 
-      {
-        errorCallback();
-      }
-    });
-}
-
 
 
 // ADMIN
@@ -321,18 +266,39 @@ function reorder(sender)
 
 
 
+var langSelectorCallback = function(data)
+{
+	var res = data;
 
+	if(res.success)
+	{
+		alert("SUCCESS");
+		//document.location = "/admin/posts/" + "en"; // make lang dynamic
+	}
+	else
+	{
+		alert("FAILED");   
+	}
+}
+  
+  
 
 $(document).ready(function()
 {
-  $('#content_blocks >').each(function(i,obj)
-  {
-    var blockID = parseInt($(obj).attr('id').substring(5));
-    if (nextBlock <= blockID) nextBlock = blockID + 1;
-    console.log('child: ' + $(obj).attr('id').substring(5));
-  })
+	$('#langSelector').change(function(value)
+	{
+		var selectedLang = $('#langSelector option:selected').val();
+		document.location = "/admin/lang/" + selectedLang; 
+	})
+	
+	$('#content_blocks >').each(function(i,obj)
+	{
+	var blockID = parseInt($(obj).attr('id').substring(5));
+	if (nextBlock <= blockID) nextBlock = blockID + 1;
+	console.log('child: ' + $(obj).attr('id').substring(5));
+	})
 
-  console.log('nextBlock: ' + nextBlock);
+	console.log('nextBlock: ' + nextBlock);
   
   $('#reorderBtn').click(function()
   {

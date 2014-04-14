@@ -2,6 +2,9 @@ var db = require('./db').connect();
 
 var tools = require('./tools');
 
+var lang = require('./lang');
+
+
 
 module.exports = function()
 {
@@ -9,7 +12,7 @@ module.exports = function()
 	var app = express();
 	
 	app.post('/key', add );
-	app.get('/:lang', page );	
+	app.get('/', page );	
 
 	
 	return app;
@@ -18,17 +21,18 @@ module.exports = function()
 
 
 function page(req,res)
-{
-	var lang = req.params.lang;
-	
-	db.hgetall('config_' + lang,function(error,values)
+{	
+	db.hgetall('config_' + lang.get(),function(error,values)
 	{
 		if (!error)
 		{
 			var options = {};
 			options.siteName = 'Blog | Admin - Config';
-			options.lang = lang;
-			options.prefs = values;
+			options.lang = lang.get();
+			if (values)
+				options.prefs = values;
+			else
+				options.prefs = [];
 			
 			
 			console.log(JSON.stringify(options));
@@ -42,9 +46,9 @@ function page(req,res)
 
 
 
-function get(lang,callback)
+function get(callback)
 {
-  db.get('config_' + lang,function(error,json)
+  db.get('config_' + lang.get(),function(error,json)
   {
     if (error)
     {
@@ -59,9 +63,9 @@ function get(lang,callback)
 }
 
 
-function set(lang,value,key,callback)
+function set(value,key,callback)
 {
-  db.get('config_' + lang,function(error,json)
+  db.get('config_' + lang.get(),function(error,json)
   {
     if (error)
     {
@@ -73,7 +77,7 @@ function set(lang,value,key,callback)
       obj[key] = value;
 
       var multi = db.multi();
-      multi.set('config_' + lang,JSON.stringify(obj));
+      multi.set('config_' + lang.get(),JSON.stringify(obj));
 
       multi.exec(function(err,replies)
       {
@@ -95,10 +99,9 @@ function set(lang,value,key,callback)
 function add(req,res)
 {
 	var key = req.body.key;
-	var lang = req.body.lang;
 	
 	
-	db.hset('config_' + lang,key,"empty",function(error,reply)
+	db.hset('config_' + lang.get(),key,"empty",function(error,reply)
 	{
 		if (!error)
 		{
@@ -124,9 +127,9 @@ function add(req,res)
 
 
 
-function del(lang,key,callback)
+function del(key,callback)
 {
-	db.hdel('config_' + lang,key,function(error,nbRemoved)
+	db.hdel('config_' + lang.get(),key,function(error,nbRemoved)
 	{
 		
 	});

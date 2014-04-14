@@ -12,12 +12,13 @@ block content
 			li
 				.styled-select
 					select#langSelector
+						option(selected disabled) #{lang}
 						option(value="en") en
 						option(value="fr") fr
 			li 
 				a(href="/admin/new") + Post
 			li 
-				a(href="/admin/posts/en") Posts
+				a(href="/admin/posts") Posts
 			li 
 				a(href="/admin") + Page
 			li 
@@ -26,7 +27,7 @@ block content
 				a(href="/admin/comments") Comments
 
 			li 
-				a(href="/admin/config/en") Prefs
+				a(href="/admin/config") Prefs
 
 	.clearboth
 	

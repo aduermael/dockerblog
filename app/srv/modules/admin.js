@@ -5,22 +5,27 @@ var postsManager = require('./posts');
 
 var tools = require('./tools');
 
+var lang = require('./lang');
+
 
 exports.app = function()
 {
   app.use(express.basicAuth('admin', 'admin'));
   
+  app.use('/lang', lang.app);
+  app.use(lang.use);
+
   app.use('/config', require('./config') );
 
   app.get('/new', newPost );
-  app.get('/posts/:lang',posts);
+  app.get('/posts',posts);
 
   app.post('/new', saveNewPost);
   app.post('/edit', saveEditedPost);
 
   app.get('/edit/:postID', editPost );
 
-  app.get('*',home);
+  app.get('*',posts);
 
   return app;
 }();
@@ -28,13 +33,13 @@ exports.app = function()
 
 function home(req,res)
 {
-	tools.renderJade(res,'admin_post',{ siteName: 'Blog | Admin - New post' });
+	tools.renderJade(res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
 }
 
 
 function newPost(req,res)
 {
-	tools.renderJade(res,'admin_post',{ siteName: 'Blog | Admin - New post' });
+	tools.renderJade(res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
 }
 
 
@@ -62,18 +67,13 @@ function saveEditedPost(req,res)
 
 
 
-
-
-
 function posts(req,res)
 {
-  var lang = req.params.lang;
-  // getPosts(lang,0,100,function(error,content) 
-  postsManager.list(lang,0,100,function(error,content)
+  postsManager.list(lang.get(),0,100,function(error,content)
   {
       tools.renderJade(res,'admin_posts',{ siteName: 'Blog | Admin',
           posts: content,
-          lang: lang });
+          lang: lang.get() });
   });
 };
 
