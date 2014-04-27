@@ -5,19 +5,39 @@ block pagecontent
 
 	h2 Preferences (#{lang})
 
-	- each pref,prefKey in prefs
-		p #{prefKey}
-		input.title_field(type="text" value="#{pref}").title_field.edit_post_zone.backgroundLevel_10
+	.list
+		.navigation
+			ul
+				- each pref,prefKey in prefs
+					li
+						p
+							| #{prefKey} 
+							a.backgroundRed(href="#" onclick="alert('work in progress')") Delete
+							
+						.clearboth
+						textarea(type="text") #{pref}
+		.clearboth
 	
 	
 	div.edit_post_zone.backgroundLevel_1
-		input(class="edit_post_add_content_button" type="button" value="Update" onclick="alert('work in progress')")
+		.navigation
+			ul
+				li
+					a(href="#" onclick="alert('work in progress')") Update
 		.clearboth
 	
-	div.edit_post_zone.backgroundLevel_10
-		input#configKey(type="text" value="" style="background-color:#555;color:#FFF").title_field.edit_post_zone
-		input.edit_post_add_content_button(type="button" value="Add key" onclick="configAddKey(this)")
+	
+	div.edit_post_zone.backgroundLevel_1
+		.navigation
+			ul
+				li
+					input#addKey(type="text" value="KEY" onfocus="if(this.value == 'KEY') { this.value = ''; }")
+				li
+					a(href="#" onclick="configAddKey(this)") Add
+				li
+					textarea#addValue(type="text" onfocus="if(this.value == 'VALUE') { this.value = ''; }") VALUE
 		.clearboth
+		
 					
 	#myNicPanel
 	div(style="height:20px;")

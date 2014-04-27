@@ -13,7 +13,7 @@ block pagecontent
 			- var block_name = "block" + block_number
 			if (block.type == "title")
 				div(id="#{block_name}").edit_post_zone.backgroundLevel_10.block_title
-					input(class="title_field" type="text" value="#{block.text}")
+					input.title_field(type="text" value="#{block.text}")
 
 			else if (block.type == "text")
 				div(id="#{block_name}" style="margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;").block_text.sortable

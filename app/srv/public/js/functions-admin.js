@@ -59,7 +59,7 @@ function addImageBlock(sender)
 function editPost(sender)
 {
   var postContent = new Object()
-  postContent.lang =$('#langSelector').val();
+  postContent.lang = $('#langSelector option:selected').val();
   postContent.ID = $('#postID').attr('value');
   var blocks = new Array();
   var i = 0;
@@ -115,7 +115,7 @@ var editPostCallBack = function(data)
 
   if(res.success)
   {
-    document.location = "/admin/posts/" + "en"; // make lang dynamic
+    document.location = "/admin/posts/" + $('#langSelector option:selected').val();
   }
   else
   {
@@ -129,7 +129,7 @@ var editPostCallBack = function(data)
 function sendPost(sender)
 {
   var postContent = new Object()
-  postContent.lang = $('#langSelector').val();
+  postContent.lang = $('#langSelector option:selected').val();
   var blocks = new Array();
   var i = 0;
 
@@ -181,17 +181,20 @@ function sendPost(sender)
 function configAddKey(sender)
 {
 	var postContent = new Object()
-	postContent.key = $('#configKey').val();
-	postContent.lang = "en"; // make lang dynamic
+	postContent.key = $('#addKey').val();
+	postContent.value = $('#addValue').val();
+	postContent.lang = $('#langSelector option:selected').val();
+	
+	alert(JSON.stringify(postContent));
   
-	Post('/admin/config/key',postContent,configAddKeyCallBack,errorCallback);
+	//Post('/admin/config/key',postContent,configAddKeyCallBack,errorCallback);
 }
 
 var configAddKeyCallBack = function(data)
 {
   if(res.success)
   {
-    document.location = "/admin/config/" + "en"; // make lang dynamic
+    document.location = "/admin/config/" + $('#langSelector option:selected').val();
     alert("OK!");
   }
   else
@@ -293,130 +296,128 @@ $(document).ready(function()
 	
 	$('#content_blocks >').each(function(i,obj)
 	{
-	var blockID = parseInt($(obj).attr('id').substring(5));
-	if (nextBlock <= blockID) nextBlock = blockID + 1;
-	console.log('child: ' + $(obj).attr('id').substring(5));
+		var blockID = parseInt($(obj).attr('id').substring(5));
+		if (nextBlock <= blockID) nextBlock = blockID + 1;
+		console.log('child: ' + $(obj).attr('id').substring(5));
 	})
+	
+	
+	$('#reorderBtn').click(function()
+	{
+		if (!reorder_mode)
+		{
+			$( "#content_blocks" ).sortable(
+			{
+				items: '.sortable',
+				cursorAt: { top: 25 , left: 25 },
+				start: function(event,ui)
+				{
+					ui.item.width(50.0);
+					ui.item.height(50.0);
+					ui.item.css("overflow","hidden");
+				}
+			});
+			
+			$('#trash').css("display","block");
+			
+			$( "#trash" ).droppable(
+			{
+				drop: function( event, ui )
+				{
+					ui.draggable.remove();
+					$('#trash').css("background-color","#fcc");
+				},
+				out: function( event, ui )
+				{
+					$('#trash').css("background-color","#fcc");
+				},
+				over: function( event, ui )
+				{
+					$('#trash').css("background-color","#f88");
+				}
+			});
+			
+			//$( "#content_blocks" ).sortable();
+			//$( "#content_blocks" ).disableSelection();
+			$("input").prop('disabled', true);
+			$("input").css('opacity', 0.1);
+			$(".block_image").css('border','1px dashed #000');
+			$(".block_text").css('border','1px dashed #000');
+			reorder_mode = true;
+		}
+		else
+		{
+			$('#trash').css("display","none");
+			
+			
+			$('#content_blocks').sortable('destroy');
+			//$('#content_blocks').disableSelection('cancel'); 
+			//$('#content_blocks').unbind('click');
+			//$('#content_blocks').unbind('mousedown');
+			//$('#content_blocks').unbind('mouseup');
+			//$('#content_blocks').unbind('selectstart');
+			$("input").prop('disabled', false);
+			$("input").css('opacity', 1.0);
+			$(".block_image").css('border','none');
+			$(".block_text").css('border','none');
+			reorder_mode = false;
+		}
+	});
 
-	console.log('nextBlock: ' + nextBlock);
-  
-  $('#reorderBtn').click(function()
-  {
-    if (!reorder_mode)
-    {
-      $( "#content_blocks" ).sortable(
-      {
-        items: '.sortable',
-        cursorAt: { top: 25 , left: 25 },
-        start: function(event,ui)
-        {
-           ui.item.width(50.0);
-           ui.item.height(50.0);
-           ui.item.css("overflow","hidden");
-        }
-      });
 
-      $('#trash').css("display","block");
-
-      $( "#trash" ).droppable(
-      {
-        drop: function( event, ui )
-        {
-          ui.draggable.remove();
-          $('#trash').css("background-color","#fcc");
-        },
-        out: function( event, ui )
-        {
-          $('#trash').css("background-color","#fcc");
-        },
-        over: function( event, ui )
-        {
-          $('#trash').css("background-color","#f88");
-        }
-      });
-
-      //$( "#content_blocks" ).sortable();
-      //$( "#content_blocks" ).disableSelection();
-      $("input").prop('disabled', true);
-      $("input").css('opacity', 0.1);
-      $(".block_image").css('border','1px dashed #000');
-      $(".block_text").css('border','1px dashed #000');
-      reorder_mode = true;
-    }
-    else
-    {
-      $('#trash').css("display","none");
-      
-
-      $('#content_blocks').sortable('destroy');
-      //$('#content_blocks').disableSelection('cancel'); 
-      //$('#content_blocks').unbind('click');
-      //$('#content_blocks').unbind('mousedown');
-      //$('#content_blocks').unbind('mouseup');
-      //$('#content_blocks').unbind('selectstart');
-      $("input").prop('disabled', false);
-      $("input").css('opacity', 1.0);
-      $(".block_image").css('border','none');
-      $(".block_text").css('border','none');
-      reorder_mode = false;
-    }
-  });
-
-
-  myNicEditor = new nicEditor({buttonList : ['bold','underline','link','unlink']});
-  myNicEditor.setPanel('myNicPanel');
-
-  myNicEditor.addEvent('focus', function(e) 
-  {
-      if (!reorder_mode)
-      {
-        var id = myNicEditor.selectedInstance.e.id;
-        
-		$("#myNicPanel").show();
+	myNicEditor = new nicEditor({buttonList : ['bold','underline','link','unlink']});
+	myNicEditor.setPanel('myNicPanel');
+	
+	myNicEditor.addEvent('focus', function(e) 
+	{
+		if (!reorder_mode)
+		{
+			var id = myNicEditor.selectedInstance.e.id;
+			
+			$("#myNicPanel").show();
+			
+			$("#myNicPanel").css(
+			{
+				top:($("#"+id).offset().top - 10) +'px',
+				left:(-$("#myNicPanel").outerWidth()) +'px',
+			});
+		}
+	});
+	
+	myNicEditor.addEvent('panel', function(e) 
+	{
+		console.log("PANEL");
+	});
+	
+	
+	myNicEditor.addEvent('blur', function(e) 
+	{
+		$("#myNicPanel").hide();
+	});
+	
+	$('.block_text').each(function (i, obj)
+	{
+		myNicEditor.addInstance($(obj).attr('id'));
+	});
+	
+	
+	$("form#upload_file_form").submit(function(e)
+	{
+		e.preventDefault();
+		//grab all form data  
+		var formData = new FormData($(this)[0]);
+		var inputs = document.getElementById('upload_file_input');
 		
-		$("#myNicPanel").css({
-								top:($("#"+id).offset().top - 10) +'px',
-								left:(-$("#myNicPanel").outerWidth()) +'px',
-							});
-		
-
-      }
-  });
-  
-  myNicEditor.addEvent('panel', function(e) 
-  {
-  	console.log("PANEL");
-  });
-
-
-  myNicEditor.addEvent('blur', function(e) 
-  {
-	  $("#myNicPanel").hide();
-  });
-
-  $('.block_text').each(function (i, obj)
-  {
-    myNicEditor.addInstance($(obj).attr('id'));
-  });
-
-
-  $("form#upload_file_form").submit(function(e)
-  {
-    e.preventDefault();
-    //grab all form data  
-    var formData = new FormData($(this)[0]);
-    var inputs = document.getElementById('upload_file_input');
-    
-    if (inputs.files.length > 0)
-    {
-      PostFiles('/image',formData,uploadFileCallback,errorCallback);
-    }
-    else
-    {
-      console.log("nothing to send");
-    }
-    return false;
-  });
+		if (inputs.files.length > 0)
+		{
+			PostFiles('/image',formData,uploadFileCallback,errorCallback);
+		}
+		else
+		{
+			console.log("nothing to send");
+		}
+		return false;
+	});
 
 
 });
