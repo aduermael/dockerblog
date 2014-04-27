@@ -7,7 +7,7 @@ block content
 			if (block.type == "title")
 				#div.block.title
 					h2
-						a(href="/post/" + post.ID) #{block.text} 
+						a(href="/post" + post.ID) #{block.text} 
 						
 					.date(style="float:right;") #{post.stringdate}
 					.clearboth
@@ -24,9 +24,12 @@ block content
 					else
 						img(src=block.path alt="bloglaurel comics")
 		.comments
-			p X Comments
+			h2 X Comments
 			.form
-				input(type="text" value="Name")
-				textarea ...
+				input(type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; }" 
+				onblur="if(this.value == '') { this.value = 'name'; }")
+				input.optional(type="text" value="email" onfocus="if(this.value == 'email') { this.value = ''; }"
+				onblur="if(this.value == '') { this.value = 'email'; }")
+				textarea
 				input(type="button" value="Send")
 	
