@@ -84,40 +84,53 @@ app.post('/image', function (req, res)
 
 
 
-app.get('/page:PageID', function (req, res)
+
+app.get('/page:PageID', renderPosts);
+app.get('/post:PostID', renderPost);
+
+app.get('*',renderPosts);
+
+
+
+
+function renderPosts(req,res)
 {
-  var page = req.params.PageID;
-  renderHome(res,page);
-});
+	var page = req.params.PageID;
+	if (!page) page = 1;
+	
+	postsManager.list(lang.get(), (page - 1) , postsPerPage , function(error,content)
+	{
+		postsManager.pages(lang.get(), postsPerPage ,function(nbPages)
+		{
+			res.render('posts',{ siteName: 'Blog | Home',
+			posts: content,
+			lang: lang.get(),
+			myInfos: myInfos(),
+			fbLink: facebookLink(),
+			twLink: twitterLink(),
+			pages: nbPages });
+		});
+	});
+}
 
 
 
-
-
-
-
-app.get('*', function(req, res)
+function renderPost(req,res)
 {
-  renderHome(res,1);
-});
-
-
-
-function renderHome(res,page)
-{
-  postsManager.list(lang.get(), (page - 1) , postsPerPage , function(error,content)
-  {
-    postsManager.pages(lang.get(), postsPerPage ,function(nbPages)
-    {
-      res.render('home',{ siteName: 'Blog | Home',
-      posts: content,
-      lang: lang.get(),
-      myInfos: myInfos(),
-      fbLink: facebookLink(),
-      twLink: twitterLink(),
-      pages: nbPages });
-    });
-  });
+	var postID = req.params.PostID;
+	
+	postsManager.get(postID, function(error,post)
+	{	
+		res.render('post',
+		{
+			siteName: 'Blog | post',
+			post: post,
+			lang: lang.get(),
+			myInfos: myInfos(),
+			fbLink: facebookLink(),
+			twLink: twitterLink()
+		});
+	});
 }
 
 

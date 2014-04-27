@@ -1,22 +1,14 @@
 extends layout
 
 block head
-	if (lang == "fr")
-		script.
-			var LANG = "fr";
-	else
-		script.
-			var LANG = "en";
-
 	script(src='/js/nicEdit.js')
 	script(src='/js/functions-common.js')
 	script(src='/js/functions-blog.js')
 	link(rel='stylesheet', href='/style.css')
 	
-block content
+block structure
 
 	//.redline
-
 
 	#topbanner
 		h1
@@ -117,36 +109,10 @@ block content
 			h2
 				a(href="/") Archives
 
-
 	.left_column
-		- each post in posts
-			#div.post
-				- each block in post.blocks
-					if (block.type == "title")
-						#div.block.title
-							h2 #{block.text} 
-							.date(style="float:right;") #{post.stringdate}
-							.clearboth
-			
-					else if (block.type == "text")
-						#div.block.text
-							p !{block.text}
-
-					else if (block.type == "image")
-						#div.block_img.image
-							if (block.url != "")
-								a(href=block.url)
-									img(src=block.path alt="bloglaurel comics")
-							else
-								img(src=block.path alt="bloglaurel comics")
-
-		#pages
-			p
-				| Pages:
-				- var i = pages
-				- for (var i = 1; i < pages + 1; ++i)
-					a(href="/page" + i) #{i}
-
+		block content
+		
+		
 		#socialfooter
 			#networks
 				.network

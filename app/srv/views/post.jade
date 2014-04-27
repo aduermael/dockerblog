@@ -1,0 +1,32 @@
+extends blog
+	
+block content
+
+	#div.post
+		- each block in post.blocks
+			if (block.type == "title")
+				#div.block.title
+					h2
+						a(href="/post/" + post.ID) #{block.text} 
+						
+					.date(style="float:right;") #{post.stringdate}
+					.clearboth
+	
+			else if (block.type == "text")
+				#div.block.text
+					p !{block.text}
+
+			else if (block.type == "image")
+				#div.block_img.image
+					if (block.url != "")
+						a(href=block.url)
+							img(src=block.path alt="bloglaurel comics")
+					else
+						img(src=block.path alt="bloglaurel comics")
+		.comments
+			p X Comments
+			.form
+				input(type="text" value="Name")
+				textarea ...
+				input(type="button" value="Send")
+	

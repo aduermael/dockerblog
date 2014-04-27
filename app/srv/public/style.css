@@ -373,6 +373,33 @@ a:hover
 }
 
 
+.left_column .post .footer
+{
+  width: 100%;
+  text-align: center;
+}
+
+
+.left_column .post .comments
+{
+  width: 100%;
+  text-align: center;
+}
+
+.left_column .post .comments .form
+{
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  padding: 5px;
+  
+  border-radius: 5px;
+  background-color: #F4F4F4;
+  
+}
+
+
 .block
 {
   width: 800px;

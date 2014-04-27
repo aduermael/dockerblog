@@ -28,7 +28,7 @@ exports.list = function(lang,page,nbPostsPerPage,callback)
           values.forEach(function (value)
           {
             var post = JSON.parse(value);
-            post.stringdate = getPostTime(post.date,lang.get);
+            post.stringdate = getPostTime(post.date,langManager.get());
             content.push(post);
           });
 
@@ -37,6 +37,24 @@ exports.list = function(lang,page,nbPostsPerPage,callback)
       });
     }
   });
+}
+
+
+exports.get = function(postID,callback)
+{
+	db.get("post_" + postID,function(error,value)
+	{
+		if (error)
+		{
+			callback(true,{});
+		}
+		else
+		{			
+			var post = JSON.parse(value);
+			post.stringdate = getPostTime(post.date,langManager.get());	
+			callback(false,post);
+		}
+	});
 }
 
 
@@ -75,7 +93,6 @@ exports.newPost = function(req,res)
     
     var post = {};
     post.blocks = req.body.blocks;
-    post.lang = req.body.lang;
     post.date = timestamp;
     post.ID = postID;
 
@@ -115,7 +132,6 @@ exports.saveEditedPost = function(req,res)
   
   var post = {};
   post.blocks = req.body.blocks;
-  post.lang = req.body.lang;
   post.date = timestamp;
   post.ID = req.body.ID;
 
@@ -209,78 +225,78 @@ var LOC_oneYear = ["one year ago","il y a un an"];
 var LOC_years = ["{0} years ago","il y a {0} ans"];
 
 if (!String.prototype.format)
-  {
-      String.prototype.format = function() {
-
-      var args = arguments;
-      var sprintfRegex = /\{(\d+)\}/g;
-
-      var sprintf = function (match, number)
-      {
-          return number in args ? args[number] : match;
-      };
-
-      return this.replace(sprintfRegex, sprintf);
-      };
-  }
+{
+	String.prototype.format = function()
+	{	
+		var args = arguments;
+		var sprintfRegex = /\{(\d+)\}/g;
+		
+		var sprintf = function (match, number)
+		{
+			return number in args ? args[number] : match;
+		};
+		
+		return this.replace(sprintfRegex, sprintf);
+	};
+}
 
   
 
 function getPostTime(gmt,lang)
 {
-  var date = new Date();
-  var now = Date.now()  
-
-  delta = Math.floor((now - gmt) / 1000);
-  
-
-  var l = lang == "fr" ? 1 : 0;
-
-  if (delta < 0)
-  {
-    return LOC_notYet[l]; 
-  }
-  if (delta < 1 * MINUTE)
-  {
-      return delta == 1 ? LOC_oneSecond[l] : LOC_seconds[l].format(delta);
-  }
-  else if (delta < 2 * MINUTE)
-  {
-      return LOC_oneMinute[l];
-  }
-  else if (delta < 60 * MINUTE)
-  {
-    var minutes = Math.floor(delta / MINUTE);
-      return LOC_minutes[l].format(minutes);  
-  }
-  else if (delta < 2 * HOUR)
-  {
-      return LOC_oneHour[l];
-  }
-  else if (delta < 24 * HOUR)
-  {
-    var hours = Math.floor(delta / HOUR);
-      return LOC_hours[l].format(hours);
-  }
-  else if (delta < 48 * HOUR)
-  {
-      return LOC_yesterday[l];
-  }
-  else if (delta < 30 * DAY)
-  {
-    var days = Math.floor(delta / DAY);
-      return LOC_days[l].format(days);
-  }
-  else if (delta < 12 * MONTH)
-  {
-      var months = Math.floor(delta/MONTH);
-      return months <= 1 ? LOC_oneMonth[l] : LOC_months[l].format(months);
-  }
-  else
-  {
-      var years = Math.floor(delta/YEAR);
-      return years <= 1 ? LOC_oneYear[l] : LOC_years[l].format(years);
-  }
+	var date = new Date();
+	var now = Date.now()  
+	
+	delta = Math.floor((now - gmt) / 1000);
+	
+	
+	var l = lang == "fr" ? 1 : 0;
+	
+	if (delta < 0)
+	{
+		return LOC_notYet[l]; 
+	}
+	if (delta < 1 * MINUTE)
+	{
+		return delta == 1 ? LOC_oneSecond[l] : LOC_seconds[l].format(delta);
+	}
+	else if (delta < 2 * MINUTE)
+	{
+		return LOC_oneMinute[l];
+	}
+	else if (delta < 60 * MINUTE)
+	{
+		var minutes = Math.floor(delta / MINUTE);
+		return LOC_minutes[l].format(minutes);  
+	}
+	else if (delta < 2 * HOUR)
+	{
+		return LOC_oneHour[l];
+	}
+	else if (delta < 24 * HOUR)
+	{
+		var hours = Math.floor(delta / HOUR);
+		return LOC_hours[l].format(hours);
+	}
+	else if (delta < 48 * HOUR)
+	{
+		return LOC_yesterday[l];
+	}
+	else if (delta < 30 * DAY)
+	{
+		var days = Math.floor(delta / DAY);
+		return LOC_days[l].format(days);
+	}
+	else if (delta < 12 * MONTH)
+	{
+		var months = Math.floor(delta/MONTH);
+		return months <= 1 ? LOC_oneMonth[l] : LOC_months[l].format(months);
+	}
+	else
+	{
+		var years = Math.floor(delta/YEAR);
+		return years <= 1 ? LOC_oneYear[l] : LOC_years[l].format(years);
+	}
 }
 
 
