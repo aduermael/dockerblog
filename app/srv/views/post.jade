@@ -27,10 +27,10 @@ block content
 			h2 X Comments
 			.form
 				input#verificationID(type="hidden" value="123456")
-				input#commentName(type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; }" 
+				input#commentName.mandatory(type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" 
 				onblur="if(this.value == '') { this.value = 'name'; }")
-				input#commentEmail.optional(type="text" value="email" onfocus="if(this.value == 'email') { this.value = ''; }"
+				input#commentEmail.optional(type="text" value="email" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
 				onblur="if(this.value == '') { this.value = 'email'; }")
-				textarea#commentContent
-				input(type="button" value="Send" onclick="postComment()")
+				textarea#commentContent(onfocus="backToOriginalBackground(this);")
+				input(type="button" value="Send" onclick="postComment('name','email')")
 	

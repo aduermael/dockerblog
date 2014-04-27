@@ -420,15 +420,19 @@ input,textarea
 input[type=text]
 {
 	width:350px;
-	
-	color: #666;
-	background-color: #E0E0E0;
 }
+
 
 input[type=text].optional 
 {
-	color: #AAA !important;
-	background-color: #e7e7e7 !important;
+	color: #AAA;
+	background-color: #e7e7e7;
+}
+
+input[type=text].mandatory 
+{
+	color: #666;
+	background-color: #E0E0E0;
 }
 
 
