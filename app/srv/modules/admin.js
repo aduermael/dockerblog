@@ -69,7 +69,7 @@ function saveEditedPost(req,res)
 
 function posts(req,res)
 {
-  postsManager.list(lang.get(),0,100,function(error,content)
+  postsManager.list(0,100,function(error,content)
   {
       tools.renderJade(res,'admin_posts',{ siteName: 'Blog | Admin',
           posts: content,

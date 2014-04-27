@@ -3,44 +3,102 @@ var tools = require('./tools');
 
 var db = require('./db').connect();
 
+var postsPerPage = 10;
 
 
-exports.list = function(lang,page,nbPostsPerPage,callback)
+var app = function()
 {
-  var content = [];
+	var express = require('express');
+	var app = express();
 
-  db.zrevrange('posts_' + lang, page * nbPostsPerPage, page * nbPostsPerPage + (nbPostsPerPage - 1) ,function(error, keys)
-  {
-    if (error)
-    {
-      callback(true,content);
-    }
-    else
-    {
-      db.mget(keys,function(error,values)
-      {
-        if (error)
-        {
-          callback(true,content);
-        }
-        else
-        {
-          values.forEach(function (value)
-          {
-            var post = JSON.parse(value);
-            post.stringdate = getPostTime(post.date,langManager.get());
-            content.push(post);
-          });
+	app.get('/page:PageID', renderPosts );
+	app.get('/post:PostID', renderOnePost );	
+	app.get('*', renderPosts );	
 
-          callback(false,content);
-        }
-      });
-    }
-  });
+	return app;
+}();
+
+
+
+function renderPosts(req,res)
+{
+	var page = req.params.PageID;
+	if (!page) page = 1;
+	
+	list((page - 1) , postsPerPage , function(error,content)
+	{
+		pages(postsPerPage ,function(nbPages)
+		{
+			tools.renderJade(res,'posts',{ siteName: 'Blog | Home',
+			posts: content,
+			lang: langManager.get(),
+			myInfos: "myInfos", // should be in key-value options
+			fbLink: "facebookURL", // should be in key-value options
+			twLink: "twitterURL", // should be in key-value options
+			pages: nbPages });
+		});
+	});
 }
 
 
-exports.get = function(postID,callback)
+function renderOnePost(req,res)
+{
+	var postID = req.params.PostID;
+	
+	get(postID, function(error,post)
+	{	
+		tools.renderJade(res,'post',
+		{
+			siteName: 'Blog | post',
+			post: post,
+			lang: langManager.get(),
+			myInfos: "myInfos", // should be in key-value options
+			fbLink: "facebookURL", // should be in key-value options
+			twLink: "twitterURL" // should be in key-value options
+		});
+	});
+}
+
+
+
+
+
+var list = function(page,nbPostsPerPage,callback)
+{	
+	var content = [];
+	
+	db.zrevrange('posts_' + langManager.get(), page * nbPostsPerPage, page * nbPostsPerPage + (nbPostsPerPage - 1) ,function(error, keys)
+	{
+	if (error)
+	{
+		callback(true,content);
+	}
+	else
+	{
+		db.mget(keys,function(error,values)
+		{
+			if (error)
+			{
+				callback(true,content);
+			}
+			else
+			{
+				values.forEach(function (value)
+				{
+					var post = JSON.parse(value);
+					post.stringdate = getPostTime(post.date,langManager.get());
+					content.push(post);
+				});
+				
+				callback(false,content);
+			}
+		});
+	}
+	});
+}
+
+
+var get = function(postID,callback)
 {
 	db.get("post_" + postID,function(error,value)
 	{
@@ -58,11 +116,11 @@ exports.get = function(postID,callback)
 }
 
 
-exports.pages = function(lang,nbPostsPerPage,callback)
+var pages = function(nbPostsPerPage,callback)
 {
   var pages = 0;
 
-  db.zcard('posts_' + lang,function(error,nbPosts)
+  db.zcard('posts_' + langManager.get(),function(error,nbPosts)
   {
     if (error)
     {
@@ -79,10 +137,13 @@ exports.pages = function(lang,nbPostsPerPage,callback)
 
 
 
+
+
+
 // this method should only be called by admin module
 // I don't know if there's a way to lock that
 
-exports.newPost = function(req,res)
+var newPost = function(req,res)
 { 
   getPostID(function(postID)
   {
@@ -110,12 +171,12 @@ exports.newPost = function(req,res)
       if (err)
       {
         var ret = {"success":false};
-        end(res,ret); 
+        tools.returnJSON(res,ret); 
       }
       else
       {
         var ret = {"success":true};
-        end(res,ret); 
+        tools.returnJSON(res,ret); 
       }
     });
   });
@@ -123,7 +184,7 @@ exports.newPost = function(req,res)
 
 
 
-exports.saveEditedPost = function(req,res)
+var saveEditedPost = function(req,res)
 { 
   var ID = "post_" + req.body.ID;
 
@@ -145,19 +206,26 @@ exports.saveEditedPost = function(req,res)
     if (err)
     {
       var ret = {"success":false};
-      end(res,ret); 
+      tools.returnJSON(res,ret); 
     }
     else
     {
       var ret = {"success":true};
-      end(res,ret); 
+      tools.returnJSON(res,ret); 
     }
   });
 }
 
 
+
+
+
+
+
+
+
 // takes a post ID in parameter
-exports.editPost = function(req,res)
+var editPost = function(req,res)
 { 
   var postID = req.params.postID;
 
@@ -165,7 +233,7 @@ exports.editPost = function(req,res)
   {
     if (error)
     {
-      end(res,{"success":false,"error":error});
+      tools.returnJSON(res,{"success":false,"error":error});
     }
     else
     {
@@ -181,7 +249,23 @@ exports.editPost = function(req,res)
 
 
 
-var getPostID = function(callback)
+
+module.exports = {
+	app: app,
+	list: list,
+	pages: pages,
+	get: get,
+	newPost: newPost,
+	saveEditedPost: saveEditedPost,
+	editPost: editPost
+}
+
+
+
+
+
+
+function getPostID(callback)
 {
   db.get("postCount",function(err,postCount)
   {
@@ -195,12 +279,6 @@ var getPostID = function(callback)
     callback(postID);
   });
 }
-
-
-
-
-
-
 
 
 var SECOND = 1;
@@ -297,16 +375,6 @@ function getPostTime(gmt,lang)
 		var years = Math.floor(delta/YEAR);
 		return years <= 1 ? LOC_oneYear[l] : LOC_years[l].format(years);
 	}
-}
-
-
-
-function end(res,data)
-{
-  var body = JSON.stringify(data);
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Content-Length', body.length);
-  res.end(body);
 }
 
 
