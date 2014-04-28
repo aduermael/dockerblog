@@ -26,7 +26,8 @@ block content
 		.comments
 			h2 X Comments
 			.form
-				input#verificationID(type="hidden" value="123456")
+				input#postID(type="hidden" value=post.ID)
+				input#verificationID(type="hidden" value=vID)
 				input#commentName.mandatory(type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" 
 				onblur="if(this.value == '') { this.value = 'name'; }")
 				input#commentEmail.optional(type="text" value="email" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"

@@ -3,6 +3,8 @@ var app = express();
 
 var db = require('./db').connect();
 
+var crypto = require('crypto');
+
 
 exports.returnJSON = function(res,obj)
 {
@@ -18,5 +20,9 @@ exports.renderJade = function(res,page,options)
 	res.render(page,options);
 }
 
+exports.randomHash = function(nbBytes)
+{
+	return crypto.randomBytes(nbBytes).toString('hex');
+}
 
 

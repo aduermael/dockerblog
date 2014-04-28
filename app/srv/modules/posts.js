@@ -5,6 +5,10 @@ var db = require('./db').connect();
 
 var postsPerPage = 10;
 
+// Comment will not be taken if sent less than COMMENT_MIN_DELAY after page loading 
+var COMMENT_MIN_DELAY = 3;
+var COMMENT_TIME_TO_WRITE = 60 * 24 * 5; // time to write a comment
+
 
 var app = function()
 {
@@ -12,7 +16,10 @@ var app = function()
 	var app = express();
 
 	app.get('/page:PageID', renderPosts );
-	app.get('/post:PostID', renderOnePost );	
+	app.get('/post:PostID', renderOnePost );
+	
+	app.post('/comment', postComment );
+			
 	app.get('*', renderPosts );	
 
 	return app;
@@ -47,20 +54,171 @@ function renderOnePost(req,res)
 	
 	get(postID, function(error,post)
 	{	
-		tools.renderJade(res,'post',
+		var vID = "vID_" + tools.randomHash(8);
+		var ttl = COMMENT_TIME_TO_WRITE;
+		
+		var multi = db.multi();
+		
+		multi.set(vID,ttl); // keep original ttl
+		multi.expire(vID,ttl);
+		
+		multi.exec(function(err,replies)
 		{
-			siteName: 'Blog | post',
-			post: post,
-			lang: langManager.get(),
-			myInfos: "myInfos", // should be in key-value options
-			fbLink: "facebookURL", // should be in key-value options
-			twLink: "twitterURL" // should be in key-value options
+			if (err)
+			{
+				var ret = {"success":false};
+				tools.returnJSON(res,ret); 
+			}
+			else // we can display post, having vID
+			{
+				tools.renderJade(res,'post',
+				{
+					siteName: 'Blog | post',
+					post: post,
+					lang: langManager.get(),
+					myInfos: "myInfos", // should be in key-value options
+					fbLink: "facebookURL", // should be in key-value options
+					twLink: "twitterURL", // should be in key-value options
+					vID: vID // an ID to check how much time it took to right a comment (anti spam)
+				}); 
+			}
 		});
+    
 	});
 }
 
 
+function postComment(req,res)
+{
+	var com = req.body;
+	console.log(JSON.stringify(com));
+	
+	//{"postID":"3","vID":"123456","name":"dsfsd","email":"","content":"sdfsdfsdf"}
+	
+	// VERIFICATION
+	
+	var error = false;
+	
+	if (com.name == "")
+	{
+		error = true;
+	}
+	
+	if ( com.email != "" && !validateEmail(comment.email) )
+	{
+		error = true;
+	}
+	
+	if (com.content == "")
+	{
+		error = true;
+	}
+	
+	if (!error)
+	{
+		comment(com,function(error)
+		{
+			if (error)
+			{
+				console.log(JSON.stringify(error));
+				var ret = {"success":false};
+				tools.returnJSON(res,ret);
+			}
+			else
+			{
+				var ret = {"success":true};
+				tools.returnJSON(res,ret);	
+			}
+		});
+	}
+	else
+	{
+		var ret = {"success":false};
+		tools.returnJSON(res,ret);
+	}
+}
 
+
+var comment = function(obj,callback)
+{
+	// CHECK VERIFICATION ID (timing)
+	var multi = db.multi();
+		
+	multi.get(obj.vID); // keep original ttl
+	multi.ttl(obj.vID);
+	
+	multi.exec(function(err,replies)
+	{
+		if (err)
+		{
+			callback(err);
+		}
+		else // we can display post, having vID
+		{
+			var originalTTL = replies[0];
+			var TTL = replies[1];
+			var delay = originalTTL - TTL;
+			
+			if (!TTL || !originalTTL)
+			{
+				callback({"error":"vID TTL not found"});	
+			}
+			else if (delay > COMMENT_MIN_DELAY) // good to go!
+			{
+				// CHECK IF POST EXISTS
+				db.exists("post_" + obj.postID,function(error,postExists)
+				{
+					if (error)
+					{
+						callback(error);
+					}
+					else
+					{	
+						if (postExists)
+						{
+							// SAVE COMMENT
+							getCommentID(function(commentID)
+							{
+								var ID = "com_" + commentID;
+								
+								var date = new Date();
+								var timestamp = Date.now();
+								
+								var multi = db.multi();
+								multi.hmset(ID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp);
+								multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+								multi.incr("commentCount");
+								
+								multi.exec(function(err,replies)
+								{
+									if (err)
+									{
+										callback(err);	 
+									}
+									else
+									{
+										callback();	 
+									}
+								});
+							});
+						}
+						else
+						{
+							callback({"error":"Post can't be found"});	
+						}
+					}
+				});
+			}
+			else
+			{	
+				db.del(obj.vID,function(err,value)
+				{
+					callback({"error":"delay too short, looks like a bot..."});	
+				});
+			}
+		}
+	});
+}
 
 
 var list = function(page,nbPostsPerPage,callback)
@@ -145,41 +303,39 @@ var pages = function(nbPostsPerPage,callback)
 
 var newPost = function(req,res)
 { 
-  getPostID(function(postID)
-  {
-    var ID = "post_" + postID;
-
-    var date = new Date();
-    var timestamp = Date.now();// / 1000;
-    
-    var post = {};
-    post.blocks = req.body.blocks;
-    post.date = timestamp;
-    post.ID = postID;
-
-    var post_json = JSON.stringify(post);
-
-    var multi = db.multi();
-    multi.set(ID,post_json);
-    multi.zadd("posts_" + post.lang,timestamp,ID); // ordered set for each lang
-
-    if (postID > 0) multi.incr("postCount");
-    else multi.set("postCount",1);
-
-    multi.exec(function(err,replies)
-    {
-      if (err)
-      {
-        var ret = {"success":false};
-        tools.returnJSON(res,ret); 
-      }
-      else
-      {
-        var ret = {"success":true};
-        tools.returnJSON(res,ret); 
-      }
-    });
-  });
+	getPostID(function(postID)
+	{
+		var ID = "post_" + postID;
+		
+		var date = new Date();
+		var timestamp = Date.now();// / 1000;
+		
+		var post = {};
+		post.blocks = req.body.blocks;
+		post.date = timestamp;
+		post.ID = postID;
+		
+		var post_json = JSON.stringify(post);
+		
+		var multi = db.multi();
+		multi.set(ID,post_json);
+		multi.zadd("posts_" + post.lang,timestamp,ID); // ordered set for each lang
+		multi.incr("postCount");
+		
+		multi.exec(function(err,replies)
+		{
+			if (err)
+			{
+				var ret = {"success":false};
+				tools.returnJSON(res,ret); 
+			}
+			else
+			{
+				var ret = {"success":true};
+				tools.returnJSON(res,ret); 
+			}
+		});
+	});
 }
 
 
@@ -275,10 +431,26 @@ function getPostID(callback)
     {
       postID = postCount;
     }
-
+    
     callback(postID);
   });
 }
+
+function getCommentID(callback)
+{
+  db.get("commentCount",function(err,commentCount)
+  {
+    var commentID = 0;
+
+    if (commentCount)
+    {
+      commentID = commentCount;
+    }
+    
+    callback(commentID);
+  });
+}
+
 
 
 var SECOND = 1;

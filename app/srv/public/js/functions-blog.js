@@ -13,6 +13,7 @@ $(document).ready(function()
 function postComment(nameIndication,emailIndication)
 {
 	var comment = new Object()
+	comment.postID = $('#postID').val();
 	comment.vID = $('#verificationID').val();
 	comment.name = $('#commentName').val();
 	comment.email = $('#commentEmail').val();
@@ -46,7 +47,20 @@ function postComment(nameIndication,emailIndication)
 	if (!error)
 	{
 		console.log(JSON.stringify(comment));
-		//Post('/admin/config/key',postContent,configAddKeyCallBack,errorCallback);			
+		Post('/comment',comment,postCommentCallback,errorCallback);			
+	}
+}
+
+var postCommentCallback = function(data)
+{
+	var res = data;
+
+	if(res.success)
+	{
+		console.log("SUCCESS");	}
+	else
+	{
+		console.log("FAILED");   
 	}
 }
 
