@@ -46,7 +46,9 @@ function postComment(nameIndication,emailIndication)
 	
 	if (!error)
 	{
-		console.log(JSON.stringify(comment));
+		$('#fields').hide();
+		$('#formsending').show();
+		
 		Post('/comment',comment,postCommentCallback,errorCallback);			
 	}
 }
@@ -55,12 +57,15 @@ var postCommentCallback = function(data)
 {
 	var res = data;
 
+	$('#formsending').hide();
+		
 	if(res.success)
 	{
-		console.log("SUCCESS");	}
+		$('#formsent').show();
+	}
 	else
 	{
-		console.log("FAILED");   
+		$('#formerror').show();
 	}
 }
 

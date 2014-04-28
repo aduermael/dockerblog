@@ -71,16 +71,22 @@ function renderOnePost(req,res)
 			}
 			else // we can display post, having vID
 			{
-				tools.renderJade(res,'post',
+				
+				getComments(postID,function(err,comments)
 				{
-					siteName: 'Blog | post',
-					post: post,
-					lang: langManager.get(),
-					myInfos: "myInfos", // should be in key-value options
-					fbLink: "facebookURL", // should be in key-value options
-					twLink: "twitterURL", // should be in key-value options
-					vID: vID // an ID to check how much time it took to right a comment (anti spam)
-				}); 
+					tools.renderJade(res,'post',
+					{
+						siteName: 'Blog | post',
+						post: post,
+						comments: comments,
+						lang: langManager.get(),
+						myInfos: "myInfos", // should be in key-value options
+						fbLink: "facebookURL", // should be in key-value options
+						twLink: "twitterURL", // should be in key-value options
+						vID: vID // an ID to check how much time it took to right a comment (anti spam)
+					}); 
+					
+				});
 			}
 		});
     
@@ -114,6 +120,7 @@ function postComment(req,res)
 		error = true;
 	}
 	
+	
 	if (!error)
 	{
 		comment(com,function(error)
@@ -137,6 +144,39 @@ function postComment(req,res)
 		tools.returnJSON(res,ret);
 	}
 }
+
+
+
+var getComments = function(postID,callback)
+{	
+	db.zrange('comments_' + postID, 0, -1 ,function(err, keys)
+	{
+		if (err)
+		{
+			callback(err);
+		}
+		else
+		{
+			var multi = db.multi();
+			
+			keys.forEach(function (key)
+			{
+				multi.hgetall(key);			
+			});
+			
+			multi.exec(function(err,replies)
+			{
+				replies.forEach(function(comment)
+				{
+					comment.date = getPostTime(comment.date);
+				});
+								
+				callback(null,replies);
+			});
+		}
+	});
+}
+
 
 
 var comment = function(obj,callback)
@@ -244,7 +284,7 @@ var list = function(page,nbPostsPerPage,callback)
 				values.forEach(function (value)
 				{
 					var post = JSON.parse(value);
-					post.stringdate = getPostTime(post.date,langManager.get());
+					post.stringdate = getPostTime(post.date);
 					content.push(post);
 				});
 				
@@ -267,7 +307,7 @@ var get = function(postID,callback)
 		else
 		{			
 			var post = JSON.parse(value);
-			post.stringdate = getPostTime(post.date,langManager.get());	
+			post.stringdate = getPostTime(post.date);	
 			callback(false,post);
 		}
 	});
@@ -492,8 +532,10 @@ if (!String.prototype.format)
 
   
 
-function getPostTime(gmt,lang)
+function getPostTime(gmt)
 {
+	var lang = langManager.get();
+	
 	var date = new Date();
 	var now = Date.now()  
 	
