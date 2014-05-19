@@ -1,0 +1,27 @@
+extends admin
+
+
+block pagecontent
+
+	h2 Comments (#{lang})
+
+	.list
+		ul
+			- each comment in comments
+				li
+					div
+						strong #{comment.name}
+						|  (#{comment.date})
+						- if (comment.email != "")
+							|  - 
+							a(href="mailto:" + comment.email) #{comment.email}
+					div
+						|  #{comment.content}
+					
+					div
+						a(href="#" onclick="deleteCom()" style="color:#c33e1b") Delete
+						|  - 
+						a(href="#" onclick="acceptCom(this)" style="color:#8ab946") Accept
+
+
+#myNicPanel

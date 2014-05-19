@@ -19,6 +19,8 @@ exports.app = function()
 
   app.get('/new', newPost );
   app.get('/posts',posts);
+  
+  app.get('/comments',comments);
 
   app.post('/new', saveNewPost);
   app.post('/edit', saveEditedPost);
@@ -73,6 +75,17 @@ function posts(req,res)
   {
       tools.renderJade(res,'admin_posts',{ siteName: 'Blog | Admin',
           posts: content,
+          lang: lang.get() });
+  });
+};
+
+
+function comments(req,res)
+{
+  postsManager.listComments(0,100,function(error,content)
+  {
+      tools.renderJade(res,'admin_comments',{ siteName: 'Blog | Admin - Comments',
+          comments: content,
           lang: lang.get() });
   });
 };

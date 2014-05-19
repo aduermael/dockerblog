@@ -117,7 +117,7 @@ function postComment(req,res)
 		error = true;
 	}
 	
-	if ( com.email != "" && !validateEmail(comment.email) )
+	if ( com.email != "" && !validateEmail(com.email) )
 	{
 		error = true;
 	}
@@ -254,8 +254,14 @@ var comment = function(obj,callback)
 									var timestamp = Date.now();
 									
 									var multi = db.multi();
-									multi.hmset(ID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp);
-									multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+									multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp);
+									
+									// comment will be link to the post later, when validated
+									//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+									
+									multi.zadd("comments_all_" + langManager.get(),timestamp,ID); // all comments (to list in admin)
+									multi.zadd("comments_unvalidated_" + langManager.get(),timestamp,ID); // unvalidated comments (to list in admin)
+									
 									multi.incr("commentCount");
 									
 									multi.exec(function(err,replies)
@@ -326,6 +332,43 @@ var list = function(page,nbPostsPerPage,callback)
 }
 
 
+
+var listComments = function(page,nbCommentsPerPage,callback)
+{	
+	var content = [];
+
+	db.zrevrange('comments_all_' + langManager.get(), page * nbCommentsPerPage, page * nbCommentsPerPage + (nbCommentsPerPage - 1) ,function(error, keys)
+	{
+		if (error)
+		{
+			callback(true,content);
+		}
+		else
+		{	
+			var multi = db.multi();
+			
+			keys.forEach(function (key)
+			{
+				multi.hgetall(key);			
+			});
+			
+			multi.exec(function(err,replies)
+			{
+				replies.forEach(function(comment)
+				{
+					comment.date = getPostTime(comment.date);
+				});
+						
+				callback(null,replies);
+			});
+		}
+	});
+}
+
+
+
+
+
 var get = function(postID,callback)
 {	
 	db.get("post_" + postID,function(error,value)
@@ -373,49 +416,57 @@ var pages = function(nbPostsPerPage,callback)
 
 var newPost = function(req,res)
 { 
-	getPostID(function(postID)
+	getPostID(function(err,postID)
 	{
-		var ID = "post_" + postID;
-		
-		var date = new Date();
-		var timestamp = Date.now();// / 1000;
-		
-		var post = {};
-		post.blocks = req.body.blocks;
-		post.date = timestamp;
-		post.ID = postID;
-		
-		if (post.blocks)
+		if (err)
 		{
-			post.blocks.forEach(function(block)
-			{	
-				if (block.type == "title")
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 
+		}
+		else
+		{
+			var ID = "post_" + postID;
+			
+			var date = new Date();
+			var timestamp = Date.now();// / 1000;
+			
+			var post = {};
+			post.blocks = req.body.blocks;
+			post.date = timestamp;
+			post.ID = postID;
+			
+			if (post.blocks)
+			{
+				post.blocks.forEach(function(block)
+				{	
+					if (block.type == "title")
+					{
+						post.slug = slug(block.text).toLowerCase();
+					}
+				});
+			}
+			
+			var post_json = JSON.stringify(post);
+			
+			var multi = db.multi();
+			multi.set(ID,post_json);
+			multi.zadd("posts_" + langManager.get(),timestamp,ID); // ordered set for each lang
+			multi.incr("postCount");
+			
+			multi.exec(function(err,replies)
+			{
+				if (err)
 				{
-					post.slug = slug(block.text).toLowerCase();
+					var ret = {"success":false};
+					tools.returnJSON(res,ret); 
+				}
+				else
+				{
+					var ret = {"success":true};
+					tools.returnJSON(res,ret); 
 				}
 			});
 		}
-		
-		var post_json = JSON.stringify(post);
-		
-		var multi = db.multi();
-		multi.set(ID,post_json);
-		multi.zadd("posts_" + post.lang,timestamp,ID); // ordered set for each lang
-		multi.incr("postCount");
-		
-		multi.exec(function(err,replies)
-		{
-			if (err)
-			{
-				var ret = {"success":false};
-				tools.returnJSON(res,ret); 
-			}
-			else
-			{
-				var ret = {"success":true};
-				tools.returnJSON(res,ret); 
-			}
-		});
 	});
 }
 
@@ -425,43 +476,68 @@ var saveEditedPost = function(req,res)
 { 
 	var ID = "post_" + req.body.ID;
 	
-	var date = new Date();
-	var timestamp = Date.now();// / 1000;
 	
-	var post = {};
-	post.blocks = req.body.blocks;
-	post.date = timestamp;
-	post.ID = req.body.ID;
-  
-	if (post.blocks)
+	
+	console.log("EDITED POST: " + JSON.stringify(req.body));
+	
+	
+	db.get(ID,function(error,value)
 	{
-		post.blocks.forEach(function(block)
+		if (error)
 		{
-			if (block.type == "title")
-			{
-				post.slug = slug(block.text).toLowerCase();
-			}
-		});
-	}
-	
-	var post_json = JSON.stringify(post);
-	
-	var multi = db.multi();
-	multi.set(ID,post_json);
-	
-	multi.exec(function(err,replies)
-	{
-		if (err)
-		{
-			var ret = {"success":false};
-			tools.returnJSON(res,ret); 
+			tools.returnJSON(res,{"success":false,"error":error});
 		}
 		else
 		{
+			var originalPost = JSON.parse(value);
+			
+			console.log("ORIGINAL POST: " + value);
+			
+			var date = new Date();
+			var timestamp = Date.now();// / 1000;
+			
+			var post = {};
+			post.blocks = req.body.blocks;
+			post.update = timestamp;
+			post.date = originalPost.date;
+			post.ID = originalPost.ID;
+			
+			if (post.blocks)
+			{
+			post.blocks.forEach(function(block)
+			{
+			if (block.type == "title")
+			{
+			post.slug = slug(block.text).toLowerCase();
+			}
+			});
+			}
+			
+			var post_json = JSON.stringify(post);
+			
+			var multi = db.multi();
+			multi.set(ID,post_json);
+			
+			multi.exec(function(err,replies)
+			{
+			if (err)
+			{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 
+			}
+			else
+			{
 			var ret = {"success":true};
 			tools.returnJSON(res,ret); 
+			}
+			});
+	
+	
+			
 		}
 	});
+  
+  
 }
 
 
@@ -505,12 +581,18 @@ module.exports = {
 	get: get,
 	newPost: newPost,
 	saveEditedPost: saveEditedPost,
-	editPost: editPost
+	editPost: editPost,
+	listComments: listComments
 }
 
 
 
 
+function validateEmail(email) 
+{
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
 
 
 function getPostID(callback)
@@ -524,7 +606,7 @@ function getPostID(callback)
       postID = postCount;
     }
     
-    callback(postID);
+    callback(err,postID);
   });
 }
 
