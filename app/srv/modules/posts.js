@@ -1,3 +1,4 @@
+var slug = require('slug');
 var langManager = require('./lang');
 var tools = require('./tools');
 
@@ -16,7 +17,7 @@ var app = function()
 	var app = express();
 
 	app.get('/page:PageID', renderPosts );
-	app.get('/post:PostID', renderOnePost );
+	app.get('/:slug/:PostID', renderOnePost );
 	
 	app.post('/comment', postComment );
 			
@@ -54,41 +55,48 @@ function renderOnePost(req,res)
 	
 	get(postID, function(error,post)
 	{	
-		var vID = "vID_" + tools.randomHash(8);
-		var ttl = COMMENT_TIME_TO_WRITE;
-		
-		var multi = db.multi();
-		
-		multi.set(vID,ttl); // keep original ttl
-		multi.expire(vID,ttl);
-		
-		multi.exec(function(err,replies)
+		if (error) // not found?
 		{
-			if (err)
+			renderPosts(req,res);
+		}
+		else
+		{
+			var vID = "vID_" + tools.randomHash(8);
+			var ttl = COMMENT_TIME_TO_WRITE;
+			
+			var multi = db.multi();
+			
+			multi.set(vID,ttl); // keep original ttl
+			multi.expire(vID,ttl);
+			
+			multi.exec(function(err,replies)
 			{
-				var ret = {"success":false};
-				tools.returnJSON(res,ret); 
-			}
-			else // we can display post, having vID
-			{
-				
-				getComments(postID,function(err,comments)
+				if (err)
 				{
-					tools.renderJade(res,'post',
-					{
-						siteName: 'Blog | post',
-						post: post,
-						comments: comments,
-						lang: langManager.get(),
-						myInfos: "myInfos", // should be in key-value options
-						fbLink: "facebookURL", // should be in key-value options
-						twLink: "twitterURL", // should be in key-value options
-						vID: vID // an ID to check how much time it took to right a comment (anti spam)
-					}); 
+					var ret = {"success":false};
+					tools.returnJSON(res,ret); 
+				}
+				else // we can display post, having vID
+				{
 					
-				});
-			}
-		});
+					getComments(postID,function(err,comments)
+					{
+						tools.renderJade(res,'post',
+						{
+							siteName: 'Blog | post',
+							post: post,
+							comments: comments,
+							lang: langManager.get(),
+							myInfos: "myInfos", // should be in key-value options
+							fbLink: "facebookURL", // should be in key-value options
+							twLink: "twitterURL", // should be in key-value options
+							vID: vID // an ID to check how much time it took to right a comment (anti spam)
+						}); 
+						
+					});
+				}
+			});
+		}
     
 	});
 }
@@ -97,7 +105,6 @@ function renderOnePost(req,res)
 function postComment(req,res)
 {
 	var com = req.body;
-	console.log(JSON.stringify(com));
 	
 	//{"postID":"3","vID":"123456","name":"dsfsd","email":"","content":"sdfsdfsdf"}
 	
@@ -127,7 +134,6 @@ function postComment(req,res)
 		{
 			if (error)
 			{
-				console.log(JSON.stringify(error));
 				var ret = {"success":false};
 				tools.returnJSON(res,ret);
 			}
@@ -178,6 +184,23 @@ var getComments = function(postID,callback)
 }
 
 
+// should work for several posts
+var getNbComments = function(postID, callback)
+{
+	db.zcard('comments_' + postID,function(err, nb)
+	{
+		if (err)
+		{
+			callback(err);
+		}
+		else
+		{
+			callback(null,nb);
+		}
+	});
+}
+
+
 
 var comment = function(obj,callback)
 {
@@ -217,29 +240,36 @@ var comment = function(obj,callback)
 						if (postExists)
 						{
 							// SAVE COMMENT
-							getCommentID(function(commentID)
+							getCommentID(function(err,commentID)
 							{
-								var ID = "com_" + commentID;
-								
-								var date = new Date();
-								var timestamp = Date.now();
-								
-								var multi = db.multi();
-								multi.hmset(ID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp);
-								multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
-								multi.incr("commentCount");
-								
-								multi.exec(function(err,replies)
+								if (err)
 								{
-									if (err)
+									callback(err);
+								}
+								else
+								{
+									var ID = "com_" + commentID;
+									
+									var date = new Date();
+									var timestamp = Date.now();
+									
+									var multi = db.multi();
+									multi.hmset(ID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp);
+									multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+									multi.incr("commentCount");
+									
+									multi.exec(function(err,replies)
 									{
-										callback(err);	 
-									}
-									else
-									{
-										callback();	 
-									}
-								});
+										if (err)
+										{
+											callback(err);	 
+										}
+										else
+										{
+											callback();	 
+										}
+									});
+								}
 							});
 						}
 						else
@@ -297,12 +327,12 @@ var list = function(page,nbPostsPerPage,callback)
 
 
 var get = function(postID,callback)
-{
+{	
 	db.get("post_" + postID,function(error,value)
 	{
-		if (error)
+		if (error || !value)
 		{
-			callback(true,{});
+			callback(true);
 		}
 		else
 		{			
@@ -355,6 +385,17 @@ var newPost = function(req,res)
 		post.date = timestamp;
 		post.ID = postID;
 		
+		if (post.blocks)
+		{
+			post.blocks.forEach(function(block)
+			{	
+				if (block.type == "title")
+				{
+					post.slug = slug(block.text).toLowerCase();
+				}
+			});
+		}
+		
 		var post_json = JSON.stringify(post);
 		
 		var multi = db.multi();
@@ -382,34 +423,45 @@ var newPost = function(req,res)
 
 var saveEditedPost = function(req,res)
 { 
-  var ID = "post_" + req.body.ID;
-
-  var date = new Date();
-  var timestamp = Date.now();// / 1000;
+	var ID = "post_" + req.body.ID;
+	
+	var date = new Date();
+	var timestamp = Date.now();// / 1000;
+	
+	var post = {};
+	post.blocks = req.body.blocks;
+	post.date = timestamp;
+	post.ID = req.body.ID;
   
-  var post = {};
-  post.blocks = req.body.blocks;
-  post.date = timestamp;
-  post.ID = req.body.ID;
-
-  var post_json = JSON.stringify(post);
-
-  var multi = db.multi();
-  multi.set(ID,post_json);
-
-  multi.exec(function(err,replies)
-  {
-    if (err)
-    {
-      var ret = {"success":false};
-      tools.returnJSON(res,ret); 
-    }
-    else
-    {
-      var ret = {"success":true};
-      tools.returnJSON(res,ret); 
-    }
-  });
+	if (post.blocks)
+	{
+		post.blocks.forEach(function(block)
+		{
+			if (block.type == "title")
+			{
+				post.slug = slug(block.text).toLowerCase();
+			}
+		});
+	}
+	
+	var post_json = JSON.stringify(post);
+	
+	var multi = db.multi();
+	multi.set(ID,post_json);
+	
+	multi.exec(function(err,replies)
+	{
+		if (err)
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 
+		}
+		else
+		{
+			var ret = {"success":true};
+			tools.returnJSON(res,ret); 
+		}
+	});
 }
 
 
@@ -480,14 +532,14 @@ function getCommentID(callback)
 {
   db.get("commentCount",function(err,commentCount)
   {
-    var commentID = 0;
-
-    if (commentCount)
-    {
-      commentID = commentCount;
-    }
-    
-    callback(commentID);
+	var commentID = 0;
+	
+	if (!err && commentCount)
+	{
+	  commentID = commentCount;
+	}
+	
+	callback(err,commentID);
   });
 }
 

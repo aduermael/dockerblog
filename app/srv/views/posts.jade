@@ -8,7 +8,7 @@ block content
 				if (block.type == "title")
 					#div.block.title
 						h2
-							a(href="/post" + post.ID) #{block.text} 
+							a(href="/" + post.slug +  "/" + post.ID) #{block.text} 
 							
 						.date(style="float:right;") #{post.stringdate}
 						.clearboth
