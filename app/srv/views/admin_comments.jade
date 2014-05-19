@@ -15,13 +15,16 @@ block pagecontent
 						- if (comment.email != "")
 							|  - 
 							a(href="mailto:" + comment.email) #{comment.email}
+						|  - 
+						a(href="/post/" + comment.postID) (post)
 					div
 						|  #{comment.content}
 					
 					div
 						a(href="#" onclick="deleteCom()" style="color:#c33e1b") Delete
-						|  - 
-						a(href="#" onclick="acceptCom(this)" style="color:#8ab946") Accept
+						- if (!comment.valid)
+							|  - 
+							a(href="#" onclick="acceptCom(this)" style="color:#8ab946") Accept
 
 
 #myNicPanel

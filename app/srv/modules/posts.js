@@ -254,7 +254,7 @@ var comment = function(obj,callback)
 									var timestamp = Date.now();
 									
 									var multi = db.multi();
-									multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0);
+									multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
 									
 									// comment will be link to the post later, when validated
 									//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
@@ -365,6 +365,16 @@ var listComments = function(page,nbCommentsPerPage,callback)
 	});
 }
 
+
+var validComment = function(commentID,callback)
+{
+	
+}
+
+var deleteComment = function(commentID,callback)
+{
+	
+}
 
 
 
