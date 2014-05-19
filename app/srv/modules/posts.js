@@ -254,7 +254,7 @@ var comment = function(obj,callback)
 									var timestamp = Date.now();
 									
 									var multi = db.multi();
-									multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp);
+									multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0);
 									
 									// comment will be link to the post later, when validated
 									//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
@@ -504,13 +504,13 @@ var saveEditedPost = function(req,res)
 			
 			if (post.blocks)
 			{
-			post.blocks.forEach(function(block)
-			{
-			if (block.type == "title")
-			{
-			post.slug = slug(block.text).toLowerCase();
-			}
-			});
+				post.blocks.forEach(function(block)
+				{
+					if (block.type == "title")
+					{
+						post.slug = slug(block.text).toLowerCase();
+					}
+				});
 			}
 			
 			var post_json = JSON.stringify(post);
