@@ -21,10 +21,10 @@ block pagecontent
 						|  #{comment.content}
 					
 					div
-						a(href="#" onclick="deleteCom(" + comment.ID + ")" style="color:#c33e1b") Delete
+						a(href="#" onclick="deleteComment(" + comment.ID + ")" style="color:#c33e1b") Delete
 						- if (comment.valid == 0 || !comment.valid)
 							|  - 
-							a(href="#" onclick="acceptCom(" + comment.ID + ")" style="color:#8ab946") Accept
+							a(href="#" onclick="acceptComment(" + comment.ID + ")" style="color:#8ab946") Accept
 
 
 #myNicPanel

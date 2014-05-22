@@ -175,6 +175,17 @@ function sendPost(sender)
 
 
 
+// COMMENTS
+
+function acceptComment()
+{
+	alert("accept comment");
+}
+
+function deleteComment()
+{
+	alert("delete comment");
+}
 
 // CONFIG
 
