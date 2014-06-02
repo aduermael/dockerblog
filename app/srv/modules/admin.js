@@ -29,6 +29,7 @@ exports.app = function()
 	app.get('/posts',posts);
 
 	app.get('/comments',comments);
+	app.post('/acceptComment',postsManager.acceptComment);
 
 	app.post('/new', saveNewPost);
 	app.post('/edit', saveEditedPost);

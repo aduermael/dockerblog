@@ -16,7 +16,7 @@ exports.returnJSON = function(res,obj)
 
 
 exports.renderJade = function(res,page,options)
-{
+{	
 	res.render(page,options);
 }
 
