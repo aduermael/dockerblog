@@ -177,14 +177,14 @@ function sendPost(sender)
 
 // COMMENTS
 
-function acceptComment()
+function acceptComment(comID)
 {
-	alert("accept comment");
+	alert("accept comment " + comID);
 }
 
-function deleteComment()
+function deleteComment(comID)
 {
-	alert("delete comment");
+	alert("delete comment " + comID);
 }
 
 // CONFIG
