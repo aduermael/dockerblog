@@ -8,7 +8,7 @@ block pagecontent
 	.list
 		ul
 			- each comment in comments
-				li
+				li(id="com" + comment.ID)
 					div
 						strong #{comment.name}
 						|  (#{comment.date})
