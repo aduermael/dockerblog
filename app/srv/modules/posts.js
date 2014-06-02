@@ -333,6 +333,8 @@ var list = function(page,nbPostsPerPage,callback)
 
 
 
+
+ 
 var listComments = function(page,nbCommentsPerPage,callback)
 {	
 	var content = [];
@@ -366,10 +368,82 @@ var listComments = function(page,nbCommentsPerPage,callback)
 }
 
 
-var validComment = function(commentID,callback)
-{
-	
+
+var listUnvalidatedComments = function(page,nbCommentsPerPage,callback)
+{	
+	var content = [];
+
+	db.zrevrange('comments_unvalidated_' + langManager.get(), page * nbCommentsPerPage, page * nbCommentsPerPage + (nbCommentsPerPage - 1) ,function(error, keys)
+	{
+		if (error)
+		{
+			callback(true,content);
+		}
+		else
+		{	
+			var multi = db.multi();
+			
+			keys.forEach(function (key)
+			{
+				multi.hgetall(key);			
+			});
+			
+			multi.exec(function(err,replies)
+			{
+				replies.forEach(function(comment)
+				{
+					comment.date = getPostTime(comment.date);
+				});
+						
+				callback(null,replies);
+			});
+		}
+	});
 }
+
+
+
+
+
+var acceptComment = function(req,res)
+{
+	var ID = "com_" + req.body.ID;
+	
+	db.hmget(ID,"postID","date",function(error,values)
+	{
+		if (!error && values)
+		{
+			var postID = values[0];
+			var date = values[1];
+			
+			var multi = db.multi();
+			multi.zrem("comments_unvalidated_" + langManager.get(),ID);
+			multi.zadd("comments_" + postID,date,ID); // ordered set for each post
+			multi.hset(ID,"valid",1);
+			multi.exec(function(error,values)
+			{
+				if (!error)
+				{
+					var ret = {"success":true};
+					tools.returnJSON(res,ret);
+				}
+				else
+				{
+					var ret = {"success":false};
+					tools.returnJSON(res,ret);
+				}
+			});
+		}
+		else
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 	
+		}
+	});
+}
+
+
+
 
 var deleteComment = function(commentID,callback)
 {
@@ -592,7 +666,8 @@ module.exports = {
 	newPost: newPost,
 	saveEditedPost: saveEditedPost,
 	editPost: editPost,
-	listComments: listComments
+	listComments: listComments,
+	acceptComment : acceptComment
 }
 
 

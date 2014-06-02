@@ -115,7 +115,7 @@ var editPostCallBack = function(data)
 
   if(res.success)
   {
-    document.location = "/admin/posts/" + $('#langSelector option:selected').val();
+    document.location = "/admin/posts";
   }
   else
   {
@@ -179,8 +179,28 @@ function sendPost(sender)
 
 function acceptComment(comID)
 {
-	alert("accept comment " + comID);
+	var obj = {};
+	obj.ID = comID;
+	
+	Post('/admin/acceptComment',obj,acceptCommentCallBack,errorCallback);
 }
+
+
+var acceptCommentCallBack = function(data)
+{
+	var res = data;
+	
+	if(res.success)
+	{
+		document.location = "/admin/comments";
+	}
+	else
+	{
+		alert("FAILED");   
+	}
+}
+
+
 
 function deleteComment(comID)
 {
@@ -205,7 +225,7 @@ var configAddKeyCallBack = function(data)
 {
   if(res.success)
   {
-    document.location = "/admin/config/" + $('#langSelector option:selected').val();
+    document.location = "/admin/config";
     alert("OK!");
   }
   else
