@@ -1,3 +1,8 @@
+//
+// Gaetan : should be renamed into config_kvs
+//
+
+
 var db = require('./db').connect();
 
 var tools = require('./tools');
@@ -139,78 +144,45 @@ function del(key,callback)
 // ADDED BY GAETAN
 
 
+// callback(error)
 function setValueForKey(value, key, callback)
 {
 	var hashname = 'config_' + lang.get();
 	db.hset(hashname, key, value, function(error, value) 
 	{
-		if (!error)
-		{
-			callback(value);
-		}
-		else
-		{
-			callback();
-		}
+		callback(error);
 	});
 }
 
 
 
-function getAllValues(callback)
-{
-  var hashname = 'config_' + lang.get();
-  db.hgetall(hashname, function(error,value)
-  {
-    if (error)
-    {
-      callback();
-    }
-    else
-    {
-      callback(value);
-    }
-  });
-}
-
-
-
+// callback(error, value)
 function getValueForKey(key, callback)
 {
-  var hashname = 'config_' + lang.get();
-  db.hget(hashname, key, function(error,value)
-  {
-    if (!error)
-    {
-    	callback(value);
-    }
-    else
-    {
-      callback();
-    }
-  });
+	var hashname = 'config_' + lang.get();
+	db.hget(hashname, key, callback);
 }
 
 
 
+// callback(error)
 function deleteValueForKey(key,callback)
 {
 	var hashname = 'config_' + lang.get();
 	db.hdel(hashname, key, function(error,nbRemoved)
 	{
-		if (!error)
-		{
-			callback(nbRemoved);
-		}
-		else
-		{
-			callback();
-		}
+		callback(error);
 	});
 }
 
 
 
+// callback(error, value)
+function getAllValues(callback)
+{
+	var hashname = 'config_' + lang.get();
+	db.hgetall(hashname, callback);
+}
 
 
 
