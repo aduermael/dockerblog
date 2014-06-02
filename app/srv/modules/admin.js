@@ -1,36 +1,83 @@
+//
+// Dockerblog
+//
+//
+
+
+// import GLOBAL modules
 var express = require('express');
-var app = express();
+var auth = require('basic-auth');
 
+// import LOCAL modules
 var postsManager = require('./posts');
-
 var tools = require('./tools');
-
 var lang = require('./lang');
 
 
+var app = express();
 exports.app = function()
 {
-  app.use(express.basicAuth('admin', 'admin'));
-  
-  app.use('/lang', lang.app);
-  app.use(lang.use);
+	// http basic auth middleware
+	app.use(authentication);
 
-  app.use('/config', require('./config') );
+	app.use('/lang', lang.app);
+	app.use(lang.use);
 
-  app.get('/new', newPost );
-  app.get('/posts',posts);
-  
-  app.get('/comments',comments);
+	app.use('/config', require('./config') );
 
-  app.post('/new', saveNewPost);
-  app.post('/edit', saveEditedPost);
+	app.get('/new', newPost );
+	app.get('/posts',posts);
 
-  app.get('/edit/:postID', editPost );
+	app.get('/comments',comments);
 
-  app.get('*',posts);
+	app.post('/new', saveNewPost);
+	app.post('/edit', saveEditedPost);
 
-  return app;
+	app.get('/edit/:postID', editPost );
+
+	app.get('*',posts);
+
+	return app;
 }();
+
+
+
+//
+// [MIDDLEWARE]
+// author : gaetan
+// note   : this is to be moved to a clean module!!
+// help to do the module : https://github.com/expressjs/basic-auth-connect/blob/master/index.js
+//
+function authentication(req, res, next)
+{	
+	var result = auth(req);
+	//console.log('result is '+JSON.stringify(result));
+	
+	// is 'result' is undefined, it means the authentication has failed
+	// (authentication header fields are not present)
+	if (result == undefined)
+	{
+		// Respond with 401 "Unauthorized".
+		res.statusCode = 401;
+		res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
+		res.end('Unauthorized');
+	}
+	else
+	{
+		if (result.name == 'admin' && result.pass == 'admin')
+		{
+			next();
+		}
+		else
+		{
+			// Respond with 401 "Unauthorized".
+			res.statusCode = 401;
+			res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
+			res.end('Unauthorized');
+		}
+	}
+}
+
 
 
 function home(req,res)
