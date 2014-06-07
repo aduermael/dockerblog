@@ -4,9 +4,6 @@ var reorder_mode = false;
   
 
 
-
-
-
 function PostFiles(path,formData,callback,errorCallback)
 {
   $.ajax
@@ -185,6 +182,15 @@ function acceptComment(comID)
 	Post('/admin/acceptComment',obj,acceptCommentCallBack,errorCallback);
 }
 
+function deleteComment(comID)
+{
+	var obj = {};
+	obj.ID = comID;
+	
+	Post('/admin/deleteComment',obj,deleteCommentCallBack,errorCallback);
+}
+
+
 
 var acceptCommentCallBack = function(data)
 {
@@ -200,12 +206,20 @@ var acceptCommentCallBack = function(data)
 	}
 }
 
-
-
-function deleteComment(comID)
+var deleteCommentCallBack = function(data)
 {
-	alert("delete comment " + comID);
+	var res = data;
+	
+	if(res.success)
+	{
+		document.location = "/admin/comments";
+	}
+	else
+	{
+		alert("FAILED");   
+	}
 }
+
 
 // CONFIG
 

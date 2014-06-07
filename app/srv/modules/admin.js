@@ -30,6 +30,7 @@ exports.app = function()
 
 	app.get('/comments',comments);
 	app.post('/acceptComment',postsManager.acceptComment);
+	app.post('/deleteComment',postsManager.deleteComment);
 
 	app.post('/new', saveNewPost);
 	app.post('/edit', saveEditedPost);

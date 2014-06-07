@@ -19,7 +19,6 @@ block pagecontent
 						a(href="/post/" + comment.postID) (post)
 					div
 						|  #{comment.content}
-					
 					div
 						a(href="#" onclick="deleteComment(" + comment.ID + ")" style="color:#c33e1b") Delete
 						- if (comment.valid == 0 || !comment.valid)

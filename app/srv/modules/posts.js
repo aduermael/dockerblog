@@ -444,12 +444,45 @@ var acceptComment = function(req,res)
 
 
 
-
-var deleteComment = function(commentID,callback)
+var deleteComment = function(req,res)
 {
+	var ID = "com_" + req.body.ID;
 	
+	console.log("delete comment: " + ID);
+	
+	db.hmget(ID,"postID",function(error,values)
+	{
+		if (!error && values)
+		{
+			var postID = values[0];
+			
+			var multi = db.multi();
+			multi.zrem("comments_unvalidated_" + langManager.get(),ID);
+			multi.zrem("comments_all_" + langManager.get(),ID);
+			multi.zrem("comments_" + postID,ID); // ordered set for each post
+			multi.exec(function(error,values)
+			{
+				if (!error)
+				{
+					console.log("comment deleted");
+					var ret = {"success":true};
+					tools.returnJSON(res,ret);
+				}
+				else
+				{
+					console.log("comment NOT deleted");
+					var ret = {"success":false};
+					tools.returnJSON(res,ret);
+				}
+			});
+		}
+		else
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 	
+		}
+	});
 }
-
 
 
 
@@ -667,7 +700,8 @@ module.exports = {
 	saveEditedPost: saveEditedPost,
 	editPost: editPost,
 	listComments: listComments,
-	acceptComment : acceptComment
+	acceptComment : acceptComment,
+	deleteComment : deleteComment
 }
 
 
