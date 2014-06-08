@@ -1,7 +1,7 @@
 ### Building
 
 ```
-$ docker build --no-cache --rm=true -t blog_redis .
+$ docker build -t blog_redis .
 ```
 
 ### Running

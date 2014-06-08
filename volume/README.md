@@ -1,6 +1,6 @@
 ### Building
 
-docker build --no-cache --rm=true -t blog_volumes .
+docker build -t blog_volumes .
 
 ### Running
 
