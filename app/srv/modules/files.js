@@ -1,11 +1,22 @@
+//
+// FILES
+//
+//
+//
+
+
 var fs = require('fs');
+
+var tools = require('./tools');
+
+
 var PUBLIC_DIR = "";
+
+// to be renamed into "uploads"
 var FILES_DIR = "files";
 
-exports.init = function(public_dir)
-{
-  PUBLIC_DIR = public_dir;
-}
+
+
 
 
 var checkYearDir = function(year, callback)
@@ -63,102 +74,218 @@ var checkMonthDir = function(year,month,callback){
 };
 
 
-function getExtension(filename) {
+function getFilenameExtension(filename)
+{
     var i = filename.lastIndexOf('.');
     return (i < 0) ? '' : filename.substr(i);
 }
 
 
+function getFilenameWithoutExtension(filename)
+{
+    var i = filename.lastIndexOf('.');
+    return (i < 0) ? '' : filename.substr(0,i);
+}
 
+
+
+//====================================================
+//
+// EXPORTED FUNCTIONS
+//
+//====================================================
+
+// receive the path of the /public directory
+exports.init = function(public_dir)
+{
+  PUBLIC_DIR = public_dir;
+}
+
+
+
+// receives the request which is a file upload
 exports.saveFile = function(req, res)
 {
-  var ret = {"success":false};
+	// parse the multipart-data-form
+	// and populate req.files and req.body objects
+		
+	// create the req.files hash
+	req.files = {};
+	
+	req.busboy.on('error', function(err)
+	{
+        console.log('BUSBOY ERROR : ' + err);
+	});
+	
+	// code to parse each file
+	req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype)
+	{
+		//console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding);
+		// create the <fieldname> object in req.files
+		req.files[fieldname] = {};
+		req.files[fieldname].filename = filename;
+		req.files[fieldname].encoding = encoding;
 
-  var files = req.files.upload_file_input;
-  
-  //we only send images one by one, no array
-  var file = files;
-
-  var date = new Date();
-  
-  // for directories
-  var year = date.getFullYear();
-  
-  var month = date.getMonth() + 1;
-  month = (month < 10 ? "0" : "") + month;
-
-
-  checkYearDir(year,function(ok)
-  {
-    if (ok)
-    {
-      checkMonthDir(year,month,function(ok)
-      {
-        if (ok)
-        {
-          // for file name
-          var day  = date.getDate();
-          day = (day < 10 ? "0" : "") + day;
-          
-          var hour = date.getHours();
-          hour = (hour < 10 ? "0" : "") + hour;
-
-          var min  = date.getMinutes();
-          min = (min < 10 ? "0" : "") + min;
-
-          var sec  = date.getSeconds();
-          sec = (sec < 10 ? "0" : "") + sec;
-
-          var suffix = day + hour + min + sec;
-
-          //var hash = crypto.randomBytes(5).toString('hex');
-          //var filename = "bloglaurel-comics-" + suffix;
-          //var relative_path = '/' + FILES_DIR + '/' + year + '/' + month + '/' + filename + getExtension(file.originalFilename);
-
-          var filename = "bloglaurel-" + file.originalFilename;
-          var relative_path = '/' + FILES_DIR + '/' + year + '/' + month + '/' + filename;
-
-          var path = PUBLIC_DIR + relative_path;
-          
-
-          var source = fs.createReadStream(file.path);
-          var dest = fs.createWriteStream(path); 
-          source.pipe(dest);
-          
-          source.on('end', function()
-          {
-            ret = {"success":true,"image_path":relative_path};
-            end(res,ret);
-          });
-          
-          source.on('error', function(err)
-          {
-            ret = {"success":false,"error":err};
-            end(res,ret);
-          });
-        }
-        else
-        {
-          ret = {"success":false};
-          end(res,ret);
-        }
-      });
-    }
-    else
-    {
-      ret = {"success":false};
-      end(res,ret);
-    }
-  });
+		var chunks = [];
+		
+		file.on('data', function(chunk)
+		{
+			//console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
+			chunks.push(chunk);
+		});
+		
+		file.on('end', function()
+		{
+			// console.log('File [' + fieldname + '] Finished ---- ');
+			req.files[fieldname].data = Buffer.concat(chunks);
+		});
+	});
+	
+/*
+	// code to parse each field
+	req.busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated)
+	{
+		console.log('Field [' + fieldname + '] as value: ' + val);
+		req.body[fieldname] = val;
+	});
+*/
+	
+	req.busboy.on('finish', function()
+	{
+		// upload is finished
+		// handle the request and reply to the client
+		
+		var file = req.files.upload_file_input;
+		
+		// get current timestamp		
+		var date = new Date();
+		// get current year and month for directories
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		month = (month < 10 ? "0" : "") + month;
+		
+		checkYearDir(year,function(ok)
+		{
+			if (ok)
+			{
+				checkMonthDir(year,month,function(ok)
+				{
+					if (ok)
+					{
+						// TODO: ALLOW FILES WITH SAME NAME !!
+						// TODO: get the prefix and suffix values from the config
+						var prefix = "prefix-";
+						var suffix = "-suffix";
+						
+						// add a prefix to the filename
+						var filename = prefix + getFilenameWithoutExtension(file.filename) + suffix + getFilenameExtension(file.filename);
+						console.log('NAME : ' + filename);
+						var destination_directory_relative_path = '/' + FILES_DIR + '/' + year + '/' + month;
+						var destination_file_relative_path = destination_directory_relative_path + '/' + filename;
+						var destination_directory_absolute_path = PUBLIC_DIR + destination_directory_relative_path;
+						var destination_file_absolute_path = PUBLIC_DIR + destination_file_relative_path;
+						
+						fs.exists(destination_directory_absolute_path, function (exists)
+						{
+							if (exists)
+							{
+								// destination directory already exists
+								// we can write the file in it
+								fs.writeFile(destination_file_absolute_path, file.data, function (error_writefile)
+								{
+									if (!error_writefile)
+									{
+										// writefile success
+										var response = {};
+										response.success = true;
+										response.image_path = destination_file_relative_path;
+										tools.returnJSON(res, response);
+									}
+									else
+									{
+										// writefile error
+										var response = {};
+										response.success = false;
+										response.error = 'write file error';
+										tools.returnJSON(res, response);
+									}
+								});
+							}
+							else
+							{
+								// destination directory does not exist yet
+								fs.mkdir(destination_directory_absolute_path, function (error_mkdir)
+								{
+									if (!error_mkdir)
+									{
+										// destination directory now exists
+										// we can write the file in it
+										fs.writeFile(destination_file_absolute_path, file.data, function (error_writefile)
+										{
+											if (!error_writefile)
+											{
+												// writefile success
+												var response = {};
+												response.success = true;
+												response.image_path = destination_file_relative_path;
+												tools.returnJSON(res, response);
+											}
+											else
+											{
+												// writefile error
+												var response = {};
+												response.result = false;
+												response.error = 'fs error on writefile operation';
+												tools.returnJSON(res, response);
+											}
+										});
+									}
+									else
+									{
+										// mkdir error
+										var response = {};
+										response.result = false;
+										response.error = 'fs error on mkdir operation';
+										tools.returnJSON(res, response);
+									}
+								});
+							}
+						});
+					}
+					else
+					{
+						console.log('check month NOK');
+						var response = {};
+						response.result = false;
+						tools.returnJSON(res, response);
+					}
+				});
+			}
+			else
+			{
+				console.log('check year NOK');
+				var response = {};
+				response.result = false;
+				tools.returnJSON(res, response);
+			}
+		});
+	});
 };
 
 
 
-function end(res,data)
-{
-  var body = JSON.stringify(data);
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Content-Length', body.length);
-  res.end(body);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

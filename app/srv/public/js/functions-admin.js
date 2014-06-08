@@ -1,35 +1,44 @@
+//
+//
+//
+//
+//
+
+
+
 var myNicEditor;
-var nextBlock=0;
+var nextBlock = 0;
 var reorder_mode = false;
   
 
 
-
-
-
 function PostFiles(path,formData,callback,errorCallback)
 {
-  $.ajax
-  (
-    {
-      url: SERVER + path,
-      type:"POST",
-      data:formData,
-      mimeType:"multipart/form-data",
-      contentType: false,
-      cache: false,
-      processData:false,
-      success: function(data, textStatus, jqXHR)
-      {
-        callback(data);
-      },
-      error: function(jqXHR, textStatus, errorThrown) 
-      {
-        errorCallback();
-      }  
-    }
-  );
+	var url = 'http://' + location.host + path;
+	// console.log('fullpath : '+fullpath);
+	
+	$.ajax
+	(
+		{
+			url: url,
+			type:"POST",
+			data:formData,
+			mimeType:"multipart/form-data",
+			contentType: false,
+			cache: false,
+			processData:false,
+			success: function(data, textStatus, jqXHR)
+			{
+				callback(data);
+			},
+			error: function(jqXHR, textStatus, errorThrown) 
+			{
+				errorCallback();
+			}  
+		}
+	);
 }
+
 
 
 // ADMIN
