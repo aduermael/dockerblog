@@ -40,13 +40,11 @@ app.use(bodyParser());
 // we handle "multipart/form-data" (file uploads) with busboy module
 app.use(busboy({immediate: true}));
 
-// log the original url of all incoming requests
-app.use(log_request_url);
-
 // 'static' middleware is still part on Express
 app.use(express.static(__dirname + '/public'));
 
-
+// log the original url of all incoming requests
+app.use(log_request_url);
 
 // blog modules
 app.use('/admin', admin);
