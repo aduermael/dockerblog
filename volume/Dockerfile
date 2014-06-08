@@ -1,6 +1,6 @@
 #
 # Dockerblog
-# 
+#
 # https://github.com/aduermael/dockerblog
 #
 # volume container for dockerblog
@@ -25,7 +25,7 @@ RUN echo "root:toor" | chpasswd
 ADD dockerblog_style /dockerblog_style
 VOLUME /dockerblog_style
 
-RUN mkdir /dockerblog_files
+ADD dockerblog_files /dockerblog_files
 VOLUME /dockerblog_files
 
 RUN mkdir /dockerblog_db
@@ -35,7 +35,3 @@ VOLUME /dockerblog_db
 
 ENTRYPOINT ["/bin/bash"]
 # ENTRYPOINT ["/bin/true"]
-
-
-
-
