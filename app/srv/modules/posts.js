@@ -36,9 +36,7 @@ function renderPosts(req,res)
 	list((page - 1) , postsPerPage , function(error,content)
 	{
 		pages(postsPerPage ,function(nbPages)
-		{
-			console.log(JSON.stringify(content));
-			
+		{	
 			tools.renderJade(res,'posts',{ siteName: 'Blog | Home',
 			posts: content,
 			lang: langManager.get(),
@@ -325,8 +323,6 @@ var list = function(page,nbPostsPerPage,callback)
 				post.date = getPostTime(post.date);
 				post.blocks = JSON.parse(post.blocks);
 			});
-			
-			console.log("REPLIES: " + JSON.stringify(replies));
 					
 			callback(null,replies);
 		});
@@ -419,8 +415,6 @@ var acceptComment = function(req,res)
 		{
 			var postID = values[0];
 			var date = values[1];
-			
-			console.log("postID -> " + "post_" + postID);
 			
 			var multi = db.multi();
 			multi.zrem("comments_unvalidated_" + langManager.get(),ID);
