@@ -36,7 +36,7 @@ function renderPosts(req,res)
 	list((page - 1) , postsPerPage , function(error,content)
 	{
 		pages(postsPerPage ,function(nbPages)
-		{
+		{	
 			tools.renderJade(res,'posts',{ siteName: 'Blog | Home',
 			posts: content,
 			lang: langManager.get(),
@@ -309,28 +309,28 @@ var list = function(page,nbPostsPerPage,callback)
 	}
 	else
 	{
-		db.mget(keys,function(error,values)
+		var multi = db.multi();
+		
+		keys.forEach(function (key)
 		{
-			if (error)
-			{
-				callback(true,content);
-			}
-			else
-			{
-				values.forEach(function (value)
-				{
-					var post = JSON.parse(value);
-					post.stringdate = getPostTime(post.date);
-					content.push(post);
-				});
-				
-				callback(false,content);
-			}
+			multi.hgetall(key);
 		});
+		
+		multi.exec(function(err,replies)
+		{
+			replies.forEach(function(post)
+			{
+				post.date = getPostTime(post.date);
+				post.blocks = JSON.parse(post.blocks);
+			});
+					
+			callback(null,replies);
+		});
+			
+			
 	}
 	});
 }
-
 
 
 
@@ -420,6 +420,7 @@ var acceptComment = function(req,res)
 			multi.zrem("comments_unvalidated_" + langManager.get(),ID);
 			multi.zadd("comments_" + postID,date,ID); // ordered set for each post
 			multi.hset(ID,"valid",1);
+			multi.hincrby("post_" + postID,"nbComs",1);
 			multi.exec(function(error,values)
 			{
 				if (!error)
@@ -448,29 +449,33 @@ var deleteComment = function(req,res)
 {
 	var ID = "com_" + req.body.ID;
 	
-	console.log("delete comment: " + ID);
-	
-	db.hmget(ID,"postID",function(error,values)
+	db.hmget(ID,"postID","valid",function(error,values)
 	{
 		if (!error && values)
 		{
 			var postID = values[0];
+			var valid = (values[1] == 1);
 			
 			var multi = db.multi();
 			multi.zrem("comments_unvalidated_" + langManager.get(),ID);
 			multi.zrem("comments_all_" + langManager.get(),ID);
 			multi.zrem("comments_" + postID,ID); // ordered set for each post
+			
+			// only if comment was attached to the post (validated)
+			if (valid)
+			{
+				multi.hincrby("post_" + postID,"nbComs",-1);
+			}
+			
 			multi.exec(function(error,values)
 			{
 				if (!error)
 				{
-					console.log("comment deleted");
 					var ret = {"success":true};
 					tools.returnJSON(res,ret);
 				}
 				else
 				{
-					console.log("comment NOT deleted");
 					var ret = {"success":false};
 					tools.returnJSON(res,ret);
 				}
@@ -488,15 +493,15 @@ var deleteComment = function(req,res)
 
 var get = function(postID,callback)
 {	
-	db.get("post_" + postID,function(error,value)
+	db.hgetall("post_" + postID,function(error,post)
 	{
-		if (error || !value)
+		if (error || !post)
 		{
 			callback(true);
 		}
 		else
 		{			
-			var post = JSON.parse(value);
+			post.blocks = JSON.parse(post.blocks);
 			post.stringdate = getPostTime(post.date);	
 			callback(false,post);
 		}
@@ -549,8 +554,8 @@ var newPost = function(req,res)
 			
 			var post = {};
 			post.blocks = req.body.blocks;
-			post.date = timestamp;
-			post.ID = postID;
+			
+			var slugURL = "";
 			
 			if (post.blocks)
 			{
@@ -558,15 +563,14 @@ var newPost = function(req,res)
 				{	
 					if (block.type == "title")
 					{
-						post.slug = slug(block.text).toLowerCase();
+						slugURL = slug(block.text).toLowerCase();						
 					}
 				});
 			}
 			
-			var post_json = JSON.stringify(post);
-			
 			var multi = db.multi();
-			multi.set(ID,post_json);
+			
+			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL);
 			multi.zadd("posts_" + langManager.get(),timestamp,ID); // ordered set for each lang
 			multi.incr("postCount");
 			
@@ -591,69 +595,47 @@ var newPost = function(req,res)
 
 var saveEditedPost = function(req,res)
 { 
-	var ID = "post_" + req.body.ID;
+	var postID = req.body.ID;
 	
+	var ID = "post_" + postID;
 	
+	var date = new Date();
+	var timestamp = Date.now();// / 1000;
 	
-	console.log("EDITED POST: " + JSON.stringify(req.body));
+	var post = {};
+	post.blocks = req.body.blocks;
 	
+	var slugURL = "";
 	
-	db.get(ID,function(error,value)
+	if (post.blocks)
 	{
-		if (error)
+		post.blocks.forEach(function(block)
+		{	
+			if (block.type == "title")
+			{
+				slugURL = slug(block.text).toLowerCase();						
+			}
+		});
+	}
+	
+	var multi = db.multi();
+	
+	multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"update",timestamp,"ID",postID,"nbComs",0,"slug",slugURL);
+	
+	multi.exec(function(err,replies)
+	{
+		if (err)
 		{
-			tools.returnJSON(res,{"success":false,"error":error});
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 
 		}
 		else
 		{
-			var originalPost = JSON.parse(value);
-			
-			console.log("ORIGINAL POST: " + value);
-			
-			var date = new Date();
-			var timestamp = Date.now();// / 1000;
-			
-			var post = {};
-			post.blocks = req.body.blocks;
-			post.update = timestamp;
-			post.date = originalPost.date;
-			post.ID = originalPost.ID;
-			
-			if (post.blocks)
-			{
-				post.blocks.forEach(function(block)
-				{
-					if (block.type == "title")
-					{
-						post.slug = slug(block.text).toLowerCase();
-					}
-				});
-			}
-			
-			var post_json = JSON.stringify(post);
-			
-			var multi = db.multi();
-			multi.set(ID,post_json);
-			
-			multi.exec(function(err,replies)
-			{
-			if (err)
-			{
-			var ret = {"success":false};
-			tools.returnJSON(res,ret); 
-			}
-			else
-			{
 			var ret = {"success":true};
 			tools.returnJSON(res,ret); 
-			}
-			});
-	
-	
-			
 		}
 	});
-  
+
   
 }
 
@@ -670,7 +652,7 @@ var editPost = function(req,res)
 { 
   var postID = req.params.postID;
 
-  db.get("post_" + postID,function(error,value)
+  db.hgetall("post_" + postID,function(error,content)
   {
     if (error)
     {
@@ -678,7 +660,8 @@ var editPost = function(req,res)
     }
     else
     {
-      var content = JSON.parse(value);
+      content.date = getPostTime(content.date);
+	  content.blocks = JSON.parse(content.blocks);
 
       tools.renderJade(res,'admin_post_edit',{ siteName: 'Blog | Admin - Edit post',
       post: content,

@@ -120,7 +120,7 @@ function saveEditedPost(req,res)
 
 function posts(req,res)
 {
-  postsManager.list(0,100,function(error,content)
+  postsManager.list(0,200,function(error,content)
   {
       tools.renderJade(res,'admin_posts',{ siteName: 'Blog | Admin',
           posts: content,
@@ -131,7 +131,7 @@ function posts(req,res)
 
 function comments(req,res)
 {
-  postsManager.listComments(0,100,function(error,content)
+  postsManager.listComments(0,200,function(error,content)
   {
       tools.renderJade(res,'admin_comments',{ siteName: 'Blog | Admin - Comments',
           comments: content,
