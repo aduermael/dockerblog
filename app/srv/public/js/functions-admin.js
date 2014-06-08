@@ -68,12 +68,9 @@ function addImageBlock(sender)
 function editPost(sender)
 {
   var postContent = new Object()
-  postContent.lang = $('#langSelector option:selected').val();
   postContent.ID = $('#postID').attr('value');
   var blocks = new Array();
   var i = 0;
-
-  console.log("EDIT POST: " + postContent.ID);
 
 
   $('#content_blocks').children().each(function ()
@@ -118,6 +115,53 @@ function editPost(sender)
 }
 
 
+
+function editPage(sender)
+{
+  var pageContent = new Object()
+  pageContent.ID = $('#pageID').attr('value');
+  var blocks = new Array();
+  var i = 0;
+
+  $('#content_blocks').children().each(function ()
+  {
+    blocks[i] = new Object();
+
+    if ($(this).hasClass("block_text"))
+    {
+      blocks[i].type = "text";
+      blocks[i].text = $(this).html();
+      console.log("add text block");
+    }
+    else if ($(this).hasClass("block_image"))
+    {
+      blocks[i].type = "image";
+      blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
+      blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+    }
+    else if ($(this).hasClass("block_video"))
+    {
+      blocks[i].type = "video";
+    }
+    else
+    {
+      blocks[i].type = "unknown type";
+    }
+
+    i++;
+
+  });
+
+  pageContent.blocks = blocks;
+  pageContent.pageName = $("#pageName").val();
+  pageContent.pageTitle = $("#pageTitle").val();
+  
+  Post('/admin/pages/edit',pageContent,editPageCallBack,errorCallback);
+}
+
+
+
+
 var editPostCallBack = function(data)
 {
   var res = data;
@@ -133,12 +177,26 @@ var editPostCallBack = function(data)
 }
 
 
+var editPageCallBack = function(data)
+{
+	var res = data;
+
+	if(res.success)
+	{
+		document.location = "/admin/pages";
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
 
 
 function sendPost(sender)
 {
   var postContent = new Object()
-  postContent.lang = $('#langSelector option:selected').val();
   var blocks = new Array();
   var i = 0;
 
@@ -181,6 +239,59 @@ function sendPost(sender)
 
   Post('/admin/new',postContent,editPostCallBack,errorCallback);
 }
+
+
+
+
+function sendPage(sender)
+{
+  var postContent = new Object();
+  var blocks = new Array();
+  var i = 0;
+
+  $('#content_blocks').children().each(function ()
+  {
+    blocks[i] = new Object();
+    //postContent[i].id = this.id;
+
+    if ($(this).hasClass("block_text"))
+    {
+      blocks[i].type = "text";
+      blocks[i].text = $(this).html();
+
+    }
+    else if ($(this).hasClass("block_image"))
+    {
+      blocks[i].type = "image";
+      blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
+      blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+    }
+    else if ($(this).hasClass("block_title"))
+    {
+      blocks[i].type = "title";
+      blocks[i].text = $(this).children('input')[0].value;
+    }
+    else if ($(this).hasClass("block_video"))
+    {
+      blocks[i].type = "video";
+    }
+    else
+    {
+      blocks[i].type = "unknown type";
+    }
+
+    i++;
+
+  });
+
+  postContent.blocks = blocks;
+  postContent.pageName = $("#pageName").val();
+  postContent.pageTitle = $("#pageTitle").val();
+
+  Post('/admin/pages/new',postContent,editPageCallBack,errorCallback);
+}
+
+
 
 
 
