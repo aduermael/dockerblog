@@ -1,0 +1,34 @@
+extends admin
+
+
+block pagecontent
+
+	h2 Keys (#{lang})
+
+	.list
+		ul
+			- each pref,prefKey in prefs
+				li
+					div
+						strong #{prefKey}
+					div
+						textarea(type="text" style="margin:0;width:500px;height:50px;") #{pref}
+					div
+						a(href="#" onclick="keysDeleteKey(this)" style="color:#c33e1b") Delete
+						|  - 
+						a(href="#" onclick="keyUpdateKey(this)" style="color:#8ab946") Update
+	
+		
+
+	.list
+		ul
+			li
+				div
+					input#addKey(type="text" value="KEY" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'KEY') { this.value = ''; }")
+				div
+					textarea#addValue(type="text" style="margin:0;width:500px;height:50px;" onfocus="if(this.value == 'VALUE') { this.value = ''; }") VALUE
+				div
+					a(href="#" onclick="keysAddKey(this)") Add
+				
+				
+	div(style="height:20px;")

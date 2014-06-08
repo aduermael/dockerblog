@@ -1,0 +1,15 @@
+extends admin
+
+
+block pagecontent
+
+	h2 Posts (#{lang})
+
+	.list
+		ul
+			- each post in posts
+				li 
+					a(href="/admin/edit/" + post.ID) #{post.title}
+
+
+#myNicPanel

@@ -1,0 +1,491 @@
+
+
+html
+{
+  font-family: 'Helvetica Neue';
+  background-color: #fff;
+  font-size:14px;
+  line-height: 14px;
+}
+
+body
+{
+	width: 680px;
+	margin-left: auto;
+	margin-right: auto;
+	/*background-color: #cfe9ff;*/
+	color: #333;
+	
+  	padding:10px;
+  	
+  	position: relative;
+}
+
+
+body,div,li,ul,h2,p,a
+{
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+
+
+div
+{
+	padding:10px;
+	margin:0;	
+	width: 100%;
+	position: relative;
+}
+
+li div
+{
+	padding:4px;
+	margin:0;
+}
+
+
+
+.block_text
+{
+	line-height: 20px;
+}
+.block_text div
+{
+	padding:0px;
+	margin:0;
+}
+
+
+h2
+{
+	padding:0;
+	margin:0;	
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color: #333;
+}
+
+a
+{
+	padding:0;
+	margin:0;
+	color: #1087ee;
+	text-decoration: none;
+}
+
+
+input,textarea
+{
+	margin-bottom: 10px;
+	border-radius: 5px;
+	border: none;
+	outline: none;	
+}
+
+
+
+
+a:hover
+{
+	text-decoration: underline;
+}
+
+
+p
+{
+	padding:0;
+	margin:0;
+	
+	font-weight: normal;
+	color: #666;
+	margin-top: 5px;
+}
+
+
+.clearboth
+{
+	padding:0;
+	margin:0;
+	clear: both;
+}
+
+
+input[type=text]
+{
+	display: block;
+	
+	padding:5px;
+	width:100%;
+	color: #666;
+	background-color: #E0E0E0;
+}
+
+
+input[type=button]
+{
+	display: block;
+	color: #FFF;
+}
+
+
+textarea
+{
+	padding:5px;
+	color: #666;
+	width:500px;	
+	background-color: #E0E0E0;
+}
+
+
+
+
+
+/* LISTS */
+
+ul
+{
+	padding:0;
+	margin:0;	
+	list-style-type: none;
+}
+
+
+
+
+/* LISTS - DEFAULT */
+
+.list
+{
+	padding:0;
+	margin:0;
+	
+}
+
+
+.list ul
+{
+	padding:0;
+	margin:0;	
+}
+
+
+.list ul li
+{ 
+	padding:10px;
+	margin:0 0 5px 0;	
+	
+	border-radius: 5px;
+
+	border: none;
+	background-color: #F7F7F7;
+  
+	overflow: hidden !important;
+}
+
+
+
+/* LISTS - NAVIGATION */
+
+.navigation
+{
+	padding:0;
+	margin:0;
+}
+
+
+.navigation ul li a
+{
+  display: block;
+  float: left;
+
+  padding:10px;
+  margin:0 5px 5px 0px;
+
+  
+  border-radius: 5px;
+
+  border: none;
+  background-color: #77c0ff;
+  color: #FFF;
+  overflow: hidden !important;
+  
+  text-decoration: none;
+}
+
+.navigation ul li p
+{
+  display: block;
+  float: left;
+
+  padding:0;
+  margin:0 5px 5px 0px;
+}
+
+.navigation ul li p a
+{
+  display: inline;
+  float: none;
+  
+  padding:2px;
+  margin:0 5px 5px 0px;
+}
+
+
+.navigation ul li input[type=text]
+{
+  float: left;
+
+  padding:10px;
+  margin:0 5px 5px 0px;
+}
+
+.navigation ul li textarea
+{
+  /*float: left;*/
+  /*width:100%;*/
+
+  padding:10px;
+  margin:0 5px 5px 0px;
+}
+
+.navigation ul li a:hover
+{
+	background-color: #1087ee;
+}
+
+.navigation ul li .styled-select
+{
+  display: block;
+  float: left;
+
+  padding:0px;
+  margin:0 5px 5px 0px;
+  width:auto;
+  
+  border-radius: 5px;
+
+  border: none;
+  background-color: #77c0ff;
+  color: #FFF;
+  overflow: hidden !important;
+}
+
+.navigation ul li .styled-select:hover
+{
+	background-color: #1087ee;
+}
+
+.navigation ul li .styled-select select
+{
+	margin: 0;
+	padding: 10px;
+	background: transparent;
+	-webkit-appearance: none;
+	border: 0;
+	border-radius: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	color: #fff;
+}
+
+
+.navigation ul li .styled-select select:hover
+{
+	cursor: pointer;
+}
+
+.navigation ul li .styled-select select option
+{
+
+}
+
+
+.edit_post_zone
+{ 
+	margin-bottom: 10px;
+	border-radius: 5px;
+	border: none;
+	outline: none;
+}
+
+
+
+.edit_post_zone .title_field
+{
+	padding: 0;	
+	color: #333;
+	font-size: 20px;
+	line-height: 20px;
+	background-color: transparent;
+	border: none;
+	outline: none;
+	margin:0;
+}
+
+
+.edit_post_zone img
+{
+  display: block;
+  margin:0;
+  padding: 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+}
+
+
+.edit_img_url_field
+{
+  width: 340px;
+  color: #FFF;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  background-color: #000;
+  border-radius: 5px;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
+.edit_post_zone .edit_img_url_zone
+{
+  width: 400px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.8;
+  background-color: #555;
+  border-radius: 5px;
+  color: #FFF;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: none;
+  outline: none;
+}
+
+
+#content_blocks
+{
+  margin: 0;
+  padding: 0;
+}
+
+.trash
+{
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  padding: 5px;
+
+  width: 100%;
+  height: 60px;
+
+  border-radius: 5px;
+  border: none;
+  background-color: #fcc;
+  margin-bottom: 10px;
+
+  border: 2px dashed #f00;
+  color: #f00;
+
+  display: none;
+}
+
+
+
+
+/* backgrounds */
+
+.backgroundLevel_10
+{
+  background-color: #E0E0E0;
+}
+
+.backgroundLevel_8
+{
+  background-color: #EEEEEE;
+}
+
+.backgroundLevel_2
+{
+  background-color: #F7F7F7;
+}
+
+.backgroundLevel_1
+{
+  background-color: #FBFBFB;
+}
+
+
+.backgroundRed
+{
+  background-color: #e54833 !important;
+}
+
+
+
+
+/* nicEdit panel*/
+
+.nicEdit-panel div
+{
+	padding:0;
+	margin:0;	
+	width: auto;
+}
+
+
+.nicEdit-panel
+{	
+	border: none !important;
+	outline: none !important;
+	background-color: transparent !important;
+}
+
+.nicEdit-panelContain
+{
+	border: none !important;
+	outline: none !important;
+	padding: 5px !important;
+	border-radius: 5px !important;
+}
+
+.nicEdit-paneContainer
+{
+	padding:0;
+	margin:0;	
+	width: auto;
+}
+
+.nicEdit-paneContainer div
+{	
+	padding:0;
+	margin:0;	
+	width: auto;
+}
+
+.nicEdit-buttonContain
+{
+
+}
+
+#myNicPanel
+{
+	padding:0;
+	margin:0;	
+
+	position: absolute;
+	top: 20px;
+	left: -20px;
+	width: auto;
+
+	display:none;
+}
+

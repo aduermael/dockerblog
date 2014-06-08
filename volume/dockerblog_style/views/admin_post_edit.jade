@@ -1,0 +1,60 @@
+extends admin
+
+block pagecontent
+
+	h2 Edit post
+
+	input(id="postID" type="text" style="display:none" value="#{post.ID}")
+	
+	div.edit_post_zone.backgroundLevel_8
+		input.title_field(id="postTitle" type="text" value="#{post.title}")
+
+	#content_blocks
+		- var block_number = 0	
+
+		each block in post.blocks
+			- var block_name = "block" + block_number
+			if (block.type == "text")
+				div(id="#{block_name}" style="margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;").block_text.sortable
+					| !{block.text}
+
+			else if (block.type == "image")
+				div(id="#{block_name}").edit_post_zone.backgroundLevel_8.block_image.sortable
+					img(src=block.path)
+					div.edit_img_url_zone
+						| url: 
+						input#imageurl.edit_img_url_field(name="imageurl" type="text" value="#{block.url}")
+			- block_number++
+
+
+	div(id="trash" class="trash")
+		| Trash
+
+	div.edit_post_zone.backgroundLevel_1
+		.navigation
+			ul
+				li
+					a(href="#" onclick="addTextBlock(this)") Text
+				li
+					a(href="#" onclick="addImageBlock(this)") Image
+				li
+					a(href="#") Video
+		.clearboth
+
+	div.edit_post_zone.backgroundLevel_1
+		
+		.navigation
+			ul
+				li
+					a(href="#" onclick="reorder(this)") reorder/delete blocks
+				li
+					a(href="#" onclick="editPost(this)") Edit post
+					
+		.clearboth
+
+
+
+	form(name="upload_file_form" id="upload_file_form" action="" method="POST" enctype="multipart/form-data" style="display:none")
+			input(id="upload_file_input" name="upload_file_input" type="file" style="display:none" onChange="sendImage(this)")
+
+	#myNicPanel
