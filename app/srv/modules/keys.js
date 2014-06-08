@@ -20,6 +20,7 @@ module.exports = function()
 	var app = express();
 	
 	app.post('/key', post_key );
+	app.post('/delete_key', delete_key );
 	app.get('/', root );	
 	
 	return app;	
@@ -49,17 +50,16 @@ function root(req, res)
 function post_key(req, res)
 {
 	console.log('POST KEY '+JSON.stringify(req.body));
-	console.log('LANG : ' + JSON.stringify(lang.get()));
 	
 	var key   = req.body.key;
 	var value = req.body.value;
-	var langue  = req.body.lang;
-	
+	var lang_value = lang.get();
+		
 	if (key)
 	{
 		if (value)
 		{
-			if (langue)
+			if (lang_value)
 			{
 				setValueForKey(value, key, function(error) 
 				{
@@ -101,6 +101,51 @@ function post_key(req, res)
 
 
 
+function delete_key(req, res)
+{
+	console.log('DELETE KEY '+JSON.stringify(req.body));
+	
+	var key   = req.body.key;
+	var lang_value = lang.get();
+	
+	if (key)
+	{
+		if (lang_value)
+		{
+			deleteKey(key, function(error)
+			{
+				if (!error)
+				{
+					var response = {};
+					response.success = true;
+					tools.returnJSON(res, response)
+				}
+				else
+				{
+					var response = {};
+					response.success = false;
+					tools.returnJSON(res, response)
+				}
+			});
+		}
+		else
+		{
+			var response = {};
+			response.success = false;
+			tools.returnJSON(res, response)
+		}
+	}
+	else
+	{
+		var response = {};
+		response.success = false;
+		tools.returnJSON(res, response)
+	}
+	
+}
+
+
+
 ////////////////////////////////
 //
 // HELPERS
@@ -132,7 +177,7 @@ function getValueForKey(key, callback)
 
 
 // callback(error)
-function deleteValueForKey(key, callback)
+function deleteKey(key, callback)
 {
 	var hashname = 'keys_' + lang.get();
 	db.hdel(hashname, key, function(error, nbRemoved)
@@ -149,46 +194,6 @@ function getAllValues(callback)
 	var hashname = 'keys_' + lang.get();
 	db.hgetall(hashname, callback);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

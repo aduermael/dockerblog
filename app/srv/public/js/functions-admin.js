@@ -337,9 +337,9 @@ function keysAddKey(sender)
 	var postContent = new Object()
 	postContent.key = $('#addKey').val();
 	postContent.value = $('#addValue').val();
-	postContent.lang = $('#langSelector option:selected').val();
-	//alert(JSON.stringify(postContent));
 	Post('/admin/keys/key', postContent, keysAddKeyCallBack, errorCallback);
+	//postContent.lang = $('#langSelector option:selected').val();
+	//alert(JSON.stringify(postContent));
 }
 
 
@@ -361,14 +361,29 @@ function keysAddKeyCallBack(response)
 
 function keysDeleteKey(sender)
 {
+	var key = $(sender).closest('li').find('div:first-child strong').html();
+
 	var postContent = new Object()
-	postContent.key = $('#addKey').val();
-	postContent.lang = $('#langSelector option:selected').val();
+	postContent.key = key
+	Post('/admin/keys/delete_key', postContent, callback_key_delete, errorCallback);
+	//postContent.lang = $('#langSelector option:selected').val();
 	//alert(JSON.stringify(postContent));
-	Post('/admin/keys/delete_key', postContent, keysAddKeyCallBack, errorCallback);
 }
 
 
+
+function callback_key_delete(response)
+{
+	if(response.success && response.success == true)
+	{
+		document.location = "/admin/keys";
+		alert("OK!");
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
 
 
 
