@@ -22,6 +22,9 @@ RUN echo "root:toor" | chpasswd
 
 ##########  VOLUMES  ###########
 
+ADD dockerblog_style /dockerblog_style
+VOLUME /dockerblog_style
+
 RUN mkdir /dockerblog_files
 VOLUME /dockerblog_files
 
@@ -30,9 +33,8 @@ VOLUME /dockerblog_db
 
 ########## ENTRYPOINT ##########
 
-ADD start.sh /srv/start.sh
-
-ENTRYPOINT ["/bin/bash","/srv/start.sh"]
+ENTRYPOINT ["/bin/bash"]
+# ENTRYPOINT ["/bin/true"]
 
 
 
