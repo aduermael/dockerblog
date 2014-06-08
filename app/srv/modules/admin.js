@@ -10,6 +10,7 @@ var auth = require('basic-auth');
 
 // import LOCAL modules
 var postsManager = require('./posts');
+var pagesManager = require('./pages');
 var tools = require('./tools');
 var lang = require('./lang');
 
@@ -27,6 +28,15 @@ exports.app = function()
 
 	app.get('/new', newPost );
 	app.get('/posts',posts);
+	
+	app.get('/pages/new', newPage );
+	app.get('/pages',pages);
+	
+	app.post('/pages/new', saveNewPage);
+	app.post('/pages/edit', saveEditedPage);
+	
+	
+	
 
 	app.get('/comments',comments);
 	app.post('/acceptComment',postsManager.acceptComment);
@@ -36,6 +46,7 @@ exports.app = function()
 	app.post('/edit', saveEditedPost);
 
 	app.get('/edit/:postID', editPost );
+	app.get('/pages/edit/:pageID', editPage );
 
 	app.get('*',posts);
 
@@ -94,6 +105,12 @@ function newPost(req,res)
 }
 
 
+function newPage(req,res)
+{
+	tools.renderJade(res,'admin_page',{ siteName: 'Blog | Admin - New page', lang: lang.get() });
+}
+
+
 
 // TO MOVE 
 
@@ -102,11 +119,23 @@ function saveNewPost(req,res)
   postsManager.newPost(req,res);
 }
 
+
+function saveNewPage(req,res)
+{
+  pagesManager.newPage(req,res);
+}
+
+
 // TO MOVE 
 
 function editPost(req,res)
 {
-  postsManager.editPost(req,res);
+	postsManager.editPost(req,res);
+}
+
+function editPage(req,res)
+{
+	pagesManager.editPage(req,res);
 }
 
 // TO MOVE 
@@ -114,6 +143,11 @@ function editPost(req,res)
 function saveEditedPost(req,res)
 {
   postsManager.saveEditedPost(req,res);
+}
+
+function saveEditedPage(req,res)
+{
+  pagesManager.saveEditedPage(req,res);
 }
 
 
@@ -124,6 +158,17 @@ function posts(req,res)
   {
       tools.renderJade(res,'admin_posts',{ siteName: 'Blog | Admin',
           posts: content,
+          lang: lang.get() });
+  });
+};
+
+
+function pages(req,res)
+{
+  pagesManager.list(0,200,function(error,content)
+  {
+      tools.renderJade(res,'admin_pages',{ siteName: 'Blog | Admin',
+          pages: content,
           lang: lang.get() });
   });
 };

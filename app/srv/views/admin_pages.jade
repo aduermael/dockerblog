@@ -1,0 +1,11 @@
+extends admin
+
+block pagecontent
+
+	h2 Pages (#{lang})
+
+	.list
+		ul
+			- each page in pages
+				li 
+					a(href="/admin/pages/edit/" + page.ID) #{page.title}
