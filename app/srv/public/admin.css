@@ -117,7 +117,7 @@ input[type=text]
 	display: block;
 	
 	padding:5px;
-	
+	width:100%;
 	color: #666;
 	background-color: #E0E0E0;
 }

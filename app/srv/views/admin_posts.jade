@@ -8,10 +8,8 @@ block pagecontent
 	.list
 		ul
 			- each post in posts
-				- each block in post.blocks
-					if (block.type == "title")
-						li 
-							a(href="/admin/edit/" + post.ID) #{block.text}
+				li 
+					a(href="/admin/edit/" + post.ID) #{post.title}
 
 
 #myNicPanel

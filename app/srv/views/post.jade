@@ -3,16 +3,16 @@ extends blog
 block content
 
 	#div.post
-		- each block in post.blocks
-			if (block.type == "title")
-				.block.title
-					h2
-						a(href="/" + post.slug +  "/" + post.ID) #{block.text} 
-						
-					.date(style="float:right;") #{post.stringdate}
-					.clearboth
 	
-			else if (block.type == "text")
+		#div.block.title
+			h2
+				a(href="/" + post.slug +  "/" + post.ID) #{post.title}
+					
+			.date(style="float:right;") #{post.stringdate}
+			.clearboth
+			
+		- each block in post.blocks
+			if (block.type == "text")
 				.block.text
 					p !{block.text}
 

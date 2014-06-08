@@ -5,17 +5,16 @@ block pagecontent
 	h2 Edit post
 
 	input(id="postID" type="text" style="display:none" value="#{post.ID}")
+	
+	div.edit_post_zone.backgroundLevel_8
+		input.title_field(id="postTitle" type="text" value="#{post.title}")
 
 	#content_blocks
 		- var block_number = 0	
 
 		each block in post.blocks
 			- var block_name = "block" + block_number
-			if (block.type == "title")
-				div(id="#{block_name}").edit_post_zone.backgroundLevel_10.block_title
-					input.title_field(type="text" value="#{block.text}")
-
-			else if (block.type == "text")
+			if (block.type == "text")
 				div(id="#{block_name}" style="margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;").block_text.sortable
 					| !{block.text}
 

@@ -320,7 +320,7 @@ var list = function(page,nbPostsPerPage,callback)
 		{
 			replies.forEach(function(post)
 			{
-				post.date = getPostTime(post.date);
+				post.stringdate = getPostTime(post.date);
 				post.blocks = JSON.parse(post.blocks);
 			});
 					
@@ -554,23 +554,14 @@ var newPost = function(req,res)
 			
 			var post = {};
 			post.blocks = req.body.blocks;
+			post.title = req.body.postTitle;
 			
-			var slugURL = "";
-			
-			if (post.blocks)
-			{
-				post.blocks.forEach(function(block)
-				{	
-					if (block.type == "title")
-					{
-						slugURL = slug(block.text).toLowerCase();						
-					}
-				});
-			}
+			var slugURL = slug(post.title).toLowerCase();						
+
 			
 			var multi = db.multi();
 			
-			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL);
+			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title);
 			multi.zadd("posts_" + langManager.get(),timestamp,ID); // ordered set for each lang
 			multi.incr("postCount");
 			
@@ -604,23 +595,13 @@ var saveEditedPost = function(req,res)
 	
 	var post = {};
 	post.blocks = req.body.blocks;
+	post.title = req.body.postTitle;
 	
-	var slugURL = "";
-	
-	if (post.blocks)
-	{
-		post.blocks.forEach(function(block)
-		{	
-			if (block.type == "title")
-			{
-				slugURL = slug(block.text).toLowerCase();						
-			}
-		});
-	}
+	var slugURL = slug(post.title).toLowerCase();
 	
 	var multi = db.multi();
 	
-	multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"update",timestamp,"ID",postID,"nbComs",0,"slug",slugURL);
+	multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"update",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title);
 	
 	multi.exec(function(err,replies)
 	{
@@ -660,7 +641,7 @@ var editPost = function(req,res)
     }
     else
     {
-      content.date = getPostTime(content.date);
+      content.stringdate = getPostTime(content.date);
 	  content.blocks = JSON.parse(content.blocks);
 
       tools.renderJade(res,'admin_post_edit',{ siteName: 'Blog | Admin - Edit post',

@@ -89,13 +89,6 @@ function editPost(sender)
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
       blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
     }
-    else if ($(this).hasClass("block_title"))
-    {
-      blocks[i].type = "title";
-      blocks[i].text = $(this).children('input')[0].value;
-
-      console.log("add title block");
-    }
     else if ($(this).hasClass("block_video"))
     {
       blocks[i].type = "video";
@@ -110,6 +103,7 @@ function editPost(sender)
   });
 
   postContent.blocks = blocks;
+  postContent.postTitle = $("#postTitle").val();
 
   Post('/admin/edit',postContent,editPostCallBack,errorCallback);
 }
@@ -217,11 +211,6 @@ function sendPost(sender)
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
       blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
     }
-    else if ($(this).hasClass("block_title"))
-    {
-      blocks[i].type = "title";
-      blocks[i].text = $(this).children('input')[0].value;
-    }
     else if ($(this).hasClass("block_video"))
     {
       blocks[i].type = "video";
@@ -236,6 +225,7 @@ function sendPost(sender)
   });
 
   postContent.blocks = blocks;
+  postContent.postTitle = $("#postTitle").val();
 
   Post('/admin/new',postContent,editPostCallBack,errorCallback);
 }
@@ -265,11 +255,6 @@ function sendPage(sender)
       blocks[i].type = "image";
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
       blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
-    }
-    else if ($(this).hasClass("block_title"))
-    {
-      blocks[i].type = "title";
-      blocks[i].text = $(this).children('input')[0].value;
     }
     else if ($(this).hasClass("block_video"))
     {
