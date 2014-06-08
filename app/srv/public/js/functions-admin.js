@@ -329,6 +329,49 @@ var deleteCommentCallBack = function(data)
 }
 
 
+
+// KEYS
+
+function keysAddKey(sender)
+{
+	var postContent = new Object()
+	postContent.key = $('#addKey').val();
+	postContent.value = $('#addValue').val();
+	postContent.lang = $('#langSelector option:selected').val();
+	//alert(JSON.stringify(postContent));
+	Post('/admin/keys/key', postContent, keysAddKeyCallBack, errorCallback);
+}
+
+
+
+function keysAddKeyCallBack(response)
+{
+	// console.log('RESULT : '+JSON.stringify(data));
+	if(response.success && response.success == true)
+	{
+		document.location = "/admin/keys";
+		alert("OK!");
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
+function keysDeleteKey(sender)
+{
+	var postContent = new Object()
+	postContent.key = $('#addKey').val();
+	postContent.lang = $('#langSelector option:selected').val();
+	//alert(JSON.stringify(postContent));
+	Post('/admin/keys/delete_key', postContent, keysAddKeyCallBack, errorCallback);
+}
+
+
+
+
+
 // CONFIG
 
 function configAddKey(sender)
@@ -343,7 +386,7 @@ function configAddKey(sender)
 	//Post('/admin/config/key',postContent,configAddKeyCallBack,errorCallback);
 }
 
-var configAddKeyCallBack = function(data)
+function configAddKeyCallBack(data)
 {
   if(res.success)
   {

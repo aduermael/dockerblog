@@ -16,7 +16,7 @@ var lang = require('./lang');
 
 
 var app = express();
-exports.app = function()
+module.exports = function()
 {
 	// http basic auth middleware
 	app.use(authentication);
@@ -24,7 +24,10 @@ exports.app = function()
 	app.use('/lang', lang.app);
 	app.use(lang.use);
 
-	app.use('/config', require('./config') );
+	// admin "keys" tab
+	app.use('/keys', require('./keys'));
+	// admin "config" tab
+	app.use('/config', require('./config'));
 
 	app.get('/new', newPost );
 	app.get('/posts',posts);

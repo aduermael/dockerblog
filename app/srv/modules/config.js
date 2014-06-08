@@ -1,5 +1,7 @@
 //
-// Gaetan : should be renamed into config_kvs
+// 
+// CONFIG
+//
 //
 
 
