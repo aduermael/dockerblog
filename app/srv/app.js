@@ -49,7 +49,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 // blog modules
-app.use('/admin', admin.app);
+app.use('/admin', admin);
 app.use('/lang', lang.app);
 app.use(lang.use);
 
