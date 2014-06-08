@@ -13,41 +13,69 @@ var tools = require('./tools');
 var PUBLIC_DIR = "";
 
 // to be renamed into "uploads"
-var FILES_DIR = "files";
+var FILES_DIR = "uploads";
 
 
+
+
+function checkUploadsDir (callback)
+{
+	var dir = PUBLIC_DIR + '/' + FILES_DIR;
+	
+	fs.exists(dir, function (exists)
+	{
+		if (!exists)
+		{
+			fs.mkdir(dir, 0777, function (err)
+			{
+				if (err)
+				{
+					callback(false);
+				} 
+				else 
+				{
+					callback(true);
+				}
+			}); 
+		}
+		else
+		{
+			callback(true);
+		}
+	});
+};
 
 
 
 var checkYearDir = function(year, callback)
-{    
-  var dir = PUBLIC_DIR + '/' + FILES_DIR + '/' + year;
-  
-  fs.exists(dir, function (exists)
-  {
-    if (!exists)
-    {
-      fs.mkdir(dir, 0777, function (err)
-      {
-        if (err)
-        {
-          callback(false);
-        } 
-        else 
-        {
-          callback(true);
-        }
-      });
-    }
-    else
-    {
-      callback(true);
-    }
-  });
+{
+	var dir = PUBLIC_DIR + '/' + FILES_DIR + '/' + year;
+	
+	fs.exists(dir, function (exists)
+	{
+		if (!exists)
+		{
+			fs.mkdir(dir, 0777, function (err)
+			{
+				if (err)
+				{
+					callback(false);
+				} 
+				else 
+				{
+					callback(true);
+				}
+			}); 
+		}
+		else
+		{
+			callback(true);
+		}
+	});
 };
 
-var checkMonthDir = function(year,month,callback){
-    
+var checkMonthDir = function(year,month,callback)
+{    
   var dir = PUBLIC_DIR + '/' + FILES_DIR + '/' + year + '/' + month;
   
   fs.exists(dir, function (exists)
@@ -164,61 +192,36 @@ exports.saveFile = function(req, res)
 		var month = date.getMonth() + 1;
 		month = (month < 10 ? "0" : "") + month;
 		
-		checkYearDir(year,function(ok)
+		checkUploadsDir (function(ok) 
 		{
 			if (ok)
 			{
-				checkMonthDir(year,month,function(ok)
+				checkYearDir (year,function(ok)
 				{
 					if (ok)
 					{
-						// TODO: ALLOW FILES WITH SAME NAME !!
-						// TODO: get the prefix and suffix values from the config
-						var prefix = "prefix-";
-						var suffix = "-suffix";
-						
-						// add a prefix to the filename
-						var filename = prefix + getFilenameWithoutExtension(file.filename) + suffix + getFilenameExtension(file.filename);
-						console.log('NAME : ' + filename);
-						var destination_directory_relative_path = '/' + FILES_DIR + '/' + year + '/' + month;
-						var destination_file_relative_path = destination_directory_relative_path + '/' + filename;
-						var destination_directory_absolute_path = PUBLIC_DIR + destination_directory_relative_path;
-						var destination_file_absolute_path = PUBLIC_DIR + destination_file_relative_path;
-						
-						fs.exists(destination_directory_absolute_path, function (exists)
+						checkMonthDir (year,month,function(ok)
 						{
-							if (exists)
+							if (ok)
 							{
-								// destination directory already exists
-								// we can write the file in it
-								fs.writeFile(destination_file_absolute_path, file.data, function (error_writefile)
+								// TODO: ALLOW FILES WITH SAME NAME !!
+								// TODO: get the prefix and suffix values from the config
+								var prefix = "prefix-";
+								var suffix = "-suffix";
+								
+								// add a prefix to the filename
+								var filename = prefix + getFilenameWithoutExtension(file.filename) + suffix + getFilenameExtension(file.filename);
+								console.log('NAME : ' + filename);
+								var destination_directory_relative_path = '/' + FILES_DIR + '/' + year + '/' + month;
+								var destination_file_relative_path = destination_directory_relative_path + '/' + filename;
+								var destination_directory_absolute_path = PUBLIC_DIR + destination_directory_relative_path;
+								var destination_file_absolute_path = PUBLIC_DIR + destination_file_relative_path;
+								
+								fs.exists(destination_directory_absolute_path, function (exists)
 								{
-									if (!error_writefile)
+									if (exists)
 									{
-										// writefile success
-										var response = {};
-										response.success = true;
-										response.image_path = destination_file_relative_path;
-										tools.returnJSON(res, response);
-									}
-									else
-									{
-										// writefile error
-										var response = {};
-										response.success = false;
-										response.error = 'write file error';
-										tools.returnJSON(res, response);
-									}
-								});
-							}
-							else
-							{
-								// destination directory does not exist yet
-								fs.mkdir(destination_directory_absolute_path, function (error_mkdir)
-								{
-									if (!error_mkdir)
-									{
-										// destination directory now exists
+										// destination directory already exists
 										// we can write the file in it
 										fs.writeFile(destination_file_absolute_path, file.data, function (error_writefile)
 										{
@@ -234,27 +237,63 @@ exports.saveFile = function(req, res)
 											{
 												// writefile error
 												var response = {};
-												response.result = false;
-												response.error = 'fs error on writefile operation';
+												response.success = false;
+												response.error = 'write file error';
 												tools.returnJSON(res, response);
 											}
 										});
 									}
 									else
 									{
-										// mkdir error
-										var response = {};
-										response.result = false;
-										response.error = 'fs error on mkdir operation';
-										tools.returnJSON(res, response);
+										// destination directory does not exist yet
+										fs.mkdir(destination_directory_absolute_path, function (error_mkdir)
+										{
+											if (!error_mkdir)
+											{
+												// destination directory now exists
+												// we can write the file in it
+												fs.writeFile(destination_file_absolute_path, file.data, function (error_writefile)
+												{
+													if (!error_writefile)
+													{
+														// writefile success
+														var response = {};
+														response.success = true;
+														response.image_path = destination_file_relative_path;
+														tools.returnJSON(res, response);
+													}
+													else
+													{
+														// writefile error
+														var response = {};
+														response.result = false;
+														response.error = 'fs error on writefile operation';
+														tools.returnJSON(res, response);
+													}
+												});
+											}
+											else
+											{
+												// mkdir error
+												var response = {};
+												response.result = false;
+												response.error = 'fs error on mkdir operation';
+												tools.returnJSON(res, response);
+											}
+										});
 									}
 								});
+							}
+							else
+							{
+								var response = {};
+								response.result = false;
+								tools.returnJSON(res, response);
 							}
 						});
 					}
 					else
 					{
-						console.log('check month NOK');
 						var response = {};
 						response.result = false;
 						tools.returnJSON(res, response);
@@ -263,7 +302,6 @@ exports.saveFile = function(req, res)
 			}
 			else
 			{
-				console.log('check year NOK');
 				var response = {};
 				response.result = false;
 				tools.returnJSON(res, response);
