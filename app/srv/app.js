@@ -3,8 +3,8 @@
 //
 //
 
-GLOBAL.redis_server_ip = "172.17.0.4";
-GLOBAL.redis_server_port = "6379";
+GLOBAL.redis_server_ip = process.env.DB_PORT_6379_TCP_ADDR;
+GLOBAL.redis_server_port = process.env.DB_PORT_6379_TCP_PORT;
 
 GLOBAL.views_path = "/dockerblog_files/views"
 
