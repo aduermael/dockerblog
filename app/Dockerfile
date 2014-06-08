@@ -1,8 +1,8 @@
-# 
+#
 # DOCKERBLOG - APP
-# 
-# 
-# 
+#
+#
+#
 
 FROM ubuntu:13.04
 MAINTAINER Gaetan de Villele (gdevillele@gmail.com)
@@ -23,7 +23,9 @@ RUN echo "root:toor" | chpasswd
 
 ########## Update packages ##########
 
-RUN apt-get update -y; apt-get upgrade -y
+RUN apt-get update -y
+
+RUN apt-get upgrade -y
 
 
 
@@ -35,7 +37,7 @@ RUN apt-get install -y openssh-server
 # we need to create privilege separation directory
 RUN mkdir -p /var/run/sshd
 
-# we expose the 22 port of the container to the host 
+# we expose the 22 port of the container to the host
 # to be able to use SSH from a remote client
 EXPOSE 22
 
@@ -61,12 +63,6 @@ RUN cd /srv; npm install;
 
 
 
-########## Install redis-server (TEMPORARY)
-RUN apt-get install redis-server -y
-EXPOSE 6379
-
-
-
 ########## Define the work directory
 WORKDIR /srv
 
@@ -76,7 +72,3 @@ WORKDIR /srv
 ADD start.sh /start.sh
 # ENTRYPOINT later
 CMD ["/bin/bash", "/start.sh"]
-
-
-
-

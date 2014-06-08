@@ -6,6 +6,7 @@
 GLOBAL.redis_server_ip = "172.17.0.4";
 GLOBAL.redis_server_port = "6379";
 
+GLOBAL.views_path = "/dockerblog_files/views"
 
 // import GLOBAL modules
 var express      = require('express');
