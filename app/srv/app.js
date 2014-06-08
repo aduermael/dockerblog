@@ -5,10 +5,11 @@
 
 
 // import GLOBAL modules
-var express = require('express');
-var compression = require('compression');
+var express      = require('express');
+var compression  = require('compression');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var bodyParser   = require('body-parser');
+var busboy       = require('connect-busboy');
 
 // import LOCAL modules
 var posts = require('./modules/posts');
@@ -26,6 +27,7 @@ var app = express();
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
+
 // we use compression module to compress the responses
 app.use(compression());
 
@@ -35,14 +37,15 @@ app.use(cookieParser());
 // not sure we need this one ... need confirmation (for regular forms maybe ??)
 // parse application/json and application/x-www-form-urlencoded
 app.use(bodyParser());
+// we handle "multipart/form-data" (file uploads) with busboy module
+app.use(busboy({immediate: true}));
 
-// TODO:
-// we still need to handle "multipart/form-data" also known as file uploads
-// with busboy probably
-//app.use(express.bodyParser({ uploadDir:__dirname + '/uploads' }));
+// log the original url of all incoming requests
+app.use(log_request_url);
 
 // 'static' middleware is still part on Express
 app.use(express.static(__dirname + '/public'));
+
 
 
 // blog modules
@@ -72,5 +75,19 @@ app.listen(port, function()
 });
 
 
+//---------------------------------------------------------------------
+// UTILITY FUNCTIONS
+//---------------------------------------------------------------------
+
+//
+// MIDDLEWARE
+// log the incoming request
+//
+function log_request_url (req, res, next)
+{
+	console.log('');
+	console.log('--- REQUEST [ '+req.originalUrl+' ]');
+	next();
+}
 
 

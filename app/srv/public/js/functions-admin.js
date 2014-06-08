@@ -1,46 +1,58 @@
+//
+//
+//
+//
+//
+
+
+
 var myNicEditor;
-var nextBlock=0;
+var nextBlock = 0;
 var reorder_mode = false;
-  
+
 
 
 function PostFiles(path,formData,callback,errorCallback)
 {
-  $.ajax
-  (
-    {
-      url: SERVER + path,
-      type:"POST",
-      data:formData,
-      mimeType:"multipart/form-data",
-      contentType: false,
-      cache: false,
-      processData:false,
-      success: function(data, textStatus, jqXHR)
-      {
-        callback(data);
-      },
-      error: function(jqXHR, textStatus, errorThrown) 
-      {
-        errorCallback();
-      }  
-    }
-  );
+	var url = 'http://' + location.host + path;
+	// console.log('fullpath : '+fullpath);
+
+	$.ajax
+	(
+		{
+			url: url,
+			type:"POST",
+			data:formData,
+			mimeType:"multipart/form-data",
+			contentType: false,
+			cache: false,
+			processData:false,
+			success: function(data, textStatus, jqXHR)
+			{
+				callback(data);
+			},
+			error: function(jqXHR, textStatus, errorThrown)
+			{
+				errorCallback();
+			}
+		}
+	);
 }
 
 
+
 // ADMIN
- 
+
 function addTextBlock(sender)
 {
   nextBlock++;
   var blockName = "block" + nextBlock;
 
   $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_text sortable\" style=\"margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;\">Text</div>");
-  
+
   console.log(blockName);
   myNicEditor.addInstance(blockName);
-}    
+}
 
 function sendImage(sender)
 {
@@ -116,7 +128,7 @@ var editPostCallBack = function(data)
   }
   else
   {
-    alert("FAILED");   
+    alert("FAILED");
   }
 }
 
@@ -178,7 +190,7 @@ function acceptComment(comID)
 {
 	var obj = {};
 	obj.ID = comID;
-	
+
 	Post('/admin/acceptComment',obj,acceptCommentCallBack,errorCallback);
 }
 
@@ -186,7 +198,7 @@ function deleteComment(comID)
 {
 	var obj = {};
 	obj.ID = comID;
-	
+
 	Post('/admin/deleteComment',obj,deleteCommentCallBack,errorCallback);
 }
 
@@ -195,28 +207,28 @@ function deleteComment(comID)
 var acceptCommentCallBack = function(data)
 {
 	var res = data;
-	
+
 	if(res.success)
 	{
 		document.location = "/admin/comments";
 	}
 	else
 	{
-		alert("FAILED");   
+		alert("FAILED");
 	}
 }
 
 var deleteCommentCallBack = function(data)
 {
 	var res = data;
-	
+
 	if(res.success)
 	{
 		document.location = "/admin/comments";
 	}
 	else
 	{
-		alert("FAILED");   
+		alert("FAILED");
 	}
 }
 
@@ -229,9 +241,9 @@ function configAddKey(sender)
 	postContent.key = $('#addKey').val();
 	postContent.value = $('#addValue').val();
 	postContent.lang = $('#langSelector option:selected').val();
-	
+
 	alert(JSON.stringify(postContent));
-  
+
 	//Post('/admin/config/key',postContent,configAddKeyCallBack,errorCallback);
 }
 
@@ -244,7 +256,7 @@ var configAddKeyCallBack = function(data)
   }
   else
   {
-    alert("FAILED");   
+    alert("FAILED");
   }
 }
 
@@ -296,10 +308,10 @@ function reorder(sender)
     else
     {
       $('#trash').css("display","none");
-      
+
 
       $('#content_blocks').sortable('destroy');
-      //$('#content_blocks').disableSelection('cancel'); 
+      //$('#content_blocks').disableSelection('cancel');
       //$('#content_blocks').unbind('click');
       //$('#content_blocks').unbind('mousedown');
       //$('#content_blocks').unbind('mouseup');
@@ -325,28 +337,28 @@ var langSelectorCallback = function(data)
 	}
 	else
 	{
-		alert("FAILED");   
+		alert("FAILED");
 	}
 }
-  
-  
+
+
 
 $(document).ready(function()
 {
 	$('#langSelector').change(function(value)
 	{
 		var selectedLang = $('#langSelector option:selected').val();
-		document.location = "/admin/lang/" + selectedLang; 
+		document.location = "/admin/lang/" + selectedLang;
 	})
-	
+
 	$('#content_blocks >').each(function(i,obj)
 	{
 		var blockID = parseInt($(obj).attr('id').substring(5));
 		if (nextBlock <= blockID) nextBlock = blockID + 1;
 		console.log('child: ' + $(obj).attr('id').substring(5));
 	})
-	
-	
+
+
 	$('#reorderBtn').click(function()
 	{
 		if (!reorder_mode)
@@ -362,9 +374,9 @@ $(document).ready(function()
 					ui.item.css("overflow","hidden");
 				}
 			});
-			
+
 			$('#trash').css("display","block");
-			
+
 			$( "#trash" ).droppable(
 			{
 				drop: function( event, ui )
@@ -381,7 +393,7 @@ $(document).ready(function()
 					$('#trash').css("background-color","#f88");
 				}
 			});
-			
+
 			//$( "#content_blocks" ).sortable();
 			//$( "#content_blocks" ).disableSelection();
 			$("input").prop('disabled', true);
@@ -393,10 +405,10 @@ $(document).ready(function()
 		else
 		{
 			$('#trash').css("display","none");
-			
-			
+
+
 			$('#content_blocks').sortable('destroy');
-			//$('#content_blocks').disableSelection('cancel'); 
+			//$('#content_blocks').disableSelection('cancel');
 			//$('#content_blocks').unbind('click');
 			//$('#content_blocks').unbind('mousedown');
 			//$('#content_blocks').unbind('mouseup');
@@ -412,15 +424,15 @@ $(document).ready(function()
 
 	myNicEditor = new nicEditor({buttonList : ['bold','underline','link','unlink']});
 	myNicEditor.setPanel('myNicPanel');
-	
-	myNicEditor.addEvent('focus', function(e) 
+
+	myNicEditor.addEvent('focus', function(e)
 	{
 		if (!reorder_mode)
 		{
 			var id = myNicEditor.selectedInstance.e.id;
-			
+
 			$("#myNicPanel").show();
-			
+
 			$("#myNicPanel").css(
 			{
 				top:($("#"+id).offset().top - 10) +'px',
@@ -428,31 +440,31 @@ $(document).ready(function()
 			});
 		}
 	});
-	
-	myNicEditor.addEvent('panel', function(e) 
+
+	myNicEditor.addEvent('panel', function(e)
 	{
 		console.log("PANEL");
 	});
-	
-	
-	myNicEditor.addEvent('blur', function(e) 
+
+
+	myNicEditor.addEvent('blur', function(e)
 	{
 		$("#myNicPanel").hide();
 	});
-	
+
 	$('.block_text').each(function (i, obj)
 	{
 		myNicEditor.addInstance($(obj).attr('id'));
 	});
-	
-	
+
+
 	$("form#upload_file_form").submit(function(e)
 	{
 		e.preventDefault();
-		//grab all form data  
+		//grab all form data
 		var formData = new FormData($(this)[0]);
 		var inputs = document.getElementById('upload_file_input');
-		
+
 		if (inputs.files.length > 0)
 		{
 			PostFiles('/image',formData,uploadFileCallback,errorCallback);
@@ -474,14 +486,12 @@ var uploadFileCallback = function(data)
   if(res.success)
   {
     nextBlock++;
-    var blockName = "block" + nextBlock; 
+    var blockName = "block" + nextBlock;
 
     $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.image_path + "\"/><div class=\"edit_img_url_zone\">url: <input class=\"edit_img_url_field\" id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"\"/></div></div>");
   }
   else
   {
-    alert("FAILED");   
+    alert("FAILED");
   }
 }
-
-
