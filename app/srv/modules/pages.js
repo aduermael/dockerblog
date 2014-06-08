@@ -20,55 +20,42 @@ var app = function()
 
 
 
-function renderPage(req,res)
-{
-	/*var pageID = req.params.pageID;
+function renderPage(req,res,next)
+{	
+	var pageName = req.params.pageName;
 	
-	get(pageID, function(error,post)
-	{	
-		if (error) // not found?
+	console.log("test page: " + pageName);
+	
+	db.hget("pages_" + langManager.get(),pageName,function(err,pageID)
+	{
+		if (!err && pageID)
 		{
-			renderPosts(req,res);
-		}
-		else
-		{
-			var vID = "vID_" + tools.randomHash(8);
-			var ttl = COMMENT_TIME_TO_WRITE;
-			
-			var multi = db.multi();
-			
-			multi.set(vID,ttl); // keep original ttl
-			multi.expire(vID,ttl);
-			
-			multi.exec(function(err,replies)
+			get(pageID, function(error,page)
 			{
-				if (err)
+				if (!error)
 				{
-					var ret = {"success":false};
-					tools.returnJSON(res,ret); 
-				}
-				else // we can display post, having vID
-				{
-					
-					getComments(postID,function(err,comments)
+					tools.renderJade(res,'page',
 					{
-						tools.renderJade(res,'post',
-						{
-							siteName: 'Blog | page',
-							page: page,
-							lang: langManager.get(),
-							myInfos: "myInfos", // should be in key-value options
-							fbLink: "facebookURL", // should be in key-value options
-							twLink: "twitterURL", // should be in key-value options
-							vID: vID // an ID to check how much time it took to right a comment (anti spam)
-						}); 
-						
+						siteName: 'Blog | page',
+						page: page,
+						lang: langManager.get()
 					});
+				}
+				else
+				{
+					console.log("error getting page");
+					next();
 				}
 			});
 		}
-    
-	});*/
+		else
+		{
+			console.log("page not found");
+			next();
+		}
+	});
+	
+	
 }
 
 
@@ -100,8 +87,8 @@ var list = function(page,nbpagesPerpage,callback)
 
 
 var get = function(pageID,callback)
-{	
-	db.hgetall("page_" + pageID,function(error,page)
+{
+	db.hgetall(pageID,function(error,page)
 	{
 		if (error || !page)
 		{

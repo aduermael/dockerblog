@@ -13,6 +13,7 @@ var busboy       = require('connect-busboy');
 
 // import LOCAL modules
 var posts = require('./modules/posts');
+var pages = require('./modules/pages');
 var lang = require('./modules/lang');
 var files = require('./modules/files');
 files.init(__dirname + "/public");
@@ -41,7 +42,7 @@ app.use(bodyParser());
 app.use(busboy({immediate: true}));
 
 // log the original url of all incoming requests
-app.use(log_request_url);
+//app.use(log_request_url);
 
 // 'static' middleware is still part on Express
 app.use(express.static(__dirname + '/public'));
@@ -62,7 +63,8 @@ app.post('/image', function (req, res)
 
 
 app.use('/', posts.app);
-app.use('*',posts.app);
+app.use('/', pages.app);
+app.use('*',posts.renderPosts2);
 
 
 
