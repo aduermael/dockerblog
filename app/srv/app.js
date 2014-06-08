@@ -3,6 +3,9 @@
 //
 //
 
+GLOBAL.redis_server_ip = "172.17.0.4";
+GLOBAL.redis_server_port = "6379";
+
 
 // import GLOBAL modules
 var express      = require('express');
@@ -62,7 +65,7 @@ app.post('/image', function (req, res)
 
 app.use('/', posts.app);
 app.use('/', pages.app);
-app.use('*',posts.renderPosts2);
+app.use('*', posts.renderPosts2);
 
 
 
