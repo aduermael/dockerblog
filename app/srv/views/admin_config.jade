@@ -6,38 +6,16 @@ block pagecontent
 	h2 Preferences (#{lang})
 
 	.list
-		.navigation
-			ul
-				- each pref,prefKey in prefs
-					li
-						p
-							| #{prefKey} 
-							a.backgroundRed(href="#" onclick="alert('work in progress')") Delete
-							
-						.clearboth
-						textarea(type="text") #{pref}
-		.clearboth
-	
-	
-	div.edit_post_zone.backgroundLevel_1
-		.navigation
-			ul
+		ul
+			- each pref,prefKey in prefs
 				li
-					a(href="#" onclick="alert('work in progress')") Update
-		.clearboth
-	
-	
-	div.edit_post_zone.backgroundLevel_1
-		.navigation
-			ul
-				li
-					input#addKey(type="text" value="KEY" onfocus="if(this.value == 'KEY') { this.value = ''; }")
-				li
-					a(href="#" onclick="configAddKey(this)") Add
-				li
-					textarea#addValue(type="text" onfocus="if(this.value == 'VALUE') { this.value = ''; }") VALUE
-		.clearboth
-		
-					
-	#myNicPanel
+					div
+						strong #{prefKey} 
+					div
+						textarea(type="text" style="margin:0;width:500px;height:50px;") #{pref}
+					div
+						a(href="#" onclick="keysDeleteKey(this)" style="color:#c33e1b") Delete
+						|  - 
+						a(href="#" onclick="keyUpdateKey(this)" style="color:#8ab946") Update
+						
 	div(style="height:20px;")
