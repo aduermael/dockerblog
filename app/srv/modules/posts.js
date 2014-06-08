@@ -21,7 +21,7 @@ var app = function()
 	
 	app.post('/comment', postComment );
 			
-	app.get('*', renderPosts );	
+	//app.get('*', renderPosts );	
 
 	return app;
 }();
@@ -46,6 +46,12 @@ function renderPosts(req,res)
 			pages: nbPages });
 		});
 	});
+}
+
+
+var renderPosts2 = function(req,res)
+{
+	renderPosts(req,res);
 }
 
 
@@ -665,7 +671,8 @@ module.exports = {
 	editPost: editPost,
 	listComments: listComments,
 	acceptComment : acceptComment,
-	deleteComment : deleteComment
+	deleteComment : deleteComment,
+	renderPosts2 : renderPosts2
 }
 
 
