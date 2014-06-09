@@ -13,13 +13,6 @@ MAINTAINER Gaetan de Villele (gdevillele@gmail.com)
 ENV DEBIAN_FRONTEND noninteractive
 
 
-################# USER ##################
-
-# we define a new root password
-RUN echo "root:toor" | chpasswd
-
-
-
 ################# PACKAGES ##############
 
 # Update packages
@@ -38,7 +31,6 @@ ADD redis.conf /etc/redis/redis.conf
 
 # we expose redis-server service to the other containers
 EXPOSE 6379
-
 
 
 ############################################
