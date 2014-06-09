@@ -1,8 +1,10 @@
 var express = require('express');
 var app = express();
 
-var db = require('./db').connect();
+app.set('views', GLOBAL.views_dir_path);
+app.set('view engine', 'jade');
 
+var db = require('./db').connect();
 var crypto = require('crypto');
 
 

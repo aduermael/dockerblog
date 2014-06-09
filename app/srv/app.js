@@ -29,11 +29,6 @@ var admin = require('./modules/admin');
 // create an express server app
 var app = express();
 
-// TO CHECK
-app.set('views', GLOBAL.views_dir_path);
-app.set('view engine', 'jade');
-
-
 // we use compression module to compress the responses
 app.use(compression());
 
@@ -50,7 +45,7 @@ app.use(busboy({immediate: true}));
 app.use(express.static(GLOBAL.public_dir_path));
 
 // log the original url of all incoming requests
-app.use(log_request_url);
+// app.use(log_request_url);
 
 // blog modules
 app.use('/admin', admin);
