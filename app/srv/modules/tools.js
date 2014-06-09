@@ -6,6 +6,7 @@ app.set('view engine', 'jade');
 
 var db = require('./db').connect();
 var crypto = require('crypto');
+var keys = require('./keys');
 
 
 exports.returnJSON = function(res,obj)
@@ -19,8 +20,13 @@ exports.returnJSON = function(res,obj)
 
 exports.renderJade = function(res,page,options)
 {	
-	res.render(page,options);
+	keys.getAllKeysAndValues(function(err,values)
+	{
+		options.keys = values;
+		res.render(page,options);
+	});
 }
+
 
 exports.randomHash = function(nbBytes)
 {

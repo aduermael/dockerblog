@@ -350,7 +350,6 @@ function keysAddKeyCallBack(response)
 	if(response.success && response.success == true)
 	{
 		document.location = "/admin/keys";
-		alert("OK!");
 	}
 	else
 	{
@@ -377,7 +376,6 @@ function callback_key_delete(response)
 	if(response.success && response.success == true)
 	{
 		document.location = "/admin/keys";
-		alert("OK!");
 	}
 	else
 	{
@@ -396,7 +394,7 @@ function configAddKey(sender)
 	postContent.value = $('#addValue').val();
 	postContent.lang = $('#langSelector option:selected').val();
 
-	alert(JSON.stringify(postContent));
+	//alert(JSON.stringify(postContent));
 
 	//Post('/admin/config/key',postContent,configAddKeyCallBack,errorCallback);
 }
@@ -406,7 +404,6 @@ function configAddKeyCallBack(data)
   if(res.success)
   {
     document.location = "/admin/config";
-    alert("OK!");
   }
   else
   {

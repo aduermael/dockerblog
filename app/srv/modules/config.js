@@ -18,6 +18,9 @@ module.exports = function()
 	var express = require('express');
 	var app = express();
 	
+	app.set('views', GLOBAL.views_dir_path);
+	app.set('view engine', 'jade');
+	
 	app.post('/key', add );
 	app.get('/', page );	
 

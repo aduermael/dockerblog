@@ -19,6 +19,9 @@ module.exports = function()
 	var express = require('express');
 	var app = express();
 	
+	app.set('views', GLOBAL.views_dir_path);
+	app.set('view engine', 'jade');
+	
 	app.post('/key', post_key );
 	app.post('/delete_key', delete_key );
 	app.get('/', root );	
@@ -187,9 +190,8 @@ function deleteKey(key, callback)
 }
 
 
-
 // callback(error, value)
-function getAllValues(callback)
+module.exports.getAllKeysAndValues = function(callback)
 {
 	var hashname = 'keys_' + lang.get();
 	db.hgetall(hashname, callback);

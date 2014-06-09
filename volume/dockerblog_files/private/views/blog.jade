@@ -13,7 +13,7 @@ block structure
 	#topbanner
 		h1
 			a(href='/')
-				img(src="/img/title.png" alt="laurel comics blog bloglaurel")
+				img(src="/img/title.jpg" alt="laurel comics blog bloglaurel")
 
 	#infos
 		#avatar
@@ -21,55 +21,55 @@ block structure
 	#social
 		#networks
 			.network
-				a(href="/")
+				a(href="#{keys.facebook}")
 					img(src="/img/networks/facebook.png").facebook
 				h2.facebook
-					a(href="#{fbLink}") Facebook
+					a(href="#{keys.facebook}") Facebook
 			.network
-				a(href="/")
+				a(href="#{keys.twitter}")
 					img(src="/img/networks/twitter.png").twitter
 				h2.twitter
-					a(href="#{twLink}") Twitter
+					a(href="#{keys.twitter}") Twitter
 			.network
-				a(href="/")
+				a(href="#{keys.pinterest}")
 					img(src="/img/networks/pinterest.png").pinterest
 				h2.pinterest
-					a(href="http://www.pinterest.com/bloglaurel") Pinterest
+					a(href="#{keys.pinterest}") Pinterest
 			.network
-				a(href="/")
+				a(href="#{keys.tumblr}")
 					img(src="/img/networks/tumblr.png").tumblr
 				h2.tumblr
-					a(href="http://bloglaurel.tumblr.com") Tumblr
+					a(href="#{keys.tumblr}") Tumblr
 			.network
-				a(href="/")
+				a(href="#{keys.deviantart}")
 					img(src="/img/networks/deviantart.png").deviantart
 				h2.deviantart
-					a(href="http://bloglaurel.deviantart.com") Deviantart
+					a(href="#{keys.deviantart}") Deviantart
 			.network
-				a(href="https://vine.co/bloglaurel")
+				a(href="#{keys.vine}")
 					img(src="/img/networks/vine.png").vine
 				h2.vine
-					a(href="https://vine.co/bloglaurel") Vine
+					a(href="#{keys.vine}") Vine
 			.network
-				a(href="/")
+				a(href="#{keys.vimeo}")
 					img(src="/img/networks/vimeo.png").vimeo
 				h2.vimeo
-					a(href="http://vimeo.com/bloglaurel") Vimeo
+					a(href="#{keys.vimeo}") Vimeo
 			.network
-				a(href="/")
+				a(href="#{keys.instagram}")
 					img(src="/img/networks/instagram.png").instagram
 				h2.instagram
-					a(href="http://instagram.com/bloglaurel") Instagram
+					a(href="#{keys.instagram}") Instagram
 			.network
-				a(href="/")
+				a(href="#{keys.etsy}")
 					img(src="/img/networks/etsy.png").etsy
 				h2.etsy
-					a(href="/") Etsy
+					a(href="#{keys.etsy}") Etsy
 			.network
-				a(href="/")
+				a(href="#{keys.society6}")
 					img(src="/img/networks/society6.jpg")
 				h2.society6
-					a(href="http://society6.com/Bloglaurel") Society6
+					a(href="#{keys.society6}") Society6
 
 			.clearboth
 
@@ -90,24 +90,25 @@ block structure
 		.zone
 			img(src="/img/banners/contact.jpg")
 			h2
-				a(href="/") Contact me
+				a(href="/contact") Contact me
 
 		.zone
-			img(src="/img/banners/youridea.jpg")
-			h2
-				a(href="/") Work with me
-			img(src="/img/banners/card.jpg")
-			h2
-				a(href="/") Business cards
-			img(src="/img/banners/books.jpg")
-			h2
-				a(href="/") Books
-			img(src="/img/banners/apps.jpg")
-			h2
-				a(href="/") Apps
-			img(src="/img/banners/archives.jpg")
-			h2
-				a(href="/") Archives
+			//
+				img(src="/img/banners/youridea.jpg")
+				h2
+					a(href="/") Work with me
+				img(src="/img/banners/card.jpg")
+				h2
+					a(href="/") Business cards
+				img(src="/img/banners/books.jpg")
+				h2
+					a(href="/") Books
+				img(src="/img/banners/apps.jpg")
+				h2
+					a(href="/") Apps
+				img(src="/img/banners/archives.jpg")
+				h2
+					a(href="/") Archives
 
 	.left_column
 		block content
@@ -115,30 +116,38 @@ block structure
 		
 		#socialfooter
 			#networks
+			
 				.network
-					img(src="/img/networks/facebook.png").facebook
+					a(href="#{keys.facebook}")
+						img(src="/img/networks/facebook.png").facebook
 					h2.facebook
-						a(href="/") Facebook
+						a(href="#{keys.facebook}") Facebook
 				.network
-					img(src="/img/networks/twitter.png").twitter
+					a(href="#{keys.twitter}")
+						img(src="/img/networks/twitter.png").twitter
 					h2.twitter
-						a(href="/") Twitter
+						a(href="#{keys.twitter}") Twitter
 				.network
-					img(src="/img/networks/pinterest.png").pinterest
+					a(href="#{keys.pinterest}")
+						img(src="/img/networks/pinterest.png").pinterest
 					h2.pinterest
-						a(href="/") Pinterest
+						a(href="#{keys.pinterest}") Pinterest
 				.network
-					img(src="/img/networks/tumblr.png").tumblr
+					a(href="#{keys.tumblr}")
+						img(src="/img/networks/tumblr.png").tumblr
 					h2.tumblr
-						a(href="/") Tumblr
+						a(href="#{keys.tumblr}") Tumblr
 				.network
-					img(src="/img/networks/deviantart.png").deviantart
+					a(href="#{keys.deviantart}")
+						img(src="/img/networks/deviantart.png").deviantart
 					h2.deviantart
-						a(href="/") Deviantart
+						a(href="#{keys.deviantart}") Deviantart
 				.network
-					img(src="/img/networks/vine.png").vine
+					a(href="#{keys.vine}")
+						img(src="/img/networks/vine.png").vine
 					h2.vine
-						a(href="/") Vine
+						a(href="#{keys.vine}") Vine
+					
 		.clearboth
 
 		#footer
