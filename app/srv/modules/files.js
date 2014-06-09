@@ -9,18 +9,13 @@ var fs = require('fs');
 
 var tools = require('./tools');
 
-
-var PUBLIC_DIR = "";
-
-// to be renamed into "uploads"
-var FILES_DIR = "uploads";
-
-
+var PUBLIC_DIR = GLOBAL.public_dir_path;
+var UPLOADS_DIR = GLOBAL.uploads_dir;
 
 
 function checkUploadsDir (callback)
 {
-	var dir = PUBLIC_DIR + '/' + FILES_DIR;
+	var dir = PUBLIC_DIR + '/' + UPLOADS_DIR;
 	
 	fs.exists(dir, function (exists)
 	{
@@ -46,10 +41,9 @@ function checkUploadsDir (callback)
 };
 
 
-
 var checkYearDir = function(year, callback)
 {
-	var dir = PUBLIC_DIR + '/' + FILES_DIR + '/' + year;
+	var dir = PUBLIC_DIR + '/' + UPLOADS_DIR + '/' + year;
 	
 	fs.exists(dir, function (exists)
 	{
@@ -76,7 +70,7 @@ var checkYearDir = function(year, callback)
 
 var checkMonthDir = function(year,month,callback)
 {    
-  var dir = PUBLIC_DIR + '/' + FILES_DIR + '/' + year + '/' + month;
+  var dir = PUBLIC_DIR + '/' + UPLOADS_DIR + '/' + year + '/' + month;
   
   fs.exists(dir, function (exists)
   {
@@ -122,13 +116,6 @@ function getFilenameWithoutExtension(filename)
 // EXPORTED FUNCTIONS
 //
 //====================================================
-
-// receive the path of the /public directory
-exports.init = function(public_dir)
-{
-  PUBLIC_DIR = public_dir;
-}
-
 
 
 // receives the request which is a file upload
@@ -212,7 +199,7 @@ exports.saveFile = function(req, res)
 								// add a prefix to the filename
 								var filename = prefix + getFilenameWithoutExtension(file.filename) + suffix + getFilenameExtension(file.filename);
 								console.log('NAME : ' + filename);
-								var destination_directory_relative_path = '/' + FILES_DIR + '/' + year + '/' + month;
+								var destination_directory_relative_path = '/' + UPLOADS_DIR + '/' + year + '/' + month;
 								var destination_file_relative_path = destination_directory_relative_path + '/' + filename;
 								var destination_directory_absolute_path = PUBLIC_DIR + destination_directory_relative_path;
 								var destination_file_absolute_path = PUBLIC_DIR + destination_file_relative_path;

@@ -6,7 +6,9 @@
 GLOBAL.redis_server_ip = process.env.DB_PORT_6379_TCP_ADDR;
 GLOBAL.redis_server_port = process.env.DB_PORT_6379_TCP_PORT;
 
-GLOBAL.views_path = "/dockerblog_files/views"
+GLOBAL.views_dir_path = "/dockerblog_files/private/views";
+GLOBAL.public_dir_path = "/dockerblog_files/public";
+GLOBAL.uploads_dir = "uploads"; // in public directory
 
 // import GLOBAL modules
 var express      = require('express');
@@ -20,7 +22,6 @@ var posts = require('./modules/posts');
 var pages = require('./modules/pages');
 var lang = require('./modules/lang');
 var files = require('./modules/files');
-files.init(__dirname + "/public");
 var admin = require('./modules/admin');
 
 
@@ -29,7 +30,7 @@ var admin = require('./modules/admin');
 var app = express();
 
 // TO CHECK
-app.set('views', __dirname + '/views');
+app.set('views', GLOBAL.views_dir_path);
 app.set('view engine', 'jade');
 
 
@@ -46,7 +47,7 @@ app.use(bodyParser());
 app.use(busboy({immediate: true}));
 
 // 'static' middleware is still part on Express
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(GLOBAL.public_dir_path));
 
 // log the original url of all incoming requests
 app.use(log_request_url);
