@@ -1,5 +1,12 @@
-#! /bin/bash
+#!/bin/bash
+#
+# START SCRIPT
+#
 
-redis-server /etc/redis/redis.conf
+# start ssh-server
+# /usr/sbin/sshd
 
-node /srv/app.js
+forever start app.js
+
+# we keep an interactive TTY
+/bin/bash
