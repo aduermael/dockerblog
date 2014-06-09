@@ -15,15 +15,7 @@
 FROM ubuntu:14.04
 MAINTAINER Gaetan de Villele (gdevillele@gmail.com)
 
-##########   USER   ############
-
-# we define a new root password
-RUN echo "root:toor" | chpasswd
-
 ##########  VOLUMES  ###########
-
-ADD dockerblog_style /dockerblog_style
-VOLUME /dockerblog_style
 
 ADD dockerblog_files /dockerblog_files
 VOLUME /dockerblog_files
@@ -33,5 +25,4 @@ VOLUME /dockerblog_db
 
 ########## ENTRYPOINT ##########
 
-ENTRYPOINT ["/bin/bash"]
-# ENTRYPOINT ["/bin/true"]
+ENTRYPOINT ["/bin/true"]
