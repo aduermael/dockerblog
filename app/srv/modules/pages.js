@@ -11,6 +11,9 @@ var app = function()
 {
 	var express = require('express');
 	var app = express();
+	
+	app.set('views', GLOBAL.views_dir_path);
+	app.set('view engine', 'jade');
 
 	app.get('/:pageName', renderPage );
 

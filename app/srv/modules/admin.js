@@ -16,6 +16,11 @@ var lang = require('./lang');
 
 
 var app = express();
+
+app.set('views', GLOBAL.views_dir_path);
+app.set('view engine', 'jade');
+	
+	
 module.exports = function()
 {
 	// http basic auth middleware

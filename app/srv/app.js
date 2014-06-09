@@ -29,6 +29,9 @@ var admin = require('./modules/admin');
 // create an express server app
 var app = express();
 
+app.set('views', GLOBAL.views_dir_path);
+app.set('view engine', 'jade');
+
 // we use compression module to compress the responses
 app.use(compression());
 
