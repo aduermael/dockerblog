@@ -13,20 +13,16 @@ MAINTAINER Gaetan de Villele (gdevillele@gmail.com)
 ENV DEBIAN_FRONTEND noninteractive
 
 
-
-################# USER ################
-
-# we define a new root password
-RUN echo "root:toor" | chpasswd
-
-
-
 ########## Update packages ##########
 
 RUN apt-get update -y
-
 RUN apt-get upgrade -y
 
+
+################# USER (for dev) ################
+
+# we define a new root password
+# RUN echo "root:toor" | chpasswd
 
 
 ########## SSH SERVER (for dev) ##########
@@ -67,8 +63,6 @@ RUN cd /srv; npm install;
 WORKDIR /srv
 
 
-
 ########## Define default command
-ADD start.sh /start.sh
 # ENTRYPOINT later
 CMD ["/bin/bash", "/start.sh"]
