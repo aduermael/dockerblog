@@ -26,7 +26,13 @@ block content
 
 		a(name="coms")
 		#comments
-			h2 #{comments.length} Comments
+			- if (comments.length == 0)
+				h2 #{keys.loc_no_comments}
+			- else if (comments.length == 1)
+				h2 #{comments.length} #{keys.loc_comment}
+			- else
+				h2 #{comments.length} #{keys.loc_comments}
+			
 			
 			- each comment in comments
 				.comment

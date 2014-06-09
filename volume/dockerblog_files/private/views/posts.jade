@@ -26,7 +26,13 @@ block content
 						else
 							img(src=block.path alt="bloglaurel comics")
 			.footer
-				a(href="/" + post.slug +  "/" + post.ID + "#coms") #{post.nbComs} Comments
+				a(href="/" + post.slug +  "/" + post.ID + "#coms") 
+					- if (post.nbComs == 0)
+						| #{keys.loc_no_comments}
+					- else if (post.nbComs == 1)
+						| #{post.nbComs} #{keys.loc_comment}
+					- else
+						| #{post.nbComs} #{keys.loc_comments}
 		
 	#pages
 		p
