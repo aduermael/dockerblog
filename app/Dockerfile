@@ -32,14 +32,14 @@ RUN apt-get upgrade -y
 ########## SSH SERVER (for dev) ##########
 
 # we install openssh server
-RUN apt-get install -y openssh-server
+# RUN apt-get install -y openssh-server
 
 # we need to create privilege separation directory
-RUN mkdir -p /var/run/sshd
+# RUN mkdir -p /var/run/sshd
 
 # we expose the 22 port of the container to the host
 # to be able to use SSH from a remote client
-EXPOSE 22
+# EXPOSE 22
 
 
 
