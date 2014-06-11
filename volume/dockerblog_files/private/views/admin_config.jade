@@ -3,19 +3,17 @@ extends admin
 
 block pagecontent
 
-	h2 Preferences (#{lang})
+	h2 Configuration (#{lang})
 
 	.list
 		ul
-			- each pref,prefKey in prefs
+			- each pref,prefKey in config_values
 				li
 					div
-						strong #{prefKey} 
+						strong #{prefKey}
 					div
 						textarea(type="text" style="margin:0;width:500px;height:50px;") #{pref}
 					div
-						a(href="#" onclick="keysDeleteKey(this)" style="color:#c33e1b") Delete
-						|  - 
-						a(href="#" onclick="keyUpdateKey(this)" style="color:#8ab946") Update
-						
+						a(href="#" onclick="configUpdateKey(this)" style="color:#8ab946") Update
+
 	div(style="height:20px;")

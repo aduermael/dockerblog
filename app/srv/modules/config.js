@@ -6,9 +6,7 @@
 
 
 var db = require('./db').connect();
-
 var tools = require('./tools');
-
 var lang = require('./lang');
 
 
@@ -21,132 +19,109 @@ module.exports = function()
 	app.set('views', GLOBAL.views_dir_path);
 	app.set('view engine', 'jade');
 	
-	app.post('/key', add );
-	app.get('/', page );	
+	app.post('/key', post_key);
+	app.get('/', page);	
 
-	
+	initConfig();
+		
 	return app;
 	
 }();
 
 
-function page(req,res)
+
+function page (req, res)
 {	
-	db.hgetall('config_' + lang.get(),function(error,values)
+	getAllValues(function(error, value)
 	{
 		if (!error)
 		{
+			// console.log('all : '+JSON.stringify(value));
 			var options = {};
 			options.siteName = 'Blog | Admin - Config';
 			options.lang = lang.get();
-			if (values)
-				options.prefs = values;
-			else
-				options.prefs = [];
-			
-			
-			console.log(JSON.stringify(options));
-			
-			tools.renderJade(res,'admin_config',options);	
+			options.config_values = value ? value : [];			
+			tools.renderJade(res, 'admin_config', options);	
 		}
-		
 	});
 }
 
 
 
-
-function get(callback)
+function post_key(req, res)
 {
-  db.get('config_' + lang.get(),function(error,json)
-  {
-    if (error)
-    {
-      callback();
-    }
-    else
-    {
-      var obj = JSON.parse(json);
-      callback(obj);
-    }
-  });
-}
-
-
-function set(value,key,callback)
-{
-  db.get('config_' + lang.get(),function(error,json)
-  {
-    if (error)
-    {
-      callback();
-    }
-    else
-    {
-      var obj = JSON.parse(json);
-      obj[key] = value;
-
-      var multi = db.multi();
-      multi.set('config_' + lang.get(),JSON.stringify(obj));
-
-      multi.exec(function(err,replies)
-      {
-        if (err)
-        {
-          callback(JSON.parse(json));
-        }
-        else
-        {
-          callback(obj);
-        }
-      });
-    }
-  });
-}
-
-
-
-function add(req,res)
-{
-	var key = req.body.key;
+	// console.log('POST CONFIG '+JSON.stringify(req.body));
 	
-	
-	db.hset('config_' + lang.get(),key,"empty",function(error,reply)
+	var key   = req.body.key;
+	var value = req.body.value;
+	var lang_value = lang.get();
+		
+	if (key)
 	{
-		if (!error)
+		if (value)
 		{
-			if (reply == 1)
+			if (lang_value)
 			{
-				console.log("config: new key");
+				setValueForKey(value, key, function(error) 
+				{
+					if (!error)
+					{
+						var response = {};
+						response.success = true;
+						tools.returnJSON(res, response)
+					}
+					else
+					{
+						var response = {};
+						response.success = false;
+						tools.returnJSON(res, response)
+					}
+				});
 			}
 			else
 			{
-				console.log("config: updated key");
+				var response = {};
+				response.success = false;
+				tools.returnJSON(res, response)
 			}
-			
-			 var ret = {"success":true};
-			 tools.returnJSON(res,ret)
 		}
 		else
 		{
-			 var ret = {"success":false};
-			 tools.returnJSON(res,ret)
+			var response = {};
+			response.success = false;
+			tools.returnJSON(res, response)
 		}
-	});
-}
-
-
-
-function del(key,callback)
-{
-	db.hdel('config_' + lang.get(),key,function(error,nbRemoved)
+	}
+	else
 	{
-		
-	});
+		var response = {};
+		response.success = false;
+		tools.returnJSON(res, response)
+	}
 }
 
 
-// ADDED BY GAETAN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // callback(error)
@@ -191,6 +166,56 @@ function getAllValues(callback)
 
 
 
+// callback(error, keys)
+function getAllKeys(callback)
+{
+	var hashname = 'config_' + lang.get();
+	db.hkeys(hashname, callback);
+}
+
+
+
+function initConfig()
+{	
+	var db_config_keys_and_values = getAllKeys(function(error, values) 
+	{
+		if (!error)
+		{
+			// console.log('INIT CONFIG : ' + JSON.stringify(values));
+			if (!values)
+			{
+				values = [];
+			}
+			
+			var config = require(GLOBAL.private_dir_path+'/config.json');
+			
+			var transaction = db.multi();
+			Object.keys(config).forEach(function(key)
+			{
+				if (isInArray(key, values) == false)
+				{
+					var value = config[key];
+					console.log('adding ' +key+'/'+value+' in DB config');
+					transaction.hset('config_'+lang.get(), key, value);
+				}
+			});
+			
+			JSON.stringify(transaction.exec());
+		}
+		else
+		{
+			// redis error
+			console.log('redis error');
+		}
+	});
+}
+
+
+
+function isInArray(value, array)
+{
+	return array.indexOf(value) > -1;
+}
 
 
 
