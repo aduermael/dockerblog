@@ -13,6 +13,7 @@ var postsManager = require('./posts');
 var pagesManager = require('./pages');
 var tools = require('./tools');
 var lang = require('./lang');
+var files = require('./files');
 
 
 var app = express();
@@ -55,6 +56,13 @@ module.exports = function()
 
 	app.get('/edit/:postID', editPost );
 	app.get('/pages/edit/:pageID', editPage );
+
+	
+	app.post('/image', function (req, res)
+	{
+		files.saveFile(req,res);
+	});
+
 
 	app.get('*',posts);
 

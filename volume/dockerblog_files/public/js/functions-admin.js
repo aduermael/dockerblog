@@ -149,7 +149,7 @@ function editPage(sender)
   pageContent.blocks = blocks;
   pageContent.pageName = $("#pageName").val();
   pageContent.pageTitle = $("#pageTitle").val();
-
+  
   Post('/admin/pages/edit',pageContent,editPageCallBack,errorCallback);
 }
 
@@ -619,7 +619,7 @@ $(document).ready(function()
 
 		if (inputs.files.length > 0)
 		{
-			PostFiles('/image',formData,uploadFileCallback,errorCallback);
+			PostFiles('/admin/image',formData,uploadFileCallback,errorCallback);
 		}
 		else
 		{

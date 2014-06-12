@@ -22,7 +22,6 @@ var busboy       = require('connect-busboy');
 var posts = require('./modules/posts');
 var pages = require('./modules/pages');
 var lang = require('./modules/lang');
-var files = require('./modules/files');
 var admin = require('./modules/admin');
 
 
@@ -55,13 +54,6 @@ app.use(express.static(GLOBAL.public_dir_path));
 app.use('/admin', admin);
 app.use('/lang', lang.app);
 app.use(lang.use);
-
-
-// SHOULD BE ONLY CALL IN /ADMIN
-app.post('/image', function (req, res)
-{
-  files.saveFile(req,res);
-});
 
 
 app.use('/', posts.app);
