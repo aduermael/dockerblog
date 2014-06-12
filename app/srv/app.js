@@ -8,6 +8,7 @@ GLOBAL.redis_server_port = process.env.DB_PORT_6379_TCP_PORT;
 
 GLOBAL.views_dir_path = "/dockerblog_files/private/views";
 GLOBAL.public_dir_path = "/dockerblog_files/public";
+GLOBAL.private_dir_path = "/dockerblog_files/private";
 GLOBAL.uploads_dir = "uploads"; // in public directory
 
 // import GLOBAL modules

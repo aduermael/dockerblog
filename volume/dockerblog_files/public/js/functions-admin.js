@@ -149,7 +149,7 @@ function editPage(sender)
   pageContent.blocks = blocks;
   pageContent.pageName = $("#pageName").val();
   pageContent.pageTitle = $("#pageTitle").val();
-  
+
   Post('/admin/pages/edit',pageContent,editPageCallBack,errorCallback);
 }
 
@@ -387,23 +387,24 @@ function callback_key_delete(response)
 
 // CONFIG
 
-function configAddKey(sender)
+function configUpdateKey(sender)
 {
-	var postContent = new Object()
-	postContent.key = $('#addKey').val();
-	postContent.value = $('#addValue').val();
-	postContent.lang = $('#langSelector option:selected').val();
-
-	//alert(JSON.stringify(postContent));
-
-	//Post('/admin/config/key',postContent,configAddKeyCallBack,errorCallback);
+    var key = $(sender).closest('li').find('div:first-child strong').html();
+    var value = $(sender).closest('li').find('div textarea').val();
+    // console.log('--> '+key+' / '+value);
+    var postContent = new Object()
+    postContent.key = key;
+    postContent.value = value;
+    Post('/admin/config/key', postContent, callback_config_update, errorCallback);
 }
 
-function configAddKeyCallBack(data)
+
+
+function callback_config_update(response)
 {
-  if(res.success)
+  if(response.success)
   {
-    document.location = "/admin/config";
+    alert('SUCCESS');
   }
   else
   {

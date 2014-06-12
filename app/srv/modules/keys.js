@@ -42,7 +42,7 @@ function root(req, res)
 			options.siteName = 'Blog | Admin - Keys (kvs)';
 			options.lang = lang.get();
 			options.prefs = value ? value : [];
-			console.log(JSON.stringify(options));			
+			//console.log(JSON.stringify(options));			
 			tools.renderJade(res, 'admin_keys', options);	
 		}
 	});
