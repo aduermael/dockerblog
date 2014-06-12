@@ -193,8 +193,8 @@ exports.saveFile = function(req, res)
 							{
 								// TODO: ALLOW FILES WITH SAME NAME !!
 								// TODO: get the prefix and suffix values from the config
-								var prefix = "prefix-";
-								var suffix = "-suffix";
+								var prefix = "";
+								var suffix = "";
 								
 								// add a prefix to the filename
 								var filename = prefix + getFilenameWithoutExtension(file.filename) + suffix + getFilenameExtension(file.filename);
