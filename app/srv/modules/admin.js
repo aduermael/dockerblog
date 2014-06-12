@@ -15,6 +15,8 @@ var tools = require('./tools');
 var lang = require('./lang');
 var files = require('./files');
 
+var db = require('./db').connect();
+
 
 var app = express();
 
@@ -62,6 +64,9 @@ module.exports = function()
 	{
 		files.saveFile(req,res);
 	});
+	
+	
+	app.post('/credentials', updateCredentials);
 
 
 	app.get('*',posts);
@@ -93,6 +98,36 @@ function authentication(req, res, next)
 	}
 	else
 	{
+		// get from DB
+		db.hmget("blog_credentials","login","pass",function(err,values)
+		{
+			if (!err)
+			{
+				var login = values[0];
+				var passHash = values[1];
+				
+				if (login && passHash)
+				{
+					console.log("login: " + login + " pass: " + pass);
+					
+					if (result.name == login && tools.sha1(result.pass,"w;0S9f;9O!1gI6w26*4dfB.&UA=E?9") == passHash)
+					{
+						console.log("authentication -> OK");
+					}
+					else
+					{
+						console.log("authentication -> NO");
+					}					
+				}
+				else
+				{
+					// admin / admin
+					console.log("missing login & pass in DB -> admin/admin");
+				}
+			}	
+		});
+		
+		
 		if (result.name == 'admin' && result.pass == 'admin')
 		{
 			next();
@@ -104,6 +139,42 @@ function authentication(req, res, next)
 			res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
 			res.end('Unauthorized');
 		}
+	}
+}
+
+
+
+function updateCredentials(req,res)
+{
+	var login = req.body.login;
+	var loginVerif = req.body.loginVerif;
+	
+	var pass = req.body.pass;
+	var passVerif = req.body.passVerif;
+	
+	if (login != "" && login == loginVerif && pass != "" && pass == passVerif)
+	{
+		var passHash = tools.sha1(pass,"w;0S9f;9O!1gI6w26*4dfB.&UA=E?9");
+			
+		db.hmset("blog_credentials","login",login,"pass",passHash,function(err)
+		{
+			if (!err)
+			{
+				var ret = {"success":true};
+				tools.returnJSON(res,ret);		
+			}
+			else
+			{
+				var ret = {"success":false};
+				tools.returnJSON(res,ret);				
+			}
+		});
+		
+	}
+	else
+	{
+		var ret = {"success":false};
+		tools.returnJSON(res,ret);
 	}
 }
 
