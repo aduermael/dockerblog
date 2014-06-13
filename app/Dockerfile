@@ -52,10 +52,14 @@ RUN npm install forever -g
 EXPOSE 80
 
 
+ADD package.json /tmp/package.json
+RUN cd /tmp; npm install;
+RUN cp -a /tmp/node_modules /srv/
 
 ########## Put blog source files
+
 ADD srv /srv
-RUN cd /srv; npm install;
+#RUN cd /srv; npm install;
 
 
 
