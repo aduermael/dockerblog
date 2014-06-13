@@ -7,6 +7,20 @@ block pagecontent
 
 	.list
 		ul
+			li
+				div
+					input#addKey(type="text" value="login" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'login') { this.value = ''; }")
+				div
+					input#addKey(type="text" value="login verification" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'login verification') { this.value = ''; }")
+				div
+					input#addKey(type="password" value="password" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'password') { this.value = ''; }")
+				div
+					input#addKey(type="password" value="password" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'password') { this.value = ''; }")
+				div
+					a(href="#" onclick="updateCredentials(this)") Update
+					
+	.list
+		ul
 			- each pref,prefKey in config_values
 				li
 					div

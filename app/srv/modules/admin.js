@@ -113,32 +113,36 @@ function authentication(req, res, next)
 					if (result.name == login && tools.sha1(result.pass,"w;0S9f;9O!1gI6w26*4dfB.&UA=E?9") == passHash)
 					{
 						console.log("authentication -> OK");
+						next();
 					}
 					else
 					{
 						console.log("authentication -> NO");
+						// Respond with 401 "Unauthorized".
+						res.statusCode = 401;
+						res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
+						res.end('Unauthorized');
 					}					
 				}
 				else
 				{
 					// admin / admin
 					console.log("missing login & pass in DB -> admin/admin");
+					
+					if (result.name == 'admin' && result.pass == 'admin')
+					{
+						next();
+					}
+					else
+					{
+						// Respond with 401 "Unauthorized".
+						res.statusCode = 401;
+						res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
+						res.end('Unauthorized');
+					}
 				}
 			}	
 		});
-		
-		
-		if (result.name == 'admin' && result.pass == 'admin')
-		{
-			next();
-		}
-		else
-		{
-			// Respond with 401 "Unauthorized".
-			res.statusCode = 401;
-			res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
-			res.end('Unauthorized');
-		}
 	}
 }
 
