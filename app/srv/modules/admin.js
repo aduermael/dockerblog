@@ -15,6 +15,11 @@ var tools = require('./tools');
 var lang = require('./lang');
 var files = require('./files');
 
+var LOGIN = "";
+var PASSHASH = "";
+
+
+
 var db = require('./db').connect();
 
 
@@ -98,53 +103,75 @@ function authentication(req, res, next)
 	}
 	else
 	{
-		// get from DB
-		db.hmget("blog_credentials","login","pass",function(err,values)
+		if (LOGIN == "" && PASSHASH == "")
 		{
-			if (!err)
+			// get from DB
+			db.hmget("blog_credentials","login","pass",function(err,values)
 			{
-				var login = values[0];
-				var passHash = values[1];
-				
-				if (login && passHash)
+				if (!err)
 				{
-					console.log("DB -> login: " + login + " pass: " + passHash);
-					console.log("SENT -> login: " + result.name + " pass: " + tools.sha1(result.pass));
+					var login = values[0];
+					var passHash = values[1];
 					
-					if (result.name == login && tools.sha1(result.pass) == passHash)
+					if (login && passHash)
 					{
-						console.log("authentication -> OK");
-						next();
+						LOGIN = login;
+						PASSHASH = passHash;
+						
+						if (result.name == LOGIN && tools.sha1(result.pass) == PASSHASH)
+						{
+							console.log("authentication -> OK");
+							next();
+						}
+						else
+						{
+							console.log("authentication -> NO");
+	
+							// Respond with 401 "Unauthorized".
+							res.statusCode = 401;
+							res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
+							res.end('Unauthorized');
+						}					
 					}
 					else
 					{
-						console.log("authentication -> NO");
+						// admin / admin
+						console.log("missing login & pass in DB -> admin/admin");
+						
+						if (result.name == 'admin' && result.pass == 'admin')
+						{
+							next();
+						}
+						else
+						{
+							// Respond with 401 "Unauthorized".
+							res.statusCode = 401;
+							res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
+							res.end('Unauthorized');
+						}
+					}
+				}	
+			}); // end get from DB	
+		}
+		else // LOGIN & PASSHASH already retrieved from DB
+		{
+			if (result.name == LOGIN && tools.sha1(result.pass) == PASSHASH)
+			{
+				console.log("authentication -> OK");
+				next();
+			}
+			else
+			{
+				console.log("authentication -> NO");
 
-						// Respond with 401 "Unauthorized".
-						res.statusCode = 401;
-						res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
-						res.end('Unauthorized');
-					}					
-				}
-				else
-				{
-					// admin / admin
-					console.log("missing login & pass in DB -> admin/admin");
-					
-					if (result.name == 'admin' && result.pass == 'admin')
-					{
-						next();
-					}
-					else
-					{
-						// Respond with 401 "Unauthorized".
-						res.statusCode = 401;
-						res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
-						res.end('Unauthorized');
-					}
-				}
-			}	
-		});
+				// Respond with 401 "Unauthorized".
+				res.statusCode = 401;
+				res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
+				res.end('Unauthorized');
+			}
+		}
+	
+		
 	}
 }
 
@@ -159,7 +186,10 @@ function updateCredentials(req,res)
 	var passVerif = req.body.passVerif;
 	
 	if (login != "" && login == loginVerif && pass != "" && pass == passVerif)
-	{
+	{	
+		LOGIN = "";
+		PASSHASH = "";
+						
 		var passHash = tools.sha1(pass);
 			
 		db.hmset("blog_credentials","login",login,"pass",passHash,function(err)
