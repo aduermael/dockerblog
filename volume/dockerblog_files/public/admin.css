@@ -122,6 +122,16 @@ input[type=text]
 	background-color: #E0E0E0;
 }
 
+input[type=password]
+{
+	display: block;
+	
+	padding:5px;
+	width:100%;
+	color: #666;
+	background-color: #E0E0E0;
+}
+
 
 input[type=button]
 {
