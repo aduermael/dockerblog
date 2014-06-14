@@ -50,7 +50,6 @@ function addTextBlock(sender)
 
   $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_text sortable\" style=\"margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;\">Text</div>");
 
-  console.log(blockName);
   myNicEditor.addInstance(blockName);
 }
 
@@ -62,6 +61,25 @@ function sendImage(sender)
 function addImageBlock(sender)
 {
   $('#upload_file_input').click();
+}
+
+function addContactForm(sender)
+{
+	nextBlock++;
+	var blockName = "block" + nextBlock;
+	
+	$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_contact sortable\" style=\"margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;\">" 
+		+ "<div>"
+			+ "<p style=\"float:left;margin-right:10px;\">To:</p>"
+			+ "<input id=\"emailTo\" type=\"text\" style=\"float:left;width:500px;margin:0;height:20px;\">"
+			+ "<div style=\"clear:both;\"></div>"
+		+ "</div>"		
+		+ "<div>"
+			+ "<p style=\"float:left;margin-right:10px;\">Title:</p>"
+			+ "<input id=\"emailTitle\" type=\"text\" style=\"float:left;width:500px;margin:0;height:20px;\">"
+			+ "<div style=\"clear:both;\"></div>"
+		+ "</div>"		
+	+ "</div>");
 }
 
 
@@ -88,6 +106,12 @@ function editPost(sender)
       blocks[i].type = "image";
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
       blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+    }
+    else if ($(this).hasClass("block_contact"))
+    {
+      blocks[i].type = "contact";
+      blocks[i].to = $($(this).children('div')[0]).children('input')[0].value;
+      blocks[i].title = $($(this).children('div')[1]).children('input')[0].value;
     }
     else if ($(this).hasClass("block_video"))
     {
@@ -132,6 +156,12 @@ function editPage(sender)
       blocks[i].type = "image";
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
       blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+    }
+    else if ($(this).hasClass("block_contact"))
+    {
+      blocks[i].type = "contact";
+      blocks[i].to = $($(this).children('div')[0]).children('input')[0].value;
+      blocks[i].title = $($(this).children('div')[1]).children('input')[0].value;
     }
     else if ($(this).hasClass("block_video"))
     {
@@ -211,6 +241,12 @@ function sendPost(sender)
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
       blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
     }
+    else if ($(this).hasClass("block_contact"))
+    {
+      blocks[i].type = "contact";
+      blocks[i].to = $($(this).children('div')[0]).children('input')[0].value;
+      blocks[i].title = $($(this).children('div')[1]).children('input')[0].value;
+    }
     else if ($(this).hasClass("block_video"))
     {
       blocks[i].type = "video";
@@ -255,6 +291,12 @@ function sendPage(sender)
       blocks[i].type = "image";
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
       blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+    }
+    else if ($(this).hasClass("block_contact"))
+    {
+      blocks[i].type = "contact";
+      blocks[i].to = $($(this).children('div')[0]).children('input')[0].value;
+      blocks[i].title = $($(this).children('div')[1]).children('input')[0].value;
     }
     else if ($(this).hasClass("block_video"))
     {
@@ -482,6 +524,9 @@ function reorder(sender)
       $("input").css('opacity', 0.1);
       $(".block_image").css('border','1px dashed #000');
       $(".block_text").css('border','1px dashed #000');
+	  $(".block_contact").css('border','1px dashed #000');
+      
+     
       reorder_mode = true;
     }
     else
@@ -499,6 +544,8 @@ function reorder(sender)
       $("input").css('opacity', 1.0);
       $(".block_image").css('border','none');
       $(".block_text").css('border','none');
+      $(".block_contact").css('border','none');
+      
       reorder_mode = false;
     }
 }
@@ -579,6 +626,8 @@ $(document).ready(function()
 			$("input").css('opacity', 0.1);
 			$(".block_image").css('border','1px dashed #000');
 			$(".block_text").css('border','1px dashed #000');
+			$(".block_contact").css('border','1px dashed #000');
+
 			reorder_mode = true;
 		}
 		else
@@ -596,6 +645,8 @@ $(document).ready(function()
 			$("input").css('opacity', 1.0);
 			$(".block_image").css('border','none');
 			$(".block_text").css('border','none');
+			$(".block_contact").css('border','none');
+			
 			reorder_mode = false;
 		}
 	});
@@ -661,16 +712,19 @@ $(document).ready(function()
 
 var uploadFileCallback = function(data)
 {
-  var res = JSON.parse(data);
-  if(res.success)
-  {
-    nextBlock++;
-    var blockName = "block" + nextBlock;
-
-    $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.image_path + "\"/><div class=\"edit_img_url_zone\">url: <input class=\"edit_img_url_field\" id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"\"/></div></div>");
-  }
-  else
-  {
-    alert("FAILED");
-  }
+	alert("DATA: " + data);
+	
+	var res = JSON.parse(data);
+	
+	if(res.success)
+	{
+		nextBlock++;
+		var blockName = "block" + nextBlock;
+		
+		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.image_path + "\"/><div class=\"edit_img_url_zone\">url: <input class=\"edit_img_url_field\" id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"\"/></div></div>");
+	}
+	else
+	{
+		alert("FAILED");
+	}
 }
