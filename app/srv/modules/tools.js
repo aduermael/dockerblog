@@ -33,10 +33,10 @@ exports.randomHash = function(nbBytes)
 	return crypto.randomBytes(nbBytes).toString('hex');
 }
 
-exports.sha1 = function(string,salt)
+exports.sha1 = function(string)
 {
 	var shasum = crypto.createHash('sha1');
-	shasum.update(string + salt);
+	shasum.update(string);
 	return shasum.digest('hex');
 }
 

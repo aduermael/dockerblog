@@ -387,6 +387,33 @@ function callback_key_delete(response)
 
 // CONFIG
 
+function updateCredentials()
+{	
+	var obj = {};
+	obj.login = $("#login").val();
+	obj.loginVerif = $("#loginVerif").val();
+	obj.pass = $("#pass").val();
+	obj.passVerif = $("#passVerif").val();
+	
+	Post('/admin/credentials', obj, callbackUpdateCredentials, errorCallback);
+}
+
+
+function callbackUpdateCredentials(response)
+{
+  if(response.success)
+  {
+	document.location = "/admin/config";
+  }
+  else
+  {
+    alert("FAILED");
+  }
+}
+
+
+
+
 function configUpdateKey(sender)
 {
     var key = $(sender).closest('li').find('div:first-child strong').html();

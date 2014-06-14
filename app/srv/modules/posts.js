@@ -49,9 +49,6 @@ function renderPosts(req,res)
 			tools.renderJade(res,'posts',{ siteName: 'Blog | Home',
 			posts: content,
 			lang: langManager.get(),
-			myInfos: "myInfos", // should be in key-value options
-			fbLink: "facebookURL", // should be in key-value options
-			twLink: "twitterURL", // should be in key-value options
 			pages: nbPages });
 		});
 	});
@@ -102,9 +99,6 @@ function renderOnePost(req,res)
 							post: post,
 							comments: comments,
 							lang: langManager.get(),
-							myInfos: "myInfos", // should be in key-value options
-							fbLink: "facebookURL", // should be in key-value options
-							twLink: "twitterURL", // should be in key-value options
 							vID: vID // an ID to check how much time it took to right a comment (anti spam)
 						}); 
 						

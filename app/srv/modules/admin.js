@@ -108,9 +108,10 @@ function authentication(req, res, next)
 				
 				if (login && passHash)
 				{
-					console.log("login: " + login + " pass: " + pass);
+					console.log("DB -> login: " + login + " pass: " + passHash);
+					console.log("SENT -> login: " + result.name + " pass: " + tools.sha1(result.pass));
 					
-					if (result.name == login && tools.sha1(result.pass,"w;0S9f;9O!1gI6w26*4dfB.&UA=E?9") == passHash)
+					if (result.name == login && tools.sha1(result.pass) == passHash)
 					{
 						console.log("authentication -> OK");
 						next();
@@ -118,6 +119,7 @@ function authentication(req, res, next)
 					else
 					{
 						console.log("authentication -> NO");
+
 						// Respond with 401 "Unauthorized".
 						res.statusCode = 401;
 						res.setHeader('WWW-Authenticate', 'Basic realm="Authorization Required"');
@@ -158,12 +160,14 @@ function updateCredentials(req,res)
 	
 	if (login != "" && login == loginVerif && pass != "" && pass == passVerif)
 	{
-		var passHash = tools.sha1(pass,"w;0S9f;9O!1gI6w26*4dfB.&UA=E?9");
+		var passHash = tools.sha1(pass);
 			
 		db.hmset("blog_credentials","login",login,"pass",passHash,function(err)
 		{
 			if (!err)
 			{
+				console.log("passHash: " + passHash);
+				
 				var ret = {"success":true};
 				tools.returnJSON(res,ret);		
 			}
