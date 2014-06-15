@@ -12,10 +12,6 @@ var db = require('./db').connect();
 
 var postsPerPage = 10;
 
-// Comment will not be taken if sent less than COMMENT_MIN_DELAY after page loading 
-var COMMENT_MIN_DELAY = 3;
-var COMMENT_TIME_TO_WRITE = 60 * 24 * 5; // time to write a comment
-
 
 var app = function()
 {
@@ -46,9 +42,8 @@ function renderPosts(req,res)
 	{
 		pages(postsPerPage ,function(nbPages)
 		{	
-			tools.renderJade(res,'posts',{ siteName: 'Blog | Home',
+			tools.renderJade(req,res,'posts',{ siteName: 'Blog | Home',
 			posts: content,
-			lang: langManager.get(),
 			pages: nbPages });
 		});
 	});
@@ -73,37 +68,14 @@ function renderOnePost(req,res)
 		}
 		else
 		{
-			var vID = "vID_" + tools.randomHash(8);
-			var ttl = COMMENT_TIME_TO_WRITE;
-			
-			var multi = db.multi();
-			
-			multi.set(vID,ttl); // keep original ttl
-			multi.expire(vID,ttl);
-			
-			multi.exec(function(err,replies)
+			getComments(postID,function(err,comments)
 			{
-				if (err)
+				tools.renderJade(req,res,'post',
 				{
-					var ret = {"success":false};
-					tools.returnJSON(res,ret); 
-				}
-				else // we can display post, having vID
-				{
-					
-					getComments(postID,function(err,comments)
-					{
-						tools.renderJade(res,'post',
-						{
-							siteName: 'Blog | post',
-							post: post,
-							comments: comments,
-							lang: langManager.get(),
-							vID: vID // an ID to check how much time it took to right a comment (anti spam)
-						}); 
-						
-					});
-				}
+					siteName: 'Blog | post',
+					post: post,
+					comments: comments
+				}); 
 			});
 		}
     
@@ -213,93 +185,59 @@ var getNbComments = function(postID, callback)
 
 var comment = function(obj,callback)
 {
-	// CHECK VERIFICATION ID (timing)
-	var multi = db.multi();
-		
-	multi.get(obj.vID); // keep original ttl
-	multi.ttl(obj.vID);
-	
-	multi.exec(function(err,replies)
+	// CHECK IF POST EXISTS
+	db.exists("post_" + obj.postID,function(error,postExists)
 	{
-		if (err)
+		if (error)
 		{
-			callback(err);
+			callback(error);
 		}
-		else // we can display post, having vID
-		{
-			var originalTTL = replies[0];
-			var TTL = replies[1];
-			var delay = originalTTL - TTL;
-			
-			if (!TTL || !originalTTL)
+		else
+		{	
+			if (postExists)
 			{
-				callback({"error":"vID TTL not found"});	
-			}
-			else if (delay > COMMENT_MIN_DELAY) // good to go!
-			{
-				// CHECK IF POST EXISTS
-				db.exists("post_" + obj.postID,function(error,postExists)
+				// SAVE COMMENT
+				getCommentID(function(err,commentID)
 				{
-					if (error)
+					if (err)
 					{
-						callback(error);
+						callback(err);
 					}
 					else
-					{	
-						if (postExists)
+					{
+						var ID = "com_" + commentID;
+						
+						var date = new Date();
+						var timestamp = Date.now();
+						
+						var multi = db.multi();
+						multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
+						
+						// comment will be link to the post later, when validated
+						//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+						
+						multi.zadd("comments_all_" + langManager.get(),timestamp,ID); // all comments (to list in admin)
+						multi.zadd("comments_unvalidated_" + langManager.get(),timestamp,ID); // unvalidated comments (to list in admin)
+						
+						multi.incr("commentCount");
+						
+						multi.exec(function(err,replies)
 						{
-							// SAVE COMMENT
-							getCommentID(function(err,commentID)
+							if (err)
 							{
-								if (err)
-								{
-									callback(err);
-								}
-								else
-								{
-									var ID = "com_" + commentID;
-									
-									var date = new Date();
-									var timestamp = Date.now();
-									
-									var multi = db.multi();
-									multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
-									
-									// comment will be link to the post later, when validated
-									//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
-									
-									multi.zadd("comments_all_" + langManager.get(),timestamp,ID); // all comments (to list in admin)
-									multi.zadd("comments_unvalidated_" + langManager.get(),timestamp,ID); // unvalidated comments (to list in admin)
-									
-									multi.incr("commentCount");
-									
-									multi.exec(function(err,replies)
-									{
-										if (err)
-										{
-											callback(err);	 
-										}
-										else
-										{
-											callback();	 
-										}
-									});
-								}
-							});
-						}
-						else
-						{
-							callback({"error":"Post can't be found"});	
-						}
+								callback(err);	 
+							}
+							else
+							{
+								callback();	 
+							}
+						});
 					}
 				});
 			}
 			else
-			{	
-				db.del(obj.vID,function(err,value)
-				{
-					callback({"error":"delay too short, looks like a bot..."});	
-				});
+			{
+				callback({"error":"Post can't be found"});	
 			}
 		}
 	});
@@ -653,9 +591,8 @@ var editPost = function(req,res)
       content.stringdate = getPostTime(content.date);
 	  content.blocks = JSON.parse(content.blocks);
 
-      tools.renderJade(res,'admin_post_edit',{ siteName: 'Blog | Admin - Edit post',
-      post: content,
-      lang: langManager.get()
+      tools.renderJade(req,res,'admin_post_edit',{ siteName: 'Blog | Admin - Edit post',
+      post: content
       });
     }
   });

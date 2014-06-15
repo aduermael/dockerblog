@@ -4,7 +4,7 @@
 #
 #
 
-FROM ubuntu:13.04
+FROM ubuntu:14.04
 MAINTAINER Gaetan de Villele (gdevillele@gmail.com)
 
 
@@ -55,6 +55,17 @@ EXPOSE 80
 ADD package.json /tmp/package.json
 RUN cd /tmp; npm install;
 RUN cp -a /tmp/node_modules /srv/
+
+################# REDIS #################
+
+# install redis-server package
+RUN apt-get install -y redis-server
+
+ADD redis.conf /etc/redis/redis.conf
+
+# we expose redis-server service to the other containers
+EXPOSE 6379
+
 
 ########## Put blog source files
 

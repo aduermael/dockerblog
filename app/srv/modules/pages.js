@@ -37,7 +37,7 @@ function renderPage(req,res,next)
 			{
 				if (!error)
 				{
-					tools.renderJade(res,'page',
+					tools.renderJade(req,res,'page',
 					{
 						siteName: 'Blog | page',
 						page: page,
@@ -249,7 +249,7 @@ var editPage = function(req,res)
       content.date = getPostTime(content.date);
 	  content.blocks = JSON.parse(content.blocks);
 
-      tools.renderJade(res,'admin_page_edit',{ siteName: 'Blog | Admin - Edit page',
+      tools.renderJade(req,res,'admin_page_edit',{ siteName: 'Blog | Admin - Edit page',
       page: content,
       lang: langManager.get()
       });

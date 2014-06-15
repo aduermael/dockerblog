@@ -223,19 +223,19 @@ function updateCredentials(req,res)
 
 function home(req,res)
 {
-	tools.renderJade(res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
+	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
 }
 
 
 function newPost(req,res)
 {
-	tools.renderJade(res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
+	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
 }
 
 
 function newPage(req,res)
 {
-	tools.renderJade(res,'admin_page',{ siteName: 'Blog | Admin - New page', lang: lang.get() });
+	tools.renderJade(req,res,'admin_page',{ siteName: 'Blog | Admin - New page', lang: lang.get() });
 }
 
 
@@ -284,7 +284,7 @@ function posts(req,res)
 {
   postsManager.list(0,200,function(error,content)
   {
-      tools.renderJade(res,'admin_posts',{ siteName: 'Blog | Admin',
+      tools.renderJade(req,res,'admin_posts',{ siteName: 'Blog | Admin',
           posts: content,
           lang: lang.get() });
   });
@@ -295,7 +295,7 @@ function pages(req,res)
 {
   pagesManager.list(0,200,function(error,content)
   {
-      tools.renderJade(res,'admin_pages',{ siteName: 'Blog | Admin',
+      tools.renderJade(req,res,'admin_pages',{ siteName: 'Blog | Admin',
           pages: content,
           lang: lang.get() });
   });
@@ -306,7 +306,7 @@ function comments(req,res)
 {
   postsManager.listComments(0,200,function(error,content)
   {
-      tools.renderJade(res,'admin_comments',{ siteName: 'Blog | Admin - Comments',
+      tools.renderJade(req,res,'admin_comments',{ siteName: 'Blog | Admin - Comments',
           comments: content,
           lang: lang.get() });
   });

@@ -43,7 +43,7 @@ function root(req, res)
 			options.lang = lang.get();
 			options.prefs = value ? value : [];
 			//console.log(JSON.stringify(options));			
-			tools.renderJade(res, 'admin_keys', options);	
+			tools.renderJade(req,res, 'admin_keys', options);	
 		}
 	});
 }

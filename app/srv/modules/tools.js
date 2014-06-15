@@ -1,3 +1,5 @@
+var MIN_TIME_BETWEEN_PAGE_RENDERING_AND_POST = 5; // in seconds
+
 var express = require('express');
 var app = express();
 
@@ -18,13 +20,53 @@ exports.returnJSON = function(res,obj)
 }
 
 
-exports.renderJade = function(res,page,options)
-{	
+exports.renderJade = function(req,res,page,options)
+{		
+	// Store the last time a page was rendered in session
+	// Used to detect robots when receiving post messages from non-admin users
+	req.session.lastPageRenderTime = new Date().getTime();
+	
 	keys.getAllKeysAndValues(function(err,values)
 	{
 		options.keys = values;
 		res.render(page,options);
 	});
+}
+
+
+exports.killFastRobots = function(req,res,next)
+{
+	if (req.session.lastPageRenderTime)
+	{
+		var lastPageRenderTime = new Date(req.session.lastPageRenderTime);
+		var now = new Date();
+		
+		var diff = (now - lastPageRenderTime) / 1000;
+		
+		if (diff >= MIN_TIME_BETWEEN_PAGE_RENDERING_AND_POST)
+		{	
+			next();			
+		}
+		else
+		{
+			var obj = {"success":false};
+		
+			var body = JSON.stringify(obj);
+			res.setHeader('Content-Type', 'application/json');
+			res.setHeader('Content-Length', body.length);
+			res.end(body);
+		}
+	}
+	else
+	{
+		var obj = {"success":false};
+		
+		var body = JSON.stringify(obj);
+		res.setHeader('Content-Type', 'application/json');
+		res.setHeader('Content-Length', body.length);
+		res.end(body);
+  
+	}
 }
 
 

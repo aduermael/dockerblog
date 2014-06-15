@@ -41,7 +41,7 @@ function page (req, res)
 			options.siteName = 'Blog | Admin - Config';
 			options.lang = lang.get();
 			options.config_values = value ? value : [];			
-			tools.renderJade(res, 'admin_config', options);	
+			tools.renderJade(req,res, 'admin_config', options);	
 		}
 	});
 }

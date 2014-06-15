@@ -17,12 +17,16 @@ var compression  = require('compression');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var busboy       = require('connect-busboy');
+var session      = require('express-session');
+var RedisStore   = require('connect-redis')(session);
+
 
 // import LOCAL modules
 var posts = require('./modules/posts');
 var pages = require('./modules/pages');
-var lang = require('./modules/lang');
+var lang  = require('./modules/lang');
 var admin = require('./modules/admin');
+var tools = require('./modules/tools');
 
 
 
@@ -41,6 +45,12 @@ app.use(cookieParser());
 // not sure we need this one ... need confirmation (for regular forms maybe ??)
 // parse application/json and application/x-www-form-urlencoded
 app.use(bodyParser());
+
+var options = {};
+options.ttl = 60 * 60 * 5; // session ttl -> 5 hours
+
+app.use(session({ store: new RedisStore(options), secret:'5c8be406c43595d4143b96043d0cfd6f'}))
+
 // we handle "multipart/form-data" (file uploads) with busboy module
 app.use(busboy({immediate: true}));
 
@@ -52,9 +62,14 @@ app.use(express.static(GLOBAL.public_dir_path));
 
 // blog modules
 app.use('/admin', admin);
+
+// For anything posted by a non-admin user
+// We check if the message was posted long enough after page rendering
+// It helps getting rid of some spam robots
+app.post('*',tools.killFastRobots);
+
 app.use('/lang', lang.app);
 app.use(lang.use);
-
 
 app.use('/', posts.app);
 app.use('/', pages.app);
