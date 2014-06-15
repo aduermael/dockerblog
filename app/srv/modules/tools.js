@@ -29,8 +29,19 @@ exports.renderJade = function(req,res,page,options)
 	
 	keys.getAllKeysAndValues(function(err,values)
 	{
-		options.keys = values;
-		res.render(page,options);
+		if (!err)
+		{
+			var keys = values;
+			if (! keys ) keys = {};
+			
+			options.keys = keys;
+			res.render(page,options);
+		}
+		else
+		{
+			options.keys = {};
+			res.render(page,options);
+		}
 	});
 }
 
