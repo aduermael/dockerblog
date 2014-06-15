@@ -25,6 +25,7 @@ var app = function()
 	app.get('/:slug/:PostID', renderOnePost );
 	
 	app.post('/comment', postComment );
+	app.post('/contact', postContact ); // email form
 			
 	//app.get('*', renderPosts );	
 
@@ -81,6 +82,76 @@ function renderOnePost(req,res)
     
 	});
 }
+
+
+function postContact(req,res)
+{
+	var message = req.body;
+	
+	var error = false;
+	
+	
+	if ( message.email != "" && !validateEmail(message.email) )
+	{
+		error = true;
+	}
+	
+	if (message.content == "")
+	{
+		error = true;
+	}
+	
+	
+	if (!error)
+	{
+		console.log("Data is all good to send email. Now let's find the associated post...");
+		
+		get(message.postID, function(error,post)
+		{	
+			if (error) // not found?
+			{
+				var ret = {"success":false};
+				tools.returnJSON(res,ret);
+			}
+			else
+			{
+				console.log("Post found! now let's find the associated block...");
+				
+				console.dir(post);
+				
+				if (post.blocks)
+				{
+					if (post.blocks.length > message.blockID)
+					{
+						var contactBlock = post.blocks[message.blockID];
+												
+						tools.sendMail(contactBlock.to,message.email,contactBlock.title + message.subject,message.content);
+						
+						var ret = {"success":true};
+						tools.returnJSON(res,ret);	
+					}
+					else // not enough blocks???
+					{
+						var ret = {"success":false};
+						tools.returnJSON(res,ret);
+					}
+				}
+				else // no blocks???
+				{
+					var ret = {"success":false};
+					tools.returnJSON(res,ret);
+				}
+			}
+	    
+		});
+	}
+	else
+	{	
+		var ret = {"success":false};
+		tools.returnJSON(res,ret);
+	}
+}
+
 
 
 function postComment(req,res)

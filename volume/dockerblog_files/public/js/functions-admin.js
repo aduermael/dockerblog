@@ -694,7 +694,7 @@ $(document).ready(function()
 		//grab all form data
 		var formData = new FormData($(this)[0]);
 		var inputs = document.getElementById('upload_file_input');
-
+		
 		if (inputs.files.length > 0)
 		{
 			PostFiles('/admin/image',formData,uploadFileCallback,errorCallback);

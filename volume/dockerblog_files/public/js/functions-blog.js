@@ -44,18 +44,52 @@ function sendMessage(postID,blockID,emailIndication,subjectIndication)
 		$('#contactFields_' + postID + '_' + blockID).hide();
 		$('#formsending_' + postID + '_' + blockID).show();
 		
-		//Post('/comment',comment,postCommentCallback,errorCallback);			
-		
-		alert(JSON.stringify(message));
+		Post('/contact',message,sendMessageCallback,errorCallback);			
 	}
 	
 }
+
+
+var sendMessageCallback = function(data)
+{
+	var res = data;
+	
+	$( "div[id^='formsending_']" ).each(function( index )
+	{	
+		if ($(this).is(":visible"))
+		{	
+			var id = $(this).attr('id');
+			
+			var elements = id.split('_');
+			
+			if(res.success)
+			{
+				elements.splice(0,1,"formsent");
+				var idSent = elements.join("_");
+				idSent = "#" + idSent;
+							
+				$(idSent).show();
+			}
+			else
+			{
+				elements.splice(0,1,"formerror");
+				var idError = elements.join("_");
+				idError = "#" + idError;
+							
+				$(idError).show();			
+			}
+			
+			$(this).hide();	
+		}
+	});
+}
+
+
 
 function postComment(nameIndication,emailIndication)
 {
 	var comment = new Object()
 	comment.postID = $('#postID').val();
-	comment.vID = $('#verificationID').val();
 	comment.name = $('#commentName').val();
 	comment.email = $('#commentEmail').val();
 	comment.content = $('#commentContent').val();

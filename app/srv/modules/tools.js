@@ -9,6 +9,7 @@ app.set('view engine', 'jade');
 var db = require('./db').connect();
 var crypto = require('crypto');
 var keys = require('./keys');
+var mail = require("nodemailer").mail;
 
 
 exports.returnJSON = function(res,obj)
@@ -69,6 +70,22 @@ exports.killFastRobots = function(req,res,next)
 	}
 }
 
+// html is optional
+exports.sendMail = function(to,from,title,text,html)
+{
+	var mailObject = {};
+	mailObject.from = from;
+	mailObject.to = to;	
+	mailObject.subject = title;	
+	mailObject.text = text;
+	
+	if (html)
+		mailObject.html = html;	
+		
+	console.dir(mailObject);
+	
+	mail(mailObject);
+}
 
 exports.randomHash = function(nbBytes)
 {
