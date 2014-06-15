@@ -11,7 +11,7 @@ block content
 			.date(style="float:right;") #{post.stringdate}
 			.clearboth
 			
-		- each block in post.blocks
+		- each block,i in post.blocks
 			if (block.type == "text")
 				.block.text
 					p !{block.text}
@@ -35,7 +35,6 @@ block content
 								p Error when sending message!
 								
 							div(id="contactFields_"+post.ID+"_"+i)
-								//p #{post.ID} - #{i}
 								input.mandatory(id="contactEmail_"+post.ID+"_"+i type="text" value="Your email" 
 								onfocus="if(this.value == 'Your email') { this.value = ''; } backToOriginalBackground(this);" 
 								onblur="if(this.value == '') { this.value = 'Your email'; }")

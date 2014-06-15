@@ -1,3 +1,13 @@
+/*
+	A page is very similar to a post. 
+	It has the same type of ID (post_X)
+	But it is not referenced in the same set. (pages_LANG)
+
+	A page has a <NAME> defining the URL to display it.
+	-> <HOST>/<NAME>
+*/
+
+
 var slug = require('slug');
 var langManager = require('./lang');
 var tools = require('./tools');
@@ -145,7 +155,7 @@ var newPage = function(req,res)
 		}
 		else
 		{
-			var ID = "page_" + pageID;
+			var ID = "post_" + pageID;
 			
 			var date = new Date();
 			var timestamp = Date.now();// / 1000;
@@ -159,7 +169,7 @@ var newPage = function(req,res)
 			
 			multi.hmset(ID,"blocks",JSON.stringify(page.blocks),"date",timestamp,"ID",pageID,"name",page.name,"title",page.title);
 			multi.hset("pages_" + langManager.get(),page.name,ID); // ordered set for each lang
-			multi.incr("pageCount");
+			multi.incr("postCount");
 			
 			multi.exec(function(err,replies)
 			{
@@ -184,7 +194,7 @@ var saveEditedPage = function(req,res)
 { 
 	var pageID = req.body.ID;
 	
-	var ID = "page_" + pageID;
+	var ID = "post_" + pageID;
 	
 	var date = new Date();
 	var timestamp = Date.now();// / 1000;
@@ -238,7 +248,7 @@ var editPage = function(req,res)
 { 
   var pageID = req.params.pageID;
 
-  db.hgetall("page_" + pageID,function(error,content)
+  db.hgetall("post_" + pageID,function(error,content)
   {
     if (error)
     {
@@ -272,19 +282,33 @@ module.exports = {
 
 
 
+// Same as getPostID() from posts module
+
 function getPageID(callback)
 {
-  db.get("pageCount",function(err,pageCount)
-  {
-    var pageID = 0;
-
-    if (pageCount)
-    {
-      pageID = pageCount;
-    }
-    
-    callback(err,pageID);
-  });
+	db.get("postCount",function(err,postCount)
+	{
+		var pageID = 0;
+		
+		if (postCount)
+		{
+			pageID = postCount;
+		}
+		
+		callback(err,pageID);
+	});
+  
+	/*db.get("pageCount",function(err,pageCount)
+	{
+		var pageID = 0;
+	
+		if (pageCount)
+		{
+		 	pageID = pageCount;
+		}
+		
+		callback(err,pageID);
+	});*/
 }
 
 

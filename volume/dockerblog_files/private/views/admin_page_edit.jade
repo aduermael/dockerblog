@@ -30,6 +30,18 @@ block pagecontent
 					div.edit_img_url_zone
 						| url: 
 						input#imageurl.edit_img_url_field(name="imageurl" type="text" value="#{block.url}")
+						
+			else if (block.type == "contact")
+				div(id="#{block_contact}" style="background-color:#F7F7F7;").edit_post_zone.block_contact.sortable
+					div 
+						p(style="float:left;margin-right:10px;") To:
+						input#emailTo(type="text" style="float:left;width:500px;margin:0;height:20px;" value="#{block.to}")
+						div(style="clear:both;")
+					div 
+						p(style="float:left;margin-right:10px;") Title:
+						input#emailTitle(type="text" style="float:left;width:500px;margin:0;height:20px;" value="#{block.title}")
+						div(style="clear:both;")
+						
 			- block_number++
 
 
@@ -45,6 +57,10 @@ block pagecontent
 					a(href="#" onclick="addImageBlock(this)") Image
 				li
 					a(href="#") Video
+				li
+					a(href="#" onclick="addContactForm(this)") Contact form
+				li
+					a(href="#") File
 		.clearboth
 
 	div.edit_post_zone.backgroundLevel_1
