@@ -420,6 +420,21 @@ a:hover
 }
 
 
+.tinyForm
+{
+  width: 400px;
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  padding: 5px;
+  
+  border-radius: 5px;
+  background-color: #F4F4F4;
+  
+}
+
+
 .left_column .post #comments #form
 {
   width: 400px;
@@ -538,6 +553,16 @@ textarea
 }
 
 .text
+{
+  background-color: transparent;
+  width: 740px;
+  text-align:justify;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+
+.contact
 {
   background-color: transparent;
   width: 740px;

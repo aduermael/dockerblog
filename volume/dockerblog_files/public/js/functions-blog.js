@@ -10,6 +10,47 @@ $(document).ready(function()
 });
 
 
+function sendMessage(postID,blockID,emailIndication,subjectIndication)
+{	
+	var message = new Object()
+	message.postID = postID;
+	message.blockID = blockID;
+	message.email = $('#contactEmail_' + postID + '_' + blockID).val();
+	message.subject = $('#contactSubject_' + postID + '_' + blockID).val();
+	message.content = $('#contactContent_' + postID + '_' + blockID).val();
+	
+	var error = false;
+	
+	if ( !validateEmail(message.email) )
+	{
+		setBackgroundColor($('#contactEmail_' + postID + '_' + blockID),errorColor);
+		error = true;
+	}
+	
+	if (message.subject == subjectIndication || message.subject == "")
+	{
+		message.subject = "";
+	}
+	
+	if (message.content == "")
+	{
+		setBackgroundColor($('#contactContent_' + postID + '_' + blockID),errorColor);
+		error = true;
+	}
+	
+	
+	if (!error)
+	{
+		$('#contactFields_' + postID + '_' + blockID).hide();
+		$('#formsending_' + postID + '_' + blockID).show();
+		
+		//Post('/comment',comment,postCommentCallback,errorCallback);			
+		
+		alert(JSON.stringify(message));
+	}
+	
+}
+
 function postComment(nameIndication,emailIndication)
 {
 	var comment = new Object()
@@ -83,6 +124,17 @@ function backToOriginalBackground(obj)
 	else if ($(obj).attr('id') == $('#commentEmail').attr('id'))
 	{
 		setBackgroundColor($('#commentEmail'),optionalColor);
+	}
+	else
+	{
+		if ($(obj).hasClass( "mandatory" ))
+		{
+			setBackgroundColor($(obj),mandatoryColor);
+		}
+		else
+		{
+			setBackgroundColor($(obj),optionalColor);
+		}
 	}
 }
 
