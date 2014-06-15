@@ -138,7 +138,10 @@ function authentication(req, res, next)
 						// admin / admin
 						console.log("missing login & pass in DB -> admin/admin");
 						
-						if (result.name == 'admin' && result.pass == 'admin')
+						LOGIN = "admin";
+						PASSHASH = tools.sha1("admin");
+						
+						if (result.name == LOGIN && tools.sha1(result.pass) == PASSHASH)
 						{
 							next();
 						}
@@ -185,11 +188,11 @@ function updateCredentials(req,res)
 	var pass = req.body.pass;
 	var passVerif = req.body.passVerif;
 	
+	LOGIN = "";
+	PASSHASH = "";
+	
 	if (login != "" && login == loginVerif && pass != "" && pass == passVerif)
-	{	
-		LOGIN = "";
-		PASSHASH = "";
-						
+	{					
 		var passHash = tools.sha1(pass);
 			
 		db.hmset("blog_credentials","login",login,"pass",passHash,function(err)
