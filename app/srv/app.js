@@ -54,8 +54,10 @@ app.use(session({ store: new RedisStore(options), secret:'5c8be406c43595d4143b96
 // we handle "multipart/form-data" (file uploads) with busboy module
 app.use(busboy({immediate: true}));
 
+var oneDay = 86400000;
+
 // 'static' middleware is still part on Express
-app.use(express.static(GLOBAL.public_dir_path));
+app.use(express.static(GLOBAL.public_dir_path, { maxAge: oneDay }));
 
 // log the original url of all incoming requests
 // app.use(log_request_url);
