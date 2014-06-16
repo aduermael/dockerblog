@@ -67,11 +67,14 @@ ADD redis.conf /etc/redis/redis.conf
 EXPOSE 6379
 
 
+##### FIX FOR SAFARI BLANK PAGES... #####
+
+ADD index.js /srv/node_modules/express/node_modules/fresh/index.js
+
 ########## Put blog source files
 
 ADD srv /srv
 #RUN cd /srv; npm install;
-
 
 
 ########## Define the work directory
