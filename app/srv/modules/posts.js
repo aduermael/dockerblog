@@ -24,6 +24,8 @@ var app = function()
 	app.get('/page:PageID', renderPosts );
 	app.get('/:slug/:PostID', renderOnePost );
 	
+	app.get('/rss',renderRSS);
+	
 	app.post('/comment', postComment );
 	app.post('/contact', postContact ); // email form
 			
@@ -46,6 +48,21 @@ function renderPosts(req,res)
 			tools.renderJade(req,res,'posts',{ siteName: 'Blog | Home',
 			posts: content,
 			pages: nbPages });
+		});
+	});
+}
+
+
+function renderRSS(req,res)
+{
+	var page = 1;
+		
+	list((page - 1) , postsPerPage , function(error,content)
+	{
+		pages(postsPerPage ,function(nbPages)
+		{	
+			tools.renderJade(req,res,'rss',{ siteName: 'Blog | RSS',
+			posts: content });
 		});
 	});
 }
