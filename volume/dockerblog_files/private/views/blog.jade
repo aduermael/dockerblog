@@ -94,22 +94,43 @@ block structure
 				a(href="/contact") #{keys.loc_contactme}
 
 		.zone
-			//
-				img(src="/img/banners/youridea.jpg")
+			a(href="/references")
+				img(src="/img/banners/references.jpg")
+			h2
+				a(href="/references") #{keys.loc_references}
+				
+			- if (keys.loc_minecraft)
+				a(href="/minecraft")
+					img(src="/img/banners/minecraft.jpg")
 				h2
-					a(href="/") Work with me
-				img(src="/img/banners/card.jpg")
+					a(href="/minecraft") #{keys.loc_minecraft}
+					
+			//				
+				a(href="/publications")
+					img(src="/img/banners/books.jpg")
 				h2
-					a(href="/") Business cards
-				img(src="/img/banners/books.jpg")
+					a(href="/publications") #{keys.loc_publications}
+						
+						
+				a(href="/games")
+					img(src="/img/banners/apps.jpg")
 				h2
-					a(href="/") Books
-				img(src="/img/banners/apps.jpg")
+					a(href="/games") #{keys.loc_games}
+					
+				a(href="/commandes")
+					img(src="/img/banners/commandes.jpg")
 				h2
-					a(href="/") Apps
-				img(src="/img/banners/archives.jpg")
+					a(href="/commandes") Commandes
+					
+				a(href="/bcards")					
+					img(src="/img/banners/card.jpg")
 				h2
-					a(href="/") Archives
+					a(href="/bcards") Business cards
+					
+				a(href="/archives")
+					img(src="/img/banners/archives.jpg")
+				h2
+					a(href="/archives") Archives
 
 	.left_column
 		block content

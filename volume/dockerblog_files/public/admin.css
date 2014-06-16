@@ -341,7 +341,7 @@ ul
   display: block;
   margin:0;
   padding: 0;
-  max-width: 700px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
   border-radius: 5px;
@@ -350,7 +350,7 @@ ul
 
 .edit_img_url_field
 {
-  width: 340px;
+  width: 260px !important;
   color: #FFF;
   background-color: transparent;
   border: none;
@@ -360,12 +360,13 @@ ul
   padding: 5px;
   padding-left: 10px;
   padding-right: 10px;
+  margin:5px;
 }
 
 
 .edit_post_zone .edit_img_url_zone
 {
-  width: 400px;
+  width: 300px;
   position: absolute;
   bottom: 20px;
   right: 20px;

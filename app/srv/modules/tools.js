@@ -26,6 +26,7 @@ exports.renderJade = function(req,res,page,options)
 	// Store the last time a page was rendered in session
 	// Used to detect robots when receiving post messages from non-admin users
 	req.session.lastPageRenderTime = new Date().getTime();
+	options.timestamp304 = req.session.lastPageRenderTime;
 	
 	keys.getAllKeysAndValues(function(err,values)
 	{

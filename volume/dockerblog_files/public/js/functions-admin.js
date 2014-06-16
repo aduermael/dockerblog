@@ -711,9 +711,7 @@ $(document).ready(function()
 
 
 var uploadFileCallback = function(data)
-{
-	alert("DATA: " + data);
-	
+{	
 	var res = JSON.parse(data);
 	
 	if(res.success)
