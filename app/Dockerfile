@@ -69,7 +69,7 @@ EXPOSE 6379
 
 ##### FIX FOR SAFARI BLANK PAGES... #####
 
-ADD index.js /srv/node_modules/express/node_modules/fresh/index.js
+# ADD index.js /srv/node_modules/express/node_modules/fresh/index.js
 
 ########## Put blog source files
 
