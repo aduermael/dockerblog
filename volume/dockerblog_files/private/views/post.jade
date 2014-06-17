@@ -61,7 +61,7 @@ block content
 					.date
 						p #{comment.date}
 					.clearboth
-					p #{comment.content}
+					p !{comment.content.replace(/\n/g, '<br/>')}
 			
 			#form
 				#formsending(style="display: none")
