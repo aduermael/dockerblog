@@ -33,14 +33,15 @@ module.exports = function()
 
 function root(req, res)
 {
+	var lang = req.session.lang;
 	// display the /admin/keys page
-	db.hgetall('keys_' + lang.get(), function(error, value)
+	db.hgetall('keys_' + lang, function(error, value)
 	{
 		if (!error)
 		{
 			var options = {};
 			options.siteName = 'Blog | Admin - Keys (kvs)';
-			options.lang = lang.get();
+			options.lang = lang;
 			options.prefs = value ? value : [];
 			//console.log(JSON.stringify(options));			
 			tools.renderJade(req,res, 'admin_keys', options);	
@@ -56,7 +57,7 @@ function post_key(req, res)
 	
 	var key   = req.body.key;
 	var value = req.body.value;
-	var lang_value = lang.get();
+	var lang_value = req.session.lang;
 		
 	if (key)
 	{
@@ -64,7 +65,7 @@ function post_key(req, res)
 		{
 			if (lang_value)
 			{
-				setValueForKey(value, key, function(error) 
+				setValueForKey(lang_value, value, key, function(error) 
 				{
 					if (!error)
 					{
@@ -109,13 +110,13 @@ function delete_key(req, res)
 	console.log('DELETE KEY '+JSON.stringify(req.body));
 	
 	var key   = req.body.key;
-	var lang_value = lang.get();
+	var lang_value = req.session.lang;
 	
 	if (key)
 	{
 		if (lang_value)
 		{
-			deleteKey(key, function(error)
+			deleteKey(lang_value, key, function(error)
 			{
 				if (!error)
 				{
@@ -159,9 +160,9 @@ function delete_key(req, res)
 
 // add a value for key in the Keys KVS
 // callback(error)
-function setValueForKey(value, key, callback)
+function setValueForKey(lang, value, key, callback)
 {
-	var hashname = 'keys_' + lang.get();
+	var hashname = 'keys_' + lang;
 	db.hset(hashname, key, value, function(error, value) 
 	{
 		callback(error);
@@ -171,18 +172,18 @@ function setValueForKey(value, key, callback)
 
 
 // callback(error, value)
-function getValueForKey(key, callback)
+function getValueForKey(lang, key, callback)
 {
-	var hashname = 'keys_' + lang.get();
+	var hashname = 'keys_' + lang;
 	db.hget(hashname, key, callback);
 }
 
 
 
 // callback(error)
-function deleteKey(key, callback)
+function deleteKey(lang, key, callback)
 {
-	var hashname = 'keys_' + lang.get();
+	var hashname = 'keys_' + lang;
 	db.hdel(hashname, key, function(error, nbRemoved)
 	{
 		callback(error);
@@ -191,9 +192,9 @@ function deleteKey(key, callback)
 
 
 // callback(error, value)
-module.exports.getAllKeysAndValues = function(callback)
+module.exports.getAllKeysAndValues = function(lang, callback)
 {
-	var hashname = 'keys_' + lang.get();
+	var hashname = 'keys_' + lang;
 	db.hgetall(hashname, callback);
 }
 

@@ -21,14 +21,15 @@ exports.returnJSON = function(res,obj)
 }
 
 
-exports.renderJade = function(req,res,page,options)
-{		
+exports.renderJade = function(req, res, page, options)
+{
+	var lang = req.session.lang;
 	// Store the last time a page was rendered in session
 	// Used to detect robots when receiving post messages from non-admin users
 	req.session.lastPageRenderTime = new Date().getTime();
 	options.timestamp304 = req.session.lastPageRenderTime;
 	
-	keys.getAllKeysAndValues(function(err,values)
+	keys.getAllKeysAndValues(lang, function(err,values)
 	{
 		if (!err)
 		{
