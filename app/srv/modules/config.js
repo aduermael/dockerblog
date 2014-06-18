@@ -5,7 +5,6 @@
 //
 
 
-// import LOCAL modules
 var db = require('./db').connect();
 var tools = require('./tools');
 var lang = require('./lang');
@@ -26,20 +25,21 @@ module.exports = function()
 	initConfig();
 		
 	return app;
+	
 }();
 
 
 
 function page (req, res)
 {	
-	getAllValuesForLang(req.session.lang, function(error, value)
+	getAllValues(function(error, value)
 	{
 		if (!error)
 		{
 			// console.log('all : '+JSON.stringify(value));
 			var options = {};
 			options.siteName = 'Blog | Admin - Config';
-			options.lang = req.session.lang;
+			options.lang = lang.get();
 			options.config_values = value ? value : [];			
 			tools.renderJade(req,res, 'admin_config', options);	
 		}
@@ -54,7 +54,7 @@ function post_key(req, res)
 	
 	var key   = req.body.key;
 	var value = req.body.value;
-	var lang_value = req.session.lang;
+	var lang_value = lang.get();
 		
 	if (key)
 	{
@@ -62,7 +62,7 @@ function post_key(req, res)
 		{
 			if (lang_value)
 			{
-				setValueForKeyAndLang(value, key, lang_value, function(error) 
+				setValueForKey(value, key, function(error) 
 				{
 					if (!error)
 					{
@@ -125,9 +125,9 @@ function post_key(req, res)
 
 
 // callback(error)
-function setValueForKeyAndLang(value, key, lang_value, callback)
+function setValueForKey(value, key, callback)
 {
-	var hashname = 'config_' + lang_value;
+	var hashname = 'config_' + lang.get();
 	db.hset(hashname, key, value, function(error, value) 
 	{
 		callback(error);
@@ -137,18 +137,18 @@ function setValueForKeyAndLang(value, key, lang_value, callback)
 
 
 // callback(error, value)
-function getValueForKeyAndLang(key, lang_value, callback)
+function getValueForKey(key, callback)
 {
-	var hashname = 'config_' + lang_value;
+	var hashname = 'config_' + lang.get();
 	db.hget(hashname, key, callback);
 }
 
 
 
 // callback(error)
-function deleteValueForKeyAndLang(key, lang_value, callback)
+function deleteValueForKey(key,callback)
 {
-	var hashname = 'config_' + lang_value;
+	var hashname = 'config_' + lang.get();
 	db.hdel(hashname, key, function(error,nbRemoved)
 	{
 		callback(error);
@@ -158,18 +158,18 @@ function deleteValueForKeyAndLang(key, lang_value, callback)
 
 
 // callback(error, value)
-function getAllValuesForLang(lang_value, callback)
+function getAllValues(callback)
 {
-	var hashname = 'config_' + lang_value;
+	var hashname = 'config_' + lang.get();
 	db.hgetall(hashname, callback);
 }
 
 
 
 // callback(error, keys)
-function getAllKeysForLang(lang_value, callback)
+function getAllKeys(callback)
 {
-	var hashname = 'config_' + lang_value;
+	var hashname = 'config_' + lang.get();
 	db.hkeys(hashname, callback);
 }
 
@@ -177,7 +177,7 @@ function getAllKeysForLang(lang_value, callback)
 
 function initConfig()
 {	
-	var db_config_keys_and_values = getAllKeysForLang('en', function(error, values) 
+	var db_config_keys_and_values = getAllKeys(function(error, values) 
 	{
 		if (!error)
 		{
@@ -196,7 +196,7 @@ function initConfig()
 				{
 					var value = config[key];
 					console.log('adding ' +key+'/'+value+' in DB config');
-					transaction.hset('config_'+'en', key, value);
+					transaction.hset('config_'+lang.get(), key, value);
 				}
 			});
 			

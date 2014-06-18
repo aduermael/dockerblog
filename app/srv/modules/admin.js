@@ -12,7 +12,7 @@ var auth = require('basic-auth');
 var postsManager = require('./posts');
 var pagesManager = require('./pages');
 var tools = require('./tools');
-var lang_module = require('./lang');
+var lang = require('./lang');
 var files = require('./files');
 
 var LOGIN = "";
@@ -34,8 +34,8 @@ module.exports = function()
 	// http basic auth middleware
 	app.use(authentication);
 
-	app.use('/lang', lang_module);
-	app.use(lang_module.detect);
+	app.use('/lang', lang.app);
+	app.use(lang.use);
 
 	// admin "keys" tab
 	app.use('/keys', require('./keys'));
@@ -221,24 +221,21 @@ function updateCredentials(req,res)
 
 
 
-function home(req, res)
+function home(req,res)
 {
-	var lang = req.session.lang;
-	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang});
+	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
 }
 
 
-function newPost(req, res)
+function newPost(req,res)
 {
-	var lang = req.session.lang;
-	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang });
+	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
 }
 
 
-function newPage(req, res)
+function newPage(req,res)
 {
-	var lang = req.session.lang;
-	tools.renderJade(req,res,'admin_page',{ siteName: 'Blog | Admin - New page', lang: lang });
+	tools.renderJade(req,res,'admin_page',{ siteName: 'Blog | Admin - New page', lang: lang.get() });
 }
 
 
@@ -276,44 +273,43 @@ function saveEditedPost(req,res)
   postsManager.saveEditedPost(req,res);
 }
 
-function saveEditedPage(req, res)
+function saveEditedPage(req,res)
 {
-	pagesManager.saveEditedPage(req,res);
+  pagesManager.saveEditedPage(req,res);
 }
 
 
 
-function posts(req, res)
+function posts(req,res)
 {
-	var lang = req.session.lang;
-	postsManager.list(lang, 0, 200, function(error,content)
-	{
-		tools.renderJade(req,res,'admin_posts',{ siteName: 'Blog | Admin', posts: content, lang: lang });
-	});
+  postsManager.list(0,200,function(error,content)
+  {
+      tools.renderJade(req,res,'admin_posts',{ siteName: 'Blog | Admin',
+          posts: content,
+          lang: lang.get() });
+  });
 };
 
 
-function pages(req, res)
+function pages(req,res)
 {
-	var lang = req.session.lang;
-	pagesManager.list(lang, 0, 200, function(error,content)
-	{
-	  tools.renderJade(req,res,'admin_pages',{ siteName: 'Blog | Admin',
-	      pages: content,
-	      lang: lang });
-	});
+  pagesManager.list(0,200,function(error,content)
+  {
+      tools.renderJade(req,res,'admin_pages',{ siteName: 'Blog | Admin',
+          pages: content,
+          lang: lang.get() });
+  });
 };
 
 
 function comments(req,res)
 {
-	var lang = req.session.lang;
-	postsManager.listComments(lang, 0, 200, function(error,content)
-	{
-	  tools.renderJade(req,res,'admin_comments',{ siteName: 'Blog | Admin - Comments',
-	      comments: content,
-	      lang: lang });
-	});
+  postsManager.listComments(0,200,function(error,content)
+  {
+      tools.renderJade(req,res,'admin_comments',{ siteName: 'Blog | Admin - Comments',
+          comments: content,
+          lang: lang.get() });
+  });
 };
 
 

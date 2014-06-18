@@ -68,10 +68,10 @@ app.use('/admin', admin);
 // For anything posted by a non-admin user
 // We check if the message was posted long enough after page rendering
 // It helps getting rid of some spam robots
-app.post('*', tools.killFastRobots);
+app.post('*',tools.killFastRobots);
 
-app.use('/lang', lang);
-app.use(lang.detect);
+app.use('/lang', lang.app);
+app.use(lang.use);
 
 app.use('/', posts.app);
 app.use('/', pages.app);
