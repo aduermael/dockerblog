@@ -94,7 +94,7 @@ exports.sendMail = function(to,from,title,text,html)
 	if (html)
 		mailObject.html = html;	
 		
-	console.dir(mailObject);
+	//console.dir(mailObject);
 	
 	mail(mailObject);
 }

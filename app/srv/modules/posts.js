@@ -535,10 +535,18 @@ var get = function(req,postID,callback)
 			callback(true);
 		}
 		else
-		{			
-			post.blocks = JSON.parse(post.blocks);
-			post.stringdate = getPostTime(req,post.date);	
-			callback(false,post);
+		{	
+			if (post.blocks)
+			{	
+				console.log(post.blocks);
+				post.blocks = JSON.parse(post.blocks);
+				post.stringdate = getPostTime(req,post.date);	
+				callback(false,post);
+			}
+			else
+			{
+				callback(true);
+			}
 		}
 	});
 }
