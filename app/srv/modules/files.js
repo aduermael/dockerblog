@@ -295,6 +295,8 @@ exports.saveFile = function(req, res)
 			}
 		});
 	});
+
+	req.pipe(req.busboy);
 };
 
 

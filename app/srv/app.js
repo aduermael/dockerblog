@@ -52,7 +52,8 @@ options.ttl = 60 * 60 * 5; // session ttl -> 5 hours
 app.use(session({ store: new RedisStore(options), secret:'5c8be406c43595d4143b96043d0cfd6f'}))
 
 // we handle "multipart/form-data" (file uploads) with busboy module
-app.use(busboy({immediate: true}));
+//app.use(busboy({immediate: true}));
+app.use(busboy());
 
 var oneDay = 86400000;
 
