@@ -24,7 +24,7 @@ var RedisStore   = require('connect-redis')(session);
 // import LOCAL modules
 var posts = require('./modules/posts');
 var pages = require('./modules/pages');
-var lang  = require('./modules/lang');
+var lang_module  = require('./modules/lang');
 var admin = require('./modules/admin');
 var tools = require('./modules/tools');
 
@@ -70,8 +70,8 @@ app.use('/admin', admin);
 // It helps getting rid of some spam robots
 app.post('*',tools.killFastRobots);
 
-app.use('/lang', lang.app);
-app.use(lang.use);
+app.use('/lang',lang_module.app);
+app.use(lang_module.use);
 
 app.use('/', posts.app);
 app.use('/', pages.app);

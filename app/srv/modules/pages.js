@@ -9,7 +9,7 @@
 
 
 var slug = require('slug');
-var langManager = require('./lang');
+var lang_module = require('./lang');
 var tools = require('./tools');
 var db = require('./db').connect();
 
@@ -39,11 +39,11 @@ function renderPage(req,res,next)
 	
 	console.log("test page: " + pageName);
 	
-	db.hget("pages_" + langManager.get(),pageName,function(err,pageID)
+	db.hget("pages_" + lang_module.get(req),pageName,function(err,pageID)
 	{
 		if (!err && pageID)
 		{
-			get(pageID, function(error,page)
+			get(req,pageID, function(error,page)
 			{
 				if (!error)
 				{
@@ -51,7 +51,7 @@ function renderPage(req,res,next)
 					{
 						siteName: 'Blog | page',
 						page: page,
-						lang: langManager.get()
+						lang: lang_module.get(req)
 					});
 				}
 				else
@@ -73,9 +73,9 @@ function renderPage(req,res,next)
 
 
 
-var list = function(page,nbpagesPerpage,callback)
+var list = function(req,page,nbpagesPerpage,callback)
 {	
-	db.hvals("pages_" + langManager.get(),function(err,IDs)
+	db.hvals("pages_" + lang_module.get(req),function(err,IDs)
 	{
 		var multi = db.multi();
 		
@@ -88,7 +88,7 @@ var list = function(page,nbpagesPerpage,callback)
 		{
 			replies.forEach(function(page)
 			{
-				page.date = getPostTime(page.date);
+				page.date = getPostTime(req,page.date);
 				page.blocks = JSON.parse(page.blocks);
 			});
 					
@@ -99,7 +99,7 @@ var list = function(page,nbpagesPerpage,callback)
 
 
 
-var get = function(pageID,callback)
+var get = function(req,pageID,callback)
 {
 	db.hgetall(pageID,function(error,page)
 	{
@@ -110,18 +110,18 @@ var get = function(pageID,callback)
 		else
 		{			
 			page.blocks = JSON.parse(page.blocks);
-			page.stringdate = getPostTime(page.date);	
+			page.stringdate = getPostTime(req,page.date);	
 			callback(false,page);
 		}
 	});
 }
 
 
-var pages = function(nbpagesPerpage,callback)
+var pages = function(req,nbpagesPerpage,callback)
 {
   var pages = 0;
 
-  db.zcard('pages_' + langManager.get(),function(error,nbPages)
+  db.zcard('pages_' + lang_module.get(req),function(error,nbPages)
   {
     if (error)
     {
@@ -168,7 +168,7 @@ var newPage = function(req,res)
 			var multi = db.multi();
 			
 			multi.hmset(ID,"blocks",JSON.stringify(page.blocks),"date",timestamp,"ID",pageID,"name",page.name,"title",page.title);
-			multi.hset("pages_" + langManager.get(),page.name,ID); // ordered set for each lang
+			multi.hset("pages_" + lang_module.get(req),page.name,ID); // ordered set for each lang
 			multi.incr("postCount");
 			
 			multi.exec(function(err,replies)
@@ -211,8 +211,8 @@ var saveEditedPage = function(req,res)
 			var multi = db.multi();
 		
 			multi.hmset(ID,"blocks",JSON.stringify(page.blocks),"update",timestamp,"ID",pageID,"name",page.name,"title",page.title);
-			multi.hdel("pages_" + langManager.get(),oldPageName);
-			multi.hset("pages_" + langManager.get(),page.name,ID); // ordered set for each langManager
+			multi.hdel("pages_" + lang_module.get(req),oldPageName);
+			multi.hset("pages_" + lang_module.get(req),page.name,ID); // ordered set for each langManager
 			
 			multi.exec(function(err,replies)
 			{
@@ -256,12 +256,12 @@ var editPage = function(req,res)
     }
     else
     {
-      content.date = getPostTime(content.date);
+      content.date = getPostTime(req,content.date);
 	  content.blocks = JSON.parse(content.blocks);
 
       tools.renderJade(req,res,'admin_page_edit',{ siteName: 'Blog | Admin - Edit page',
       page: content,
-      lang: langManager.get()
+      lang: lang_module.get(req)
       });
     }
   });
@@ -297,18 +297,6 @@ function getPageID(callback)
 		
 		callback(err,pageID);
 	});
-  
-	/*db.get("pageCount",function(err,pageCount)
-	{
-		var pageID = 0;
-	
-		if (pageCount)
-		{
-		 	pageID = pageCount;
-		}
-		
-		callback(err,pageID);
-	});*/
 }
 
 
@@ -354,9 +342,9 @@ if (!String.prototype.format)
 
   
 
-function getPostTime(gmt)
-{
-	var lang = langManager.get();
+function getPostTime(req,gmt)
+{	
+	var lang = lang_module.get(req);
 	
 	var date = new Date();
 	var now = Date.now()  

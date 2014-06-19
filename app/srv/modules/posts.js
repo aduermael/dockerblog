@@ -5,7 +5,7 @@
 //
 
 var slug = require('slug');
-var langManager = require('./lang');
+var lang_module = require('./lang');
 var tools = require('./tools');
 
 var db = require('./db').connect();
@@ -41,10 +41,10 @@ function renderPosts(req,res)
 	var page = req.params.PageID;
 	if (!page) page = 1;
 	
-	list((page - 1) , postsPerPage , function(error,content)
+	list(req,(page - 1) , postsPerPage , function(error,content)
 	{
-		pages(postsPerPage ,function(nbPages)
-		{	
+		pages(req,postsPerPage ,function(nbPages)
+		{				
 			tools.renderJade(req,res,'posts',{ siteName: 'Blog | Home',
 			posts: content,
 			pages: nbPages });
@@ -57,9 +57,9 @@ function renderRSS(req,res)
 {
 	var page = 1;
 		
-	list((page - 1) , postsPerPage , function(error,content)
+	list(req,(page - 1) , postsPerPage , function(error,content)
 	{
-		pages(postsPerPage ,function(nbPages)
+		pages(req,postsPerPage ,function(nbPages)
 		{	
 			tools.renderJade(req,res,'rss',{ siteName: 'Blog | RSS',
 			posts: content });
@@ -78,7 +78,7 @@ function renderOnePost(req,res)
 {
 	var postID = req.params.PostID;
 	
-	get(postID, function(error,post)
+	get(req,postID, function(error,post)
 	{	
 		if (error) // not found?
 		{
@@ -86,7 +86,7 @@ function renderOnePost(req,res)
 		}
 		else
 		{
-			getComments(postID,function(err,comments)
+			getComments(req,postID,function(err,comments)
 			{
 				tools.renderJade(req,res,'post',
 				{
@@ -123,7 +123,7 @@ function postContact(req,res)
 	{
 		console.log("Data is all good to send email. Now let's find the associated post...");
 		
-		get(message.postID, function(error,post)
+		get(req,message.postID, function(error,post)
 		{	
 			if (error) // not found?
 			{
@@ -199,7 +199,7 @@ function postComment(req,res)
 	
 	if (!error)
 	{
-		comment(com,function(error)
+		comment(req,com,function(error)
 		{
 			if (error)
 			{
@@ -222,7 +222,7 @@ function postComment(req,res)
 
 
 
-var getComments = function(postID,callback)
+var getComments = function(req,postID,callback)
 {	
 	db.zrange('comments_' + postID, 0, -1 ,function(err, keys)
 	{
@@ -243,7 +243,7 @@ var getComments = function(postID,callback)
 			{
 				replies.forEach(function(comment)
 				{
-					comment.date = getPostTime(comment.date);
+					comment.date = getPostTime(req,comment.date);
 				});
 								
 				callback(null,replies);
@@ -271,7 +271,7 @@ var getNbComments = function(postID, callback)
 
 
 
-var comment = function(obj,callback)
+var comment = function(req,obj,callback)
 {
 	// CHECK IF POST EXISTS
 	db.exists("post_" + obj.postID,function(error,postExists)
@@ -304,8 +304,8 @@ var comment = function(obj,callback)
 						// comment will be link to the post later, when validated
 						//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
 						
-						multi.zadd("comments_all_" + langManager.get(),timestamp,ID); // all comments (to list in admin)
-						multi.zadd("comments_unvalidated_" + langManager.get(),timestamp,ID); // unvalidated comments (to list in admin)
+						multi.zadd("comments_all_" + lang_module.get(req),timestamp,ID); // all comments (to list in admin)
+						multi.zadd("comments_unvalidated_" + lang_module.get(req),timestamp,ID); // unvalidated comments (to list in admin)
 						
 						multi.incr("commentCount");
 						
@@ -332,11 +332,11 @@ var comment = function(obj,callback)
 }
 
 
-var list = function(page,nbPostsPerPage,callback)
+var list = function(req,page,nbPostsPerPage,callback)
 {	
 	var content = [];
 	
-	db.zrevrange('posts_' + langManager.get(), page * nbPostsPerPage, page * nbPostsPerPage + (nbPostsPerPage - 1) ,function(error, keys)
+	db.zrevrange('posts_' + lang_module.get(req), page * nbPostsPerPage, page * nbPostsPerPage + (nbPostsPerPage - 1) ,function(error, keys)
 	{
 	if (error)
 	{
@@ -355,7 +355,7 @@ var list = function(page,nbPostsPerPage,callback)
 		{
 			replies.forEach(function(post)
 			{
-				post.stringdate = getPostTime(post.date);
+				post.stringdate = getPostTime(req,post.date);
 				post.blocks = JSON.parse(post.blocks);
 			});
 					
@@ -370,11 +370,11 @@ var list = function(page,nbPostsPerPage,callback)
 
 
  
-var listComments = function(page,nbCommentsPerPage,callback)
+var listComments = function(req,page,nbCommentsPerPage,callback)
 {	
 	var content = [];
 
-	db.zrevrange('comments_all_' + langManager.get(), page * nbCommentsPerPage, page * nbCommentsPerPage + (nbCommentsPerPage - 1) ,function(error, keys)
+	db.zrevrange('comments_all_' + lang_module.get(req), page * nbCommentsPerPage, page * nbCommentsPerPage + (nbCommentsPerPage - 1) ,function(error, keys)
 	{
 		if (error)
 		{
@@ -393,7 +393,7 @@ var listComments = function(page,nbCommentsPerPage,callback)
 			{
 				replies.forEach(function(comment)
 				{
-					comment.date = getPostTime(comment.date);
+					comment.date = getPostTime(req,comment.date);
 				});
 						
 				callback(null,replies);
@@ -404,11 +404,11 @@ var listComments = function(page,nbCommentsPerPage,callback)
 
 
 
-var listUnvalidatedComments = function(page,nbCommentsPerPage,callback)
+var listUnvalidatedComments = function(req,page,nbCommentsPerPage,callback)
 {	
 	var content = [];
 
-	db.zrevrange('comments_unvalidated_' + langManager.get(), page * nbCommentsPerPage, page * nbCommentsPerPage + (nbCommentsPerPage - 1) ,function(error, keys)
+	db.zrevrange('comments_unvalidated_' + lang_module.get(req), page * nbCommentsPerPage, page * nbCommentsPerPage + (nbCommentsPerPage - 1) ,function(error, keys)
 	{
 		if (error)
 		{
@@ -427,7 +427,7 @@ var listUnvalidatedComments = function(page,nbCommentsPerPage,callback)
 			{
 				replies.forEach(function(comment)
 				{
-					comment.date = getPostTime(comment.date);
+					comment.date = getPostTime(req,comment.date);
 				});
 						
 				callback(null,replies);
@@ -452,7 +452,7 @@ var acceptComment = function(req,res)
 			var date = values[1];
 			
 			var multi = db.multi();
-			multi.zrem("comments_unvalidated_" + langManager.get(),ID);
+			multi.zrem("comments_unvalidated_" + lang_module.get(req),ID);
 			multi.zadd("comments_" + postID,date,ID); // ordered set for each post
 			multi.hset(ID,"valid",1);
 			multi.hincrby("post_" + postID,"nbComs",1);
@@ -492,8 +492,8 @@ var deleteComment = function(req,res)
 			var valid = (values[1] == 1);
 			
 			var multi = db.multi();
-			multi.zrem("comments_unvalidated_" + langManager.get(),ID);
-			multi.zrem("comments_all_" + langManager.get(),ID);
+			multi.zrem("comments_unvalidated_" + lang_module.get(req),ID);
+			multi.zrem("comments_all_" + lang_module.get(req),ID);
 			multi.zrem("comments_" + postID,ID); // ordered set for each post
 			
 			// only if comment was attached to the post (validated)
@@ -526,7 +526,7 @@ var deleteComment = function(req,res)
 
 
 
-var get = function(postID,callback)
+var get = function(req,postID,callback)
 {	
 	db.hgetall("post_" + postID,function(error,post)
 	{
@@ -537,18 +537,18 @@ var get = function(postID,callback)
 		else
 		{			
 			post.blocks = JSON.parse(post.blocks);
-			post.stringdate = getPostTime(post.date);	
+			post.stringdate = getPostTime(req,post.date);	
 			callback(false,post);
 		}
 	});
 }
 
 
-var pages = function(nbPostsPerPage,callback)
+var pages = function(req,nbPostsPerPage,callback)
 {
   var pages = 0;
 
-  db.zcard('posts_' + langManager.get(),function(error,nbPosts)
+  db.zcard('posts_' + lang_module.get(req),function(error,nbPosts)
   {
     if (error)
     {
@@ -597,7 +597,7 @@ var newPost = function(req,res)
 			var multi = db.multi();
 			
 			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title);
-			multi.zadd("posts_" + langManager.get(),timestamp,ID); // ordered set for each lang
+			multi.zadd("posts_" + lang_module.get(req),timestamp,ID); // ordered set for each lang
 			multi.incr("postCount");
 			
 			multi.exec(function(err,replies)
@@ -676,7 +676,7 @@ var editPost = function(req,res)
     }
     else
     {
-      content.stringdate = getPostTime(content.date);
+      content.stringdate = getPostTime(req,content.date);
 	  content.blocks = JSON.parse(content.blocks);
 
       tools.renderJade(req,res,'admin_post_edit',{ siteName: 'Blog | Admin - Edit post',
@@ -784,9 +784,9 @@ if (!String.prototype.format)
 
   
 
-function getPostTime(gmt)
+function getPostTime(req,gmt)
 {
-	var lang = langManager.get();
+	var lang = lang_module.get(req);
 	
 	var date = new Date();
 	var now = Date.now()  

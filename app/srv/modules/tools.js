@@ -28,7 +28,7 @@ exports.renderJade = function(req,res,page,options)
 	req.session.lastPageRenderTime = new Date().getTime();
 	options.timestamp304 = req.session.lastPageRenderTime;
 	
-	keys.getAllKeysAndValues(function(err,values)
+	keys.getAllKeysAndValues(req,function(err,values)
 	{
 		if (!err)
 		{

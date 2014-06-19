@@ -12,7 +12,7 @@ var auth = require('basic-auth');
 var postsManager = require('./posts');
 var pagesManager = require('./pages');
 var tools = require('./tools');
-var lang = require('./lang');
+var lang_module = require('./lang');
 var files = require('./files');
 
 var LOGIN = "";
@@ -34,8 +34,8 @@ module.exports = function()
 	// http basic auth middleware
 	app.use(authentication);
 
-	app.use('/lang', lang.app);
-	app.use(lang.use);
+	app.use('/lang', lang_module.app);
+	app.use(lang_module.use);
 
 	// admin "keys" tab
 	app.use('/keys', require('./keys'));
@@ -223,19 +223,19 @@ function updateCredentials(req,res)
 
 function home(req,res)
 {
-	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
+	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang_module.get(req) });
 }
 
 
 function newPost(req,res)
 {
-	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang.get() });
+	tools.renderJade(req,res,'admin_post',{ siteName: 'Blog | Admin - New post', lang: lang_module.get(req) });
 }
 
 
 function newPage(req,res)
 {
-	tools.renderJade(req,res,'admin_page',{ siteName: 'Blog | Admin - New page', lang: lang.get() });
+	tools.renderJade(req,res,'admin_page',{ siteName: 'Blog | Admin - New page', lang: lang_module.get(req) });
 }
 
 
@@ -282,33 +282,33 @@ function saveEditedPage(req,res)
 
 function posts(req,res)
 {
-  postsManager.list(0,200,function(error,content)
+  postsManager.list(req,0,200,function(error,content)
   {
       tools.renderJade(req,res,'admin_posts',{ siteName: 'Blog | Admin',
           posts: content,
-          lang: lang.get() });
+          lang: lang_module.get(req) });
   });
 };
 
 
 function pages(req,res)
 {
-  pagesManager.list(0,200,function(error,content)
+  pagesManager.list(req,0,200,function(error,content)
   {
       tools.renderJade(req,res,'admin_pages',{ siteName: 'Blog | Admin',
           pages: content,
-          lang: lang.get() });
+          lang: lang_module.get(req) });
   });
 };
 
 
 function comments(req,res)
 {
-  postsManager.listComments(0,200,function(error,content)
+  postsManager.listComments(req,0,200,function(error,content)
   {
       tools.renderJade(req,res,'admin_comments',{ siteName: 'Blog | Admin - Comments',
           comments: content,
-          lang: lang.get() });
+          lang: lang_module.get(req) });
   });
 };
 

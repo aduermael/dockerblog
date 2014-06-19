@@ -1,7 +1,8 @@
 var tools = require('./tools');
 
-var _lang = "en"; // default lang
-var _justSet = false;
+var DEFAULT_LANG = "en"; // default lang
+var AVAILABLE_LANGS = ["en","fr"];
+
 
 exports.app = function()
 {
@@ -14,14 +15,28 @@ exports.app = function()
 }();
 
 
+
 function setLang(req,res,next)
 {
-	console.log("SET LANG: " + req.params.lang);
-	_lang = req.params.lang
+	console.log("SET LANG: " + req.params.lang + "(req.lang: " + req.lang + ")");
+	
+	var lang = req.params.lang;
+	
+	for (var j = 0; j < AVAILABLE_LANGS.length; j++)
+	{
+		if (lang == AVAILABLE_LANGS[j])
+		{
+			req.lang = lang;
+			break;
+		}
+	}
+								
+	if (!req.lang) req.lang = DEFAULT_LANG;
+	
+	console.log("req.lang: " + req.lang);
+	
 	var hour = 3600000;
-	res.cookie('lang', _lang, { maxAge: 365 * 24 * hour, httpOnly: false});
-
-	_justSet = true;
+	res.cookie('lang', req.lang, { maxAge: 365 * 24 * hour, httpOnly: false});
 
 	next();
 }
@@ -30,46 +45,51 @@ function setLang(req,res,next)
 
 exports.use = function(req,res,next)
 {
-  if (!_justSet)
-  {
-    if (!req.cookies.lang) // if no cookie
-    {
-      if (req.acceptedLanguages)
-      {
-        for (var i = 0; i< req.acceptedLanguages.length; ++i)
-        {
-          var lang = req.acceptedLanguages[i].substr(0,2);
-        
-          if (lang == "en" || lang == "fr")
-          {
-            _lang = lang;
-            break;
-          }
-        }
-      }
-
-      var hour = 3600000;
-      res.cookie('lang', _lang, { maxAge: 365 * 24 * hour, httpOnly: false});
-
-    } // no lang cookie
-    else // there is a lang cookie
-    {
-      _lang = req.cookies.lang;
-    }
-  }
-  
-  //console.log("use lang:" + _lang);
+	if (!req.lang)
+	{
+		if (!req.cookies.lang) // if no cookie
+		{
+			if (req.acceptedLanguages)
+			{
+				for (var i = 0; i < req.acceptedLanguages.length; i++)
+				{
+					var lang = req.acceptedLanguages[i].substr(0,2);
+					
+					for (var j = 0; j < AVAILABLE_LANGS.length; j++)
+					{
+						if (lang == AVAILABLE_LANGS[j])
+						{
+							req.lang = lang;
+							break;
+						}
+					}
+					
+					if (req.lang) break;
+				}
+			}
+			
+			if (!req.lang) req.lang = DEFAULT_LANG;
+			
+			var hour = 3600000;
+			res.cookie('lang', req.lang, { maxAge: 365 * 24 * hour, httpOnly: false});
+		
+		} // no lang cookie
+		else // there is a lang cookie
+		{
+			req.lang = req.cookies.lang;
+		}
+	}
 
   next();
 }
 
 
-exports.get = function()
+exports.get = function(req)
 {
-  return _lang;
+  return req.lang;
 }
 
-exports.is = function(lang)
+exports.is = function(req,lang)
 {
-	return lang == _lang;
+	return lang == req.lang;
 }
