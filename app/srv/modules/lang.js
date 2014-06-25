@@ -45,20 +45,32 @@ function setLang(req,res,next)
 
 exports.use = function(req,res,next)
 {
+	console.dir("LANG.USE - " + req.url);
+	console.dir("-----ACCEPTED LANGUAGES:" + req.headers["accept-language"]);
+	console.dir("-----REQ.LANG: " + req.lang);
+	console.dir("-----LANG COOKIE: " + req.cookies.lang);
+
+	
 	if (!req.lang)
 	{
 		if (!req.cookies.lang) // if no cookie
 		{
-			if (req.acceptedLanguages)
+			if (req.headers["accept-language"])
 			{
-				for (var i = 0; i < req.acceptedLanguages.length; i++)
+				var acceptedLanguages = req.headers["accept-language"].split(',');
+				
+				
+				for (var i = 0; i < acceptedLanguages.length; i++)
 				{
-					var lang = req.acceptedLanguages[i].substr(0,2);
+					var langField = acceptedLanguages[i].trim();
+					
+					var lang = langField.substr(0,2);
 					
 					for (var j = 0; j < AVAILABLE_LANGS.length; j++)
 					{
 						if (lang == AVAILABLE_LANGS[j])
 						{
+							console.log("----------LANG FOUND FROM BROWSER: " + lang);
 							req.lang = lang;
 							break;
 						}
@@ -79,6 +91,8 @@ exports.use = function(req,res,next)
 			req.lang = req.cookies.lang;
 		}
 	}
+	
+	console.dir("-----REQ.LANG: " + req.lang);
 
   next();
 }
