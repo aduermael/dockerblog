@@ -36,7 +36,7 @@ function setLang(req,res,next)
 	console.log("req.lang: " + req.lang);
 	
 	var hour = 3600000;
-	res.cookie('lang', req.lang, { maxAge: 365 * 24 * hour, httpOnly: false});
+	res.cookie('lang_', req.lang, { maxAge: 365 * 24 * hour, httpOnly: false});
 
 	next();
 }
@@ -45,15 +45,15 @@ function setLang(req,res,next)
 
 exports.use = function(req,res,next)
 {
-	console.dir("LANG.USE - " + req.url);
-	console.dir("-----ACCEPTED LANGUAGES:" + req.headers["accept-language"]);
-	console.dir("-----REQ.LANG: " + req.lang);
-	console.dir("-----LANG COOKIE: " + req.cookies.lang);
+	//console.dir("LANG.USE - " + req.url);
+	//console.dir("-----ACCEPTED LANGUAGES:" + req.headers["accept-language"]);
+	//console.dir("-----REQ.LANG: " + req.lang);
+	//console.dir("-----LANG COOKIE: " + req.cookies.lang);
 
 	
 	if (!req.lang)
 	{
-		if (!req.cookies.lang) // if no cookie
+		if (!req.cookies.lang_) // if no cookie
 		{
 			if (req.headers["accept-language"])
 			{
@@ -83,16 +83,16 @@ exports.use = function(req,res,next)
 			if (!req.lang) req.lang = DEFAULT_LANG;
 			
 			var hour = 3600000;
-			res.cookie('lang', req.lang, { maxAge: 365 * 24 * hour, httpOnly: false});
+			res.cookie('lang_', req.lang, { maxAge: 365 * 24 * hour, httpOnly: false});
 		
 		} // no lang cookie
 		else // there is a lang cookie
 		{
-			req.lang = req.cookies.lang;
+			req.lang = req.cookies.lang_;
 		}
 	}
 	
-	console.dir("-----REQ.LANG: " + req.lang);
+	//console.dir("-----REQ.LANG: " + req.lang);
 
   next();
 }
