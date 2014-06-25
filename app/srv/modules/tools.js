@@ -9,6 +9,8 @@ app.set('view engine', 'jade');
 var db = require('./db').connect();
 var crypto = require('crypto');
 var keys = require('./keys');
+var lang_module = require('./lang');
+
 var mail = require("nodemailer").mail;
 
 
@@ -27,6 +29,11 @@ exports.renderJade = function(req,res,page,options)
 	// Used to detect robots when receiving post messages from non-admin users
 	req.session.lastPageRenderTime = new Date().getTime();
 	options.timestamp304 = req.session.lastPageRenderTime;
+	
+	if (req.params.lang)
+		options.lang = req.params.lang;
+	else
+		options.lang = lang_module.get(req);
 	
 	keys.getAllKeysAndValues(req,function(err,values)
 	{

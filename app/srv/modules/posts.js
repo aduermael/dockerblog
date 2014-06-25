@@ -21,10 +21,12 @@ var app = function()
 	app.set('views', GLOBAL.views_dir_path);
 	app.set('view engine', 'jade');
 
+	app.get('/rss/:lang',renderRSS);	
+	app.get('/rss',renderRSS);
+	
 	app.get('/page:PageID', renderPosts );
 	app.get('/:slug/:PostID', renderOnePost );
 	
-	app.get('/rss',renderRSS);
 	
 	app.post('/comment', postComment );
 	app.post('/contact', postContact ); // email form
@@ -51,6 +53,7 @@ function renderPosts(req,res)
 		});
 	});
 }
+
 
 
 function renderRSS(req,res)
@@ -336,7 +339,15 @@ var list = function(req,page,nbPostsPerPage,callback)
 {	
 	var content = [];
 	
-	db.zrevrange('posts_' + lang_module.get(req), page * nbPostsPerPage, page * nbPostsPerPage + (nbPostsPerPage - 1) ,function(error, keys)
+	var lang;
+	
+	if (req.params.lang)
+		lang = req.params.lang;
+	else
+		lang = lang_module.get(req);
+		
+	
+	db.zrevrange('posts_' + lang, page * nbPostsPerPage, page * nbPostsPerPage + (nbPostsPerPage - 1) ,function(error, keys)
 	{
 	if (error)
 	{
@@ -366,6 +377,9 @@ var list = function(req,page,nbPostsPerPage,callback)
 	}
 	});
 }
+
+
+
 
 
 
@@ -554,21 +568,29 @@ var get = function(req,postID,callback)
 
 var pages = function(req,nbPostsPerPage,callback)
 {
-  var pages = 0;
-
-  db.zcard('posts_' + lang_module.get(req),function(error,nbPosts)
-  {
-    if (error)
-    {
-      // error
-    }         
-    else
-    {
-      pages = Math.floor(nbPosts / nbPostsPerPage) + (nbPosts % nbPostsPerPage > 0 ? 1 : 0);
-    }
-
-    callback(pages);
-  });
+	var pages = 0;
+  
+	var lang;
+	
+	if (req.params.lang)
+		lang = req.params.lang;
+	else
+		lang = lang_module.get(req);
+	
+	
+	db.zcard('posts_' + lang,function(error,nbPosts)
+	{
+		if (error)
+		{
+		// error
+		}         
+		else
+		{
+			pages = Math.floor(nbPosts / nbPostsPerPage) + (nbPosts % nbPostsPerPage > 0 ? 1 : 0);
+		}
+	
+		callback(pages);
+	});
 }
 
 
