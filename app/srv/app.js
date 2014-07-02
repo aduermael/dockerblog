@@ -61,7 +61,7 @@ var oneDay = 86400000;
 app.use(express.static(GLOBAL.public_dir_path, { maxAge: oneDay }));
 
 // log the original url of all incoming requests
-// app.use(log_request_url);
+app.use(log_request_url);
 
 // blog modules
 app.use('/admin', admin);
@@ -99,8 +99,7 @@ app.listen(port, function()
 //
 function log_request_url (req, res, next)
 {
-	console.log('');
-	console.log('--- REQUEST [ '+req.originalUrl+' ]');
+	console.log('--- ' + req.originalUrl);
 	next();
 }
 
