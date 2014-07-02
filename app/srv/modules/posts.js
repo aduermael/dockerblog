@@ -27,6 +27,9 @@ var app = function()
 	// TEMPORARY (redirection for users using old bloglaurel.com rss)
 	app.get('/feed',renderFrenchRSS);
 	app.get('/coeur',renderFrenchRSS);
+	app.get('/coeur/rss.php',renderFrenchRSS);
+	app.get('/coeur/atom.php',renderFrenchRSS);
+	
 	
 	app.get('/',renderPosts);
 	app.get('/page:PageID',renderPosts);
