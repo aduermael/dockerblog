@@ -50,7 +50,6 @@ function renderPage(req,res,next)
 					tools.renderJade(req,res,'page',
 					{
 						siteName: 'Blog | page',
-						page: page,
 						lang: lang_module.get(req)
 					});
 				}
@@ -61,8 +60,31 @@ function renderPage(req,res,next)
 				}
 			});
 		}
-		else
+		else // page not found, maybe we can find it in another language
 		{
+			
+			lang_module.availableLangs().forEach(function (availableLang)
+			{
+				if (availableLang == lang_module.get(req)) continue;
+				
+				db.hget("pages_" + availableLang,pageName,function(err,pageID)
+				{
+					if (!err && pageID)
+					{
+						tools.renderJade(req,res,'page',
+						{
+							siteName: 'Blog | page',
+							lang: lang_module.get(req),
+							pageLang: lang_module
+						});
+						
+						return;	
+					}
+				}
+			});
+			
+		
+			
 			console.log("page not found");
 			next();
 		}

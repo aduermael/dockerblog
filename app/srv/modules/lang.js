@@ -97,6 +97,10 @@ exports.use = function(req,res,next)
   next();
 }
 
+exports.availableLangs = function()
+{
+	return AVAILABLE_LANGS;
+}
 
 exports.get = function(req)
 {
