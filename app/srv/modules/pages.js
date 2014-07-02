@@ -49,7 +49,8 @@ function renderPage(req,res,next)
 				{
 					tools.renderJade(req,res,'page',
 					{
-						siteName: 'Blog | page',
+						siteName: "Laurel" + " - " + page.title,
+						page: page,
 						lang: lang_module.get(req)
 					});
 				}
@@ -63,30 +64,68 @@ function renderPage(req,res,next)
 		else // page not found, maybe we can find it in another language
 		{
 			
+			var multi = db.multi();
+			
 			lang_module.availableLangs().forEach(function (availableLang)
-			{
-				if (availableLang == lang_module.get(req)) continue;
-				
-				db.hget("pages_" + availableLang,pageName,function(err,pageID)
+			{	
+				if (availableLang != lang_module.get(req))
 				{
-					if (!err && pageID)
-					{
-						tools.renderJade(req,res,'page',
-						{
-							siteName: 'Blog | page',
-							lang: lang_module.get(req),
-							pageLang: lang_module
-						});
-						
-						return;	
-					}
+					console.log("look in: " + "pages_" + availableLang + " / " + pageName);
+					multi.hget("pages_" + availableLang,pageName);
 				}
 			});
 			
-		
 			
-			console.log("page not found");
-			next();
+			multi.exec(function(err,values)
+			{
+				if (!err)
+				{
+					console.dir(values);
+					
+					var found = false; 
+					
+					values.forEach(function(postID)
+					{
+						if (!found)
+						{
+							if (postID)
+							{
+								get(req,postID, function(error,page)
+								{
+									if (!error)
+									{
+										tools.renderJade(req,res,'page',
+										{
+											siteName: "Laurel" + " - " + page.title,
+											page: page,
+											lang: lang_module.get(req)
+										});
+									}
+									else
+									{
+										console.log("error getting page");
+										next();
+									}
+								});
+								
+								found = true;
+							}
+						}
+					});
+					
+					
+					if (!found)
+					{
+						console.log("page not found");
+						next();
+					}
+				}
+				else
+				{								
+					console.log("page not found");
+					next();
+				}
+			});
 		}
 	});
 	

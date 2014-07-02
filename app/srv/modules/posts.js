@@ -47,7 +47,7 @@ function renderPosts(req,res)
 	{
 		pages(req,postsPerPage ,function(nbPages)
 		{				
-			tools.renderJade(req,res,'posts',{ siteName: 'Blog | Home',
+			tools.renderJade(req,res,'posts',{ siteName: "Laurel",
 			posts: content,
 			pages: nbPages });
 		});
@@ -64,7 +64,7 @@ function renderRSS(req,res)
 	{
 		pages(req,postsPerPage ,function(nbPages)
 		{	
-			tools.renderJade(req,res,'rss',{ siteName: 'Blog | RSS',
+			tools.renderJade(req,res,'rss',{ siteName: "Laurel" + " - " + "RSS",
 			posts: content });
 		});
 	});
@@ -93,7 +93,7 @@ function renderOnePost(req,res)
 			{
 				tools.renderJade(req,res,'post',
 				{
-					siteName: 'Blog | post',
+					siteName: "Laurel" + " - " + post.title,
 					post: post,
 					comments: comments
 				}); 
