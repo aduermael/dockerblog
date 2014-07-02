@@ -626,7 +626,7 @@ var newPost = function(req,res)
 			
 			var multi = db.multi();
 			
-			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title);
+			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title,"lang",lang_module.get(req));
 			multi.zadd("posts_" + lang_module.get(req),timestamp,ID); // ordered set for each lang
 			multi.incr("postCount");
 			
@@ -666,7 +666,7 @@ var saveEditedPost = function(req,res)
 	
 	var multi = db.multi();
 	
-	multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"update",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title);
+	multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"update",timestamp,"slug",slugURL,"title",post.title);
 	
 	multi.exec(function(err,replies)
 	{
