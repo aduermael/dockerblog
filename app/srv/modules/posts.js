@@ -99,7 +99,7 @@ function renderRSS(req,res)
 
 var renderPosts2 = function(req,res)
 {
-	console.url("url not found (404): " + req.url);
+	console.log("url not found (404): " + req.url);
 	renderPosts(req,res);
 }
 
