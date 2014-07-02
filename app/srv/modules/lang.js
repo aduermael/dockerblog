@@ -18,7 +18,7 @@ exports.app = function()
 
 function setLang(req,res,next)
 {
-	console.log("SET LANG: " + req.params.lang + "(req.lang: " + req.lang + ")");
+	//console.log("SET LANG: " + req.params.lang + "(req.lang: " + req.lang + ")");
 	
 	var lang = req.params.lang;
 	
@@ -33,7 +33,7 @@ function setLang(req,res,next)
 								
 	if (!req.lang) req.lang = DEFAULT_LANG;
 	
-	console.log("req.lang: " + req.lang);
+	//console.log("req.lang: " + req.lang);
 	
 	var hour = 3600000;
 	res.cookie('lang_', req.lang, { maxAge: 365 * 24 * hour, httpOnly: false});
@@ -70,7 +70,7 @@ exports.use = function(req,res,next)
 					{
 						if (lang == AVAILABLE_LANGS[j])
 						{
-							console.log("----------LANG FOUND FROM BROWSER: " + lang);
+							//console.log("----------LANG FOUND FROM BROWSER: " + lang);
 							req.lang = lang;
 							break;
 						}

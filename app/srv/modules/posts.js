@@ -24,6 +24,10 @@ var app = function()
 	app.get('/rss/:lang',renderRSS);	
 	app.get('/rss',renderRSS);
 	
+	// TEMPORARY (redirection for users using old bloglaurel.com rss)
+	app.get('/feed',renderFrenchRSS);
+	app.get('/coeur',renderFrenchRSS);
+	
 	app.get('/page:PageID', renderPosts );
 	app.get('/:slug/:PostID', renderOnePost );
 	
@@ -56,6 +60,28 @@ function renderPosts(req,res)
 
 
 
+// TEMPORARY (redirection for users using old bloglaurel.com rss)
+
+function renderFrenchRSS(req,res)
+{
+	console.log("render old RSS");
+	
+	var page = 1;
+	req.params.lang = "fr";
+		
+	list(req,(page - 1) , postsPerPage , function(error,content)
+	{
+		pages(req,postsPerPage ,function(nbPages)
+		{	
+			tools.renderJade(req,res,'rss',{ siteName: "Laurel" + " - " + "RSS",
+			posts: content });
+		});
+	});
+}
+
+
+
+
 function renderRSS(req,res)
 {
 	var page = 1;
@@ -73,6 +99,7 @@ function renderRSS(req,res)
 
 var renderPosts2 = function(req,res)
 {
+	console.url("url not found (404): " + req.url);
 	renderPosts(req,res);
 }
 
@@ -124,7 +151,7 @@ function postContact(req,res)
 	
 	if (!error)
 	{
-		console.log("Data is all good to send email. Now let's find the associated post...");
+		//console.log("Data is all good to send email. Now let's find the associated post...");
 		
 		get(req,message.postID, function(error,post)
 		{	
@@ -135,9 +162,7 @@ function postContact(req,res)
 			}
 			else
 			{
-				console.log("Post found! now let's find the associated block...");
-				
-				console.dir(post);
+				//console.log("Post found! now let's find the associated block...");
 				
 				if (post.blocks)
 				{
@@ -552,7 +577,7 @@ var get = function(req,postID,callback)
 		{	
 			if (post.blocks)
 			{	
-				console.log(post.blocks);
+				//console.log(post.blocks);
 				post.blocks = JSON.parse(post.blocks);
 				post.stringdate = getPostTime(req,post.date);	
 				callback(false,post);

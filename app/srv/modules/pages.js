@@ -37,7 +37,7 @@ function renderPage(req,res,next)
 {	
 	var pageName = req.params.pageName;
 	
-	console.log("test page: " + pageName);
+	//console.log("test page: " + pageName);
 	
 	db.hget("pages_" + lang_module.get(req),pageName,function(err,pageID)
 	{
@@ -56,7 +56,7 @@ function renderPage(req,res,next)
 				}
 				else
 				{
-					console.log("error getting page");
+					console.log("error getting page: " + pageName + " (" + lang_module.get(req) + ")");
 					next();
 				}
 			});
@@ -70,7 +70,7 @@ function renderPage(req,res,next)
 			{	
 				if (availableLang != lang_module.get(req))
 				{
-					console.log("look in: " + "pages_" + availableLang + " / " + pageName);
+					//console.log("look in: " + "pages_" + availableLang + " / " + pageName);
 					multi.hget("pages_" + availableLang,pageName);
 				}
 			});
@@ -80,7 +80,7 @@ function renderPage(req,res,next)
 			{
 				if (!err)
 				{
-					console.dir(values);
+					//console.dir(values);
 					
 					var found = false; 
 					
@@ -103,7 +103,7 @@ function renderPage(req,res,next)
 									}
 									else
 									{
-										console.log("error getting page");
+										console.log("error getting page: " + pageName + " (" + lang_module.get(req) + ")");
 										next();
 									}
 								});
@@ -116,13 +116,13 @@ function renderPage(req,res,next)
 					
 					if (!found)
 					{
-						console.log("page not found");
+						console.log("page not found: " + pageName + " (" + lang_module.get(req) + ")");
 						next();
 					}
 				}
 				else
 				{								
-					console.log("page not found");
+					console.log("page not found: " + pageName + " (" + lang_module.get(req) + ")");
 					next();
 				}
 			});
