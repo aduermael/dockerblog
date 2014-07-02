@@ -28,7 +28,8 @@ var app = function()
 	app.get('/feed',renderFrenchRSS);
 	app.get('/coeur',renderFrenchRSS);
 	
-	app.get('/page:PageID', renderPosts );
+	app.get('/',renderPosts);
+	app.get('/page:PageID',renderPosts);
 	app.get('/:slug/:PostID', renderOnePost );
 	
 	
@@ -47,6 +48,8 @@ function renderPosts(req,res)
 	var page = req.params.PageID;
 	if (!page) page = 1;
 	
+	console.log("posts (page " + page + ")");
+	
 	list(req,(page - 1) , postsPerPage , function(error,content)
 	{
 		pages(req,postsPerPage ,function(nbPages)
@@ -64,7 +67,7 @@ function renderPosts(req,res)
 
 function renderFrenchRSS(req,res)
 {
-	console.log("render old RSS");
+	console.log("old rss");
 	
 	var page = 1;
 	req.params.lang = "fr";
@@ -84,6 +87,8 @@ function renderFrenchRSS(req,res)
 
 function renderRSS(req,res)
 {
+	console.log("rss");
+	
 	var page = 1;
 		
 	list(req,(page - 1) , postsPerPage , function(error,content)
@@ -99,14 +104,16 @@ function renderRSS(req,res)
 
 var renderPosts2 = function(req,res)
 {
-	console.log("url not found (404): " + req.url);
+	console.log("404: " + req.url);
 	renderPosts(req,res);
 }
 
 
 function renderOnePost(req,res)
-{
+{	
 	var postID = req.params.PostID;
+	
+	console.log("post: " + postID);
 	
 	get(req,postID, function(error,post)
 	{	

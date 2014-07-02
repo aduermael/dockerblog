@@ -37,7 +37,7 @@ function renderPage(req,res,next)
 {	
 	var pageName = req.params.pageName;
 	
-	//console.log("test page: " + pageName);
+	console.log("page: " + pageName);
 	
 	db.hget("pages_" + lang_module.get(req),pageName,function(err,pageID)
 	{
