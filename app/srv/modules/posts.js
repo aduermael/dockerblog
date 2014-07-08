@@ -240,6 +240,8 @@ function postComment(req,res)
 	{
 		// save nickname / email in cookie
 		
+		var hour = 3600000;
+			
 		res.cookie('comment_name_', com.name, { maxAge: 365 * 24 * hour, httpOnly: false});
 		
 		if (com.email != "")
