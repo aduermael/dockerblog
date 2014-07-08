@@ -132,7 +132,9 @@ function renderOnePost(req,res)
 				{
 					siteName: "Laurel" + " - " + post.title,
 					post: post,
-					comments: comments
+					comments: comments,
+					commentName: req.cookies.comment_name_,
+					commentEmail: req.cookies.comment_email_
 				}); 
 			});
 		}
@@ -234,9 +236,18 @@ function postComment(req,res)
 		error = true;
 	}
 	
-	
 	if (!error)
 	{
+		// save nickname / email in cookie
+		
+		res.cookie('comment_name_', com.name, { maxAge: 365 * 24 * hour, httpOnly: false});
+		
+		if (com.email != "")
+		{
+			res.cookie('comment_email_', com.email, { maxAge: 365 * 24 * hour, httpOnly: false});
+		}
+		
+	
 		comment(req,com,function(error)
 		{
 			if (error)
