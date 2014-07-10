@@ -340,8 +340,6 @@ function deleteComment(comID)
 	Post('/admin/deleteComment',obj,deleteCommentCallBack,errorCallback);
 }
 
-
-
 var acceptCommentCallBack = function(data)
 {
 	var res = data;
@@ -369,6 +367,64 @@ var deleteCommentCallBack = function(data)
 		alert("FAILED");
 	}
 }
+
+
+
+
+// POSTS
+
+function deletePost(postID)
+{
+	var obj = {};
+	obj.ID = postID;
+
+	Post('/admin/deletePost',obj,deletePostCallBack,errorCallback);
+}
+
+
+var deletePostCallBack = function(data)
+{
+	var res = data;
+
+	if(res.success)
+	{
+		document.location = "/admin/posts";
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
+
+// PAGES
+
+function deletePage(pageID)
+{
+	var obj = {};
+	obj.ID = pageID;
+
+	Post('/admin/deletePage',obj,deletePageCallBack,errorCallback);
+}
+
+
+var deletePageCallBack = function(data)
+{
+	var res = data;
+
+	if(res.success)
+	{
+		document.location = "/admin/pages";
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
+
 
 
 

@@ -9,3 +9,4 @@ block pagecontent
 			- each page in pages
 				li 
 					a(href="/admin/pages/edit/" + page.ID) #{page.title}
+					a(href="#" onclick="deletePage(" + page.ID + ");return false;" style="color:#c33e1b;float:right;") Delete
