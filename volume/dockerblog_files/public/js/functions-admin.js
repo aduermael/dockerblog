@@ -378,7 +378,18 @@ function deletePost(postID)
 	var obj = {};
 	obj.ID = postID;
 
-	Post('/admin/deletePost',obj,deletePostCallBack,errorCallback);
+	var r = confirm("Are you sure?");
+	
+	if (r == true) 
+	{
+		Post('/admin/deletePost',obj,deletePostCallBack,errorCallback);
+	} 
+	else
+	{
+		// do nothing
+	}
+	
+	
 }
 
 
@@ -405,7 +416,16 @@ function deletePage(pageID)
 	var obj = {};
 	obj.ID = pageID;
 
-	Post('/admin/deletePage',obj,deletePageCallBack,errorCallback);
+	var r = confirm("Are you sure?");
+	
+	if (r == true) 
+	{
+		Post('/admin/deletePage',obj,deletePageCallBack,errorCallback);
+	} 
+	else
+	{
+		// do nothing
+	}
 }
 
 
