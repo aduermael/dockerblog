@@ -46,13 +46,13 @@ block pagecontent
 		.navigation
 			ul
 				li
-					a(href="#" onclick="addTextBlock(this)") Text
+					a(href="#" onclick="addTextBlock(this);return false;") Text
 				li
-					a(href="#" onclick="addImageBlock(this)") Image
+					a(href="#" onclick="addImageBlock(this);return false;") Image
 				li
 					a(href="#") Video
 				li
-					a(href="#" onclick="addContactForm(this)") Contact form
+					a(href="#" onclick="addContactForm(this);return false;") Contact form
 				li
 					a(href="#") File
 		.clearboth
@@ -62,9 +62,9 @@ block pagecontent
 		.navigation
 			ul
 				li
-					a(href="#" onclick="reorder(this)") reorder/delete blocks
+					a(href="#" onclick="reorder(this);return false;") reorder/delete blocks
 				li
-					a(href="#" onclick="editPost(this)") Edit post
+					a(href="#" onclick="editPost(this);return false;") Edit post
 					
 		.clearboth
 
