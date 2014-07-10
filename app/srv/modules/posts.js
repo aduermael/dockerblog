@@ -326,7 +326,8 @@ var comment = function(req,obj,callback)
 {
 	// CHECK IF POST EXISTS
 	db.exists("post_" + obj.postID,function(error,postExists)
-	{
+	{	
+	
 		if (error)
 		{
 			callback(error);
@@ -334,7 +335,7 @@ var comment = function(req,obj,callback)
 		else
 		{	
 			if (postExists)
-			{
+			{	
 				// SAVE COMMENT
 				getCommentID(function(err,commentID)
 				{
@@ -343,32 +344,68 @@ var comment = function(req,obj,callback)
 						callback(err);
 					}
 					else
-					{
+					{	
 						var ID = "com_" + commentID;
 						
 						var date = new Date();
 						var timestamp = Date.now();
 						
-						var multi = db.multi();
-						multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
-						
-						// comment will be link to the post later, when validated
-						//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
-						
-						multi.zadd("comments_all_" + lang_module.get(req),timestamp,ID); // all comments (to list in admin)
-						multi.zadd("comments_unvalidated_" + lang_module.get(req),timestamp,ID); // unvalidated comments (to list in admin)
-						
-						multi.incr("commentCount");
-						
-						multi.exec(function(err,replies)
+						db.hget("post_" + obj.postID, "lang",function(err,langValue)
 						{
-							if (err)
+							if (!err && langValue)
 							{
-								callback(err);	 
+								console.log("POST COMMENT getting lang from POST: " + langValue);
+								
+								var multi = db.multi();
+								multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
+								
+								// comment will be link to the post later, when validated
+								//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+								
+								multi.zadd("comments_all_" + langValue,timestamp,ID); // all comments (to list in admin)
+								multi.zadd("comments_unvalidated_" + langValue,timestamp,ID); // unvalidated comments (to list in admin)
+								
+								multi.incr("commentCount");
+								
+								multi.exec(function(err,replies)
+								{
+									if (err)
+									{
+										callback(err);	 
+									}
+									else
+									{
+										callback();	 
+									}
+								});
+								
 							}
-							else
+							else // old way, using session lang
 							{
-								callback();	 
+								console.log("POST COMMENT getting lang from SESSION: " + lang_module.get(req));
+								
+								var multi = db.multi();
+								multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
+								
+								// comment will be link to the post later, when validated
+								//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+								
+								multi.zadd("comments_all_" + lang_module.get(req),timestamp,ID); // all comments (to list in admin)
+								multi.zadd("comments_unvalidated_" + lang_module.get(req),timestamp,ID); // unvalidated comments (to list in admin)
+								
+								multi.incr("commentCount");
+								
+								multi.exec(function(err,replies)
+								{
+									if (err)
+									{
+										callback(err);	 
+									}
+									else
+									{
+										callback();	 
+									}
+								});
 							}
 						});
 					}
