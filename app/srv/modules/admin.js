@@ -51,12 +51,12 @@ module.exports = function()
 	app.post('/pages/new', saveNewPage);
 	app.post('/pages/edit', saveEditedPage);
 	
-	
-	
-
 	app.get('/comments',comments);
 	app.post('/acceptComment',postsManager.acceptComment);
 	app.post('/deleteComment',postsManager.deleteComment);
+	
+	app.post('/deletePost',postsManager.deletePost);
+	app.post('/deletePage',postsManager.deletePage);
 
 	app.post('/new', saveNewPost);
 	app.post('/edit', saveEditedPost);

@@ -588,6 +588,122 @@ var deleteComment = function(req,res)
 
 
 
+var deletePost = function(req,res)
+{
+	var ID = req.body.ID;
+	var POST_ID = "post_" + ID;
+	
+	db.hmget(POST_ID,"lang",function(error,values)
+	{
+		if (!error)
+		{
+			var lang = values[0];
+			
+			if (lang)
+			{	
+				db.zrange('comments_' + ID, 0, -1 ,function(err, keys)
+				{	
+					if (err)
+					{
+						callback(err);
+					}
+					else
+					{	
+						var multi = db.multi();
+						
+						keys.forEach(function(key)
+						{								
+							multi.zrem("comments_unvalidated_" + lang,key);
+							multi.zrem("comments_all_" + lang,key);
+							multi.zrem("comments_" + ID,key);
+						});
+						
+						multi.zrem("posts_" + lang,POST_ID);
+						
+						multi.del(POST_ID);
+												
+						multi.exec(function(err,replies)
+						{
+							if (!error)
+							{
+								var ret = {"success":true};
+								tools.returnJSON(res,ret);
+							}
+							else
+							{
+								var ret = {"success":false};
+								tools.returnJSON(res,ret);
+							}
+						});
+					}
+					
+				}); 	
+			}
+			else
+			{
+				var ret = {"success":false};
+				tools.returnJSON(res,ret); 	
+			}
+		}
+		else
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 	
+		}
+	});
+}
+
+
+
+var deletePage = function(req,res)
+{
+	var ID = req.body.ID;
+	var POST_ID = "post_" + ID;
+	
+	db.hgetall("pages_"+ lang_module.get(req),function(error,values)
+	{
+		if (!error)
+		{			
+			var multi = db.multi();
+			
+			Object.keys(values).forEach(function(val,key)
+			{	
+				var pID = values[val];
+				var parts = pID.split("_");
+				var postid = parts[parts.length-1];
+				
+				if (postid == ID)
+				{	
+					multi.hdel("pages_" + lang_module.get(req),val);
+					multi.del(POST_ID);
+				}
+			});
+			
+			multi.exec(function(err,replies)
+			{
+				if (!error)
+				{
+					var ret = {"success":true};
+					tools.returnJSON(res,ret);
+				}
+				else
+				{
+					var ret = {"success":false};
+					tools.returnJSON(res,ret);
+				}
+			});
+		}
+		else
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 	
+		}
+	});
+}
+
+
+
+
 var get = function(req,postID,callback)
 {	
 	db.hgetall("post_" + postID,function(error,post)
@@ -778,6 +894,10 @@ module.exports = {
 	listComments: listComments,
 	acceptComment : acceptComment,
 	deleteComment : deleteComment,
+	
+	deletePost : deletePost,
+	deletePage : deletePage,
+	
 	renderPosts2 : renderPosts2
 }
 
