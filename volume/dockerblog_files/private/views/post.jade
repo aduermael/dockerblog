@@ -56,12 +56,22 @@ block content
 			
 			
 			- each comment in comments
-				.comment
-					h2 #{comment.name}
-					.date
-						p #{comment.date}
-					.clearboth
-					p !{comment.content.replace(/\n/g, '<br/>')}
+				- if (comment.name == "Laurel" && comment.email == "secret@bloglaurel.com")
+					.comment(style="background-color:#cae1ea")
+						h2 #{comment.name}
+						.date
+							p #{comment.date}
+						.clearboth
+						p !{comment.content.replace(/\n/g, '<br/>')}
+						
+				- else
+					.comment						
+						h2 #{comment.name}
+						.date
+							p #{comment.date}
+						.clearboth
+						p !{comment.content.replace(/\n/g, '<br/>')}
+						
 			
 			#form
 				#formsending(style="display: none")
@@ -73,10 +83,23 @@ block content
 					
 				#fields
 					input#postID(type="hidden" value=post.ID)
-					input#commentName.mandatory(type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" 
-					onblur="if(this.value == '') { this.value = 'name'; }")
-					input#commentEmail.optional(type="text" value="email" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
-					onblur="if(this.value == '') { this.value = 'email'; }")
+					
+					- if (commentName)
+						input#commentName.mandatory(type="text" value="#{commentName}" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" 
+						onblur="if(this.value == '') { this.value = 'name'; }")
+					- else
+						input#commentName.mandatory(type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);"
+						onblur="if(this.value == '') { this.value = 'name'; }")						
+												
+					- if (commentEmail)
+						input#commentEmail.optional(type="text" value="#{commentEmail}" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
+						onblur="if(this.value == '') { this.value = 'email'; }")
+					- else
+						input#commentEmail.optional(type="text" value="email" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
+						onblur="if(this.value == '') { this.value = 'email'; }")
+					
+						
+						
 					textarea#commentContent(onfocus="backToOriginalBackground(this);")
 					input(type="button" value="Send" onclick="postComment('name','email')")
 				
