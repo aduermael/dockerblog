@@ -337,7 +337,16 @@ function deleteComment(comID)
 	var obj = {};
 	obj.ID = comID;
 
-	Post('/admin/deleteComment',obj,deleteCommentCallBack,errorCallback);
+	var r = confirm("Are you sure?");
+	
+	if (r == true) 
+	{
+		Post('/admin/deleteComment',obj,deleteCommentCallBack,errorCallback);
+	} 
+	else
+	{
+		// do nothing
+	}
 }
 
 var acceptCommentCallBack = function(data)
