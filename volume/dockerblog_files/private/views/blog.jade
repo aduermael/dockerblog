@@ -88,22 +88,58 @@ block structure
 			p #{keys.bio}		
 
 		.zone
-			a(href="/contact")
-				img(src="/img/banners/contact.jpg")
-			h2
-				a(href="/contact") #{keys.loc_contactme}
+			- if (keys.loc_contactme)
+				a(href="/contact")
+					img(src="/img/banners/contact.jpg")
+				h2
+					a(href="/contact") #{keys.loc_contactme}
 
 		.zone
-			a(href="/references")
-				img(src="/img/banners/references.jpg")
-			h2
-				a(href="/references") #{keys.loc_references}
-				
+			- if (keys.loc_cerise1)
+				a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318")
+					img(src="/img/banners/cerise1.jpg")
+				h2
+					a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318") #{keys.loc_cerise1}
+					
+			- if (keys.loc_cerise2)
+				a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004")
+					img(src="/img/banners/cerise2.jpg")
+				h2
+					a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004") #{keys.loc_cerise2}
+					
+			- if (keys.loc_dailystruggle)
+				a(href="/studio")
+					img(src="/img/banners/dailystruggle.jpg")
+				h2
+					a(href="/studio") #{keys.loc_dailystruggle}
+					
 			- if (keys.loc_minecraft)
 				a(href="/minecraft")
 					img(src="/img/banners/minecraft.jpg")
 				h2
-					a(href="/minecraft") #{keys.loc_minecraft}
+					a(href="/minecraft") #{keys.loc_minecraft}	
+					
+					
+			- if (keys.loc_youridea)
+				a(href="/book")
+					img(src="/img/banners/youridea.jpg")
+				h2
+					a(href="/book") #{keys.loc_youridea}	
+
+
+			- if (keys.loc_references)		
+				a(href="/references")
+					img(src="/img/banners/references.jpg")
+				h2
+					a(href="/references") #{keys.loc_references}
+				
+			
+			- if (keys.loc_apps)
+				a(href="http://bit.ly/grubgrub")
+					img(src="/img/banners/apps.jpg")
+				h2
+					a(href="http://bit.ly/grubgrub") #{keys.loc_apps}
+				
 		
 		.zone
 			h2
