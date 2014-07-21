@@ -118,4 +118,12 @@ exports.sha1 = function(string)
 	return shasum.digest('hex');
 }
 
+exports.md5 = function(string)
+{
+	var sum = crypto.createHash('md5');
+	sum.update(string);
+	return sum.digest('hex');
+}
+
+
 
