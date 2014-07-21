@@ -408,6 +408,12 @@ a:hover
 	float: right;
 }
 
+.left_column .post #comments .comment .answer a
+{
+	color: #868686;
+	float: right;
+}
+
 
 .left_column .post #comments .comment h2
 {
@@ -469,6 +475,34 @@ input,textarea
 }
 
 
+.user
+{
+	margin: 5px;
+	width:370px;
+	height:81px;
+	margin-left: auto;
+	margin-right: auto
+}
+
+.gravatar
+{
+	float:left;
+	width: 81px;
+	height:81px;
+	margin:0;
+	padding:0;
+}
+
+
+.user input[type=text]
+{
+	float:right;
+	width:264px;
+	margin:0;
+}
+
+
+
 input[type=text]
 {
 	width:350px;
@@ -498,6 +532,25 @@ input[type=button]
 input[type=button]:hover
 {
 	cursor: pointer;
+}
+
+.checkbox
+{
+	margin-left: auto;
+	margin-right: auto;
+	width:350px;
+}
+
+
+.checkbox input[type=checkbox]
+{
+	display: inline;
+}
+
+.checkbox p
+{
+	margin-left:8px;
+	display: inline;
 }
 
 
