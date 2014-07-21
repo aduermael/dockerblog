@@ -90,9 +90,15 @@ function postComment(nameIndication,emailIndication)
 {
 	var comment = new Object()
 	comment.postID = $('#postID').val();
+	comment.answerComID = $('#answerComID').val();
 	comment.name = $('#commentName').val();
 	comment.email = $('#commentEmail').val();
 	comment.content = $('#commentContent').val();
+	
+	comment.emailOnAnswer = $('#comEmailOnAnswer').is(":checked");
+	comment.remember = $('#comRemember').is(":checked");
+	
+	
 	
 	var error = false;
 	
@@ -142,6 +148,29 @@ var postCommentCallback = function(data)
 	{
 		$('#formerror').show();
 	}
+}
+
+
+function answerComment(comID)
+{
+	$('#com_' + comID).after($('#form'));
+	$('#answerComID').val(comID);
+}
+
+
+function emailChange(emailInput)
+{
+	var hash = getGravatarHash(emailInput.value)
+	console.log("hash: " + hash); 
+	$('#formGravatar').attr("src",'http://www.gravatar.com/avatar/' + hash + '.jpg?s=81');
+}
+
+function getGravatarHash(email)
+{
+	email = $.trim(email);
+	email = email.toLowerCase();
+	var md5 = $.md5(email);
+	return md5;
 }
 
 
