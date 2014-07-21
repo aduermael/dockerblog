@@ -291,6 +291,35 @@ function postComment(req,res)
 
 
 
+Array.prototype.move = function (old_index, new_index) {
+    if (new_index >= this.length) {
+        var k = new_index - this.length;
+        while ((k--) + 1) {
+            this.push(undefined);
+        }
+    }
+    this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+    return this; // for testing purposes
+};
+
+
+function getTotalChildren(comments,index)
+{
+	var directChildren = comments[index].children;
+	var count = 0;
+	
+	var totalChildren = 0;
+	
+	while (count < directChildren)
+	{
+		totalChildren += 1;
+		totalChildren += getTotalChildren(comments,index+totalChildren);
+		count++;
+	}
+	
+	return totalChildren;
+}
+
 var getComments = function(req,postID,callback)
 {	
 	db.zrange('comments_' + postID, 0, -1 ,function(err, keys)
@@ -320,8 +349,46 @@ var getComments = function(req,postID,callback)
 						comment.gravatar = tools.md5(s);
 					}
 					
+					comment.indent = 0;
+					comment.children = 0; // direct children
+					
 					comment.date = getPostTime(req,comment.date);
 				});
+				
+				
+				for (var i = 1; i < replies.length; i++)
+				{
+					var com = replies[i];
+					
+					if (com.answerComID)
+					{
+						for (var j = i -1; j >= 0; j--)
+						{
+							var older_com = replies[j];
+							if (older_com.ID == com.answerComID)
+							{
+								com.indent = older_com.indent + 1;
+								
+								var totalChildren = getTotalChildren(replies,j);
+								
+								older_com.children++;
+								
+								console.log("FOUND PARENT!");
+								
+								if ( i != j+ totalChildren )
+								{
+									replies.move(i,j+totalChildren+1);
+								}
+								
+								break;
+							}
+						}	
+					}
+				}
+				
+				
+				console.dir(replies);
+				
 								
 				callback(null,replies);
 			});

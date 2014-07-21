@@ -153,7 +153,7 @@ var postCommentCallback = function(data)
 
 function answerComment(comID)
 {
-	$('#com_' + comID).after($('#form'));
+	$('#com_end_' + comID).after($('#form'));
 	$('#answerComID').val(comID);
 }
 
