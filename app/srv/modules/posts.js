@@ -134,7 +134,8 @@ function renderOnePost(req,res)
 					post: post,
 					comments: comments,
 					commentName: req.cookies.comment_name_,
-					commentEmail: req.cookies.comment_email_
+					commentEmail: req.cookies.comment_email_,
+					commentGravatar: req.cookies.comment_gravatar_
 				}); 
 			});
 		}
@@ -240,16 +241,33 @@ function postComment(req,res)
 	{
 		// save nickname / email in cookie
 		
-		var hour = 3600000;
-			
-		res.cookie('comment_name_', com.name, { maxAge: 365 * 24 * hour, httpOnly: false});
-		
-		if (com.email != "")
+		// compute gravatar hash
+		if ( com.email != "" )
 		{
-			res.cookie('comment_email_', com.email, { maxAge: 365 * 24 * hour, httpOnly: false});
+			var s = com.email.toLowerCase();
+			s = s.replace(/^s+/g,'').replace(/s+$/g,'');
+			
+			com.gravatar = tools.md5(s);
 		}
 		
-	
+		var hour = 3600000;
+		
+		if (com.remember)	
+		{
+			res.cookie('comment_name_', com.name, { maxAge: 365 * 24 * hour, httpOnly: false});
+			
+			if (com.email != "")
+			{
+				res.cookie('comment_email_', com.email, { maxAge: 365 * 24 * hour, httpOnly: false});
+			}
+			
+			if (com.gravatar)
+			{
+				res.cookie('comment_gravatar_', com.gravatar, { maxAge: 365 * 24 * hour, httpOnly: false});
+			}
+		}
+		
+		
 		comment(req,com,function(error)
 		{
 			if (error)
@@ -294,6 +312,14 @@ var getComments = function(req,postID,callback)
 			{
 				replies.forEach(function(comment)
 				{
+					// for old comments with emails but not gravatar hashes, we make them on the fly
+					if (comment.email && comment.email != "" && !comment.gravatar)
+					{
+						var s = comment.email.toLowerCase();
+						s = s.replace(/^s+/g,'').replace(/s+$/g,'');
+						comment.gravatar = tools.md5(s);
+					}
+					
 					comment.date = getPostTime(req,comment.date);
 				});
 								
@@ -357,8 +383,35 @@ var comment = function(req,obj,callback)
 								console.log("POST COMMENT getting lang from POST: " + langValue);
 								
 								var multi = db.multi();
+								
+								
 								multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
 								
+								
+								if (obj.answerComID && parseInt(obj.answerComID) != -1)
+								{
+									var answerComID = parseInt(obj.answerComID);
+									
+									if (answerComID != -1)
+									{								
+										multi.hmset(ID,"answerComID",parseInt(obj.answerComID));
+									}
+								}
+								
+								
+								if (obj.emailOnAnswer && obj.email != "")
+								{
+									multi.hmset(ID,"emailOnAnswer",1);
+								}
+								
+								
+								if (obj.gravatar)
+								{
+									multi.hmset(ID,"gravatar",obj.gravatar);
+								}
+							
+
+	
 								// comment will be link to the post later, when validated
 								//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
 								
@@ -385,7 +438,32 @@ var comment = function(req,obj,callback)
 								console.log("POST COMMENT getting lang from SESSION: " + lang_module.get(req));
 								
 								var multi = db.multi();
+								
 								multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
+								
+								if (obj.answerComID && parseInt(obj.answerComID) != -1)
+								{
+									var answerComID = parseInt(obj.answerComID);
+									
+									if (answerComID != -1)
+									{								
+										multi.hmset(ID,"answerComID",parseInt(obj.answerComID));
+									}
+								}
+								
+								
+								if (obj.emailOnAnswer && obj.email != "")
+								{
+									multi.hmset(ID,"emailOnAnswer",1);
+								}
+								
+								
+								if (obj.gravatar)
+								{
+									multi.hmset(ID,"gravatar",obj.gravatar);
+								}
+								
+								
 								
 								// comment will be link to the post later, when validated
 								//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
