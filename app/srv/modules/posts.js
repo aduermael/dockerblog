@@ -236,6 +236,20 @@ function postComment(req,res)
 	{
 		error = true;
 	}
+
+	com.website = formatWebsite(com.website);
+
+	if (!validateWebsite(com.website))
+	{
+		delete com.website;
+	}
+
+	com.twitter = formatTwitter(com.twitter);
+
+	if (!validateTwitter(com.twitter))
+	{
+		delete com.twitter;
+	}
 	
 	if (!error)
 	{
@@ -447,7 +461,7 @@ var comment = function(req,obj,callback)
 						{
 							if (!err && langValue)
 							{
-								console.log("POST COMMENT getting lang from POST: " + langValue);
+								//console.log("POST COMMENT getting lang from POST: " + langValue);
 								
 								var multi = db.multi();
 								
@@ -476,7 +490,16 @@ var comment = function(req,obj,callback)
 								{
 									multi.hmset(ID,"gravatar",obj.gravatar);
 								}
-							
+
+								if (obj.twitter)
+								{
+									multi.hmset(ID,"twitter",obj.twitter);
+								}
+
+								if (obj.website)
+								{
+									multi.hmset(ID,"website",obj.website);
+								}
 
 	
 								// comment will be link to the post later, when validated
@@ -528,6 +551,16 @@ var comment = function(req,obj,callback)
 								if (obj.gravatar)
 								{
 									multi.hmset(ID,"gravatar",obj.gravatar);
+								}
+
+								if (obj.twitter)
+								{
+									multi.hmset(ID,"twitter",obj.twitter);
+								}
+
+								if (obj.website)
+								{
+									multi.hmset(ID,"website",obj.website);
 								}
 								
 								
@@ -1084,7 +1117,48 @@ module.exports = {
 }
 
 
+function formatWebsite(website)
+{
+	if (website != "")
+	{
+		// nothing special...
+		return website;
+	}
+	else
+	{
+		return "";
+	}
+}
 
+
+function validateWebsite(website) 
+{
+    return (website.length <= 255) && (website != "");
+}
+
+function formatTwitter(twitter)
+{
+	if (twitter != "")
+	{
+		// in case user entered adress such as https://twitter.com/a_duermael
+		var parts = twitter.split("/");
+		twitter = parts[parts.length-1];
+
+		// In case user entered the '@', "@a_duermael"
+		twitter = twitter.replace('@','');
+
+		return twitter;
+	}
+	else
+	{
+		return "";
+	}
+}
+
+function validateTwitter(twitter) 
+{
+    return (twitter.length <= 20) && (twitter != "");
+}
 
 function validateEmail(email) 
 {
