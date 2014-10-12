@@ -1121,7 +1121,9 @@ function formatWebsite(website)
 {
 	if (website != "")
 	{
-		// nothing special...
+		website = website.trim();
+		website = encodeURIComponent(website);
+		
 		return website;
 	}
 	else
@@ -1146,6 +1148,8 @@ function formatTwitter(twitter)
 
 		// In case user entered the '@', "@a_duermael"
 		twitter = twitter.replace('@','');
+
+		twitter = twitter.trim();
 
 		return twitter;
 	}
