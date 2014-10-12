@@ -368,10 +368,6 @@ var getComments = function(req,postID,callback)
 					
 					comment.date = getPostTime(req,comment.date);
 
-					if (comment.website)
-					{
-						comment.website = decodeURIComponent(comment.website);
-					}
 				});
 				
 				
@@ -1127,7 +1123,11 @@ function formatWebsite(website)
 	if (website != "")
 	{
 		website = website.trim();
-		website = encodeURIComponent(website);
+
+		if (str.substring(0,7) != "http://" && str.substring(0,8) != "https://")
+		{
+			website = "http://" + website;
+		}
 		
 		return website;
 	}
