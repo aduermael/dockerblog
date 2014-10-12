@@ -367,6 +367,11 @@ var getComments = function(req,postID,callback)
 					comment.children = 0; // direct children
 					
 					comment.date = getPostTime(req,comment.date);
+
+					if (comment.website)
+					{
+						comment.website = decodeURIComponent(comment.website);
+					}
 				});
 				
 				
