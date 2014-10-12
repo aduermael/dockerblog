@@ -135,7 +135,9 @@ function renderOnePost(req,res)
 					comments: comments,
 					commentName: req.cookies.comment_name_,
 					commentEmail: req.cookies.comment_email_,
-					commentGravatar: req.cookies.comment_gravatar_
+					commentGravatar: req.cookies.comment_gravatar_,
+					commentTwitter: req.cookies.comment_twitter_,
+					commentWebsite: req.cookies.comment_website_
 				}); 
 			});
 		}
@@ -278,6 +280,16 @@ function postComment(req,res)
 			if (com.gravatar)
 			{
 				res.cookie('comment_gravatar_', com.gravatar, { maxAge: 365 * 24 * hour, httpOnly: false});
+			}
+
+			if (com.twitter)
+			{
+				res.cookie('comment_twitter_', com.twitter, { maxAge: 365 * 24 * hour, httpOnly: false});
+			}
+
+			if (com.website)
+			{
+				res.cookie('comment_website_', com.website, { maxAge: 365 * 24 * hour, httpOnly: false});
 			}
 		}
 		
