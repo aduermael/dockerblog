@@ -367,7 +367,6 @@ var getComments = function(req,postID,callback)
 					comment.children = 0; // direct children
 					
 					comment.date = getPostTime(req,comment.date);
-
 				});
 				
 				
@@ -1124,7 +1123,7 @@ function formatWebsite(website)
 	{
 		website = website.trim();
 
-		if (str.substring(0,7) != "http://" && str.substring(0,8) != "https://")
+		if (website.substring(0,7) != "http://" && website.substring(0,8) != "https://")
 		{
 			website = "http://" + website;
 		}
