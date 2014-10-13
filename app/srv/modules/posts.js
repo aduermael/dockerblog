@@ -223,7 +223,7 @@ function sendEmailOnAnswer(comID)
 
 	console.log("sendEmailOnAnswer com ID: " + comID);
 
-	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website","postID",function(error,values)
+	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website","postID","ID",function(error,values)
 	{
 		if (!error)
 		{
@@ -240,6 +240,7 @@ function sendEmailOnAnswer(comID)
 				com.twitter = values[4];
 				com.website = values[5];
 				com.postID = values[6];
+				com.ID = values[7];
 
 				var originalComID = "com_" + com.answerComID;
 
@@ -300,7 +301,7 @@ function sendEmailOnAnswer(comID)
 							html += "</div>";
 
 							html += "<div style=\"padding: 4px;margin:0\">";
-							html += "<a href=\"http://bloglaurel.com/post/" + com.postID + "\">Answer</a>";
+							html += "<a href=\"http://bloglaurel.com/post/" + com.postID + "#com" + com.ID + "\">Answer</a>";
 							html += "</div>";
 
 
