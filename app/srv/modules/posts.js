@@ -342,26 +342,6 @@ function postComment(req,res)
 			{
 				var ret = {"success":false};
 				tools.returnJSON(res,ret);
-
-				// maybe an email has to be sent if answering comment
-
-				console.log("comment posted, maybe we should send an email?");
-
-				if (com.answerComID)
-				{
-					var answerComID = parseInt(com.answerComID);
-					
-					if (answerComID != -1)
-					{		
-						console.log("send email");						
-						sendEmailOnAnswer(answerComID);
-					}
-					else
-					{
-						console.log("email not required");
-					}
-				}
-
 			}
 			else
 			{
@@ -374,6 +354,25 @@ function postComment(req,res)
 	{
 		var ret = {"success":false};
 		tools.returnJSON(res,ret);
+
+		// maybe an email has to be sent if answering comment
+
+		console.log("comment posted, maybe we should send an email?");
+
+		if (com.answerComID)
+		{
+			var answerComID = parseInt(com.answerComID);
+			
+			if (answerComID != -1)
+			{		
+				console.log("send email");						
+				sendEmailOnAnswer(answerComID);
+			}
+			else
+			{
+				console.log("email not required");
+			}
+		}
 	}
 }
 
