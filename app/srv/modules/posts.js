@@ -215,13 +215,75 @@ function postContact(req,res)
 
 
 
-function sendEmailOnAnswer(answerComID)
+function sendEmailOnAnswer(comID)
 {
-	var ID = "com_" + answerComID;
+	// comID: the comment that has just been posted or accepted
+	// we have to look if it answers to another comment
+	// if so, if that other comment required an email on answers
 
-	console.log("sendEmailOnAnswer com ID: " + ID);
 
-	db.hmget(ID,"emailOnAnswer","email","name","content",function(error,values)
+	console.log("sendEmailOnAnswer com ID: " + answerComID);
+
+	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website",function(error,values)
+	{
+		var com = {};
+		com.answerComID = values[0];
+
+		if (com.answerComID)
+		{
+			console.log("comment is an answer to another comment"); 
+
+			com.name = values[1];
+			com.content = values[2];
+			com.gravatar = values[3];
+			com.twitter = values[4];
+			com.website = values[5];
+
+			db.hmget(com.answerComID,"emailOnAnswer","email","name","content","gravatar","twitter","website",function(error2,values2)
+			{
+				var originalCom = {};
+				originalCom.emailOnAnswer = values[0];
+
+				if (originalCom.emailOnAnswer && originalCom.emailOnAnswer == 1)
+				{
+					console.log("An email should be sent");
+
+					originalCom.email = values[1];
+					originalCom.name = values[2];
+					originalCom.content = values[3];
+					originalCom.gravatar = values[4];
+					originalCom.twitter = values[5];
+					originalCom.website = values[6];
+
+
+					var text = "";
+					text += originalCom.name;
+					text += "\n";
+					text += originalCom.content;
+
+					text += "\n\n";
+
+					text += com.name;
+					text += "\n";
+					text += com.content;
+
+
+					tools.sendMail(email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text);
+				}
+				else
+				{
+					console.log("comment is an answer to another comment, but email not requested");
+				}
+		}
+		else
+		{
+			console.log("comment is not an answer to another comment");
+		}
+
+	});
+
+	/*
+	db.hmget(answerComID,"emailOnAnswer","email","name","content",function(error,values)
 	{
 		if (!error && values)
 		{
@@ -250,7 +312,7 @@ function sendEmailOnAnswer(answerComID)
 		{
 			// fail does not return anything
 		}
-	});
+	});*/
 }
 
 
@@ -347,25 +409,6 @@ function postComment(req,res)
 			{
 				var ret = {"success":true};
 				tools.returnJSON(res,ret);	
-
-				// maybe an email has to be sent if answering comment
-
-				console.log("comment posted, maybe we should send an email?");
-
-				if (com.answerComID)
-				{
-					var answerComID = parseInt(com.answerComID);
-					
-					if (answerComID != -1)
-					{		
-						console.log("send email");						
-						sendEmailOnAnswer(answerComID);
-					}
-					else
-					{
-						console.log("email not required");
-					}
-				}
 			}
 		});
 	}
@@ -814,6 +857,13 @@ var acceptComment = function(req,res)
 				{
 					var ret = {"success":true};
 					tools.returnJSON(res,ret);
+
+
+					// maybe an email has to be sent if answering comment
+
+					console.log("comment accepted, maybe we should send an email?");
+					sendEmailOnAnswer(ID);
+
 				}
 				else
 				{
