@@ -347,6 +347,25 @@ function postComment(req,res)
 			{
 				var ret = {"success":true};
 				tools.returnJSON(res,ret);	
+
+				// maybe an email has to be sent if answering comment
+
+				console.log("comment posted, maybe we should send an email?");
+
+				if (com.answerComID)
+				{
+					var answerComID = parseInt(com.answerComID);
+					
+					if (answerComID != -1)
+					{		
+						console.log("send email");						
+						sendEmailOnAnswer(answerComID);
+					}
+					else
+					{
+						console.log("email not required");
+					}
+				}
 			}
 		});
 	}
@@ -354,25 +373,6 @@ function postComment(req,res)
 	{
 		var ret = {"success":false};
 		tools.returnJSON(res,ret);
-
-		// maybe an email has to be sent if answering comment
-
-		console.log("comment posted, maybe we should send an email?");
-
-		if (com.answerComID)
-		{
-			var answerComID = parseInt(com.answerComID);
-			
-			if (answerComID != -1)
-			{		
-				console.log("send email");						
-				sendEmailOnAnswer(answerComID);
-			}
-			else
-			{
-				console.log("email not required");
-			}
-		}
 	}
 }
 
@@ -461,7 +461,7 @@ var getComments = function(req,postID,callback)
 								
 								older_com.children++;
 								
-								console.log("FOUND PARENT!");
+								// console.log("FOUND PARENT!");
 								
 								if ( i != j+ totalChildren )
 								{

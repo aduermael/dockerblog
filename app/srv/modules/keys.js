@@ -52,7 +52,7 @@ function root(req, res)
 
 function post_key(req, res)
 {
-	console.log('POST KEY '+JSON.stringify(req.body));
+	// console.log('POST KEY '+JSON.stringify(req.body));
 	
 	var key   = req.body.key;
 	var value = req.body.value;
@@ -105,7 +105,7 @@ function post_key(req, res)
 
 function delete_key(req, res)
 {
-	console.log('DELETE KEY '+JSON.stringify(req.body));
+	// console.log('DELETE KEY '+JSON.stringify(req.body));
 	
 	var key   = req.body.key;
 	
