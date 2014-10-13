@@ -221,7 +221,7 @@ function sendEmailOnAnswer(comID)
 	// we have to look if it answers to another comment
 	// if so, if that other comment required an email on answers
 
-	console.log("sendEmailOnAnswer com ID: " + comID);
+	// console.log("sendEmailOnAnswer com ID: " + comID);
 
 	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website","postID","ID",function(error,values)
 	{
@@ -232,7 +232,7 @@ function sendEmailOnAnswer(comID)
 
 			if (com.answerComID)
 			{
-				console.log("comment is an answer to another comment"); 
+				// console.log("comment is an answer to another comment"); 
 
 				com.name = values[1];
 				com.content = values[2];
@@ -244,7 +244,7 @@ function sendEmailOnAnswer(comID)
 
 				var originalComID = "com_" + com.answerComID;
 
-				console.log("original com ID: " + originalComID);
+				// console.log("original com ID: " + originalComID);
 
 				db.hmget(originalComID,"emailOnAnswer","email","name","content","gravatar","twitter","website",function(error2,values2)
 				{
@@ -255,7 +255,7 @@ function sendEmailOnAnswer(comID)
 
 						if (originalCom.emailOnAnswer && originalCom.emailOnAnswer == 1)
 						{
-							console.log("An email should be sent");
+							// console.log("An email should be sent");
 
 							originalCom.email = values2[1];
 							originalCom.name = values2[2];
@@ -310,14 +310,14 @@ function sendEmailOnAnswer(comID)
 						}
 						else
 						{
-							console.log("comment is an answer to another comment, but email not requested");
+							//console.log("comment is an answer to another comment, but email not requested");
 						}
 					}
 				});
 			}
 			else
 			{
-				console.log("comment is not an answer to another comment");
+				//console.log("comment is not an answer to another comment");
 			}
 		}
 
@@ -871,7 +871,7 @@ var acceptComment = function(req,res)
 
 					// maybe an email has to be sent if answering comment
 
-					console.log("comment accepted, maybe we should send an email?");
+					//console.log("comment accepted, maybe we should send an email?");
 					sendEmailOnAnswer(ID);
 
 				}
