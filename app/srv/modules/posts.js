@@ -287,7 +287,7 @@ function sendEmailOnAnswer(comID)
 							html += "<div style=\"margin:0 0 5px 0;background-color: #F7F7F7;border-radius: 5px;border: none;padding:10px;\">";
 							html += "<div style=\"padding: 4px;margin:0\">";
 							html += com.name;
-							html += "</div">;
+							html += "</div>";
 							html += "<div style=\"padding: 4px;margin:0\">";
 							html += com.content;
 							html += "</div>";
