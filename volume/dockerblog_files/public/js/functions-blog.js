@@ -86,7 +86,7 @@ var sendMessageCallback = function(data)
 
 
 
-function postComment(nameIndication,emailIndication)
+function postComment(nameIndication,emailIndication,websiteIndication,twitterIndication)
 {
 	var comment = new Object()
 	comment.postID = $('#postID').val();
@@ -94,6 +94,9 @@ function postComment(nameIndication,emailIndication)
 	comment.name = $('#commentName').val();
 	comment.email = $('#commentEmail').val();
 	comment.content = $('#commentContent').val();
+
+	comment.website = $('#commentWebsite').val();
+	comment.twitter = $('#commentTwitter').val();
 	
 	comment.emailOnAnswer = $('#comEmailOnAnswer').is(":checked");
 	comment.remember = $('#comRemember').is(":checked");
@@ -118,6 +121,20 @@ function postComment(nameIndication,emailIndication)
 		setBackgroundColor($('#commentEmail'),errorColor);
 		error = true;
 	}
+
+	// check valid website
+	if (comment.website == websiteIndication || comment.website == "")
+	{
+		comment.website = "";
+	}
+
+	// limit # of characters
+	if (comment.twitter == twitterIndication || comment.twitter == "")
+	{
+		comment.website = "";
+	}
+
+
 	
 	if (comment.content == "")
 	{
@@ -133,6 +150,7 @@ function postComment(nameIndication,emailIndication)
 		Post('/comment',comment,postCommentCallback,errorCallback);			
 	}
 }
+
 
 var postCommentCallback = function(data)
 {
@@ -153,6 +171,14 @@ var postCommentCallback = function(data)
 
 function answerComment(comID)
 {
+	// reset form
+	$('#fields').show();
+	$('#formsending').hide();
+	$('#formsent').hide();
+	$('#formerror').hide();
+	$('#commentContent').val("");
+
+
 	$('#com_end_' + comID).after($('#form'));
 	$('#answerComID').val(comID);
 }
