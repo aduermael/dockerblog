@@ -273,7 +273,27 @@ function sendEmailOnAnswer(comID)
 							text += "\n";
 							text += com.content;
 
-							tools.sendMail(originalCom.email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text);
+
+							var html = "";
+							html += "<div style=\"margin:0 0 5px 0;background-color: #F7F7F7;border-radius: 5px;border: none;padding:10px;\">";
+							html += "<div style=\"padding: 4px;margin:0\">";
+							html += originalCom.name;
+							html += "</div">
+							html += "<div style=\"padding: 4px;margin:0\">";
+							html += originalCom.content;
+							html += "</div>"
+							html += "</div>"
+
+							html += "<div style=\"margin:0 0 5px 0;background-color: #F7F7F7;border-radius: 5px;border: none;padding:10px;\">";
+							html += "<div style=\"padding: 4px;margin:0\">";
+							html += com.name;
+							html += "</div">
+							html += "<div style=\"padding: 4px;margin:0\">";
+							html += com.content;
+							html += "</div">
+							html += "</div">
+
+							tools.sendMail(originalCom.email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text,html);
 						}
 						else
 						{
