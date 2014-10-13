@@ -238,7 +238,11 @@ function sendEmailOnAnswer(comID)
 			com.twitter = values[4];
 			com.website = values[5];
 
-			db.hmget(com.answerComID,"emailOnAnswer","email","name","content","gravatar","twitter","website",function(error2,values2)
+			var originalComID = "com_" + com.answerComID;
+			 
+			console.log("original com ID: " + originalComID);
+
+			db.hmget(originalComID,"emailOnAnswer","email","name","content","gravatar","twitter","website",function(error2,values2)
 			{
 				var originalCom = {};
 				originalCom.emailOnAnswer = values[0];
