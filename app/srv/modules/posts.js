@@ -51,7 +51,7 @@ function renderPosts(req,res)
 	var page = req.params.PageID;
 	if (!page) page = 1;
 	
-	console.log("posts (page " + page + ")");
+	// console.log("posts (page " + page + ")");
 	
 	list(req,(page - 1) , postsPerPage , function(error,content)
 	{
@@ -70,7 +70,7 @@ function renderPosts(req,res)
 
 function renderFrenchRSS(req,res)
 {
-	console.log("old rss");
+	// console.log("old rss");
 	
 	var page = 1;
 	req.params.lang = "fr";
@@ -90,7 +90,7 @@ function renderFrenchRSS(req,res)
 
 function renderRSS(req,res)
 {
-	console.log("rss");
+	// console.log("rss");
 	
 	var page = 1;
 		
@@ -107,7 +107,7 @@ function renderRSS(req,res)
 
 var renderPosts2 = function(req,res)
 {
-	console.log("404: " + req.url);
+	// console.log("404: " + req.url);
 	renderPosts(req,res);
 }
 
@@ -116,7 +116,7 @@ function renderOnePost(req,res)
 {	
 	var postID = req.params.PostID;
 	
-	console.log("post: " + postID);
+	// console.log("post: " + postID);
 	
 	get(req,postID, function(error,post)
 	{	
@@ -345,13 +345,20 @@ function postComment(req,res)
 
 				// maybe an email has to be sent if answering comment
 
+				console.log("comment posted, maybe we should send an email?");
+
 				if (com.answerComID)
 				{
 					var answerComID = parseInt(com.answerComID);
 					
 					if (answerComID != -1)
-					{								
+					{		
+						console.log("send email");						
 						sendEmailOnAnswer(answerComID);
+					}
+					else
+					{
+						console.log("email not required");
 					}
 				}
 
@@ -594,7 +601,7 @@ var comment = function(req,obj,callback)
 							}
 							else // old way, using session lang
 							{
-								console.log("POST COMMENT getting lang from SESSION: " + lang_module.get(req));
+								// console.log("POST COMMENT getting lang from SESSION: " + lang_module.get(req));
 								
 								var multi = db.multi();
 								
