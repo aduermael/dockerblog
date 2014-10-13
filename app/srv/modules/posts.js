@@ -223,7 +223,7 @@ function sendEmailOnAnswer(comID)
 
 	console.log("sendEmailOnAnswer com ID: " + comID);
 
-	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website",function(error,values)
+	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website","postID",function(error,values)
 	{
 		if (!error)
 		{
@@ -239,6 +239,7 @@ function sendEmailOnAnswer(comID)
 				com.gravatar = values[3];
 				com.twitter = values[4];
 				com.website = values[5];
+				com.postID = values[6];
 
 				var originalComID = "com_" + com.answerComID;
 
@@ -275,23 +276,34 @@ function sendEmailOnAnswer(comID)
 
 
 							var html = "";
-							html += "<div style=\"margin:0 0 5px 0;background-color: #F7F7F7;border-radius: 5px;border: none;padding:10px;\">";
+							html += "<div style=\"margin:0 0 10px 0;background-color: #F7F7F7;border-radius: 5px;border: none;padding:10px;\">";
 							html += "<div style=\"padding: 4px;margin:0\">";
+							html += "<strong>";
 							html += originalCom.name;
+							html += "</strong>";
 							html += "</div>";
 							html += "<div style=\"padding: 4px;margin:0\">";
 							html += originalCom.content;
 							html += "</div>";
 							html += "</div>";
 
-							html += "<div style=\"margin:0 0 5px 0;background-color: #F7F7F7;border-radius: 5px;border: none;padding:10px;\">";
+
+							html += "<div style=\"margin:0 0 10px 0;background-color: #F7F7F7;border-radius: 5px;border: none;padding:10px;\">";
 							html += "<div style=\"padding: 4px;margin:0\">";
+							html += "<strong>";
 							html += com.name;
+							html += "</strong>";
 							html += "</div>";
 							html += "<div style=\"padding: 4px;margin:0\">";
 							html += com.content;
 							html += "</div>";
 							html += "</div>";
+
+							html += "<div style=\"padding: 4px;margin:0\">";
+							html += "<a href=\"http://bloglaurel.com/post/" + com.postID + "\">Answer</a>";
+							html += "</div>";
+
+
 
 							tools.sendMail(originalCom.email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text,html);
 						}
