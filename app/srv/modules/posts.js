@@ -214,6 +214,48 @@ function postContact(req,res)
 
 
 
+
+function sendEmailOnAnswer(answerComID)
+{
+	var ID = "com_" + answerComID;
+
+	console.log("sendEmailOnAnswer com ID: " + ID);
+
+	db.hmget(ID,"emailOnAnswer","email","name","content",function(error,values)
+	{
+		if (!error && values)
+		{
+			var emailOnAnswer = values[0];	
+			
+			console.log("emailOnAnswer: " + emailOnAnswer);
+
+			if (emailOnAnswer && emailOnAnswer == 1)
+			{
+				var email = values[1];
+				var name = values[2];
+				var content = values[3];
+
+				console.log("send email!");
+
+				var text = "";
+				text += name;
+				text += "\n\n";
+				text += content;
+
+				tools.sendMail(email,"laurelcomix@gmail.com","Someone answered your comment on bloglaurel.com",text);
+			}
+
+		}
+		else
+		{
+			// fail does not return anything
+		}
+	});
+}
+
+
+
+
 function postComment(req,res)
 {
 	var com = req.body;
@@ -300,6 +342,19 @@ function postComment(req,res)
 			{
 				var ret = {"success":false};
 				tools.returnJSON(res,ret);
+
+				// maybe an email has to be sent if answering comment
+
+				if (com.answerComID)
+				{
+					var answerComID = parseInt(com.answerComID);
+					
+					if (answerComID != -1)
+					{								
+						sendEmailOnAnswer(answerComID);
+					}
+				}
+
 			}
 			else
 			{
@@ -314,6 +369,7 @@ function postComment(req,res)
 		tools.returnJSON(res,ret);
 	}
 }
+
 
 
 
@@ -441,6 +497,7 @@ var getNbComments = function(postID, callback)
 
 
 
+
 var comment = function(req,obj,callback)
 {
 	// CHECK IF POST EXISTS
@@ -481,7 +538,7 @@ var comment = function(req,obj,callback)
 								multi.hmset(ID,"ID",commentID,"name",obj.name,"content",obj.content,"email",obj.email,"date",timestamp,"valid",0,"postID",obj.postID);
 								
 								
-								if (obj.answerComID && parseInt(obj.answerComID) != -1)
+								if (obj.answerComID)
 								{
 									var answerComID = parseInt(obj.answerComID);
 									

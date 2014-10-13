@@ -92,6 +92,13 @@ exports.killFastRobots = function(req,res,next)
 // html is optional
 exports.sendMail = function(to,from,title,text,html)
 {
+	console.log("sendMail");
+	console.log("to " + to);
+	console.log("from " + from);
+	console.log("title " + title);
+	console.log("text " + text);
+	console.log("html " + html);
+
 	var mailObject = {};
 	mailObject.from = from;
 	mailObject.to = to;	
