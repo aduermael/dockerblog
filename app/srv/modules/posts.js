@@ -225,96 +225,71 @@ function sendEmailOnAnswer(comID)
 
 	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website",function(error,values)
 	{
-		var com = {};
-		com.answerComID = values[0];
-
-		if (com.answerComID)
+		if (!error)
 		{
-			console.log("comment is an answer to another comment"); 
+			var com = {};
+			com.answerComID = values[0];
 
-			com.name = values[1];
-			com.content = values[2];
-			com.gravatar = values[3];
-			com.twitter = values[4];
-			com.website = values[5];
-
-			var originalComID = "com_" + com.answerComID;
-			 
-			console.log("original com ID: " + originalComID);
-
-			db.hmget(originalComID,"emailOnAnswer","email","name","content","gravatar","twitter","website",function(error2,values2)
+			if (com.answerComID)
 			{
-				var originalCom = {};
-				originalCom.emailOnAnswer = values[0];
+				console.log("comment is an answer to another comment"); 
 
-				if (originalCom.emailOnAnswer && originalCom.emailOnAnswer == 1)
+				com.name = values[1];
+				com.content = values[2];
+				com.gravatar = values[3];
+				com.twitter = values[4];
+				com.website = values[5];
+
+				var originalComID = "com_" + com.answerComID;
+
+				console.log("original com ID: " + originalComID);
+
+				db.hmget(originalComID,"emailOnAnswer","email","name","content","gravatar","twitter","website",function(error2,values2)
 				{
-					console.log("An email should be sent");
+					if (!error2)
+					{
+						var originalCom = {};
+						originalCom.emailOnAnswer = values2[0];
 
-					originalCom.email = values[1];
-					originalCom.name = values[2];
-					originalCom.content = values[3];
-					originalCom.gravatar = values[4];
-					originalCom.twitter = values[5];
-					originalCom.website = values[6];
+						if (originalCom.emailOnAnswer && originalCom.emailOnAnswer == 1)
+						{
+							console.log("An email should be sent");
 
-					var text = "";
-					text += originalCom.name;
-					text += "\n";
-					text += originalCom.content;
+							originalCom.email = values2[1];
+							originalCom.name = values2[2];
+							originalCom.content = values2[3];
+							originalCom.gravatar = values2[4];
+							originalCom.twitter = values2[5];
+							originalCom.website = values2[6];
 
-					text += "\n\n";
+							var text = "";
+							text += originalCom.name;
+							text += "\n";
+							text += originalCom.content;
 
-					text += com.name;
-					text += "\n";
-					text += com.content;
+							text += "\n\n";
 
-					tools.sendMail(email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text);
-				}
-				else
-				{
-					console.log("comment is an answer to another comment, but email not requested");
-				}
-			});
-		}
-		else
-		{
-			console.log("comment is not an answer to another comment");
+							text += com.name;
+							text += "\n";
+							text += com.content;
+
+							tools.sendMail(originalCom.email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text);
+						}
+						else
+						{
+							console.log("comment is an answer to another comment, but email not requested");
+						}
+					}
+				});
+			}
+			else
+			{
+				console.log("comment is not an answer to another comment");
+			}
 		}
 
 	});
 
-	/*
-	db.hmget(answerComID,"emailOnAnswer","email","name","content",function(error,values)
-	{
-		if (!error && values)
-		{
-			var emailOnAnswer = values[0];	
-			
-			console.log("emailOnAnswer: " + emailOnAnswer);
-
-			if (emailOnAnswer && emailOnAnswer == 1)
-			{
-				var email = values[1];
-				var name = values[2];
-				var content = values[3];
-
-				console.log("send email!");
-
-				var text = "";
-				text += name;
-				text += "\n\n";
-				text += content;
-
-				tools.sendMail(email,"laurelcomix@gmail.com","Someone answered your comment on bloglaurel.com",text);
-			}
-
-		}
-		else
-		{
-			// fail does not return anything
-		}
-	});*/
 }
 
 
