@@ -255,7 +255,6 @@ function sendEmailOnAnswer(comID)
 					originalCom.twitter = values[5];
 					originalCom.website = values[6];
 
-
 					var text = "";
 					text += originalCom.name;
 					text += "\n";
@@ -267,13 +266,13 @@ function sendEmailOnAnswer(comID)
 					text += "\n";
 					text += com.content;
 
-
 					tools.sendMail(email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text);
 				}
 				else
 				{
 					console.log("comment is an answer to another comment, but email not requested");
 				}
+			});
 		}
 		else
 		{
