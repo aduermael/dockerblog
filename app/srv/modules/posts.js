@@ -221,8 +221,7 @@ function sendEmailOnAnswer(comID)
 	// we have to look if it answers to another comment
 	// if so, if that other comment required an email on answers
 
-
-	console.log("sendEmailOnAnswer com ID: " + answerComID);
+	console.log("sendEmailOnAnswer com ID: " + comID);
 
 	db.hmget(comID,"answerComID","name","content","gravatar","twitter","website",function(error,values)
 	{
@@ -517,7 +516,7 @@ var getComments = function(req,postID,callback)
 				}
 				
 				
-				console.dir(replies);
+				// console.dir(replies);
 				
 								
 				callback(null,replies);
