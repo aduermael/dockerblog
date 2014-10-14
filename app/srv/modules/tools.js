@@ -140,10 +140,15 @@ exports.sendMail = function(to,from,title,text,html)
 			else
 			{
 				var config = JSON.parse(data);
+
+				console.dir(config);
+
 				transporter = nodemailer.createTransport(config);
 
 				console.dir(config);
-				//sendMailHavingTransporter(to,from,title,text,html);
+				console.dir(transporter);
+				
+				// sendMailHavingTransporter(to,from,title,text,html);
 			}
 		});
 	}
