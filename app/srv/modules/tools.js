@@ -145,7 +145,7 @@ exports.sendMail = function(to,from,title,text,html)
 				console.dir(config);
 
 
-				smtpTransport = nodemailer.createTransport("SMTP",
+				transporter = nodemailer.createTransport("SMTP",
 				{
 					service: "Gmail",
 					auth:
