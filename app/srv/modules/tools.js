@@ -101,6 +101,8 @@ function sendMailHavingTransporter(to,from,title,text,html)
 	{
 		var mailOptions = {from:from,to:to,subject:title,text:text,html:html};
 
+		console.dir(transporter);
+		
 		transporter.sendMail(mailOptions, function(error, info)
 		{
 		    if(error)
@@ -148,7 +150,7 @@ exports.sendMail = function(to,from,title,text,html)
 				console.dir(config);
 				console.dir(transporter);
 				
-				// sendMailHavingTransporter(to,from,title,text,html);
+				sendMailHavingTransporter(to,from,title,text,html);
 			}
 		});
 	}
@@ -156,7 +158,7 @@ exports.sendMail = function(to,from,title,text,html)
 	{
 		console.log("already have a transporter!");
 
-		//sendMailHavingTransporter(to,from,title,text,html);
+		sendMailHavingTransporter(to,from,title,text,html);
 	}
 
 	//console.log("sendMail");
