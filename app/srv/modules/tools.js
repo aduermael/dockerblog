@@ -101,8 +101,6 @@ function sendMailHavingTransporter(to,from,title,text,html)
 	{
 		var mailOptions = {from:from,to:to,subject:title,text:text,html:html};
 
-		console.dir(transporter);
-		
 		transporter.sendMail(mailOptions, function(error, info)
 		{
 		    if(error)
@@ -142,13 +140,11 @@ exports.sendMail = function(to,from,title,text,html)
 			else
 			{
 				var config = JSON.parse(data);
+				config.auth.xoauth2 = "lBaYSIXX28zaBG30OsRAdcvT";
 
 				console.dir(config);
 
 				transporter = nodemailer.createTransport(config);
-
-				console.dir(config);
-				console.dir(transporter);
 				
 				sendMailHavingTransporter(to,from,title,text,html);
 			}
