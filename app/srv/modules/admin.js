@@ -231,44 +231,35 @@ function updateEmailCredentials(req,res)
 {
 	// only Gmail is supported
 
-	var user = req.body.user;
-	var clientID = req.body.clientID;	
-	var clientSecret = req.body.clientSecret;
-	var refreshToken = req.body.refreshToken;
+	var config = {};
+	config.service = "Gmail";
+	config.auth = {};
+	config.auth.XOAuth2 = {};
+	config.auth.XOAuth2.user = req.body.user;
+	config.auth.XOAuth2.clientId = req.body.clientID;
+	config.auth.XOAuth2.clientSecret = req.body.clientSecret;
+	config.auth.XOAuth2.refreshToken = req.body.refreshToken;
+
+	console.dir(config);
 
 
-	if (user != "" && clientID != "" && clientSecret != "" && refreshToken != "")
-	{							
-		var config = {};
-		config.service = "Gmail";
-		config.auth = {};
-		config.auth.XOAuth2 = {};
-		config.auth.XOAuth2.user = user;
-		config.auth.XOAuth2.clientId = clientID;
-		config.auth.XOAuth2.clientSecret = clientSecret;
-		config.auth.XOAuth2.refreshToken = refreshToken;
-
-		fs.writeFile( GLOBAL.private_dir_path + '/email_config.json', JSON.stringify(config), function (err)
-		{
-			if (err)
-			{
-				var ret = {"success":false};
-				tools.returnJSON(res,ret);
-			}
-			else
-			{
-				var ret = {"success":true};
-				tools.returnJSON(res,ret);
-
-				tools.deleteMailTransporter();
-			}
-		});	
-	}
-	else
+	fs.writeFile( GLOBAL.private_dir_path + '/email_config.json', JSON.stringify(config), function (err)
 	{
-		var ret = {"success":false};
-		tools.returnJSON(res,ret);
-	}
+		if (err)
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret);
+		}
+		else
+		{
+			var ret = {"success":true};
+			tools.returnJSON(res,ret);
+
+			tools.deleteMailTransporter();
+		}
+	});	
+
+	
 }
 
 
