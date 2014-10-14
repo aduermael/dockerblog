@@ -1,6 +1,7 @@
 var MIN_TIME_BETWEEN_PAGE_RENDERING_AND_POST = 5; // in seconds
 
 var express = require('express');
+var fs = require('fs');
 var app = express();
 
 app.set('views', GLOBAL.views_dir_path);
@@ -129,7 +130,7 @@ exports.sendMail = function(to,from,title,text,html)
 	if (!transporter)
 	{
 		console.log("generate transporter");
-		
+
 		fs.readFile(GLOBAL.private_dir_path + '/email_config.json', function (err, data)
 		{
 			if (err)
