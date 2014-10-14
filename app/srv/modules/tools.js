@@ -11,7 +11,9 @@ var crypto = require('crypto');
 var keys = require('./keys');
 var lang_module = require('./lang');
 
-var mail = require("nodemailer").mail;
+var nodemailer = require("nodemailer");
+var transporter;
+
 
 
 exports.returnJSON = function(res,obj)
@@ -89,9 +91,67 @@ exports.killFastRobots = function(req,res,next)
 	}
 }
 
+
+
+
+function sendMailHavingTransporter(to,from,title,text,html)
+{
+	if (transporter)
+	{
+		var mailOptions = {from:from,to:to,subject:title,text:text,html:html};
+
+		transporter.sendMail(mailOptions, function(error, info)
+		{
+		    if(error)
+		    {
+		        console.log(error);
+		    }
+		    else
+		    {
+		        console.log('Message sent: ' + info.response);
+		    }
+		});
+	}
+}
+
+
+exports.deleteMailTransporter = function()
+{
+	delete transporter;
+}
+
 // html is optional
 exports.sendMail = function(to,from,title,text,html)
 {
+	// transporter has not been initialized
+	// let's do it now
+
+	if (!transporter)
+	{
+		console.log("generate transporter");
+		
+		fs.readFile(GLOBAL.private_dir_path + '/email_config.json', function (err, data)
+		{
+			if (err)
+			{
+				console.log("can't find email credentials, email can't be sent")
+			}
+			else
+			{
+				var config = JSON.parse(data);
+				transporter = nodemailer.createTransport(config);
+
+				sendMailHavingTransporter(to,from,title,text,html);
+			}
+		});
+	}
+	else // we already have a transporter!
+	{
+		console.log("already have a transporter!");
+
+		sendMailHavingTransporter(to,from,title,text,html);
+	}
+
 	//console.log("sendMail");
 	//console.log("to " + to);
 	//console.log("from " + from);
@@ -99,19 +159,21 @@ exports.sendMail = function(to,from,title,text,html)
 	//console.log("text " + text);
 	//console.log("html " + html);
 
-	var mailObject = {};
+	/*var mailObject = {};
 	mailObject.from = from;
 	mailObject.to = to;	
 	mailObject.subject = title;	
 	mailObject.text = text;
 	
 	if (html)
-		mailObject.html = html;	
+		mailObject.html = html;*/	
 		
 	//console.dir(mailObject);
 	
-	mail(mailObject);
+	//mail(mailObject);
 }
+
+
 
 exports.randomHash = function(nbBytes)
 {

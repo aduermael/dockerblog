@@ -257,6 +257,8 @@ function updateEmailCredentials(req,res)
 			{
 				var ret = {"success":true};
 				tools.returnJSON(res,ret);
+
+				tools.deleteMailTransporter();
 			}
 		});	
 	}
