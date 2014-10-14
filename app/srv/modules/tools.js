@@ -142,7 +142,8 @@ exports.sendMail = function(to,from,title,text,html)
 				var config = JSON.parse(data);
 				transporter = nodemailer.createTransport(config);
 
-				sendMailHavingTransporter(to,from,title,text,html);
+				console.dir(config);
+				//sendMailHavingTransporter(to,from,title,text,html);
 			}
 		});
 	}
@@ -150,7 +151,7 @@ exports.sendMail = function(to,from,title,text,html)
 	{
 		console.log("already have a transporter!");
 
-		sendMailHavingTransporter(to,from,title,text,html);
+		//sendMailHavingTransporter(to,from,title,text,html);
 	}
 
 	//console.log("sendMail");
