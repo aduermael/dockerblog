@@ -514,6 +514,33 @@ function callback_key_delete(response)
 
 // CONFIG
 
+function updateEmailCredentials()
+{	
+	var obj = {};
+	obj.user = $("#emailUser").val();
+	obj.clientID = $("#emailClientID").val();
+	obj.clientSecret = $("#emailClientSecret").val();
+	obj.refreshToken = $("#emailRefreshToken").val();
+	
+	Post('/admin/emailcredentials', obj, callbackUpdateEmailCredentials, errorCallback);
+}
+
+
+function callbackUpdateEmailCredentials(response)
+{
+	if(response.success)
+	{
+		document.location = "/admin/config";
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
+
+
 function updateCredentials()
 {	
 	var obj = {};
