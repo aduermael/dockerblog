@@ -7,6 +7,7 @@
 // import GLOBAL modules
 var express = require('express');
 var auth = require('basic-auth');
+var fs = require('fs');
 
 // import LOCAL modules
 var postsManager = require('./posts');
@@ -17,6 +18,7 @@ var files = require('./files');
 
 var LOGIN = "";
 var PASSHASH = "";
+
 
 
 
@@ -72,6 +74,8 @@ module.exports = function()
 	
 	
 	app.post('/credentials', updateCredentials);
+
+	app.post('/emailcredentials', updateEmailCredentials);
 
 
 	app.get('*',posts);
@@ -218,6 +222,52 @@ function updateCredentials(req,res)
 		tools.returnJSON(res,ret);
 	}
 }
+
+
+
+
+
+function updateEmailCredentials(req,res)
+{
+	// like Gmail
+	// https://github.com/andris9/nodemailer-wellknown#supported-services
+
+	var service = req.body.service;
+	var login = req.body.login;	
+	var pass = req.body.pass;
+
+	if (login != "" && pass != "" && service != "")
+	{					
+		var passHash = tools.sha1(pass);
+			
+		var config = {};
+		config.service = service;
+		config.auth = {};
+		config.auth.user = login;
+		config.auth.pass = pass;
+
+		fs.writeFile( GLOBAL.private_dir_path + '/email_config.json', JSON.stringify(config), function (err)
+		{
+			if (err)
+			{
+				var ret = {"success":false};
+				tools.returnJSON(res,ret);
+			}
+			else
+			{
+				var ret = {"success":true};
+				tools.returnJSON(res,ret);
+			}
+		});	
+	}
+	else
+	{
+		var ret = {"success":false};
+		tools.returnJSON(res,ret);
+	}
+}
+
+
 
 
 
