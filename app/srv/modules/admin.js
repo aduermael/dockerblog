@@ -229,22 +229,24 @@ function updateCredentials(req,res)
 
 function updateEmailCredentials(req,res)
 {
-	// like Gmail
-	// https://github.com/andris9/nodemailer-wellknown#supported-services
+	// only Gmail is supported
 
-	var service = req.body.service;
-	var login = req.body.login;	
-	var pass = req.body.pass;
+	var user = req.body.user;
+	var clientID = req.body.clientID;	
+	var clientSecret = req.body.clientSecret;
+	var refreshToken = req.body.refreshToken;
 
-	if (login != "" && pass != "" && service != "")
-	{					
-		var passHash = tools.sha1(pass);
-			
+
+	if (user != "" && clientID != "" && clientSecret != "" && refreshToken != "")
+	{							
 		var config = {};
-		config.service = service;
+		config.service = "Gmail";
 		config.auth = {};
-		config.auth.user = login;
-		config.auth.pass = pass;
+		config.auth.XOAuth2 = {};
+		config.auth.XOAuth2.user = user;
+		config.auth.XOAuth2.clientId = clientID;
+		config.auth.XOAuth2.clientSecret = clientSecret;
+		config.auth.XOAuth2.refreshToken = refreshToken;
 
 		fs.writeFile( GLOBAL.private_dir_path + '/email_config.json', JSON.stringify(config), function (err)
 		{

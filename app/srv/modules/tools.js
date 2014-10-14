@@ -140,28 +140,10 @@ exports.sendMail = function(to,from,title,text,html)
 			else
 			{
 				var config = JSON.parse(data);
-				config.auth.xoauth2 = "lBaYSIXX28zaBG30OsRAdcvT";
 
 				console.dir(config);
 
-
-				transporter = nodemailer.createTransport("SMTP",
-				{
-					service: "Gmail",
-					auth:
-					{
-						XOAuth2:
-						{
-							user: "laurelcomix@gmail.com", 
-							clientId: "641810885481-2sbhch7h1nhg7todfkds5n8sb1v08r2h.apps.googleusercontent.com",
-							clientSecret: "h-HIXqkSmUcq3Y4QQFNwAuAv",
-							refreshToken: "1/7Ib9C4L7xdYW8Vs72PDV3sUceAljsmpwgIiTMhYhcLA"
-						}
-					}
-				});
-
-
-				// transporter = nodemailer.createTransport(config);
+				transporter = nodemailer.createTransport("SMTP",config);
 				
 				sendMailHavingTransporter(to,from,title,text,html);
 			}
