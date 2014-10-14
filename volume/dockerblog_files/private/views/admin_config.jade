@@ -18,7 +18,23 @@ block pagecontent
 					input#passVerif(type="password" value="password" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'password') { this.value = ''; }")
 				div
 					a(href="#" onclick="updateCredentials();return false;") Update
-					
+			
+	.list
+		ul
+			li
+				div
+					| Send emails with Gmail (Oauth 2.0)
+				div
+					input#emailUser(type="text" value="user@gmail.com" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'user@gmail.com') { this.value = ''; }")
+				div
+					input#emailClientID(type="text" value="Client ID" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'Client ID') { this.value = ''; }")
+				div
+					input#emailClientSecret(type="text" value="Client Secret" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'Client Secret') { this.value = ''; }")
+				div
+					input#emailRefreshToken(type="text" value="Refresh Token" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'Refresh Token') { this.value = ''; }")
+				div
+					a(href="#" onclick="updateEmailCredentials();return false;") Update
+
 	.list
 		ul
 			- each pref,prefKey in config_values
