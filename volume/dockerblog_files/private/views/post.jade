@@ -70,7 +70,15 @@ block content
 							p #{comment.date}
 							
 						.text
-							h2 #{comment.name}
+							h2
+								if (comment.website)
+									|  <a href="#{comment.website}">#{comment.name}</a>
+								else
+									| #{comment.name}
+
+								if (comment.twitter && comment.twitter != "twitter")
+									|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
 							p !{comment.content.replace(/\n/g, '<br/>')}
 							
 						.clearboth
@@ -88,7 +96,16 @@ block content
 							p #{comment.date}
 							
 						.text
-							h2 #{comment.name}
+							h2 
+								if (comment.website)
+									|  <a href="#{comment.website}">#{comment.name}</a>
+								else
+									| #{comment.name}
+
+								if (comment.twitter && comment.twitter != "twitter")
+									|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+
 							p !{comment.content.replace(/\n/g, '<br/>')}
 							
 						.clearboth
@@ -112,7 +129,7 @@ block content
 								else
 									| #{comment.name}
 
-								if (comment.twitter)
+								if (comment.twitter && comment.twitter != "twitter")
 									|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
 
 							p !{comment.content.replace(/\n/g, '<br/>')}
