@@ -308,7 +308,7 @@ function sendEmailOnAnswer(comID)
 
 
 
-							tools.sendMail(originalCom.email,"laurelcomix@gmail.com",com.name + " answered your comment on bloglaurel.com",text,html);
+							tools.sendMail(originalCom.email,com.name + " answered your comment on bloglaurel.com",text,html);
 						}
 						else
 						{

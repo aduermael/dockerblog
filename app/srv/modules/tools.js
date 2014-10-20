@@ -95,11 +95,11 @@ exports.killFastRobots = function(req,res,next)
 
 
 
-function sendMailHavingTransporter(to,from,title,text,html)
+function sendMailHavingTransporter(to,title,text,html)
 {
 	if (transporter)
 	{
-		var mailOptions = {from:from,to:to,subject:title,text:text,html:html};
+		var mailOptions = {from:transporter.options.auth.XOAuth2.options.user,to:to,subject:title,text:text,html:html};
 
 		transporter.sendMail(mailOptions, function(error, info)
 		{
@@ -122,11 +122,10 @@ exports.deleteMailTransporter = function()
 }
 
 // html is optional
-exports.sendMail = function(to,from,title,text,html)
+exports.sendMail = function(to,title,text,html)
 {
 	// transporter has not been initialized
 	// let's do it now
-
 	if (!transporter)
 	{
 		console.log("generate transporter");
@@ -141,40 +140,15 @@ exports.sendMail = function(to,from,title,text,html)
 			{
 				var config = JSON.parse(data);
 
-				console.dir(config);
-
 				transporter = nodemailer.createTransport("SMTP",config);
-				
-				sendMailHavingTransporter(to,from,title,text,html);
+				sendMailHavingTransporter(to,title,text,html);
 			}
 		});
 	}
 	else // we already have a transporter!
 	{
-		console.log("already have a transporter!");
-
-		sendMailHavingTransporter(to,from,title,text,html);
+		sendMailHavingTransporter(to,title,text,html);
 	}
-
-	//console.log("sendMail");
-	//console.log("to " + to);
-	//console.log("from " + from);
-	//console.log("title " + title);
-	//console.log("text " + text);
-	//console.log("html " + html);
-
-	/*var mailObject = {};
-	mailObject.from = from;
-	mailObject.to = to;	
-	mailObject.subject = title;	
-	mailObject.text = text;
-	
-	if (html)
-		mailObject.html = html;*/	
-		
-	//console.dir(mailObject);
-	
-	//mail(mailObject);
 }
 
 
