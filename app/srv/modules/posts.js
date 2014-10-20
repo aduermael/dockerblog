@@ -184,8 +184,10 @@ function postContact(req,res)
 					if (post.blocks.length > message.blockID)
 					{
 						var contactBlock = post.blocks[message.blockID];
-												
-						tools.sendMail(contactBlock.to,message.email,contactBlock.title + message.subject,message.content);
+											
+						message.content = "from: " + message.email + "\n\n" + message.content;
+
+						tools.sendMail(contactBlock.to,contactBlock.title + message.subject,message.content);
 						
 						var ret = {"success":true};
 						tools.returnJSON(res,ret);	
