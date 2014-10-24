@@ -104,8 +104,14 @@ function editPost(sender)
     else if ($(this).hasClass("block_image"))
     {
       blocks[i].type = "image";
+      
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
-      blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+      
+      blocks[i].url = $($(this).children('input')[0]).val();
+      if (blocks[i].url == "URL") blocks[i].url = "";
+
+      blocks[i].description = $($(this).children('input')[1]).val();
+      if (blocks[i].description == "Description") blocks[i].description = "";
     }
     else if ($(this).hasClass("block_contact"))
     {
@@ -125,6 +131,7 @@ function editPost(sender)
     i++;
 
   });
+
 
   postContent.blocks = blocks;
   postContent.postTitle = $("#postTitle").val();
@@ -155,7 +162,13 @@ function editPage(sender)
     {
       blocks[i].type = "image";
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
-      blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+
+      blocks[i].url = $($(this).children('input')[0]).val();
+      if (blocks[i].url == "URL") blocks[i].url = "";
+
+      blocks[i].description = $($(this).children('input')[1]).val();
+      if (blocks[i].description == "Description") blocks[i].description = "";
+
     }
     else if ($(this).hasClass("block_contact"))
     {
@@ -239,7 +252,13 @@ function sendPost(sender)
     {
       blocks[i].type = "image";
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
-      blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+      
+      blocks[i].url = $($(this).children('input')[0]).val();
+      if (blocks[i].url == "URL") blocks[i].url = "";
+
+      blocks[i].description = $($(this).children('input')[1]).val();
+      if (blocks[i].description == "Description") blocks[i].description = "";
+
     }
     else if ($(this).hasClass("block_contact"))
     {
@@ -290,7 +309,13 @@ function sendPage(sender)
     {
       blocks[i].type = "image";
       blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
-      blocks[i].url = $($(this).children('div')[0]).children('input')[0].value;
+      
+      blocks[i].url = $($(this).children('input')[0]).val();
+      if (blocks[i].url == "URL") blocks[i].url = "";
+
+      blocks[i].description = $($(this).children('input')[1]).val();
+      if (blocks[i].description == "Description") blocks[i].description = "";
+
     }
     else if ($(this).hasClass("block_contact"))
     {
@@ -831,7 +856,7 @@ var uploadFileCallback = function(data)
 		nextBlock++;
 		var blockName = "block" + nextBlock;
 		
-		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.image_path + "\"/><div class=\"edit_img_url_zone\">url: <input class=\"edit_img_url_field\" id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"\"/></div></div>");
+		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.image_path + "\"/><input id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"URL\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'URL') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'URL'; }\"/><input id=\"imagedescription\" name=\"imagedescription\" type=\"text\" value=\"Description\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'Description') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'Description'; }\"/><div style=\"margin:0;padding:0;clear:both;\"></div></div>");
 	}
 	else
 	{

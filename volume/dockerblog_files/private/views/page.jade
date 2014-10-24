@@ -17,10 +17,16 @@ block content
 			else if (block.type == "image")
 				.block_img.image
 					if (block.url != "")
-						a(href=block.url)
-							img(src=block.path alt="bloglaurel comics")
-					else
-						img(src=block.path alt="bloglaurel comics")
+							a(href=block.url)
+								if (block.description && block.description != "")
+									img(src=block.path alt="#{block.description}")
+								else
+									img(src=block.path)
+						else
+							if (block.description && block.description != "")
+								img(src=block.path alt="#{block.description}")
+							else
+								img(src=block.path)
 						
 			else if (block.type == "contact")
 					#div.block.contact

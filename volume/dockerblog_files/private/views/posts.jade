@@ -21,9 +21,16 @@ block content
 					#div.block_img.image
 						if (block.url != "")
 							a(href=block.url)
-								img(src=block.path alt="bloglaurel comics")
+								if (block.description && block.description != "")
+									img(src=block.path alt="#{block.description}")
+								else
+									img(src=block.path)
 						else
-							img(src=block.path alt="bloglaurel comics")
+							if (block.description && block.description != "")
+								img(src=block.path alt="#{block.description}")
+							else
+								img(src=block.path)
+
 				else if (block.type == "contact")
 					#div.block.contact
 						.tinyForm(id="contactForm_" + post.ID + "_" + i)

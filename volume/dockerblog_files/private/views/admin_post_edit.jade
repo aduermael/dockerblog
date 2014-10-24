@@ -21,9 +21,52 @@ block pagecontent
 			else if (block.type == "image")
 				div(id="#{block_name}").edit_post_zone.backgroundLevel_8.block_image.sortable
 					img(src=block.path)
-					div.edit_img_url_zone
-						| url: 
-						input#imageurl.edit_img_url_field(name="imageurl" type="text" value="#{block.url}")
+
+					if (block.url && block.url != "")
+						input#imageurl(
+							type="text"
+							name="imageurl"
+							style="float:left;width:500px;margin:0;margin-top:10px;height:20px;"
+							value="#{block.url}"
+							onfocus="if(this.value == 'URL') { this.value = ''; }"
+							onblur="if(this.value == '') { this.value = 'URL'; }"
+							)
+					else
+						input#imageurl(
+							type="text"
+							name="imageurl"
+							style="float:left;width:500px;margin:0;margin-top:10px;height:20px;"
+							value="URL"
+							onfocus="if(this.value == 'URL') { this.value = ''; }"
+							onblur="if(this.value == '') { this.value = 'URL'; }"
+							)
+
+
+
+
+					if (block.description && block.description != "")
+						input#imagedescription(
+							type="text"
+							name="imagedescription"
+							style="float:left;width:500px;margin:0;margin-top:10px;height:20px;"
+							value="#{block.description}"
+							onfocus="if(this.value == 'Description') { this.value = ''; }"
+							onblur="if(this.value == '') { this.value = 'Description'; }"
+							)
+					else
+						input#imagedescription(
+							type="text" 
+							name="imagedescription" 
+							style="float:left;width:500px;margin:0;margin-top:10px;height:20px;"
+							value="Description"
+							onfocus="if(this.value == 'Description') { this.value = ''; }"
+							onblur="if(this.value == '') { this.value = 'Description'; }"
+							)
+
+
+
+					div(style="margin:0;padding:0;clear:both;")
+
 						
 			else if (block.type == "contact")
 				div(id="#{block_contact}" style="background-color:#F7F7F7;").edit_post_zone.block_contact.sortable
