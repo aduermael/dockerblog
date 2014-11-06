@@ -60,6 +60,16 @@ var oneDay = 86400000;
 // 'static' middleware is still part on Express
 app.use(express.static(GLOBAL.public_dir_path, { maxAge: oneDay }));
 
+// forward www to non-www domain name
+app.get('/*', function(req, res, next)
+{
+    if (req.headers.host.match(/^www/) != null )
+	{
+		res.redirect(301,'http://' + req.headers.host.replace(/^www\./, '') + req.url);
+	}
+    else next();
+});
+
 // log the original url of all incoming requests
 app.use(log_request_url);
 
