@@ -1,2 +1,3 @@
 .DS_Store
 volume/dockerblog_files/public/uploads
+volume/dockerblog_db
