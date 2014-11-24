@@ -1339,18 +1339,45 @@ var saveEditedPost = function(req,res)
 	// required by fbcomments to merge comments from Facebook post
 	if (req.body.fbpostID && req.body.fbpostID != "")
 	{
+		// let's check if we don't already have fbcommentInfos for that post
+
+		db.hget("fbcomments",postID,function(err,value)
+		{
+			var fbcommentInfos;
+
+			if (!err && value)
+			{
+				fbcommentInfos = JSON.parse(value);
+
+				// fbpost ID was updated
+				if (fbcommentInfos.fbPostID != req.body.fbpostID)
+				{
+					// console.log("fbpostID was updated, reset since");
+					fbcommentInfos.since = 0;
+				}
+				else
+				{
+					// console.log("fbpostID was not updated, we don't reset the since value");
+				}
+			}
+			else
+			{
+				fbcommentInfos = {};
+				fbcommentInfos.since = 0;
+
+				//console.log("fbcommentInfos did not exist, set since = 0");
+			}
+
+			fbcommentInfos.postUpdate = timestamp;
+			fbcommentInfos.fbPostID = req.body.fbpostID;
+			fbcommentInfos.postID = postID;
+
+			db.hset("fbcomments",postID,JSON.stringify(fbcommentInfos));
+
+		}); // end db.hget("fbcomments",postID)
+
+		
 		multi.hmset(ID,"fbpostID",req.body.fbpostID);
-
-		// Register post to collect comments fom Facebook
-		var fbcommentInfos = {};
-		// fbcomments will stop collecting comments after X days
-		fbcommentInfos.postUpdate = timestamp;
-		fbcommentInfos.fbPostID = req.body.fbpostID;
-		fbcommentInfos.postID = postID;
-		// To avoid getting comments we already got during previous collection
-		fbcommentInfos.since = 0;
-
-		multi.hset("fbcomments",postID,JSON.stringify(fbcommentInfos));
 	}
 	else
 	{
