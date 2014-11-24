@@ -2,6 +2,33 @@
 var cluster = require('cluster');
 
 
+
+// Collection of Facebook comment is scheduled here 
+// and assigned to one of our workers
+
+function randomInt (low, high)
+{
+    return Math.floor(Math.random() * (high - low) + low);
+}
+
+function collect(intervalObject)
+{
+    var workerIDs = [];
+
+    for (var id in cluster.workers)
+    {
+        workerIDs.push(id);
+    }
+
+    var workerIndex = workerIDs[randomInt(0,workerIDs.length)];
+    cluster.workers[workerIndex].send("fbcomments");
+}
+
+
+
+
+
+
 // Code to run if we're in the master process
 if (cluster.isMaster)
 {
@@ -22,6 +49,8 @@ if (cluster.isMaster)
         cluster.fork();
     });
 
+
+    setInterval(collect, 10 * 1000);
 }
 else // Code to run if we're in a worker process
 {

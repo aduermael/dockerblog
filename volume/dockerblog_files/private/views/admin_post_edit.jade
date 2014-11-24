@@ -101,6 +101,32 @@ block pagecontent
 		.clearboth
 
 	div.edit_post_zone.backgroundLevel_1
+		p Facebook post ID (to merge comments)
+
+		if (post.fbpostID && post.fbpostID != "")
+			input#fbpostID(
+			type="text"
+			name="imageurl"
+			style="float:left;width:500px;margin:0;margin-top:10px;height:20px;"
+			value=post.fbpostID
+			onfocus="if(this.value == 'postID') { this.value = ''; }"
+			onblur="if(this.value == '') { this.value = 'postID'; }"
+			)
+		else
+			input#fbpostID(
+			type="text"
+			name="imageurl"
+			style="float:left;width:500px;margin:0;margin-top:10px;height:20px;"
+			value="postID"
+			onfocus="if(this.value == 'postID') { this.value = ''; }"
+			onblur="if(this.value == '') { this.value = 'postID'; }"
+			)
+
+
+		.clearboth
+		
+
+	div.edit_post_zone.backgroundLevel_1
 		
 		.navigation
 			ul

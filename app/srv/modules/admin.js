@@ -230,7 +230,6 @@ function updateCredentials(req,res)
 function updateEmailCredentials(req,res)
 {
 	// only Gmail is supported
-
 	var config = {};
 	config.service = "Gmail";
 	config.auth = {};
@@ -258,8 +257,6 @@ function updateEmailCredentials(req,res)
 			tools.deleteMailTransporter();
 		}
 	});	
-
-	
 }
 
 

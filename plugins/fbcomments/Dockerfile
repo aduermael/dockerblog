@@ -1,4 +1,4 @@
-	#
+#
 # fbcomments - APP
 #
 #
@@ -6,7 +6,6 @@
 
 FROM ubuntu:14.04
 MAINTAINER Adrien Duermael (adrien@duermael.com)
-
 
 
 # Make sure we don't get notifications we can't answer during building.
@@ -35,16 +34,6 @@ EXPOSE 80
 ADD package.json /tmp/package.json
 RUN cd /tmp; npm install;
 RUN cp -a /tmp/node_modules /srv/
-
-################# REDIS #################
-
-# install redis-server package
-RUN apt-get install -y redis-server
-
-ADD redis.conf /etc/redis/redis.conf
-
-# we expose redis-server service to the other containers
-EXPOSE 6379
 
 
 ########## Add source files

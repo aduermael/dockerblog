@@ -1,7 +1,5 @@
 var express = require('express');
 var app = express();
-
-var db = require('./db').connect();
 var crypto = require('crypto');
 
 exports.returnJSON = function(res,obj)

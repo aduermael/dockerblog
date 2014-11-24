@@ -25,15 +25,86 @@ block pagecontent
 				div
 					| Send emails with Gmail (Oauth 2.0)
 				div
-					input#emailUser(type="text" value="user@gmail.com" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'user@gmail.com') { this.value = ''; }")
+					if (email && email.user)
+						input#emailUser(type="text" value=email.user style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'user@gmail.com') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'user@gmail.com'; }")
+					else
+						input#emailUser(type="text" value="user@gmail.com" style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'user@gmail.com') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'user@gmail.com'; }")
+
+
 				div
-					input#emailClientID(type="text" value="Client ID" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'Client ID') { this.value = ''; }")
+					if (email && email.clientID)
+						input#emailClientID(type="text" value=email.clientID style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'clientID') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientID'; }")
+					else
+						input#emailClientID(type="text" value="clientID" style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'clientID') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientID'; }")
+
+
+
+
 				div
-					input#emailClientSecret(type="text" value="Client Secret" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'Client Secret') { this.value = ''; }")
+					if (email && email.clientSecret)
+						input#emailClientSecret(type="text" value=email.clientSecret style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'clientSecret') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientSecret'; }")
+					else
+						input#emailClientSecret(type="text" value="clientSecret" style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'clientSecret') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientSecret'; }")
+
+
+
 				div
-					input#emailRefreshToken(type="text" value="Refresh Token" style="width:500px;margin:0;height:20px;" onfocus="if(this.value == 'Refresh Token') { this.value = ''; }")
+					if (email && email.refreshToken)
+						input#emailRefreshToken(type="text" value=email.refreshToken style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'Refresh Token') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'Refresh Token'; }")
+					else
+						input#emailRefreshToken(type="text" value="Refresh Token" style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'Refresh Token') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'Refresh Token'; }")
 				div
 					a(href="#" onclick="updateEmailCredentials();return false;") Update
+
+
+	.list
+		ul
+			li
+				div
+					| Merge Facebook comments with blog post comments
+				div
+					if (facebook && facebook.clientID)
+						input#fbClientID(type="text" value=facebook.clientID style="width:500px;margin:0;height:20px;" 
+						onfocus="if(this.value == 'clientID') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientID'; }")
+					else
+						input#fbClientID(type="text" value="clientID" style="width:500px;margin:0;height:20px;" 
+						onfocus="if(this.value == 'clientID') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientID'; }")
+
+
+				div
+					if (facebook && facebook.clientSecret)
+						input#fbClientSecret(type="text" value=facebook.clientSecret style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'clientSecret') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientSecret'; }")
+					else
+						input#fbClientSecret(type="text" value="clientSecret" style="width:500px;margin:0;height:20px;"
+						onfocus="if(this.value == 'clientSecret') { this.value = ''; }"
+						onblur="if(this.value == '') { this.value = 'clientSecret'; }")
+
+
+
+				div
+					a(href="#" onclick="updateFBConfig();return false;") Update
+
+
 
 	.list
 		ul

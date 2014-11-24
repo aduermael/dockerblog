@@ -329,11 +329,10 @@ function sendEmailOnAnswer(comID)
 
 
 
-
 function postComment(req,res)
 {
 	var com = req.body;
-	
+
 	//{"postID":"3","vID":"123456","name":"dsfsd","email":"","content":"sdfsdfsdf"}
 	
 	// VERIFICATION
@@ -430,6 +429,140 @@ function postComment(req,res)
 		tools.returnJSON(res,ret);
 	}
 }
+
+
+// comments posted from server side
+// used bby fbcomments to post comments from Facebook
+// com {name,content,timestamp,postID,from}
+
+function postInternalComment(com,callback)
+{
+	var error = false;
+	
+	if (com.name == "")
+	{
+		error = true;
+	}
+	
+	if (com.content == "")
+	{
+		error = true;
+	}
+
+	if (!com.timestamp)
+	{
+		error = true;
+	}
+
+	// we could maybe link to FB profile in website?
+
+	if (!error)
+	{
+		commentInternal(com,function(error)
+		{
+			if (error)
+			{
+				callback(false);
+			}
+			else
+			{
+				callback(true);	
+			}
+		});
+	}
+	else
+	{
+		callback(false);
+	}
+}
+
+
+
+
+var commentInternal = function(com,callback)
+{
+	// CHECK IF POST EXISTS
+	db.exists("post_" + com.postID,function(error,postExists)
+	{	
+		if (error)
+		{
+			callback(error);
+		}
+		else
+		{	
+			if (postExists)
+			{	
+				// SAVE COMMENT
+				getCommentID(function(err,commentID)
+				{
+					if (err)
+					{
+						callback(err);
+					}
+					else
+					{	
+						var ID = "com_" + commentID;
+						
+						var timestamp;
+
+						if (com.timestamp)
+						{
+							timestamp = com.timestamp; // com already has a timestamp, as it comes from elsewhere
+						}
+						else
+						{
+							var date = new Date();
+							timestamp = Date.now();
+						}
+						
+						db.hget("post_" + com.postID, "lang",function(err,langValue)
+						{
+							if (!err && langValue)
+							{
+								//console.log("POST COMMENT getting lang from POST: " + langValue);
+								
+								var multi = db.multi();
+								
+								multi.hmset(ID,"ID",commentID,"name",com.name,"content",com.content,"email","","date",timestamp,"valid",0,"postID",com.postID,"from",com.from);
+								
+								// comment will be link to the post later, when validated
+								//multi.zadd("comments_" + obj.postID,timestamp,ID); // ordered set for each post
+								
+								multi.zadd("comments_all_" + langValue,timestamp,ID); // all comments (to list in admin)
+								multi.zadd("comments_unvalidated_" + langValue,timestamp,ID); // unvalidated comments (to list in admin)
+								
+								multi.exec(function(err,replies)
+								{
+									if (err)
+									{
+										callback(err);	 
+									}
+									else
+									{
+										callback();	 
+									}
+								});
+								
+							}
+							else
+							{
+								// can't find lang, can't post comment
+								callback({"error":"post lang can't be found"}); 
+							}
+						});
+					}
+				});
+			}
+			else
+			{
+				callback({"error":"Post can't be found"});	
+			}
+		}
+	});
+}
+
+
+
 
 
 
@@ -638,7 +771,6 @@ var comment = function(req,obj,callback)
 								multi.zadd("comments_all_" + langValue,timestamp,ID); // all comments (to list in admin)
 								multi.zadd("comments_unvalidated_" + langValue,timestamp,ID); // unvalidated comments (to list in admin)
 								
-								multi.incr("commentCount");
 								
 								multi.exec(function(err,replies)
 								{
@@ -701,7 +833,6 @@ var comment = function(req,obj,callback)
 								multi.zadd("comments_all_" + lang_module.get(req),timestamp,ID); // all comments (to list in admin)
 								multi.zadd("comments_unvalidated_" + lang_module.get(req),timestamp,ID); // unvalidated comments (to list in admin)
 								
-								multi.incr("commentCount");
 								
 								multi.exec(function(err,replies)
 								{
@@ -1172,17 +1303,41 @@ var saveEditedPost = function(req,res)
 	var ID = "post_" + postID;
 	
 	var date = new Date();
-	var timestamp = Date.now();// / 1000;
+	var timestamp = Date.now(); // milliseconds
 	
 	var post = {};
 	post.blocks = req.body.blocks;
 	post.title = req.body.postTitle;
-	
 	var slugURL = slug(post.title).toLowerCase();
 	
 	var multi = db.multi();
 	
 	multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"update",timestamp,"slug",slugURL,"title",post.title);
+
+	// optional for a post
+	// required by fbcomments to merge comments from Facebook post
+	if (req.body.fbpostID && req.body.fbpostID != "")
+	{
+		multi.hmset(ID,"fbpostID",req.body.fbpostID);
+
+		// Register post to collect comments fom Facebook
+		var fbcommentInfos = {};
+		// fbcomments will stop collecting comments after X days
+		fbcommentInfos.postUpdate = timestamp;
+		fbcommentInfos.fbPostID = req.body.fbpostID;
+		fbcommentInfos.postID = postID;
+		// To avoid getting comments we already got during previous collection
+		fbcommentInfos.since = 0;
+
+		multi.hset("fbcomments",postID,JSON.stringify(fbcommentInfos));
+	}
+	else
+	{
+		// in case we were getting comments from FB before
+		multi.hdel("fbcomments",postID);
+		multi.hdel(ID,"fbpostID");
+
+	}
 	
 	multi.exec(function(err,replies)
 	{
@@ -1197,8 +1352,6 @@ var saveEditedPost = function(req,res)
 			tools.returnJSON(res,ret); 
 		}
 	});
-
-  
 }
 
 
@@ -1235,7 +1388,8 @@ var editPost = function(req,res)
 
 
 
-module.exports = {
+module.exports = 
+{
 	app: app,
 	list: list,
 	pages: pages,
@@ -1246,11 +1400,11 @@ module.exports = {
 	listComments: listComments,
 	acceptComment : acceptComment,
 	deleteComment : deleteComment,
-	
 	deletePost : deletePost,
 	deletePage : deletePage,
-	
-	renderPosts2 : renderPosts2
+	renderPosts2 : renderPosts2,
+	postInternalComment : postInternalComment
+
 }
 
 
@@ -1329,17 +1483,17 @@ function getPostID(callback)
 
 function getCommentID(callback)
 {
-  db.get("commentCount",function(err,commentCount)
-  {
-	var commentID = 0;
-	
-	if (!err && commentCount)
+	db.incr("commentCount",function(err,commentCount)
 	{
-	  commentID = commentCount;
-	}
-	
-	callback(err,commentID);
-  });
+		var commentID = 0;
+
+		if (!err && commentCount)
+		{
+			commentID = commentCount;
+		}
+
+		callback(err,commentID);
+	});
 }
 
 

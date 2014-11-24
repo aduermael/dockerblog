@@ -3,13 +3,6 @@
 //
 //
 
-GLOBAL.redis_server_ip = "localhost";
-GLOBAL.redis_server_port = 6379;
-
-GLOBAL.views_dir_path = "/dockerblog_files/private/views";
-GLOBAL.public_dir_path = "/dockerblog_files/public";
-GLOBAL.private_dir_path = "/dockerblog_files/private";
-GLOBAL.uploads_dir = "uploads"; // in public directory
 
 // import GLOBAL modules
 var express      = require('express');
@@ -22,8 +15,6 @@ var RedisStore   = require('connect-redis')(session);
 
 // import LOCAL modules
 var tools = require('./modules/tools');
-
-
 
 // create an express server app
 var app = express();
@@ -38,20 +29,47 @@ app.use(cookieParser());
 // parse application/json and application/x-www-form-urlencoded
 app.use(bodyParser());
 
-var options = {};
-options.ttl = 60 * 60 * 5; // session ttl -> 5 hours
-
-app.use(session({ store: new RedisStore(options), secret:'5c8be406c43595d4143b96043d0cfd6f'}))
-
-
-var oneDay = 86400000;
-
-// 'static' middleware is still part on Express
-app.use(express.static(GLOBAL.public_dir_path, { maxAge: oneDay }));
-
-
 // log the original url of all incoming requests
 app.use(log_request_url);
+
+
+app.post('/collect', function(req, res, next)
+{
+	// req.body sample
+	/*{
+		clientID: '***',
+		clientSecret: '***',
+		postID: '1',
+		fbPostID: '***',
+		since: 0
+	}*/
+
+	console.dir(req.body);
+
+    collect(req.body.clientID,req.body.clientSecret,req.body.fbPostID,req.body.since,function(comments)
+    {
+		// comments.success
+		// comments.data
+
+		if (comments.success && comments.data)
+		{
+			//console.log(JSON.stringify(comments));
+			comments.req = req.body;
+			delete comments.req.clientID;
+			delete comments.req.clientSecret;
+			
+			console.log("comments returned: " + comments.data.length);
+		}
+		else
+		{
+			console.log("error");
+		}
+
+		tools.returnJSON(res,comments);
+
+    });
+
+});
 
 
 // TODO: move that on a config.js file
@@ -62,6 +80,137 @@ app.listen(port, function()
   console.log("FB comments started\nListening on " + port);
 });
 
+
+var FB = require('fb');
+
+
+
+
+function getPagePostComments(postID,accessToken,after,callback)
+{
+	var request;
+
+	if (after != "")
+	{
+		request = postID + "/comments?access_token=" + accessToken + "&date_format=U&limit=25" + "&after=" + after;
+	}
+	else
+	{
+		request = postID + "/comments?access_token=" + accessToken + "&date_format=U&limit=25";
+	}
+
+	FB.api(request, function (res)
+	{
+		// test if !res or res.error in callback
+		callback(res);
+	});
+}
+
+
+
+
+function getOauthToken(clientID,clientSecret,clientCredentials,callback)
+{
+	FB.api('oauth/access_token',{client_id:clientID,client_secret:clientSecret,grant_type:clientCredentials},function(res)
+	{
+		// test if !res or res.error in callback
+		callback(res.access_token);
+	});
+}
+
+
+
+function collectPostComments(postID,accessToken,since,callback)
+{
+	var commentsCollection = {};
+	commentsCollection.success = false
+	commentsCollection.collected = [];
+	commentsCollection.nextPage = "";
+
+
+	collectPostCommentsStep(postID,accessToken,since,commentsCollection,function(updatedCommentsCollection)
+	{
+		if (updatedCommentsCollection.success)
+		{
+			console.log("Total collected: " + updatedCommentsCollection.collected.length);
+			callback(true,updatedCommentsCollection.collected);
+		}
+		else
+		{
+			callback(false);
+		}
+
+	});
+}
+
+
+function collectPostCommentsStep(postID,accessToken,since,commentsCollection,callback)
+{
+	getPagePostComments(postID,accessToken,commentsCollection.nextPage,function(comments)
+	{
+		if (!comments || comments.error)
+		{
+			callback(false);
+			return;
+		}
+
+		console.log("Collected " + comments.data.length + " comments");
+
+		for (var i = 0; i < comments.data.length; i++)
+		{
+			if (comments.data[i].created_time > since)
+			{
+				var comment = {};
+				comment.name = encodeURIComponent(comments.data[i].from.name);
+				comment.created_time = comments.data[i].created_time;
+				comment.message = encodeURIComponent(comments.data[i].message);
+
+				commentsCollection.collected.push(comment);
+			}
+		}
+
+		if (comments.paging && comments.paging.next)
+		{
+			commentsCollection.nextPage = comments.paging.cursors.after; 
+			collectPostCommentsStep(postID,accessToken,since,commentsCollection,callback);
+		}
+		else
+		{
+			// Last page reached, callback!
+			commentsCollection.success = true;
+			callback(commentsCollection);
+		}
+	});
+}
+
+
+
+
+function collect(clientID,clientSecret,postID,since,callback)
+{
+	
+	getOauthToken(clientID,clientSecret,"client_credentials",function(token)
+	{
+		if (!token || token.error)
+		{
+			callback({success:false});
+			return;
+		}
+
+		collectPostComments(postID,token,since,function(success,comments)
+		{
+			if (success)
+			{
+				callback({success:true,data:comments});
+			}
+			else
+			{
+				callback({success:false});
+			}
+		});
+	});
+
+}
 
 //---------------------------------------------------------------------
 // UTILITY FUNCTIONS

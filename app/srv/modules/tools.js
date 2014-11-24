@@ -1,5 +1,8 @@
 var MIN_TIME_BETWEEN_PAGE_RENDERING_AND_POST = 5; // in seconds
 
+var http = require('http');
+var https = require('https');
+
 var express = require('express');
 var fs = require('fs');
 var app = express();
@@ -171,6 +174,72 @@ exports.md5 = function(string)
 	sum.update(string);
 	return sum.digest('hex');
 }
+
+
+/**
+ * send a HTTP request asynchronously
+ *
+ * PARAMETERS :
+ * 		options  [required] : (object)   request options
+ *		callback [required] : (function) callback of the request
+ *		body     [optional] : (object)   body of a POST request
+ * 
+ * EXAMPLE :
+
+var options = {
+		host: IP,
+		port: PORT,
+		path: '/user/create',
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	};
+	var request_body = {};
+	utils.send_http_request(options, callback, request_body);
+
+ * RETURN VALUE :
+ *		there is no return value
+ */
+exports.send_http_request = function(options, callback, body)
+{
+    var protocol = options.port == 443 ? https : http;
+   
+    var req = protocol.request(options, function(res)
+    {
+        var output = '';
+
+        res.setEncoding('utf8');
+
+        res.on('data', function (chunk) {
+            output += chunk;
+        });
+
+        res.on('end', function() 
+        {
+        	var result_object = JSON.parse(output);
+			callback(true, res.statusCode, result_object);    
+        });
+    });
+	
+    req.on('error', function(err)
+    {
+    	//console.log('inner HTTP request failed : '+err.message);
+    	callback(false, undefined, undefined);
+    });
+    
+    // if a body value is defined, add it to the request object
+    if (body)
+    {
+        // defines the request body
+    	req.write(JSON.stringify(body));
+    }
+	
+	// send the request
+    req.end();
+};
+
+
 
 
 

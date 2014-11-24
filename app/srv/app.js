@@ -6,6 +6,11 @@
 GLOBAL.redis_server_ip = process.env.DB_PORT_6379_TCP_ADDR;
 GLOBAL.redis_server_port = process.env.DB_PORT_6379_TCP_PORT;
 
+// To communicate with FB comments container
+GLOBAL.fbcomments_server_ip = process.env.FBCOMMENTS_PORT_80_TCP_ADDR;
+GLOBAL.fbcomments_server_port = process.env.FBCOMMENTS_PORT_80_TCP_PORT;
+
+
 GLOBAL.views_dir_path = "/dockerblog_files/private/views";
 GLOBAL.public_dir_path = "/dockerblog_files/public";
 GLOBAL.private_dir_path = "/dockerblog_files/private";
@@ -27,6 +32,7 @@ var pages = require('./modules/pages');
 var lang_module  = require('./modules/lang');
 var admin = require('./modules/admin');
 var tools = require('./modules/tools');
+var fbcomments = require('./modules/fbcomments');
 
 
 
@@ -98,6 +104,14 @@ app.listen(port, function()
   console.log("Dockerblog started\nListening on " + port);
 });
 
+
+process.on('message', function(msg)
+{
+    if (msg == "fbcomments")
+    {
+    	fbcomments.collect();
+    }
+});
 
 //---------------------------------------------------------------------
 // UTILITY FUNCTIONS

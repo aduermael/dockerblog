@@ -8,6 +8,7 @@
 var db = require('./db').connect();
 var tools = require('./tools');
 var lang_module = require('./lang');
+var fs = require('fs');
 
 
 
@@ -22,6 +23,9 @@ module.exports = function()
 	app.post('/key', post_key);
 	app.get('/', page);	
 
+	app.post('/emailcredentials', updateEmailCredentials);
+	app.post('/fbconfig', updateFBConfig);
+
 	initConfig();
 		
 	return app;
@@ -34,16 +38,55 @@ function page (req, res)
 {	
 	getAllValues(req,function(error, value)
 	{
-		if (!error)
+		var options = {};
+		options.siteName = 'Blog | Admin - Config';
+		options.lang = lang_module.get(req);
+		options.config_values = value ? value : [];
+
+
+		// get email config
+
+		fs.readFile(GLOBAL.private_dir_path + '/email_config.json', function (err, data)
 		{
-			// console.log('all : '+JSON.stringify(value));
-			var options = {};
-			options.siteName = 'Blog | Admin - Config';
-			options.lang = lang_module.get(req);
-			options.config_values = value ? value : [];			
-			tools.renderJade(req,res, 'admin_config', options);	
-		}
-	});
+			if (err)
+			{
+				// it's ok, just needed to populate admin config page fields
+			}
+			else
+			{
+				var config = JSON.parse(data);
+				var email = {};
+				email.user = config.auth.XOAuth2.user;
+				email.clientID = config.auth.XOAuth2.clientId;
+				email.clientSecret = config.auth.XOAuth2.clientSecret;
+				email.refreshToken = config.auth.XOAuth2.refreshToken;
+
+				options.email = email;
+			}
+
+
+			// get facebook config
+
+			fs.readFile(GLOBAL.private_dir_path + '/fbcomments_config.json', function (err, data)
+			{
+				if (err)
+				{
+					// it's ok, just needed to populate admin config page fields
+				}
+				else
+				{
+					var config = JSON.parse(data);
+					var facebook = {};
+					facebook.clientID = config.clientID;
+					facebook.clientSecret = config.clientSecret;
+					options.facebook = facebook;
+				}
+
+				tools.renderJade(req,res, 'admin_config', options);	
+
+			}); // end facebook
+		}); // end email
+	}); // end key / values
 }
 
 
@@ -98,24 +141,6 @@ function post_key(req, res)
 		tools.returnJSON(res, response)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -214,6 +239,71 @@ function initConfig()
 function isInArray(value, array)
 {
 	return array.indexOf(value) > -1;
+}
+
+
+
+
+// EMAILS 
+
+
+function updateEmailCredentials(req,res)
+{
+	// only Gmail is supported
+	var config = {};
+	config.service = "Gmail";
+	config.auth = {};
+	config.auth.XOAuth2 = {};
+	config.auth.XOAuth2.user = req.body.user;
+	config.auth.XOAuth2.clientId = req.body.clientID;
+	config.auth.XOAuth2.clientSecret = req.body.clientSecret;
+	config.auth.XOAuth2.refreshToken = req.body.refreshToken;
+
+	console.dir(config);
+
+
+	fs.writeFile( GLOBAL.private_dir_path + '/email_config.json', JSON.stringify(config), function (err)
+	{
+		if (err)
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret);
+		}
+		else
+		{
+			var ret = {"success":true};
+			tools.returnJSON(res,ret);
+
+			tools.deleteMailTransporter();
+		}
+	});	
+}
+
+
+// Facebook comments
+
+function updateFBConfig(req,res)
+{
+	// only Gmail is supported
+	var config = {};
+	config.clientID = req.body.clientID;
+	config.clientSecret = req.body.clientSecret;
+
+	console.dir(config);
+
+	fs.writeFile( GLOBAL.private_dir_path + '/fbcomments_config.json', JSON.stringify(config), function (err)
+	{
+		if (err)
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret);
+		}
+		else
+		{
+			var ret = {"success":true};
+			tools.returnJSON(res,ret);
+		}
+	});	
 }
 
 
