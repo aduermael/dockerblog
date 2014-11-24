@@ -46,5 +46,5 @@ WORKDIR /srv
 
 ########## Define default command
 # ENTRYPOINT later
-# CMD ["/bin/bash", "./start.sh"]
-CMD ["/bin/bash"]
+CMD ["/bin/bash", "./start.sh"]
+# CMD ["/bin/bash"]
