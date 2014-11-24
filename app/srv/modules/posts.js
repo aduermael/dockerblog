@@ -1040,6 +1040,7 @@ var deleteComment = function(req,res)
 			multi.zrem("comments_unvalidated_" + lang_module.get(req),ID);
 			multi.zrem("comments_all_" + lang_module.get(req),ID);
 			multi.zrem("comments_" + postID,ID); // ordered set for each post
+			multi.del(ID);
 			
 			// only if comment was attached to the post (validated)
 			if (valid)
