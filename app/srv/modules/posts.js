@@ -1276,6 +1276,27 @@ var newPost = function(req,res)
 			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title,"lang",lang_module.get(req));
 			multi.zadd("posts_" + lang_module.get(req),timestamp,ID); // ordered set for each lang
 			multi.incr("postCount");
+
+
+			// optional for a post
+			// required by fbcomments to merge comments from Facebook post
+			if (req.body.fbpostID && req.body.fbpostID != "")
+			{
+				multi.hmset(ID,"fbpostID",req.body.fbpostID);
+
+				// Register post to collect comments fom Facebook
+				var fbcommentInfos = {};
+				// fbcomments will stop collecting comments after X days
+				fbcommentInfos.postUpdate = timestamp;
+				fbcommentInfos.fbPostID = req.body.fbpostID;
+				fbcommentInfos.postID = postID;
+				// To avoid getting comments we already got during previous collection
+				fbcommentInfos.since = 0;
+
+				multi.hset("fbcomments",postID,JSON.stringify(fbcommentInfos));
+			}
+
+	
 			
 			multi.exec(function(err,replies)
 			{
