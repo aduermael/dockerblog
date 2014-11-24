@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(bodyParser());
 
 // log the original url of all incoming requests
-app.use(log_request_url);
+// app.use(log_request_url);
 
 
 app.post('/collect', function(req, res, next)
@@ -44,8 +44,6 @@ app.post('/collect', function(req, res, next)
 		since: 0
 	}*/
 
-	console.dir(req.body);
-
     collect(req.body.clientID,req.body.clientSecret,req.body.fbPostID,req.body.since,function(comments)
     {
 		// comments.success
@@ -58,11 +56,11 @@ app.post('/collect', function(req, res, next)
 			delete comments.req.clientID;
 			delete comments.req.clientSecret;
 			
-			console.log("comments returned: " + comments.data.length);
+			//console.log("comments returned: " + comments.data.length);
 		}
 		else
 		{
-			console.log("error");
+			//console.log("error");
 		}
 
 		tools.returnJSON(res,comments);
@@ -132,7 +130,7 @@ function collectPostComments(postID,accessToken,since,callback)
 	{
 		if (updatedCommentsCollection.success)
 		{
-			console.log("Total collected: " + updatedCommentsCollection.collected.length);
+			//console.log("Total collected: " + updatedCommentsCollection.collected.length);
 			callback(true,updatedCommentsCollection.collected);
 		}
 		else
@@ -154,7 +152,7 @@ function collectPostCommentsStep(postID,accessToken,since,commentsCollection,cal
 			return;
 		}
 
-		console.log("Collected " + comments.data.length + " comments");
+		//console.log("Collected " + comments.data.length + " comments");
 
 		for (var i = 0; i < comments.data.length; i++)
 		{
