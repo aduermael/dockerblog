@@ -11,7 +11,7 @@ function randomInt (low, high)
     return Math.floor(Math.random() * (high - low) + low);
 }
 
-function collect(intervalObject)
+function fbcomments_collect(intervalObject)
 {
     var workerIDs = [];
 
@@ -49,8 +49,8 @@ if (cluster.isMaster)
         cluster.fork();
     });
 
-
-    setInterval(collect, 10 * 1000);
+    // collect fb commments every 10 minutes 
+    setInterval(fbcomments_collect, 10 * 60 * 1000);
 }
 else // Code to run if we're in a worker process
 {

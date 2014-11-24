@@ -110,7 +110,7 @@ function collectCallback(success,statusCode,comments)
 	{
 		if (comments.success)
 		{
-			console.log("collectCallback: " + success + " code: " + statusCode + " comments: " + comments.data.length);	
+			// console.log("collectCallback: " + success + " code: " + statusCode + " comments: " + comments.data.length);	
 
 			if (comments.data.length > 0)
 			{

@@ -140,7 +140,7 @@ function authentication(req, res, next)
 					else
 					{
 						// admin / admin
-						console.log("missing login & pass in DB -> admin/admin");
+						// console.log("missing login & pass in DB -> admin/admin");
 						
 						LOGIN = "admin";
 						PASSHASH = tools.sha1("admin");
