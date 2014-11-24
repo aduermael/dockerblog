@@ -4,3 +4,5 @@ volume/dockerblog_db
 plugins/fbcomments/srv/node_modules
 plugins/fbcomments_volumes/fbcomments_db
 app/srv/node_modules
+volume/dockerblog_files/private/email_config.json
+volume/dockerblog_files/private/fbcomments_config.json
