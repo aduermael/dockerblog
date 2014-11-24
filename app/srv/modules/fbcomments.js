@@ -18,7 +18,7 @@ var posts = require('./posts');
 
 exports.collect = function(intervalObject)
 {
-	console.log("collect");
+	// console.log("collect");
 
 
 	var options = {
@@ -80,7 +80,7 @@ exports.collect = function(intervalObject)
 							request_body.since = entry.since;
 							request_body.postUpdate = entry.postUpdate;
 
-							console.dir(request_body);
+							// console.dir(request_body);
 
 							tools.send_http_request(options, collectCallback, request_body);
 						}
@@ -114,15 +114,15 @@ function collectCallback(success,statusCode,comments)
 
 			if (comments.data.length > 0)
 			{
-				console.dir(comments.req);
-				console.log("to insert in post " + comments.req.postID + ":");
+				// console.dir(comments.req);
+				// console.log("to insert in post " + comments.req.postID + ":");
 
 				var older = 0;
 
 				for (var i = 0; i < comments.data.length; i++)
 				{
 					var comment = comments.data[i];
-					console.log(comment.name + " " + comment.created_time);
+					// console.log(comment.name + " " + comment.created_time);
 
 					if (parseInt(comment.created_time) > older) older = comment.created_time;
 
@@ -138,12 +138,12 @@ function collectCallback(success,statusCode,comments)
 
 					posts.postInternalComment(comment,function(success)
 					{
-						console.log("postInternalComment " + success);
+						// console.log("postInternalComment " + success);
 					});
 				}
 
 				// update since value to avoid getting these comments again
-				console.log("since: " + older);
+				// console.log("since: " + older);
 
 				var fbcommentInfos = {};
 				fbcommentInfos.postUpdate = comments.req.postUpdate;
@@ -151,7 +151,7 @@ function collectCallback(success,statusCode,comments)
 				fbcommentInfos.postID = comments.req.postID;
 				fbcommentInfos.since = older;
 
-				console.dir(fbcommentInfos);
+				// console.dir(fbcommentInfos);
 
 				db.hset("fbcomments",comments.req.postID,JSON.stringify(fbcommentInfos));
 			}
@@ -159,12 +159,12 @@ function collectCallback(success,statusCode,comments)
 		}
 		else
 		{
-			console.log("collectCallback: " + success + " but no comments");
+			//console.log("collectCallback: " + success + " but no comments");
 		}
 	}
 	else
 	{
-		console.log("collectCallback: " + success);	
+		//console.log("collectCallback: " + success);	
 	}
 
 

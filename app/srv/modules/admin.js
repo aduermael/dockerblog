@@ -124,12 +124,12 @@ function authentication(req, res, next)
 						
 						if (result.name == LOGIN && tools.sha1(result.pass) == PASSHASH)
 						{
-							console.log("authentication -> OK");
+							// console.log("authentication -> OK");
 							next();
 						}
 						else
 						{
-							console.log("authentication -> NO");
+							// console.log("authentication -> NO");
 	
 							// Respond with 401 "Unauthorized".
 							res.statusCode = 401;
@@ -164,12 +164,12 @@ function authentication(req, res, next)
 		{
 			if (result.name == LOGIN && tools.sha1(result.pass) == PASSHASH)
 			{
-				console.log("authentication -> OK");
+				// console.log("authentication -> OK");
 				next();
 			}
 			else
 			{
-				console.log("authentication -> NO");
+				// console.log("authentication -> NO");
 
 				// Respond with 401 "Unauthorized".
 				res.statusCode = 401;
@@ -203,7 +203,7 @@ function updateCredentials(req,res)
 		{
 			if (!err)
 			{
-				console.log("passHash: " + passHash);
+				// console.log("passHash: " + passHash);
 				
 				var ret = {"success":true};
 				tools.returnJSON(res,ret);		
