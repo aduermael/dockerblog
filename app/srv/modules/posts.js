@@ -1276,7 +1276,6 @@ var newPost = function(req,res)
 			
 			multi.hmset(ID,"blocks",JSON.stringify(post.blocks),"date",timestamp,"ID",postID,"nbComs",0,"slug",slugURL,"title",post.title,"lang",lang_module.get(req));
 			multi.zadd("posts_" + lang_module.get(req),timestamp,ID); // ordered set for each lang
-			multi.incr("postCount");
 
 
 			// optional for a post
@@ -1490,7 +1489,7 @@ function validateEmail(email)
 
 function getPostID(callback)
 {
-  db.get("postCount",function(err,postCount)
+  db.incr("postCount",function(err,postCount)
   {
     var postID = 0;
 
