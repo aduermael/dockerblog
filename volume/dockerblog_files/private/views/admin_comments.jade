@@ -17,6 +17,8 @@ block pagecontent
 							a(href="mailto:" + comment.email) #{comment.email}
 						|  - 
 						a(href="/post/" + comment.postID) (post)
+						- if (comment.from && comment.from == "facebook")
+							|  <b>- from Facebook</b>
 					div
 						|  #{comment.content}
 					div

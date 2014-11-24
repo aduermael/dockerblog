@@ -132,7 +132,7 @@ function collectCallback(success,statusCode,comments)
 					comment.content = decodeURIComponent(comment.message);
 					delete comment.message;
 					comment.timestamp = comment.created_time * 1000; // facebook uses time in seconds
-					comments.from = "facebook"; // to know it comes from facebook
+					comment.from = "facebook"; // to know it comes from facebook
 					delete comment.created_time;
 					comment.postID = comments.req.postID;
 

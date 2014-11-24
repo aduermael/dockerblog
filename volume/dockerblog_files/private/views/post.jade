@@ -122,30 +122,58 @@ block content
 					div(id="com_end_#{comment.ID}")
 					
 				- else
-					.comment(style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
-						img.gravatar(style="margin-right:15px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
+					- if (comment.from && comment.from == "facebook")
+						.comment(class="facebook" style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
+						
+							img.gravatar(style="margin-right:15px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
 
-						.date
-							p #{comment.date}
-							
-						.text
-							h2 
-								if (comment.website)
-									|  <a href="#{comment.website}">#{comment.name}</a>
-								else
-									| #{comment.name}
+							.date
+								p #{comment.date}
+								
+							.text
+								h2 
+									if (comment.website)
+										|  <a href="#{comment.website}">#{comment.name}</a>
+									else
+										| #{comment.name} <span style="font-size:10px;"> - from Facebook<span>
 
-								if (comment.twitter && comment.twitter != "twitter")
-									|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+									if (comment.twitter && comment.twitter != "twitter")
+										|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
 
-							p !{comment.content.replace(/\n/g, '<br/>')}
-							
+								p !{comment.content.replace(/\n/g, '<br/>')}
+								
+							.clearboth
+							.answer
+								a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+							.clearboth
 						.clearboth
-						.answer
-							a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+						div(id="com_end_#{comment.ID}")
+					- else
+						.comment(style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
+						
+							img.gravatar(style="margin-right:15px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
+
+							.date
+								p #{comment.date}
+								
+							.text
+								h2 
+									if (comment.website)
+										|  <a href="#{comment.website}">#{comment.name}</a>
+									else
+										| #{comment.name}
+
+									if (comment.twitter && comment.twitter != "twitter")
+										|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+								p !{comment.content.replace(/\n/g, '<br/>')}
+								
+							.clearboth
+							.answer
+								a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+							.clearboth
 						.clearboth
-					.clearboth
-					div(id="com_end_#{comment.ID}")
+						div(id="com_end_#{comment.ID}")
 			
 			#form
 				#formsending(style="display: none")
