@@ -1100,9 +1100,13 @@ var deletePost = function(req,res)
 							multi.zrem("comments_unvalidated_" + lang,key);
 							multi.zrem("comments_all_" + lang,key);
 							multi.zrem("comments_" + ID,key);
+							multi.del(key);
 						});
 						
 						multi.zrem("posts_" + lang,POST_ID);
+						
+						// top collecting fbcomments for deleted post
+						multi.hdel("fbcomments",ID);
 						
 						multi.del(POST_ID);
 												
