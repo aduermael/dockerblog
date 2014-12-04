@@ -116,8 +116,6 @@ function renderOnePost(req,res)
 {	
 	var postID = req.params.PostID;
 	
-	// console.log("post: " + postID);
-	
 	get(req,postID, function(error,post)
 	{	
 		if (error) // not found?
@@ -128,17 +126,26 @@ function renderOnePost(req,res)
 		{
 			getComments(req,postID,function(err,comments)
 			{
-				tools.renderJade(req,res,'post',
+				// Check if there are previous/next pages
+				// maybe that info should be stored when posting the note
+				// to avoid 3 requests to the database
+				nextAndPreviousPosts(req,postID,function(pages)
 				{
-					siteName: "Laurel" + " - " + post.title,
-					post: post,
-					comments: comments,
-					commentName: req.cookies.comment_name_,
-					commentEmail: req.cookies.comment_email_,
-					commentGravatar: req.cookies.comment_gravatar_,
-					commentTwitter: req.cookies.comment_twitter_,
-					commentWebsite: req.cookies.comment_website_
-				}); 
+					console.dir(pages);
+		
+					tools.renderJade(req,res,'post',
+					{
+						siteName: "Laurel" + " - " + post.title,
+						post: post,
+						comments: comments,
+						pages: pages,
+						commentName: req.cookies.comment_name_,
+						commentEmail: req.cookies.comment_email_,
+						commentGravatar: req.cookies.comment_gravatar_,
+						commentTwitter: req.cookies.comment_twitter_,
+						commentWebsite: req.cookies.comment_website_
+					}); 
+				});
 			});
 		}
     
@@ -1216,6 +1223,172 @@ var get = function(req,postID,callback)
 		}
 	});
 }
+
+
+
+var rank = function(req,postID,callback)
+{
+	var lang;
+	
+	if (req.params.lang)
+		lang = req.params.lang;
+	else
+		lang = lang_module.get(req);
+
+
+	db.zrank("posts_" + lang,"post_" +  postID,function(error,value)
+	{
+		if (error)
+		{
+			// post not found, no rank
+			callback(true);
+		}
+		else
+		{
+			var r = parseInt(value);
+			callback(false,r);
+		}
+		
+	});
+}
+
+
+
+var nextAndPreviousPosts = function(req,postID,callback)
+{
+	var lang;
+	
+	if (req.params.lang)
+		lang = req.params.lang;
+	else
+		lang = lang_module.get(req);
+
+	var posts = {};
+
+	rank(req,postID,function(error,postRank)
+	{
+		if (error || postRank < 0)
+		{
+			console.log("error getting rank");
+			callback(posts);
+		}
+		else
+		{
+			if (postRank == 0) // first post, no previous
+			{
+				db.zrange("posts_" + lang,postRank,postRank+1,function(error,values)
+				{
+					if (error || !values)
+					{
+						// nothing
+					}
+					else
+					{
+						if (values.length == 1) // means it's the last post (and first)
+						{
+							// nothing
+						}
+						else // lenght == 2 - self,next
+						{
+							posts.next = values[1];
+						}
+					}
+
+					if (posts.next)
+					{
+						getNextAndPreviousRelativeURLs(req,posts,function(updatedPosts)
+						{
+							callback(updatedPosts);
+						});
+					}
+					else
+					{
+						callback(posts);	
+					}
+				});
+			}
+			else
+			{
+				db.zrange("posts_" + lang,postRank-1,postRank+1,function(error,values)
+				{
+					if (error || !values)
+					{
+						// nothing
+					}
+					else
+					{
+						if (values.length == 2) // means it's the last post
+						{
+							posts.previous = values[0];
+						}
+						else // lenght == 3 - previous,self,next
+						{
+							posts.previous = values[0];
+							posts.next = values[2];
+						}
+					}
+
+					if (posts.next || posts.previous)
+					{
+						getNextAndPreviousRelativeURLs(req,posts,function(updatedPosts)
+						{
+							callback(updatedPosts);
+						});
+					}
+					else
+					{
+						callback(posts);	
+					}
+				});
+			}
+		}
+	});
+}
+
+
+
+var getNextAndPreviousRelativeURLs = function(req,posts,callback)
+{
+	var multi = db.multi();
+
+	if (posts.previous)
+	{
+		multi.hmget(posts.previous,"slug","ID");
+	}	
+
+	if (posts.next)
+	{
+		multi.hmget(posts.next,"slug","ID");
+	}
+
+	multi.exec(function(err,replies)
+	{
+		if (err || !replies)
+		{
+			// error
+		}
+		else
+		{
+			var index = 0;
+
+			if (posts.previous)
+			{
+				posts.previous = "/" + replies[index][0] + "/" + replies[index][1];
+				index++;
+			}
+
+			if (posts.next)
+			{
+				posts.next = "/" + replies[index][0] + "/" + replies[index][1];
+			}
+		}
+
+		callback(posts);
+
+	});
+}
+
+
 
 
 var pages = function(req,nbPostsPerPage,callback)
