@@ -55,12 +55,12 @@ block content
 		#comments
 
 			.pages
-				- if (pages.previous)
+				- if (pages && pages.previous)
 					.previouspage
 						a(href=pages.previous)
 							img(src="/img/previous.png" alt="previous page")
 
-				- if (pages.next)
+				- if (pages && pages.next)
 					.nextpage
 						a(href=pages.next)
 							img(src="/img/next.png" alt="next page")
@@ -264,12 +264,12 @@ block content
 					input(type="button" value="Send" onclick="postComment('name','email','website','twitter')")
 
 			.pages
-				- if (pages.previous)
+				- if (pages && pages.previous)
 					.previouspage
 						a(href=pages.previous)
 							img(src="/img/previous.png" alt="previous page")
 
-				- if (pages.next)
+				- if (pages && pages.next)
 					.nextpage
 						a(href=pages.next)
 							img(src="/img/next.png" alt="next page")
