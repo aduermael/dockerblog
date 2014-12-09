@@ -16,6 +16,11 @@ block content
 				.block.text
 					p !{block.text}
 
+			if (block.type == "html")
+					#div.block.html
+						center
+							| !{block.data}
+
 			else if (block.type == "image")
 				.block_img.image
 					if (block.url != "")
@@ -86,94 +91,14 @@ block content
 
 				- if (comment.name == "Laurel" && (comment.email == "secret@bloglaurel.com" || comment.email == "laurelcomix@gmail.com"))
 					.comment(style="width:#{widthPercentage}%;background-color:#dde5ea;" id="com_#{comment.ID}")
-						img.gravatar(style="margin-right:15px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
-
-						.date
-							p #{comment.date}
-							
-						.text
-							h2
-								if (comment.website)
-									|  <a href="#{comment.website}">#{comment.name}</a>
-								else
-									| #{comment.name}
-
-								if (comment.twitter && comment.twitter != "twitter")
-									|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
-
-							p !{comment.content.replace(/\n/g, '<br/>')}
-							
-						.clearboth
-						.answer
-							a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
-						.clearboth
-					.clearboth
-					div(id="com_end_#{comment.ID}")
-					
-				- else if (comment.name == "Ad" && comment.email == "adrien@duermael.com")
-					.comment(style="width:#{widthPercentage}%;background-color:#f3e8f0;" id="com_#{comment.ID}")
-						img.gravatar(style="margin-right:15px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
-
-						.date
-							p #{comment.date}
-							
-						.text
-							h2 
-								if (comment.website)
-									|  <a href="#{comment.website}">#{comment.name}</a>
-								else
-									| #{comment.name}
-
-								if (comment.twitter && comment.twitter != "twitter")
-									|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
-
-
-							p !{comment.content.replace(/\n/g, '<br/>')}
-							
-						.clearboth
-						.answer
-							a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
-						.clearboth
-					.clearboth
-					div(id="com_end_#{comment.ID}")
-					
-				- else
-					- if (comment.from && comment.from == "facebook")
-						.comment(class="facebook" style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
-						
-							img.gravatar(style="margin-right:15px;" src="/img/fb.jpg")
+						.content
+							img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
 
 							.date
 								p #{comment.date}
 								
 							.text
-								h2 
-									if (comment.website)
-										|  <a href="#{comment.website}">#{comment.name}</a>
-									else
-										| #{comment.name} <span style="font-size:10px;"> - from Facebook<span>
-
-									if (comment.twitter && comment.twitter != "twitter")
-										|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
-
-								p !{comment.content.replace(/\n/g, '<br/>')}
-								
-							.clearboth
-							.answer
-								a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
-							.clearboth
-						.clearboth
-						div(id="com_end_#{comment.ID}")
-					- else
-						.comment(style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
-						
-							img.gravatar(style="margin-right:15px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
-
-							.date
-								p #{comment.date}
-								
-							.text
-								h2 
+								h2
 									if (comment.website)
 										|  <a href="#{comment.website}">#{comment.name}</a>
 									else
@@ -188,6 +113,88 @@ block content
 							.answer
 								a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
 							.clearboth
+					.clearboth
+					div(id="com_end_#{comment.ID}")
+					
+				- else if (comment.name == "Ad" && comment.email == "adrien@duermael.com")
+					.comment(style="width:#{widthPercentage}%;background-color:#f3e8f0;" id="com_#{comment.ID}")
+						.content
+							img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
+
+							.date
+								p #{comment.date}
+								
+							.text
+								h2 
+									if (comment.website)
+										|  <a href="#{comment.website}">#{comment.name}</a>
+									else
+										| #{comment.name}
+
+									if (comment.twitter && comment.twitter != "twitter")
+										|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+
+								p !{comment.content.replace(/\n/g, '<br/>')}
+								
+							.clearboth
+							.answer
+								a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+							.clearboth
+					.clearboth
+					div(id="com_end_#{comment.ID}")
+					
+				- else
+					- if (comment.from && comment.from == "facebook")
+						.comment(class="facebook" style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
+							.content
+								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="/img/fb.jpg")
+
+								.date
+									p #{comment.date}
+									
+								.text
+									h2 
+										if (comment.website)
+											|  <a href="#{comment.website}">#{comment.name}</a>
+										else
+											| #{comment.name} <span style="font-size:10px;"> - from Facebook<span>
+
+										if (comment.twitter && comment.twitter != "twitter")
+											|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+									p !{comment.content.replace(/\n/g, '<br/>')}
+									
+								.clearboth
+								.answer
+									a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+								.clearboth
+						.clearboth
+						div(id="com_end_#{comment.ID}")
+					- else
+						.comment(style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
+							.content
+								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
+
+								.date
+									p #{comment.date}
+									
+								.text
+									h2 
+										if (comment.website)
+											|  <a href="#{comment.website}">#{comment.name}</a>
+										else
+											| #{comment.name}
+
+										if (comment.twitter && comment.twitter != "twitter")
+											|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+									p !{comment.content.replace(/\n/g, '<br/>')}
+									
+								.clearboth
+								.answer
+									a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+								.clearboth
 						.clearboth
 						div(id="com_end_#{comment.ID}")
 			

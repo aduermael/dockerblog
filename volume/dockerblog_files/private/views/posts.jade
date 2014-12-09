@@ -17,6 +17,11 @@ block content
 					#div.block.text
 						p !{block.text}
 
+				if (block.type == "html")
+					#div.block.html
+						center
+							| !{block.data}
+
 				else if (block.type == "image")
 					#div.block_img.image
 						if (block.url != "")

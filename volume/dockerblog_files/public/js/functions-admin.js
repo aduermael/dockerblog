@@ -53,6 +53,16 @@ function addTextBlock(sender)
   myNicEditor.addInstance(blockName);
 }
 
+
+function addHtmlBlock(sender)
+{
+  nextBlock++;
+  var blockName = "block" + nextBlock;
+
+  $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_html sortable\" style=\"margin-bottom: 10px; border-radius: 5px;outline: none;\"><textarea>Text</textarea></div>");
+}
+
+
 function sendImage(sender)
 {
   $("#upload_file_form").submit();
@@ -107,7 +117,11 @@ function editPost(sender)
 		{
 			blocks[i].type = "text";
 			blocks[i].text = $(this).html();
-			console.log("add text block");
+		}
+		else if ($(this).hasClass("block_html"))
+		{
+			blocks[i].type = "html";
+			blocks[i].data = $(this).children('textarea')[0].value;
 		}
 		else if ($(this).hasClass("block_image"))
 		{
@@ -164,7 +178,11 @@ function editPage(sender)
 		{
 			blocks[i].type = "text";
 			blocks[i].text = $(this).html();
-			console.log("add text block");
+		}
+		else if ($(this).hasClass("block_html"))
+		{
+			blocks[i].type = "html";
+			blocks[i].data = $(this).children('textarea')[0].value;
 		}
 		else if ($(this).hasClass("block_image"))
 		{
@@ -265,6 +283,11 @@ function sendPost(sender)
 			blocks[i].type = "text";
 			blocks[i].text = $(this).html();
 		}
+		else if ($(this).hasClass("block_html"))
+		{
+			blocks[i].type = "html";
+			blocks[i].data = $(this).children('textarea')[0].value;
+		}
 		else if ($(this).hasClass("block_image"))
 		{
 			blocks[i].type = "image";
@@ -321,6 +344,11 @@ function sendPage(sender)
       blocks[i].text = $(this).html();
 
     }
+    else if ($(this).hasClass("block_html"))
+	{
+		blocks[i].type = "html";
+		blocks[i].data = $(this).children('textarea')[0].value;
+	}
     else if ($(this).hasClass("block_image"))
     {
       blocks[i].type = "image";
@@ -702,6 +730,7 @@ function reorder(sender)
       $("input").css('opacity', 0.1);
       $(".block_image").css('border','1px dashed #000');
       $(".block_text").css('border','1px dashed #000');
+      $(".block_html").css('border','1px dashed #000');
 	  $(".block_contact").css('border','1px dashed #000');
       
      
@@ -722,6 +751,7 @@ function reorder(sender)
       $("input").css('opacity', 1.0);
       $(".block_image").css('border','none');
       $(".block_text").css('border','none');
+      $(".block_html").css('border','none');
       $(".block_contact").css('border','none');
       
       reorder_mode = false;
@@ -804,6 +834,7 @@ $(document).ready(function()
 			$("input").css('opacity', 0.1);
 			$(".block_image").css('border','1px dashed #000');
 			$(".block_text").css('border','1px dashed #000');
+			$(".block_html").css('border','1px dashed #000');
 			$(".block_contact").css('border','1px dashed #000');
 
 			reorder_mode = true;
@@ -823,6 +854,7 @@ $(document).ready(function()
 			$("input").css('opacity', 1.0);
 			$(".block_image").css('border','none');
 			$(".block_text").css('border','none');
+			$(".block_html").css('border','none');
 			$(".block_contact").css('border','none');
 			
 			reorder_mode = false;

@@ -57,6 +57,27 @@ li div
 	margin:0;
 }
 
+.block_html
+{
+	background-color: #888;
+	color:#fff;
+}
+
+.block_html textarea
+{
+	width: 100%;
+	padding:0;
+	margin:0;
+	background: transparent;
+	line-height: 14px;
+	font-size: 14px;
+	font-family:Courier,monospace;
+	height:100px;
+	color:#fff;
+}
+
+
+
 
 h2
 {
