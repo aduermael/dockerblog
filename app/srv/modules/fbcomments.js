@@ -87,7 +87,7 @@ exports.collect = function(intervalObject)
 						else
 						{
 							// expired, stop collecting comments for this post
-							multi.hdel("fbcomments",request_body.postID);
+							multi.hdel("fbcomments",entry.postID);
 						}
 
 					});
