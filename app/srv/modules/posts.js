@@ -1693,17 +1693,17 @@ function validateEmail(email)
 
 function getPostID(callback)
 {
-  db.incr("postCount",function(err,postCount)
-  {
-    var postID = 0;
+	db.incr("postCount",function(err,postCount)
+	{
+		var postID = 0;
 
-    if (postCount)
-    {
-      postID = postCount;
-    }
-    
-    callback(err,postID);
-  });
+		if (postCount)
+		{
+			postID = postCount;
+		}
+
+		callback(err,postID);
+	});
 }
 
 function getCommentID(callback)

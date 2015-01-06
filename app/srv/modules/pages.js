@@ -230,7 +230,6 @@ var newPage = function(req,res)
 			
 			multi.hmset(ID,"blocks",JSON.stringify(page.blocks),"date",timestamp,"ID",pageID,"name",page.name,"title",page.title);
 			multi.hset("pages_" + lang_module.get(req),page.name,ID); // ordered set for each lang
-			multi.incr("postCount");
 			
 			multi.exec(function(err,replies)
 			{
@@ -293,13 +292,8 @@ var saveEditedPage = function(req,res)
 		{
 			var ret = {"success":false};
 			tools.returnJSON(res,ret); 
-		}
-			
+		}	
 	});
-	
-	
-
-  
 }
 
 
@@ -307,25 +301,25 @@ var saveEditedPage = function(req,res)
 // takes a post ID in parameter
 var editPage = function(req,res)
 { 
-  var pageID = req.params.pageID;
+	var pageID = req.params.pageID;
 
-  db.hgetall("post_" + pageID,function(error,content)
-  {
-    if (error)
-    {
-      tools.returnJSON(res,{"success":false,"error":error});
-    }
-    else
-    {
-      content.date = getPostTime(req,content.date);
-	  content.blocks = JSON.parse(content.blocks);
+	db.hgetall("post_" + pageID,function(error,content)
+	{
+		if (error)
+		{
+			tools.returnJSON(res,{"success":false,"error":error});
+		}
+		else
+		{
+			content.date = getPostTime(req,content.date);
+			content.blocks = JSON.parse(content.blocks);
 
-      tools.renderJade(req,res,'admin_page_edit',{ siteName: 'Blog | Admin - Edit page',
-      page: content,
-      lang: lang_module.get(req)
-      });
-    }
-  });
+			tools.renderJade(req,res,'admin_page_edit',{ siteName: 'Blog | Admin - Edit page',
+			page: content,
+			lang: lang_module.get(req)
+			});
+		}
+	});
 }
 
 
@@ -347,15 +341,14 @@ module.exports = {
 
 function getPageID(callback)
 {
-	db.get("postCount",function(err,postCount)
+	db.incr("postCount",function(err,postCount)
 	{
 		var pageID = 0;
-		
+
 		if (postCount)
 		{
 			pageID = postCount;
 		}
-		
 		callback(err,pageID);
 	});
 }
