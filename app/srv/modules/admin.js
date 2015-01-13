@@ -56,6 +56,9 @@ module.exports = function()
 	app.get('/comments',comments);
 	app.post('/acceptComment',postsManager.acceptComment);
 	app.post('/deleteComment',postsManager.deleteComment);
+	app.post('/highlightComment',postsManager.highlightComment);
+	app.post('/unhighlightComment',postsManager.unhighlightComment);
+
 	
 	app.post('/deletePost',postsManager.deletePost);
 	app.post('/deletePage',postsManager.deletePage);

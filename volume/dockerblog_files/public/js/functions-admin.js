@@ -418,13 +418,40 @@ function deleteComment(comID)
 	}
 }
 
+function highlightComment(comID)
+{
+	var obj = {};
+	obj.ID = comID;
+
+	Post('/admin/highlightComment',obj,highlightCommentCallBack,errorCallback);
+}
+
+
+function unhighlightComment(comID)
+{
+	var obj = {};
+	obj.ID = comID;
+
+	Post('/admin/unhighlightComment',obj,unhighlightCommentCallBack,errorCallback);
+}
+
+
+
 var acceptCommentCallBack = function(data)
 {
 	var res = data;
 
 	if(res.success)
 	{
-		document.location = "/admin/comments";
+		if (res.comID)
+		{
+			$("#com" + res.comID).stop().css("background-color", "#a0d651").animate({ backgroundColor: "#F7F7F7"}, 500);
+			$("#accept" + res.comID).remove();
+		}
+		else
+		{
+			document.location = "/admin/comments";
+		}
 	}
 	else
 	{
@@ -432,13 +459,75 @@ var acceptCommentCallBack = function(data)
 	}
 }
 
+
+
 var deleteCommentCallBack = function(data)
 {
 	var res = data;
 
 	if(res.success)
 	{
-		document.location = "/admin/comments";
+		if (res.comID)
+		{
+			$("#com" + res.comID).remove();
+		}
+		else
+		{
+			document.location = "/admin/comments";
+		}
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
+
+var highlightCommentCallBack = function(data)
+{
+	var res = data;
+
+	if(res.success)
+	{
+		if (res.comID)
+		{
+			$("#com" + res.comID).animate({ backgroundColor: "#ffe168"}, 500);
+
+			$("#highlight" + res.comID).empty();
+
+			$("#highlight" + res.comID).append(" - <a href=\"#\" onclick=\"unhighlightComment(" + res.comID + ");return false;\" style=\"color:#ef8700\">Unhighlight</a>")
+		}
+		else
+		{
+			document.location = "/admin/comments";
+		}
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
+var unhighlightCommentCallBack = function(data)
+{
+	var res = data;
+
+	if(res.success)
+	{
+		if (res.comID)
+		{
+			$("#com" + res.comID).animate({ backgroundColor: "#F7F7F7"}, 500);
+
+			$("#highlight" + res.comID).empty();
+
+			$("#highlight" + res.comID).append(" - <a href=\"#\" onclick=\"highlightComment(" + res.comID + ");return false;\" style=\"color:#ef8700\">Highlight</a>")
+		}
+		else
+		{
+			document.location = "/admin/comments";
+		}
 	}
 	else
 	{

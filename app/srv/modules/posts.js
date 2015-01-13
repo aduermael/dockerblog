@@ -987,7 +987,8 @@ var listUnvalidatedComments = function(req,page,nbCommentsPerPage,callback)
 
 var acceptComment = function(req,res)
 {
-	var ID = "com_" + req.body.ID;
+	var comID = req.body.ID;
+	var ID = "com_" + comID;
 	
 	db.hmget(ID,"postID","date",function(error,values)
 	{
@@ -1005,9 +1006,8 @@ var acceptComment = function(req,res)
 			{
 				if (!error)
 				{
-					var ret = {"success":true};
+					var ret = {"success":true,"comID":comID};
 					tools.returnJSON(res,ret);
-
 
 					// maybe an email has to be sent if answering comment
 
@@ -1034,7 +1034,8 @@ var acceptComment = function(req,res)
 
 var deleteComment = function(req,res)
 {
-	var ID = "com_" + req.body.ID;
+	var comID = req.body.ID;
+	var ID = "com_" + comID;
 	
 	db.hmget(ID,"postID","valid",function(error,values)
 	{
@@ -1059,7 +1060,7 @@ var deleteComment = function(req,res)
 			{
 				if (!error)
 				{
-					var ret = {"success":true};
+					var ret = {"success":true,"comID":comID};
 					tools.returnJSON(res,ret);
 				}
 				else
@@ -1076,6 +1077,82 @@ var deleteComment = function(req,res)
 		}
 	});
 }
+
+
+
+var highlightComment = function(req,res)
+{
+	var comID = req.body.ID;
+	var ID = "com_" + comID;
+	
+	db.hmget(ID,"postID","date",function(error,values)
+	{
+		if (!error && values)
+		{
+			var postID = values[0];
+			
+			var multi = db.multi();
+			multi.hset(ID,"highlight",1);
+			multi.exec(function(error,values)
+			{
+				if (!error)
+				{
+					var ret = {"success":true,"comID":comID};
+					tools.returnJSON(res,ret);
+				}
+				else
+				{
+					var ret = {"success":false};
+					tools.returnJSON(res,ret);
+				}
+			});
+		}
+		else
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 	
+		}
+	});
+}
+
+
+var unhighlightComment = function(req,res)
+{
+	var comID = req.body.ID;
+	var ID = "com_" + comID;
+	
+	db.hmget(ID,"postID","date",function(error,values)
+	{
+		if (!error && values)
+		{
+			var postID = values[0];
+			
+			var multi = db.multi();
+			multi.hdel(ID,"highlight");
+			multi.exec(function(error,values)
+			{
+				if (!error)
+				{
+					var ret = {"success":true,"comID":comID};
+					tools.returnJSON(res,ret);
+				}
+				else
+				{
+					var ret = {"success":false};
+					tools.returnJSON(res,ret);
+				}
+			});
+		}
+		else
+		{
+			var ret = {"success":false};
+			tools.returnJSON(res,ret); 	
+		}
+	});
+}
+
+
+
 
 
 
@@ -1625,6 +1702,8 @@ module.exports =
 	listComments: listComments,
 	acceptComment : acceptComment,
 	deleteComment : deleteComment,
+	highlightComment : highlightComment,
+	unhighlightComment : unhighlightComment,
 	deletePost : deletePost,
 	deletePage : deletePage,
 	renderPosts2 : renderPosts2,

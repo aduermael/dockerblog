@@ -8,7 +8,7 @@ block pagecontent
 	.list
 		ul
 			- each comment in comments
-				li(id="com" + comment.ID)
+				li(id="com" + comment.ID style=((comment.highlight == 0 || !comment.highlight) ? "" : "background-color:#ffe168") )
 					div
 						strong #{comment.name}
 						|  (#{comment.date})
@@ -19,13 +19,21 @@ block pagecontent
 						a(href="/post/" + comment.postID) (post)
 						- if (comment.from && comment.from == "facebook")
 							|  <b>- from Facebook</b>
+						span(id="highlight" + comment.ID)
+							- if (comment.highlight == 0 || !comment.highlight)
+								|  - 
+								a(href="#" onclick="highlightComment(" + comment.ID + ");return false;" style="color:#ef8700") Highlight
+							- else
+								|  - 
+								a(href="#" onclick="unhighlightComment(" + comment.ID + ");return false;" style="color:#ef8700") Unhighlight
 					div
 						|  #{comment.content}
 					div
 						a(href="#" onclick="deleteComment(" + comment.ID + ");return false;" style="color:#c33e1b") Delete
 						- if (comment.valid == 0 || !comment.valid)
-							|  - 
-							a(href="#" onclick="acceptComment(" + comment.ID + ");return false;" style="color:#8ab946") Accept
+							span(id="accept" + comment.ID)
+								|  - 
+								a(href="#" onclick="acceptComment(" + comment.ID + ");return false;" style="color:#8ab946") Accept
 
 
 #myNicPanel
