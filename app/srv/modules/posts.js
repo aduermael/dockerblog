@@ -143,7 +143,8 @@ function renderOnePost(req,res)
 						commentEmail: req.cookies.comment_email_,
 						commentGravatar: req.cookies.comment_gravatar_,
 						commentTwitter: req.cookies.comment_twitter_,
-						commentWebsite: req.cookies.comment_website_
+						commentWebsite: req.cookies.comment_website_,
+						commentEmailOnAnswer: req.cookies.comment_emailonanswer_
 					}); 
 				});
 			});
@@ -413,6 +414,16 @@ function postComment(req,res)
 			{
 				res.cookie('comment_website_', com.website, { maxAge: 365 * 24 * hour, httpOnly: false});
 			}
+
+			var emailOnAnswer = "no";
+
+			if (com.emailOnAnswer)
+			{
+				emailOnAnswer = "yes";
+			}
+			
+			res.cookie('comment_emailonanswer_', emailOnAnswer, { maxAge: 365 * 24 * hour, httpOnly: false});
+			
 		}
 		
 		

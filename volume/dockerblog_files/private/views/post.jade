@@ -265,7 +265,10 @@ block content
 						p #{keys.comment_remember}
 					.clearboth
 					.checkbox
-						input#comEmailOnAnswer(type="checkbox" checked)
+						- if (commentEmailOnAnswer && commentEmailOnAnswer == "no")
+							input#comEmailOnAnswer(type="checkbox")
+						- else
+							input#comEmailOnAnswer(type="checkbox" checked)
 						p #{keys.comment_email_on_answer}
 					.clearboth
 					input(type="button" value="Send" onclick="postComment('name','email','website','twitter')")
