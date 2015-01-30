@@ -131,7 +131,7 @@ function postComment(nameIndication,emailIndication,websiteIndication,twitterInd
 	// limit # of characters
 	if (comment.twitter == twitterIndication || comment.twitter == "")
 	{
-		comment.website = "";
+		comment.twitter = "";
 	}
 
 
