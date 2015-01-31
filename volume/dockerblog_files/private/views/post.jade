@@ -58,29 +58,23 @@ block content
 
 		a(name="coms")
 		#comments
+			- var commentsLabel = keys.loc_no_comments
 
-			.pages
-				- if (pages && pages.previous)
-					.previouspage
-						a(href=pages.previous)
-							img(src="/img/previous.png" alt="previous page")
-
-				- if (pages && pages.next)
-					.nextpage
-						a(href=pages.next)
-							img(src="/img/next.png" alt="next page")
-
-				.clearboth
-
-
-			- if (comments.length == 0)
-				h2 #{keys.loc_no_comments}
-			- else if (comments.length == 1)
-				h2 #{comments.length} #{keys.loc_comment}
+			- if (comments.length == 1)
+				- commentsLabel = keys.loc_comment
 			- else
-				h2 #{comments.length} #{keys.loc_comments}
-			
+				- commentsLabel = keys.loc_comments
 
+			.commentsAndNavigation
+				- if (pages && pages.previous)
+					a(href=pages.previous)
+						| #{keys.loc_previous_post}
+						.inlineSpace
+				h2 #{comments.length} #{commentsLabel}
+				- if (pages && pages.next)
+					a(href=pages.next)
+						.inlineSpace
+						| #{keys.loc_next_post}
 			
 			- each comment in comments
 
@@ -273,18 +267,16 @@ block content
 					.clearboth
 					input(type="button" value="Send" onclick="postComment('name','email','website','twitter')")
 
-			.pages
+			.commentsAndNavigation
 				- if (pages && pages.previous)
-					.previouspage
-						a(href=pages.previous)
-							img(src="/img/previous.png" alt="previous page")
-
+					a(href=pages.previous)
+						| #{keys.loc_previous_post}
+				- if (pages && pages.previous && pages.next)
+					.inlineSpace
 				- if (pages && pages.next)
-					.nextpage
-						a(href=pages.next)
-							img(src="/img/next.png" alt="next page")
+					a(href=pages.next)
+						| #{keys.loc_next_post}
 
-				.clearboth
 				
 			
 				

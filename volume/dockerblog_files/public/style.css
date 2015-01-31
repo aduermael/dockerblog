@@ -316,6 +316,23 @@ a:hover {
 	width:100%;
 }
 
+
+.left_column .post #comments h2 {
+
+	display: inline;
+	margin: 0;
+	padding: 0;
+
+}
+
+.left_column .post #comments .commentsAndNavigation
+{
+	margin:0;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+
 .left_column .post #comments .comment h2 {
 	margin:0 0 15px;
 	padding:0;
@@ -582,12 +599,12 @@ textarea {
 	background-color:#1f191a;
 }
 
-.previouspage {
-	float:left;
-}
 
-.nextpage {
-	float:right;
+.inlineSpace {
+	display: inline;
+	margin-left: 20px;
+	margin-right: 20px;
+	padding: 0;
 }
 
 .pages {
@@ -596,9 +613,7 @@ textarea {
 	margin-top:-20px;
 }
 
-.nextpage a, .previouspage a {
-	font-weight:400;
-}
+
 
 .nicEdit-panel {
 	border:none!important;
