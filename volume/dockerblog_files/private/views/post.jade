@@ -80,6 +80,9 @@ block content
 
 				a(name="com#{comment.ID}")
 
+				- var forceBackgroundColor = ""
+				- if (comment.highlight) forceBackgroundColor = "background-color:#aefffc!important;"
+
 				- var widthPercentage = (10 - comment.indent) * 10
 				- if (widthPercentage < 70) widthPercentage = 70
 
@@ -140,7 +143,7 @@ block content
 					
 				- else
 					- if (comment.from && comment.from == "facebook")
-						.comment(class="facebook" style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
+						.comment(class="facebook" style="width:#{widthPercentage}%;#{forceBackgroundColor}" id="com_#{comment.ID}")
 							.content
 								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="/img/fb.jpg")
 
@@ -166,7 +169,7 @@ block content
 						.clearboth
 						div(id="com_end_#{comment.ID}")
 					- else
-						.comment(style="width:#{widthPercentage}%;" id="com_#{comment.ID}")
+						.comment(style="width:#{widthPercentage}%;#{forceBackgroundColor}" id="com_#{comment.ID}")
 							.content
 								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
 
