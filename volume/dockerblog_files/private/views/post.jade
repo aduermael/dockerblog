@@ -2,9 +2,9 @@ extends blog
 	
 block content
 
-	#div.post
+	.post
 	
-		#div.block.title
+		.block.title
 			h2
 				a(href="/" + post.slug +  "/" + post.ID) #{post.title}
 					
@@ -17,7 +17,7 @@ block content
 					p !{block.text}
 
 			if (block.type == "html")
-					#div.block.html
+					.block.html
 						center
 							| !{block.data}
 
@@ -36,7 +36,7 @@ block content
 								img(src=block.path)
 						
 			else if (block.type == "contact")
-					#div.block.contact
+					.block.contact
 						.tinyForm(id="contactForm_" + post.ID + "_" + i)
 							div(id="formsending_" + post.ID + "_" + i style="display: none")
 								p Sending message...

@@ -3,9 +3,8 @@ extends blog
 block content
 
 	- each post in posts
-		#div.post
-
-			#div.block.title
+		.post
+			.block.title
 				h2
 					a(href="/" + post.slug +  "/" + post.ID) #{post.title}
 						
@@ -14,16 +13,16 @@ block content
 				
 			- each block,i in post.blocks
 				if (block.type == "text")
-					#div.block.text
+					.block.text
 						p !{block.text}
 
 				if (block.type == "html")
-					#div.block.html
+					.block.html
 						center
 							| !{block.data}
 
 				else if (block.type == "image")
-					#div.block_img.image
+					.block_img.image
 						if (block.url != "")
 							a(href=block.url)
 								if (block.description && block.description != "")
@@ -37,7 +36,7 @@ block content
 								img(src=block.path)
 
 				else if (block.type == "contact")
-					#div.block.contact
+					.block.contact
 						.tinyForm(id="contactForm_" + post.ID + "_" + i)
 							div(id="formsending_" + post.ID + "_" + i style="display: none")
 								p Sending message...

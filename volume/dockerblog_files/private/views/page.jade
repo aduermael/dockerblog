@@ -2,9 +2,9 @@ extends blog
 	
 block content
 
-	#div.post
+	.post
 	
-		#div.block.title
+		.block.title
 			h2
 				a(href="/" + page.name) #{page.title}
 			.clearboth
@@ -29,7 +29,7 @@ block content
 								img(src=block.path)
 						
 			else if (block.type == "contact")
-					#div.block.contact
+					.block.contact
 						.tinyForm(id="contactForm_" + page.ID + "_" + i)
 							div(id="formsending_" + page.ID + "_" + i style="display: none")
 								p Sending message...

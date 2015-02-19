@@ -19,55 +19,55 @@ block structure
 		#avatar
 
 	#social
-		#networks
+		.networks
 			.network
 				a(href="#{keys.facebook}")
-					img(src="/img/networks/facebook.png").facebook
+					img(src="/img/networks/facebook.png" alt="facebook").facebook
 				h2.facebook
 					a(href="#{keys.facebook}") Facebook
 			.network
 				a(href="#{keys.twitter}")
-					img(src="/img/networks/twitter.png").twitter
+					img(src="/img/networks/twitter.png" alt="twitter").twitter
 				h2.twitter
 					a(href="#{keys.twitter}") Twitter
 			.network
 				a(href="#{keys.instagram}")
-					img(src="/img/networks/instagram.png").instagram
+					img(src="/img/networks/instagram.png" alt="instagram").instagram
 				h2.instagram
 					a(href="#{keys.instagram}") Instagram
 			.network
 				a(href="#{keys.tumblr}")
-					img(src="/img/networks/tumblr.png").tumblr
+					img(src="/img/networks/tumblr.png" alt="tumblr").tumblr
 				h2.tumblr
 					a(href="#{keys.tumblr}") Tumblr
 			.network
 				a(href="#{keys.pinterest}")
-					img(src="/img/networks/pinterest.png").pinterest
+					img(src="/img/networks/pinterest.png" alt="pinterest").pinterest
 				h2.pinterest
 					a(href="#{keys.pinterest}") Pinterest
 			.network
 				a(href="#{keys.etsy}")
-					img(src="/img/networks/etsy.png").etsy
+					img(src="/img/networks/etsy.png" alt="etsy").etsy
 				h2.etsy
 					a(href="#{keys.etsy}") Etsy
 			.network
 				a(href="#{keys.deviantart}")
-					img(src="/img/networks/deviantart.png").deviantart
+					img(src="/img/networks/deviantart.png" alt="deviantart").deviantart
 				h2.deviantart
 					a(href="#{keys.deviantart}") Deviantart
 			.network
 				a(href="#{keys.vimeo}")
-					img(src="/img/networks/vimeo.png").vimeo
+					img(src="/img/networks/vimeo.png" alt="vimeo").vimeo
 				h2.vimeo
 					a(href="#{keys.vimeo}") Vimeo
 			.network
 				a(href="#{keys.vine}")
-					img(src="/img/networks/vine.png").vine
+					img(src="/img/networks/vine.png" alt="vine").vine
 				h2.vine
 					a(href="#{keys.vine}") Vine
 			.network
 				a(href="#{keys.society6}")
-					img(src="/img/networks/society6.jpg")
+					img(src="/img/networks/society6.jpg" alt="society6")
 				h2.society6
 					a(href="#{keys.society6}") Society6
 
@@ -78,10 +78,10 @@ block structure
 			.lang
 				.floatspace
 				a(href='/lang/en')
-					img(src="/img/langs/en.png" style="float:left;") 
+					img(src="/img/langs/en.png" style="float:left;" alt="lang_en") 
 				.floatspace
 				a(href='/lang/fr')
-					img(src="/img/langs/fr.png" style="float:right;")
+					img(src="/img/langs/fr.png" style="float:right;" alt="lang_fr")
 				.floatspace
 				.clearboth
 		.zone
@@ -90,55 +90,50 @@ block structure
 		.zone
 			- if (keys.loc_contactme)
 				a(href="/contact")
-					img(src="/img/banners/contact.png")
+					img(src="/img/banners/contact.png" alt="contact")
 				h2
 					a(href="/contact") #{keys.loc_contactme}
 
 		.zone
 			- if (keys.loc_cerise1)
 				a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318")
-					img(src="/img/banners/cerise1.png")
+					img(src="/img/banners/cerise1.png" alt="cerise1")
 				h2
 					a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318") #{keys.loc_cerise1}
 					
 			- if (keys.loc_cerise2)
 				a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004")
-					img(src="/img/banners/cerise2.png")
+					img(src="/img/banners/cerise2.png" alt="cerise2")
 				h2
 					a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004") #{keys.loc_cerise2}
 					
 			- if (keys.loc_dailystruggle)
 				a(href="/studio")
-					img(src="/img/banners/dailystruggle.png")
+					img(src="/img/banners/dailystruggle.png" alt="dailystruggle")
 				h2
 					a(href="/studio") #{keys.loc_dailystruggle}
-					
-			- if (keys.loc_minecraft)
-				a(href="/minecraft")
-					img(src="/img/banners/minecraft.png")
-				h2
-					a(href="/minecraft") #{keys.loc_minecraft}	
-					
+			
+			//		
+				- if (keys.loc_minecraft)
+					a(href="/minecraft")
+						img(src="/img/banners/minecraft.png")
+					h2
+						a(href="/minecraft") #{keys.loc_minecraft}	
+						
 					
 			- if (keys.loc_youridea)
 				a(href="#")
-					img(src="/img/banners/youridea.png")
+					img(src="/img/banners/youridea.png" alt="youridea")
 				h2
 					a(href="#") #{keys.loc_youridea}	
 
 
 			- if (keys.loc_references)		
 				a(href="/references")
-					img(src="/img/banners/references.png")
+					img(src="/img/banners/references.png" alt="references")
 				h2
 					a(href="/references") #{keys.loc_references}
-				
-			
-			- if (keys.loc_apps)
-				a(href="http://bit.ly/grubgrub")
-					img(src="/img/banners/apps.png")
-				h2
-					a(href="http://bit.ly/grubgrub") #{keys.loc_apps}
+
 				
 		
 		.zone
@@ -146,69 +141,43 @@ block structure
 				a(href="/rss/en") RSS (en)
 			h2
 				a(href="/rss/fr") RSS (fr)
-					
-			//				
-				a(href="/publications")
-					img(src="/img/banners/books.jpg")
-				h2
-					a(href="/publications") #{keys.loc_publications}
-						
-						
-				a(href="/games")
-					img(src="/img/banners/apps.jpg")
-				h2
-					a(href="/games") #{keys.loc_games}
-					
-				a(href="/commandes")
-					img(src="/img/banners/commandes.jpg")
-				h2
-					a(href="/commandes") Commandes
-					
-				a(href="/bcards")					
-					img(src="/img/banners/card.jpg")
-				h2
-					a(href="/bcards") Business cards
-					
-				a(href="/archives")
-					img(src="/img/banners/archives.jpg")
-				h2
-					a(href="/archives") Archives
+				
 
 	.left_column
 		block content
 		
 		
 		#socialfooter
-			#networks
+			.networks
 			
 				.network
 					a(href="#{keys.facebook}")
-						img(src="/img/networks/facebook.png").facebook
+						img(src="/img/networks/facebook.png" alt="facebook").facebook
 					h2.facebook
 						a(href="#{keys.facebook}") Facebook
 				.network
 					a(href="#{keys.twitter}")
-						img(src="/img/networks/twitter.png").twitter
+						img(src="/img/networks/twitter.png" alt="twitter").twitter
 					h2.twitter
 						a(href="#{keys.twitter}") Twitter
 				.network
 					a(href="#{keys.instagram}")
-						img(src="/img/networks/instagram.png").instagram
+						img(src="/img/networks/instagram.png" alt="instagram").instagram
 					h2.instagram
 						a(href="#{keys.instagram}") Instagram
 				.network
 					a(href="#{keys.tumblr}")
-						img(src="/img/networks/tumblr.png").tumblr
+						img(src="/img/networks/tumblr.png" alt="tumblr").tumblr
 					h2.tumblr
 						a(href="#{keys.tumblr}") Tumblr
 				.network
 					a(href="#{keys.pinterest}")
-						img(src="/img/networks/pinterest.png").pinterest
+						img(src="/img/networks/pinterest.png" alt="pinterest").pinterest
 					h2.pinterest
 						a(href="#{keys.pinterest}") Pinterest
 				.network
 					a(href="#{keys.society6}")
-						img(src="/img/networks/society6.jpg").vine
+						img(src="/img/networks/society6.jpg" alt="society6").vine
 					h2.society6
 						a(href="#{keys.society6}") Society6
 					

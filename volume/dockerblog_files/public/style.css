@@ -154,14 +154,14 @@ a:hover {
 	line-height:40px;
 }
 
-#socialfooter #networks {
+#socialfooter .networks {
 	width:780px;
 	display:block;
 	margin-right:auto;
 	margin-left:auto;
 }
 
-#social #networks {
+#social .networks {
 	width:650px;
 	display:block;
 	margin-right:auto;
@@ -175,7 +175,7 @@ a:hover {
 	float:left;
 }
 
-#networks .network img {
+.networks .network img {
 	margin:0;
 	padding:0;
 	float:left;
@@ -185,7 +185,8 @@ a:hover {
 	display:block;
 }
 
-#networks .network h2 {
+.networks .network h2 {
+	
 	margin:8px 0 0;
 	padding:0 5px;
 	border-top-right-radius:5px;
@@ -200,7 +201,7 @@ a:hover {
 	text-align:center;
 }
 
-#networks .network h2 a {
+.networks .network h2 a {
 	color:#fff;
 }
 

@@ -7,7 +7,7 @@ block pagecontent
 
 	.postlist
 		- each post in posts
-			#div.post
+			.post
 				- each block in post.blocks
 					if (block.type == "title")
 						h2 
