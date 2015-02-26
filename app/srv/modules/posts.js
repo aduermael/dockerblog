@@ -193,7 +193,7 @@ function postContact(req,res)
 					{
 						var contactBlock = post.blocks[message.blockID];
 											
-						message.content = "from: " + message.email + "\n\n" + message.content;
+						message.content = message.email + "\n\n" + message.content;
 
 						tools.sendMail(contactBlock.to,contactBlock.title + message.subject,message.content);
 						
@@ -313,8 +313,6 @@ function sendEmailOnAnswer(comID)
 							html += "<div style=\"padding: 4px;margin:0\">";
 							html += "<a href=\"http://bloglaurel.com/post/" + com.postID + "#com" + com.ID + "\">Answer</a>";
 							html += "</div>";
-
-
 
 							tools.sendMail(originalCom.email,com.name + " answered your comment on Laurel's blog",text,html);
 						}
