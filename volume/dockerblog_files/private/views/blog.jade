@@ -85,33 +85,34 @@ block structure
 				.floatspace
 				.clearboth
 		.zone
-			p #{keys.bio}		
+			h3 !{keys.bio}		
+
 
 		.zone
-			- if (keys.loc_contactme)
-				a(href="/contact")
-					img(src="/img/banners/contact.png" alt="contact")
+			- if (keys.loc_dailystruggle)
+				a(href="/studio")
+					img(src="/img/banners/commeconvenu.jpg" alt="commeconvenu")
 				h2
-					a(href="/contact") #{keys.loc_contactme}
+					a(href="/studio") #{keys.loc_dailystruggle}
 
 		.zone
 			- if (keys.loc_cerise1)
 				a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318")
-					img(src="/img/banners/cerise1.png" alt="cerise1")
+					img(src="/img/banners/cerise1.jpg" alt="cerise1")
 				h2
 					a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318") #{keys.loc_cerise1}
 					
 			- if (keys.loc_cerise2)
 				a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004")
-					img(src="/img/banners/cerise2.png" alt="cerise2")
+					img(src="/img/banners/cerise2.jpg" alt="cerise2")
 				h2
 					a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004") #{keys.loc_cerise2}
-					
-			- if (keys.loc_dailystruggle)
-				a(href="/studio")
-					img(src="/img/banners/dailystruggle.png" alt="dailystruggle")
+
+			- if (keys.loc_cerise3)
+				a(href="http://www.amazon.fr/Cerise-Tome-Le-seigneur-animaux/dp/2803636204")
+					img(src="/img/banners/cerise3.jpg" alt="cerise2")
 				h2
-					a(href="/studio") #{keys.loc_dailystruggle}
+					a(href="http://www.amazon.fr/Cerise-Tome-Le-seigneur-animaux/dp/2803636204") #{keys.loc_cerise3}
 			
 			//		
 				- if (keys.loc_minecraft)
@@ -121,11 +122,11 @@ block structure
 						a(href="/minecraft") #{keys.loc_minecraft}	
 						
 					
-			- if (keys.loc_youridea)
+			- if (keys.loc_illustrations)
 				a(href="#")
-					img(src="/img/banners/youridea.png" alt="youridea")
+					img(src="/img/banners/illustrations.jpg" alt="illustrations")
 				h2
-					a(href="#") #{keys.loc_youridea}	
+					a(href="#") #{keys.loc_illustrations}	
 
 
 			- if (keys.loc_references)		
@@ -134,7 +135,13 @@ block structure
 				h2
 					a(href="/references") #{keys.loc_references}
 
-				
+		
+		.zone
+			- if (keys.loc_contactme)
+				a(href="/contact")
+					img(src="/img/banners/contact.jpg" alt="contact")
+				h2
+					a(href="/contact") #{keys.loc_contactme}		
 		
 		.zone
 			h2
@@ -185,8 +192,8 @@ block structure
 
 		#footer
 			p 
-				| bloglaurel.com is © 2003-2014 Laurel | powered by 
-				a(href="https://twitter.com/a_duermael") @a_duermael
+				| bloglaurel.com is © 2003-2016 Laurel | powered by 
+				a(href="https://twitter.com/aduermael") @aduermael
 				|  & 
 				a(href="https://twitter.com/gaetan_dv") @Gaetan_dv
 				|  (running in 

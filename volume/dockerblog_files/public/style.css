@@ -81,6 +81,10 @@ a:hover {
 #pages {
 	text-align:center;
 	color:#888;
+	width: 810px;
+	padding: 5px;
+	margin-top: -20px;
+	margin-bottom: 5px;
 }
 
 #pages a {
@@ -88,7 +92,8 @@ a:hover {
 	padding:5px;
 	border-radius:5px;
 	border:1px solid #DCDCDC;
-	margin-left:4px;
+	float:left;
+	margin: 2px;
 }
 
 #pages a:hover {
@@ -114,7 +119,7 @@ a:hover {
 	height:100px;
 	margin-right:20px;
 	border-radius:5px;
-	background:url(img/banners/tete.png) no-repeat #FCFCFC;
+	background:url(img/banners/tete.jpg) no-repeat #FCFCFC;
 }
 
 #social #description {
@@ -253,6 +258,14 @@ a:hover {
 	font-weight:400;
 }
 
+.right_column .zone h3 {
+	padding:0;
+	margin:5px;
+	font-size:14px;
+	font-weight:400;
+	color:#555;
+}
+
 .right_column .zone p {
 	padding:0;
 	margin:5px;
@@ -296,6 +309,8 @@ a:hover {
 
 .left_column .post #comments .comment .content {
 	padding:10px;
+
+	word-wrap: break-word;
 }
 
 .left_column .post #comments .facebook {

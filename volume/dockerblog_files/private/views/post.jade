@@ -58,126 +58,45 @@ block content
 
 		a(name="coms")
 		#comments
-			- var commentsLabel = keys.loc_no_comments
+			- if (lang == "fr")
+				- var commentsLabel = keys.loc_no_comments
 
-			- if (comments.length == 1)
-				- commentsLabel = keys.loc_comment
-			- else
-				- commentsLabel = keys.loc_comments
-
-			.commentsAndNavigation
-				- if (pages && pages.previous)
-					a(href=pages.previous)
-						| #{keys.loc_previous_post}
-						.inlineSpace
-				h2 #{comments.length} #{commentsLabel}
-				- if (pages && pages.next)
-					a(href=pages.next)
-						.inlineSpace
-						| #{keys.loc_next_post}
-			
-			- each comment in comments
-
-				a(name="com#{comment.ID}")
-
-				- var forceBackgroundColor = ""
-				- if (comment.highlight) forceBackgroundColor = "background-color:#aefffc!important;"
-
-				- var widthPercentage = (10 - comment.indent) * 10
-				- if (widthPercentage < 70) widthPercentage = 70
-
-				- if (comment.name == "Laurel" && (comment.email == "secret@bloglaurel.com" || comment.email == "laurelcomix@gmail.com"))
-					.comment(style="width:#{widthPercentage}%;background-color:#dde5ea;" id="com_#{comment.ID}")
-						.content
-							img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
-
-							.date
-								p #{comment.date}
-								
-							.text
-								h2
-									if (comment.website)
-										|  <a href="#{comment.website}">#{comment.name}</a>
-									else
-										| #{comment.name}
-
-									if (comment.twitter && comment.twitter != "twitter")
-										|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
-
-								p !{comment.content.replace(/\n/g, '<br/>')}
-								
-							.clearboth
-							.answer
-								a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
-							.clearboth
-					.clearboth
-					div(id="com_end_#{comment.ID}")
-					
-				- else if (comment.name == "Ad" && comment.email == "adrien@duermael.com")
-					.comment(style="width:#{widthPercentage}%;background-color:#f3e8f0;" id="com_#{comment.ID}")
-						.content
-							img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
-
-							.date
-								p #{comment.date}
-								
-							.text
-								h2 
-									if (comment.website)
-										|  <a href="#{comment.website}">#{comment.name}</a>
-									else
-										| #{comment.name}
-
-									if (comment.twitter && comment.twitter != "twitter")
-										|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
-
-
-								p !{comment.content.replace(/\n/g, '<br/>')}
-								
-							.clearboth
-							.answer
-								a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
-							.clearboth
-					.clearboth
-					div(id="com_end_#{comment.ID}")
-					
+				- if (comments.length == 1)
+					- commentsLabel = keys.loc_comment
 				- else
-					- if (comment.from && comment.from == "facebook")
-						.comment(class="facebook" style="width:#{widthPercentage}%;#{forceBackgroundColor}" id="com_#{comment.ID}")
+					- commentsLabel = keys.loc_comments
+
+				.commentsAndNavigation
+					- if (pages && pages.previous)
+						a(href=pages.previous)
+							| #{keys.loc_previous_post}
+							.inlineSpace
+					h2 #{comments.length} #{commentsLabel}
+					- if (pages && pages.next)
+						a(href=pages.next)
+							.inlineSpace
+							| #{keys.loc_next_post}
+				
+				- each comment in comments
+
+					a(name="com#{comment.ID}")
+
+					- var forceBackgroundColor = ""
+					- if (comment.highlight) forceBackgroundColor = "background-color:#aefffc!important;position:relative;"
+
+					- var widthPercentage = (10 - comment.indent) * 10
+					- if (widthPercentage < 70) widthPercentage = 70
+
+					- if (comment.name == "Laurel" && (comment.email == "secret@bloglaurel.com" || comment.email == "laurelcomix@gmail.com"))
+						.comment(style="width:#{widthPercentage}%;background-color:#ffc1cb;" id="com_#{comment.ID}")
 							.content
-								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="/img/fb.jpg")
+								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg")
 
 								.date
 									p #{comment.date}
 									
 								.text
-									h2 
-										if (comment.website)
-											|  <a href="#{comment.website}">#{comment.name}</a>
-										else
-											| #{comment.name} <span style="font-size:10px;"> - from Facebook<span>
-
-										if (comment.twitter && comment.twitter != "twitter")
-											|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
-
-									p !{comment.content.replace(/\n/g, '<br/>')}
-									
-								.clearboth
-								.answer
-									a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
-								.clearboth
-						.clearboth
-						div(id="com_end_#{comment.ID}")
-					- else
-						.comment(style="width:#{widthPercentage}%;#{forceBackgroundColor}" id="com_#{comment.ID}")
-							.content
-								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81")
-
-								.date
-									p #{comment.date}
-									
-								.text
-									h2 
+									h2
 										if (comment.website)
 											|  <a href="#{comment.website}">#{comment.name}</a>
 										else
@@ -194,81 +113,171 @@ block content
 								.clearboth
 						.clearboth
 						div(id="com_end_#{comment.ID}")
-			
-			#form
-				#formsending(style="display: none")
-					p #{keys.loc_comment_sending}
-				#formsent(style="display: none")
-					p #{keys.loc_comment_sent}
-				#formerror(style="display: none")
-					p #{keys.loc_comment_send_error}
+						
+					- else if (comment.name == "Ad" && comment.email == "adrien@duermael.com")
+						.comment(style="width:#{widthPercentage}%;background-color:#f3e8f0;" id="com_#{comment.ID}")
+							.content
+								img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg")
+
+								.date
+									p #{comment.date}
+									
+								.text
+									h2 
+										if (comment.website)
+											|  <a href="#{comment.website}">#{comment.name}</a>
+										else
+											| #{comment.name}
+
+										if (comment.twitter && comment.twitter != "twitter")
+											|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+
+									p !{comment.content.replace(/\n/g, '<br/>')}
+									
+								.clearboth
+								.answer
+									a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+								.clearboth
+						.clearboth
+						div(id="com_end_#{comment.ID}")
+						
+					- else
+						- if (comment.from && comment.from == "facebook")
+							.comment(class="facebook" style="width:#{widthPercentage}%;#{forceBackgroundColor}" id="com_#{comment.ID}")
+								.content
+									img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="/img/fb.jpg")
+
+									.date
+										p #{comment.date}
+										
+									.text
+										h2 
+											if (comment.website)
+												|  <a href="#{comment.website}">#{comment.name}</a>
+											else
+												| #{comment.name} <span style="font-size:10px;"> - from Facebook<span>
+
+											if (comment.twitter && comment.twitter != "twitter")
+												|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+										p !{comment.content.replace(/\n/g, '<br/>')}
+										
+									.clearboth
+									.answer
+										a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+									.clearboth
+
+								- if (comment.highlight)
+									div(style="position:absolute;left:200px;bottom:-8px;width:150px;height:63px;background-image: url('http://bloglaurel.com/img/etoiles.gif');background-position: center;background-repeat: no-repeat;")
+									
+							.clearboth
+							div(id="com_end_#{comment.ID}")
+						- else
+							.comment(style="width:#{widthPercentage}%;#{forceBackgroundColor}" id="com_#{comment.ID}")
+								.content
+									img.gravatar(style="margin-right:15px;margin-bottom:10px;" src="http://www.gravatar.com/avatar/#{comment.gravatar}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg")
+
+									.date
+										p #{comment.date}
+										
+									.text
+										h2 
+											if (comment.website)
+												|  <a href="#{comment.website}">#{comment.name}</a>
+											else
+												| #{comment.name}
+
+											if (comment.twitter && comment.twitter != "twitter")
+												|  - <a href="https://twitter.com/#{comment.twitter}">@#{comment.twitter}</a>
+
+										p !{comment.content.replace(/\n/g, '<br/>')}
+										
+									.clearboth
+									.answer
+										a(href="#" onclick="answerComment(#{comment.ID});return false;") #{keys.loc_answer}
+									.clearboth
+
+								- if (comment.highlight)
+									div(style="position:absolute;left:200px;bottom:-8px;width:150px;height:63px;background-image: url('http://bloglaurel.com/img/etoiles.gif');background-position: center;background-repeat: no-repeat;")
+
+							.clearboth
+							div(id="com_end_#{comment.ID}")
 				
+				#form
+					#formsending(style="display: none")
+						p #{keys.loc_comment_sending}
+					#formsent(style="display: none")
+						p #{keys.loc_comment_sent}
+					#formerror(style="display: none")
+						p #{keys.loc_comment_send_error}
 					
-				#fields
-					input#answerComID(type="hidden" value=-1)
-					input#postID(type="hidden" value=post.ID)
-					
-					.user
 						
-						- if (commentGravatar)
-							img#formGravatar.gravatar(src="http://www.gravatar.com/avatar/#{commentGravatar}?s=81")
-						- else
-							img#formGravatar.gravatar(src="http://www.gravatar.com/avatar/nogravatar?s=81")
+					#fields
+						input#answerComID(type="hidden" value=-1)
+						input#postID(type="hidden" value=post.ID)
+						
+						.user
 							
-						//- var test = Math.sqrt(16);
+							- if (commentGravatar)
+								img#formGravatar.gravatar(src="http://www.gravatar.com/avatar/#{commentGravatar}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg")
+							- else
+								img#formGravatar.gravatar(src="http://www.gravatar.com/avatar/nogravatar?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg")
+								
+							//- var test = Math.sqrt(16);
 
-						- if (commentName)
-							input#commentName.mandatory(style="margin-bottom:5px;" type="text" value="#{commentName}" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" 
-							onblur="if(this.value == '') { this.value = 'name'; }")
-						- else
-							input#commentName.mandatory(style="margin-bottom:5px;" type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);"
-							onblur="if(this.value == '') { this.value = 'name'; }")
-													
-						- if (commentEmail)
-							input#commentEmail.optional(type="text" value="#{commentEmail}" onkeyup="emailChange(this);" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
-							onblur="if(this.value == '') { this.value = 'email'; }")
-						- else
-							input#commentEmail.optional(type="text" value="email" onkeyup="emailChange(this);" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
-							onblur="if(this.value == '') { this.value = 'email'; }")
+							- if (commentName)
+								input#commentName.mandatory(style="margin-bottom:5px;" type="text" value="#{commentName}" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" 
+								onblur="if(this.value == '') { this.value = 'name'; }")
+							- else
+								input#commentName.mandatory(style="margin-bottom:5px;" type="text" value="name" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);"
+								onblur="if(this.value == '') { this.value = 'name'; }")
+														
+							- if (commentEmail)
+								input#commentEmail.optional(type="text" value="#{commentEmail}" onkeyup="emailChange(this);" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
+								onblur="if(this.value == '') { this.value = 'email'; }")
+							- else
+								input#commentEmail.optional(type="text" value="email" onkeyup="emailChange(this);" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);"
+								onblur="if(this.value == '') { this.value = 'email'; }")
 
-					- if (!commentGravatar)
-						.user_gravatar_info
-							p
-								| Associez votre email à une image <a href="http://gravatar.com">Gravatar</a>!
+						- if (!commentGravatar)
+							.user_gravatar_info
+								p
+									| Associez votre email à une image <a href="http://gravatar.com">Gravatar</a>!
 
-					.user_web
+						.user_web
 
-						- if (commentWebsite)
-							input#commentWebsite.optional(type="text" value="#{commentWebsite}" onfocus="if(this.value == 'website') { this.value = ''; } backToOriginalBackground(this);"
-							onblur="if(this.value == '') { this.value = 'website'; }")
-						- else
-							input#commentWebsite.optional(type="text" value="website" onfocus="if(this.value == 'website') { this.value = ''; } backToOriginalBackground(this);"
-							onblur="if(this.value == '') { this.value = 'website'; }")
+							- if (commentWebsite)
+								input#commentWebsite.optional(type="text" value="#{commentWebsite}" onfocus="if(this.value == 'website') { this.value = ''; } backToOriginalBackground(this);"
+								onblur="if(this.value == '') { this.value = 'website'; }")
+							- else
+								input#commentWebsite.optional(type="text" value="website" onfocus="if(this.value == 'website') { this.value = ''; } backToOriginalBackground(this);"
+								onblur="if(this.value == '') { this.value = 'website'; }")
 
 
-						- if (commentTwitter)
-							input#commentTwitter.optional(style="float:right" type="text" value="#{commentTwitter}" onfocus="if(this.value == 'twitter') { this.value = ''; } backToOriginalBackground(this);"
-							onblur="if(this.value == '') { this.value = 'twitter'; }")
-						- else
-							input#commentTwitter.optional(style="float:right" type="text" value="twitter" onfocus="if(this.value == 'twitter') { this.value = ''; } backToOriginalBackground(this);"
-							onblur="if(this.value == '') { this.value = 'twitter'; }")
+							- if (commentTwitter)
+								input#commentTwitter.optional(style="float:right" type="text" value="#{commentTwitter}" onfocus="if(this.value == 'twitter') { this.value = ''; } backToOriginalBackground(this);"
+								onblur="if(this.value == '') { this.value = 'twitter'; }")
+							- else
+								input#commentTwitter.optional(style="float:right" type="text" value="twitter" onfocus="if(this.value == 'twitter') { this.value = ''; } backToOriginalBackground(this);"
+								onblur="if(this.value == '') { this.value = 'twitter'; }")
 
-					.clearboth
-						
-						
-					textarea#commentContent(onfocus="backToOriginalBackground(this);")
-					.checkbox
-						input#comRemember(type="checkbox" checked)
-						p #{keys.comment_remember}
-					.clearboth
-					.checkbox
-						- if (commentEmailOnAnswer && commentEmailOnAnswer == "no")
-							input#comEmailOnAnswer(type="checkbox")
-						- else
-							input#comEmailOnAnswer(type="checkbox" checked)
-						p #{keys.comment_email_on_answer}
-					.clearboth
-					input(type="button" value="Send" onclick="postComment('name','email','website','twitter')")
+						.clearboth
+							
+							
+						textarea#commentContent(onfocus="backToOriginalBackground(this);")
+						.checkbox
+							input#comRemember(type="checkbox" checked)
+							p #{keys.comment_remember}
+						.clearboth
+						.checkbox
+							- if (commentEmailOnAnswer && commentEmailOnAnswer == "no")
+								input#comEmailOnAnswer(type="checkbox")
+							- else
+								input#comEmailOnAnswer(type="checkbox" checked)
+							p #{keys.comment_email_on_answer}
+						.clearboth
+						input(type="button" value="Send" onclick="postComment('name','email','website','twitter')")
 
 			.commentsAndNavigation
 				- if (pages && pages.previous)
