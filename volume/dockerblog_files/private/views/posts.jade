@@ -67,9 +67,8 @@ block content
 							| #{post.nbComs} #{keys.loc_comments}
 		
 	#pages
-		p
-			| Pages:
-			- var i = pages
-			- for (var i = 1; i < pages + 1; ++i)
-				a(href="/page" + i) #{i}
+		- var i = pages
+		- for (var i = 1; i < pages + 1; ++i)
+			a(href="/page" + i) #{i}
+		.clearboth
 	
