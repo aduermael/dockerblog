@@ -96,6 +96,11 @@ a:hover {
 	margin: 2px;
 }
 
+#pages a.current {
+	background-color:#56a7c1;
+	color:#FFF;
+}
+
 #pages a:hover {
 	background-color:#56a7c1;
 	color:#FFF;

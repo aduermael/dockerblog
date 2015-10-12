@@ -69,6 +69,9 @@ block content
 	#pages
 		- var i = pages
 		- for (var i = 1; i < pages + 1; ++i)
-			a(href="/page" + i) #{i}
+			- if (i == page)
+				a(href="/page" + i).current #{i}
+			- else
+				a(href="/page" + i) #{i}
 		.clearboth
 	
