@@ -57,13 +57,14 @@ block content
 								input(type="button" value="Send" onclick="sendMessage(#{post.ID},#{i},'Your email','Subject')")
 					
 			.footer
-				a(href="/" + post.slug +  "/" + post.ID + "#coms") 
-					- if (post.nbComs == 0)
-						| #{keys.loc_no_comments}
-					- else if (post.nbComs == 1)
-						| #{post.nbComs} #{keys.loc_comment}
-					- else
-						| #{post.nbComs} #{keys.loc_comments}
+				- if (lang == "fr")
+					a(href="/" + post.slug +  "/" + post.ID + "#coms") 
+						- if (post.nbComs == 0)
+							| #{keys.loc_no_comments}
+						- else if (post.nbComs == 1)
+							| #{post.nbComs} #{keys.loc_comment}
+						- else
+							| #{post.nbComs} #{keys.loc_comments}
 		
 	#pages
 		p
