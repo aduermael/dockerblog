@@ -31,7 +31,7 @@ block pagecontent
 
 			else if (block.type == "file")
 				div(id="#{block_name}" style="margin-bottom: 10px;border-radius: 5px;outline: none;").block_file.sortable
-					| !{block.text}
+					| !{block.url}
 
 			else if (block.type == "image")
 				div(id="#{block_name}").edit_post_zone.backgroundLevel_8.block_image.sortable

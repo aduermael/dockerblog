@@ -14,6 +14,10 @@ block content
 				.block.text
 					p !{block.text}
 
+			if (block.type == "file")
+				.block.text
+					a(href=block.url) !{block.filename}
+
 			if (block.type == "html")
 					.block.html
 						center

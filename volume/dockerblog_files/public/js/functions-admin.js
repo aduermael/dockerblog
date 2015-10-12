@@ -131,7 +131,13 @@ function editPost(sender)
 		else if ($(this).hasClass("block_file"))
 		{
 			blocks[i].type = "file";
-			blocks[i].text = $(this).html();
+			blocks[i].url = $(this).html();
+			blocks[i].filename = "error"
+
+			var components = blocks[i].url.split("/");
+			if (components.length > 0) {
+				blocks[i].filename = components[components.length-1]	
+			}
 		}
 		else if ($(this).hasClass("block_html"))
 		{
@@ -197,7 +203,13 @@ function editPage(sender)
 		else if ($(this).hasClass("block_file"))
 		{
 			blocks[i].type = "file";
-			blocks[i].text = $(this).html();
+			blocks[i].url = $(this).html();
+			blocks[i].filename = "error"
+
+			var components = blocks[i].url.split("/");
+			if (components.length > 0) {
+				blocks[i].filename = components[components.length-1]	
+			}
 		}
 		else if ($(this).hasClass("block_html"))
 		{
@@ -306,7 +318,13 @@ function sendPost(sender)
 		else if ($(this).hasClass("block_file"))
 		{
 			blocks[i].type = "file";
-			blocks[i].text = $(this).html();
+			blocks[i].url = $(this).html();
+			blocks[i].filename = "error"
+
+			var components = blocks[i].url.split("/");
+			if (components.length > 0) {
+				blocks[i].filename = components[components.length-1]	
+			}
 		}
 		else if ($(this).hasClass("block_html"))
 		{
@@ -372,7 +390,13 @@ function sendPage(sender)
     else if ($(this).hasClass("block_file"))
 	{
 		blocks[i].type = "file";
-		blocks[i].text = $(this).html();
+		blocks[i].url = $(this).html();
+		blocks[i].filename = "error"
+
+		var components = blocks[i].url.split("/");
+		if (components.length > 0) {
+			blocks[i].filename = components[components.length-1]	
+		}
 	}
     else if ($(this).hasClass("block_html"))
 	{
@@ -1089,7 +1113,7 @@ var uploadFileCallback = function(data)
 		nextBlock++;
 		var blockName = "block" + nextBlock;
 		
-		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone block_file sortable\">" + res.file_path + " (" + res.file_size + ")" + "<div style=\"margin:0;padding:0;clear:both;\"></div></div>");
+		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone block_file sortable\">" + res.file_path  + "</div>");
 	}
 	else
 	{
