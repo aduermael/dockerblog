@@ -59,6 +59,7 @@ function renderPosts(req,res)
 		{				
 			tools.renderJade(req,res,'posts',{ siteName: "Laurel",
 			posts: content,
+			page: page, // to highlight current page
 			pages: nbPages });
 		});
 	});
