@@ -14,6 +14,11 @@ block content
 				.block.text
 					p !{block.text}
 
+			if (block.type == "html")
+					.block.html
+						center
+							| !{block.data}
+
 			else if (block.type == "image")
 				.block_img.image
 					if (block.url != "")

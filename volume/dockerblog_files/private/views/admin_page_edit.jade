@@ -24,6 +24,11 @@ block pagecontent
 				div(id="#{block_name}" style="margin-bottom: 10px;background-color: #F7F7F7;border-radius: 5px;outline: none;").block_text.sortable
 					| !{block.text}
 
+			else if (block.type == "html")
+				div(id="#{block_name}" style="margin-bottom: 10px;border-radius: 5px;outline: none;").block_html.sortable
+					textarea
+						| !{block.data}
+
 			else if (block.type == "image")
 				div(id="#{block_name}").edit_post_zone.backgroundLevel_8.block_image.sortable
 					img(src=block.path)
@@ -105,6 +110,8 @@ block pagecontent
 					a(href="#" onclick="addContactForm(this);return false;") Contact form
 				li
 					a(href="#") File
+				li
+					a(href="#" onclick="addHtmlBlock(this);return false;") Html
 		.clearboth
 
 	div.edit_post_zone.backgroundLevel_1
