@@ -74,6 +74,11 @@ module.exports = function()
 	{
 		files.saveFile(req,res);
 	});
+
+	app.post('/file', function (req, res)
+	{
+		files.saveFile(req,res);
+	});
 	
 	
 	app.post('/credentials', updateCredentials);

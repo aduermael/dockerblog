@@ -65,10 +65,20 @@ function addHtmlBlock(sender)
 
 function sendImage(sender)
 {
+  $("#upload_image_form").submit();
+}
+
+function sendFile(sender)
+{
   $("#upload_file_form").submit();
 }
 
 function addImageBlock(sender)
+{
+  $('#upload_image_input').click();
+}
+
+function addFileBlock(sender)
 {
   $('#upload_file_input').click();
 }
@@ -116,6 +126,11 @@ function editPost(sender)
 		if ($(this).hasClass("block_text"))
 		{
 			blocks[i].type = "text";
+			blocks[i].text = $(this).html();
+		}
+		else if ($(this).hasClass("block_file"))
+		{
+			blocks[i].type = "file";
 			blocks[i].text = $(this).html();
 		}
 		else if ($(this).hasClass("block_html"))
@@ -177,6 +192,11 @@ function editPage(sender)
 		if ($(this).hasClass("block_text"))
 		{
 			blocks[i].type = "text";
+			blocks[i].text = $(this).html();
+		}
+		else if ($(this).hasClass("block_file"))
+		{
+			blocks[i].type = "file";
 			blocks[i].text = $(this).html();
 		}
 		else if ($(this).hasClass("block_html"))
@@ -283,6 +303,11 @@ function sendPost(sender)
 			blocks[i].type = "text";
 			blocks[i].text = $(this).html();
 		}
+		else if ($(this).hasClass("block_file"))
+		{
+			blocks[i].type = "file";
+			blocks[i].text = $(this).html();
+		}
 		else if ($(this).hasClass("block_html"))
 		{
 			blocks[i].type = "html";
@@ -344,6 +369,11 @@ function sendPage(sender)
       blocks[i].text = $(this).html();
 
     }
+    else if ($(this).hasClass("block_file"))
+	{
+		blocks[i].type = "file";
+		blocks[i].text = $(this).html();
+	}
     else if ($(this).hasClass("block_html"))
 	{
 		blocks[i].type = "html";
@@ -818,6 +848,7 @@ function reorder(sender)
       $("input").prop('disabled', true);
       $("input").css('opacity', 0.1);
       $(".block_image").css('border','1px dashed #000');
+      $(".block_file").css('border','1px dashed #000');
       $(".block_text").css('border','1px dashed #000');
       $(".block_html").css('border','1px dashed #000');
 	  $(".block_contact").css('border','1px dashed #000');
@@ -839,6 +870,7 @@ function reorder(sender)
       $("input").prop('disabled', false);
       $("input").css('opacity', 1.0);
       $(".block_image").css('border','none');
+      $(".block_file").css('border','none');
       $(".block_text").css('border','none');
       $(".block_html").css('border','none');
       $(".block_contact").css('border','none');
@@ -923,6 +955,7 @@ $(document).ready(function()
 			$("input").css('opacity', 0.1);
 			$(".block_image").css('border','1px dashed #000');
 			$(".block_text").css('border','1px dashed #000');
+			$(".block_file").css('border','1px dashed #000');
 			$(".block_html").css('border','1px dashed #000');
 			$(".block_contact").css('border','1px dashed #000');
 
@@ -943,6 +976,7 @@ $(document).ready(function()
 			$("input").css('opacity', 1.0);
 			$(".block_image").css('border','none');
 			$(".block_text").css('border','none');
+			$(".block_file").css('border','none');
 			$(".block_html").css('border','none');
 			$(".block_contact").css('border','none');
 			
@@ -987,16 +1021,35 @@ $(document).ready(function()
 	});
 
 
+	$("form#upload_image_form").submit(function(e)
+	{
+		e.preventDefault();
+		//grab all form data
+		var formData = new FormData($(this)[0]);
+		var inputs = document.getElementById('upload_image_input');
+
+		if (inputs.files.length > 0)
+		{
+			PostFiles('/admin/image',formData,uploadImageCallback,errorCallback);
+		}
+		else
+		{
+			console.log("nothing to send");
+		}
+		return false;
+	});
+
+
 	$("form#upload_file_form").submit(function(e)
 	{
 		e.preventDefault();
 		//grab all form data
 		var formData = new FormData($(this)[0]);
 		var inputs = document.getElementById('upload_file_input');
-		
+
 		if (inputs.files.length > 0)
 		{
-			PostFiles('/admin/image',formData,uploadFileCallback,errorCallback);
+			PostFiles('/admin/file',formData,uploadFileCallback,errorCallback);
 		}
 		else
 		{
@@ -1009,6 +1062,24 @@ $(document).ready(function()
 });
 
 
+var uploadImageCallback = function(data)
+{	
+	var res = JSON.parse(data);
+	
+	if(res.success)
+	{
+		nextBlock++;
+		var blockName = "block" + nextBlock;
+		
+		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.file_path + "\"/><input id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"URL\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'URL') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'URL'; }\"/><input id=\"imagedescription\" name=\"imagedescription\" type=\"text\" value=\"Description\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'Description') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'Description'; }\"/><div style=\"margin:0;padding:0;clear:both;\"></div></div>");
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
+
 var uploadFileCallback = function(data)
 {	
 	var res = JSON.parse(data);
@@ -1018,7 +1089,7 @@ var uploadFileCallback = function(data)
 		nextBlock++;
 		var blockName = "block" + nextBlock;
 		
-		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.image_path + "\"/><input id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"URL\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'URL') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'URL'; }\"/><input id=\"imagedescription\" name=\"imagedescription\" type=\"text\" value=\"Description\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'Description') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'Description'; }\"/><div style=\"margin:0;padding:0;clear:both;\"></div></div>");
+		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone block_file sortable\">" + res.file_path + " (" + res.file_size + ")" + "<div style=\"margin:0;padding:0;clear:both;\"></div></div>");
 	}
 	else
 	{

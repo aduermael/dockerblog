@@ -23,6 +23,10 @@ block pagecontent
 					textarea
 						| !{block.data}
 
+			else if (block.type == "file")
+				div(id="#{block_name}" style="margin-bottom: 10px;border-radius: 5px;outline: none;").block_file.sortable
+					| !{block.text}
+
 			else if (block.type == "image")
 				div(id="#{block_name}").edit_post_zone.backgroundLevel_8.block_image.sortable
 					img(src=block.path)
@@ -98,11 +102,9 @@ block pagecontent
 				li
 					a(href="#" onclick="addImageBlock(this);return false;") Image
 				li
-					a(href="#") Video
-				li
 					a(href="#" onclick="addContactForm(this);return false;") Contact form
 				li
-					a(href="#") File
+					a(href="#" onclick="addFileBlock(this);return false;") File
 				li
 					a(href="#" onclick="addHtmlBlock(this);return false;") Html
 		.clearboth
@@ -144,9 +146,10 @@ block pagecontent
 					
 		.clearboth
 
-
+	form(name="upload_image_form" id="upload_image_form" action="" method="POST" enctype="multipart/form-data" style="display:none")
+		input(id="upload_image_input" name="upload_image_input" type="file" accept="image/*" style="display:none" onChange="sendImage(this)")
 
 	form(name="upload_file_form" id="upload_file_form" action="" method="POST" enctype="multipart/form-data" style="display:none")
-			input(id="upload_file_input" name="upload_file_input" type="file" style="display:none" onChange="sendImage(this)")
+			input(id="upload_file_input" name="upload_file_input" type="file" style="display:none" onChange="sendFile(this)")
 
 	#myNicPanel

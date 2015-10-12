@@ -57,6 +57,11 @@ li div
 	margin:0;
 }
 
+.block_file
+{
+	background-color: #77c0ff;	
+}
+
 .block_html
 {
 	background-color: #888;

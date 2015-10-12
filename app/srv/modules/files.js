@@ -171,6 +171,17 @@ exports.saveFile = function(req, res)
 		// handle the request and reply to the client
 		
 		var file = req.files.upload_file_input;
+		// when uploading an image, the field name is different
+		if (!file) {
+			file = req.files.upload_image_input;
+		}
+
+		if (!file) {
+			var response = {};
+			response.result = false;
+			tools.returnJSON(res, response);
+			return
+		}
 		
 		// get current timestamp		
 		var date = new Date();
@@ -197,6 +208,7 @@ exports.saveFile = function(req, res)
 								var suffix = "";
 								
 								// add a prefix to the filename
+								
 								var filename = prefix + getFilenameWithoutExtension(file.filename) + suffix + getFilenameExtension(file.filename);
 								console.log('NAME : ' + filename);
 								var destination_directory_relative_path = '/' + UPLOADS_DIR + '/' + year + '/' + month;
@@ -217,7 +229,8 @@ exports.saveFile = function(req, res)
 												// writefile success
 												var response = {};
 												response.success = true;
-												response.image_path = destination_file_relative_path;
+												response.file_path = destination_file_relative_path;
+												response.file_size = file.data.length;
 												tools.returnJSON(res, response);
 											}
 											else
@@ -246,7 +259,8 @@ exports.saveFile = function(req, res)
 														// writefile success
 														var response = {};
 														response.success = true;
-														response.image_path = destination_file_relative_path;
+														response.file_path = destination_file_relative_path;
+														response.file_size = file.data.length;
 														tools.returnJSON(res, response);
 													}
 													else
