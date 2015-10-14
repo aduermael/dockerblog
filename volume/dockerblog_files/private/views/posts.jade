@@ -17,7 +17,7 @@ block content
 						p !{block.text}
 
 				if (block.type == "file")
-					.block.text
+					.block.file
 						a(href=block.url) !{block.filename}
 
 				if (block.type == "html")

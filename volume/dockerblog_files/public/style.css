@@ -513,6 +513,27 @@ textarea {
 	padding-right:30px;
 }
 
+.file {
+	width:740px;
+	padding-left:30px;
+	padding-right:30px;
+	text-align:center;
+}
+
+.file a {
+	background-image: url("img/fichier-telecharger.png");
+	background-repeat: no-repeat;
+	background-position: 14px center;
+	background-color:#56a7c1;
+	color: #fff;
+	padding: 30px;
+	padding-left: 70px;
+	border-radius:5px;
+	border:none;
+	line-height: 70px;
+	
+}
+
 .block p {
 	margin:0;
 	line-height:auto;
