@@ -2,7 +2,7 @@ extends blog
 	
 block content
 
-	- each post in posts
+	- each post,iPost in posts
 		.post
 			.block.title
 				h2
@@ -69,6 +69,10 @@ block content
 							| #{post.nbComs} #{keys.loc_comment}
 						- else
 							| #{post.nbComs} #{keys.loc_comments}
+		- if (iPost < 3)
+			#banner
+				a(href="http://www.ulule.com/comme-convenu")
+					img(src="/img/comme-convenu.gif")
 		
 	#pages
 		- var i = pages
