@@ -54,6 +54,7 @@ module.exports = function()
 	app.post('/pages/edit', saveEditedPage);
 	
 	app.get('/comments',comments);
+	app.get('/newcomments',newcomments);
 	app.post('/acceptComment',postsManager.acceptComment);
 	app.post('/deleteComment',postsManager.deleteComment);
 	app.post('/highlightComment',postsManager.highlightComment);
@@ -363,6 +364,15 @@ function comments(req,res)
 };
 
 
+function newcomments(req,res)
+{
+  postsManager.listUnvalidatedComments(req,0,200,function(error,content)
+  {
+      tools.renderJade(req,res,'admin_comments',{ siteName: 'Blog | Admin - New Comments',
+          comments: content,
+          lang: lang_module.get(req) });
+  });
+};
 
 
 
