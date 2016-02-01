@@ -1710,6 +1710,7 @@ module.exports =
 	saveEditedPost: saveEditedPost,
 	editPost: editPost,
 	listComments: listComments,
+	listUnvalidatedComments: listUnvalidatedComments,
 	acceptComment : acceptComment,
 	deleteComment : deleteComment,
 	highlightComment : highlightComment,
