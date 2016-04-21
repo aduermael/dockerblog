@@ -1,56 +1,31 @@
 dockerblog
 ==========
 
-A light blog engine made with NodeJS, Redis, Jade &amp; Docker
+A light blog engine made with NodeJS, Redis, Jade &amp; Docker.
 
-To run it, you first need to install Docker:
-http://www.docker.com/whatisdocker/
+I'll add details soon, so far these are only notes for myself.
 
-Dockerblog relies on 3 containers:
-- Application
-- Database
-- Files (volume)
+### Build Docker images
 
-### Pull the 3 images:
-```
-docker pull aduermael/dockerblog-data
-docker pull aduermael/dockerblog-db
-docker pull aduermael/dockerblog-app
-```
-### Run the 3 containers (in that same order):
-```
-docker run -t -i -d --name volumes aduermael/dockerblog-data
-docker run -t -i -d --volumes-from volumes --name redis aduermael/dockerblog-db
-docker run -t -i -d --link redis:db -p 80:80 --volumes-from volumes --name app aduermael/dockerblog-app
+```shell
+docker build -t app app
+docker build -t db redis
+docker build -t volume volume
+docker build -t fbcomments plugins/fbcomments
 ```
 
-Now it runs!
+### Run the containers (in that order):
 
-You'll find the admin here: <**your host**>/admin
+```shell
+docker run -ti -d --name volume volume
+docker run -ti -d --volumes-from volume --name db db
+docker run -ti -d --name fbcomments fbcomments
+docker run -ti -d --link db:db --link fbcomments:fbcomments \
+-p 80:80 --volumes-from volume --name app app
+```
+
+Admin: `/admin`
 
 Credentials: admin/admin
 
-For now we have a specific design (for bloglaurel.com) but we'll update soon with a generic design you can use for your own blog. 
-
-[@Gaetan_dv][1] & [@a_duermael][2]
-
-
-  [1]: https://twitter.com/gaetan_dv
-  [2]: https://twitter.com/aduermael
-
-#### Dev notes
-
-containers :
-
-```
-[app]-----------[redis]
-    \           /
-     \         /
-      \       /
-      [volumes]-----------[backup]
-```
-
-app     : nodejs server
-redis   : just a redis server
-volumes : a container with 2 volumes, 1 for blog's files [app], 1 for redis dumps [redis]
-backup  : a container accessing to [volumes] to handle backup (BTSync for example)
+For now there's a specific design (for bloglaurel.com), but it's going to be updated soon with a generic design and options to customize it.
