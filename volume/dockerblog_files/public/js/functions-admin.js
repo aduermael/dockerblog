@@ -4,13 +4,9 @@
 //
 //
 
-
-
 var myNicEditor;
 var nextBlock = 0;
 var reorder_mode = false;
-
-
 
 function PostFiles(path,formData,callback,errorCallback)
 {
@@ -39,8 +35,6 @@ function PostFiles(path,formData,callback,errorCallback)
 	);
 }
 
-
-
 // ADMIN
 
 function addTextBlock(sender)
@@ -53,15 +47,26 @@ function addTextBlock(sender)
   myNicEditor.addInstance(blockName);
 }
 
-
 function addHtmlBlock(sender)
 {
   nextBlock++;
   var blockName = "block" + nextBlock;
-
   $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_html sortable\" style=\"margin-bottom: 10px; border-radius: 5px;outline: none;\"><textarea>Text</textarea></div>");
 }
 
+function addGalleryBlock(sender)
+{
+	nextBlock++;
+  	var blockName = "block" + nextBlock;
+  	$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_gallery sortable\" style=\"margin-bottom: 10px; border-radius: 5px;outline: none;\">" +
+  		"<textarea></textarea>" +
+  		"<a href=\"#\" onclick=\"addImageToGallery('" + blockName + "');return false;\">" +
+  		"Add image</a></div>");
+}
+
+function addImageToGallery(blockName) {
+	console.log("block name:" + blockName)
+}
 
 function sendImage(sender)
 {
@@ -144,6 +149,11 @@ function editPost(sender)
 			blocks[i].type = "html";
 			blocks[i].data = $(this).children('textarea')[0].value;
 		}
+		else if ($(this).hasClass("block_gallery"))
+		{
+			blocks[i].type = "gallery";
+			blocks[i].data = $(this).children('textarea')[0].value;
+		}
 		else if ($(this).hasClass("block_image"))
 		{
 			blocks[i].type = "image";
@@ -214,6 +224,11 @@ function editPage(sender)
 		else if ($(this).hasClass("block_html"))
 		{
 			blocks[i].type = "html";
+			blocks[i].data = $(this).children('textarea')[0].value;
+		}
+		else if ($(this).hasClass("block_gallery"))
+		{
+			blocks[i].type = "gallery";
 			blocks[i].data = $(this).children('textarea')[0].value;
 		}
 		else if ($(this).hasClass("block_image"))
@@ -331,6 +346,11 @@ function sendPost(sender)
 			blocks[i].type = "html";
 			blocks[i].data = $(this).children('textarea')[0].value;
 		}
+		else if ($(this).hasClass("block_gallery"))
+		{
+			blocks[i].type = "gallery";
+			blocks[i].data = $(this).children('textarea')[0].value;
+		}
 		else if ($(this).hasClass("block_image"))
 		{
 			blocks[i].type = "image";
@@ -401,6 +421,11 @@ function sendPage(sender)
     else if ($(this).hasClass("block_html"))
 	{
 		blocks[i].type = "html";
+		blocks[i].data = $(this).children('textarea')[0].value;
+	}
+	else if ($(this).hasClass("block_gallery"))
+	{
+		blocks[i].type = "gallery";
 		blocks[i].data = $(this).children('textarea')[0].value;
 	}
     else if ($(this).hasClass("block_image"))
@@ -875,6 +900,7 @@ function reorder(sender)
       $(".block_file").css('border','1px dashed #000');
       $(".block_text").css('border','1px dashed #000');
       $(".block_html").css('border','1px dashed #000');
+      $(".block_gallery").css('border','1px dashed #000');
 	  $(".block_contact").css('border','1px dashed #000');
       
      
@@ -897,6 +923,7 @@ function reorder(sender)
       $(".block_file").css('border','none');
       $(".block_text").css('border','none');
       $(".block_html").css('border','none');
+      $(".block_gallery").css('border','none');
       $(".block_contact").css('border','none');
       
       reorder_mode = false;
@@ -981,6 +1008,7 @@ $(document).ready(function()
 			$(".block_text").css('border','1px dashed #000');
 			$(".block_file").css('border','1px dashed #000');
 			$(".block_html").css('border','1px dashed #000');
+			$(".block_gallery").css('border','1px dashed #000');
 			$(".block_contact").css('border','1px dashed #000');
 
 			reorder_mode = true;
@@ -1002,6 +1030,7 @@ $(document).ready(function()
 			$(".block_text").css('border','none');
 			$(".block_file").css('border','none');
 			$(".block_html").css('border','none');
+			$(".block_gallery").css('border','none');
 			$(".block_contact").css('border','none');
 			
 			reorder_mode = false;

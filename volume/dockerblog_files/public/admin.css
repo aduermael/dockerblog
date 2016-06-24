@@ -82,6 +82,30 @@ li div
 }
 
 
+.block_gallery
+{
+	background-color: #99cccc;
+	color:#000;
+}
+
+.block_gallery textarea
+{
+	width: 620px;
+	padding:10px;
+	margin:0;
+	margin-bottom:10px;
+	background-color: #ccffff;
+	line-height: 14px;
+	font-size: 14px;
+	font-family:Courier,monospace;
+	height:100px;
+	color:#000;
+}
+
+.block_gallery a
+{
+	color:#fff;
+}
 
 
 h2

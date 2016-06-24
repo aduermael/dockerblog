@@ -29,6 +29,12 @@ block pagecontent
 					textarea
 						| !{block.data}
 
+			else if (block.type == "gallery")
+				div(id="#{block_name}" style="margin-bottom: 10px;border-radius: 5px;outline: none;").block_gallery.sortable
+					textarea
+						| !{block.data}
+					a(href="#" onclick="addImageToGallery('#{block_name}');return false;") Add image
+
 			else if (block.type == "file")
 				div(id="#{block_name}" style="margin-bottom: 10px;border-radius: 5px;outline: none;").block_file.sortable
 					| !{block.url}
@@ -114,6 +120,8 @@ block pagecontent
 					a(href="#" onclick="addFileBlock(this);return false;") File
 				li
 					a(href="#" onclick="addHtmlBlock(this);return false;") Html
+				li
+					a(href="#" onclick="addGalleryBlock(this);return false;") Gallery
 		.clearboth
 
 	div.edit_post_zone.backgroundLevel_1
