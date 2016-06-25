@@ -564,6 +564,26 @@ textarea {
 	display:inline;
 }
 
+.block.gallery {
+	position: relative;
+	height: 700px;
+}
+
+.slideme {
+	/*max-width: 990px;
+	max-height: 450px;*/
+	width: 100%;
+	height: 100%;
+}
+
+.fullscreen img.slide {
+	height: 100%;
+}
+
+.gallery img {
+    border-radius:0px;
+}
+
 .block_img img {
 	display:block;
 	margin:0 auto;

@@ -239,3 +239,13 @@ function validateEmail(email)
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
 }
+
+
+$(function(){
+ 	Galleria.loadTheme('/js/galleria/themes/classic/galleria.classic.min.js');
+ 	Galleria.configure({
+	    transition: 'fade', 
+	    lightbox: true, 
+	});
+    Galleria.run('.gallery');
+})

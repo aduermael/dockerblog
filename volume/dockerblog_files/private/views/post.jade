@@ -16,14 +16,21 @@ block content
 				.block.text
 					p !{block.text}
 
-			if (block.type == "file")
+			else if (block.type == "file")
 				.block.file
 					a(href=block.url) !{block.filename}
 
-			if (block.type == "html")
-					.block.html
-						center
-							| !{block.data}
+			else if (block.type == "html")
+				.block.html
+					center
+						| !{block.data}
+
+			else if (block.type == "gallery")
+				.block.gallery
+						- var raw = block.data
+						- var arr = raw.split('\n')
+						- each line in arr
+							img(src=line)
 
 			else if (block.type == "image")
 				.block_img.image
