@@ -15,7 +15,6 @@ var crypto = require('crypto');
 var keys = require('./keys');
 var lang_module = require('./lang');
 
-var nodemailer = require("nodemailer");
 var transporter;
 
 
@@ -28,6 +27,33 @@ exports.returnJSON = function(res,obj)
   res.end(body);
 }
 
+// callback(err, value)
+exports.getValueForKey = function(req, key, callback) {
+
+	keys.getAllKeysAndValues(req,function(err,values)
+	{	
+		if (err) {
+			callback(err)
+			return
+		}
+
+		var keys = values;
+		if (! keys ) {
+			callback("can't find value for key: " + key)
+			return
+		}
+
+		console.log(keys)
+		
+		var value = keys[key]
+		if (! value ) {
+			callback("can't find value for key: " + key)
+			return
+		}
+
+		callback(null, value)
+	});
+}
 
 exports.renderJade = function(req,res,page,options)
 {		
@@ -96,62 +122,56 @@ exports.killFastRobots = function(req,res,next)
 }
 
 
-
-
-function sendMailHavingTransporter(to,title,text,html)
-{
-	if (transporter)
-	{
-		var mailOptions = {from:transporter.options.auth.XOAuth2.options.user,to:to,subject:title,text:text,html:html};
-
-		transporter.sendMail(mailOptions, function(error, info)
-		{
-		    if(error)
-		    {
-		        console.log(error);
-		    }
-		    else
-		    {
-		        console.log('Message sent: ' + info.response);
-		    }
-		});
-	}
-}
-
-
 exports.deleteMailTransporter = function()
 {
 	delete transporter;
 }
 
 // html is optional
-exports.sendMail = function(to,title,text,html)
+exports.sendMail = function(sendgridApiKey,to,title,text,html)
 {
-	// transporter has not been initialized
-	// let's do it now
-	if (!transporter)
-	{
-		console.log("generate transporter");
+	console.log("send email to: " + to)
+	console.log("title to send: " + title)
+	console.log("text to send: " + text)
+	console.log("html to send: " + html)
 
-		fs.readFile(GLOBAL.private_dir_path + '/email_config.json', function (err, data)
-		{
-			if (err)
-			{
-				console.log("can't find email credentials, email can't be sent")
-			}
-			else
-			{
-				var config = JSON.parse(data);
+	// help: https://github.com/sendgrid/sendgrid-nodejs/blob/master/examples/helpers/mail/example.js
 
-				transporter = nodemailer.createTransport("SMTP",config);
-				sendMailHavingTransporter(to,title,text,html);
-			}
-		});
+	var helper = require('sendgrid').mail
+
+	mail = new helper.Mail()
+
+	// TODO: get that from config
+	from = new helper.Email("no-reply@bloglaurel.com", "Bloglaurel")
+  	mail.setFrom(from)
+
+  	personalization = new helper.Personalization()
+
+  	emailTo = new helper.Email(to) //, "Example User")
+  	personalization.addTo(emailTo)
+  	mail.addPersonalization(personalization)
+
+	mail.setSubject(title)
+
+	textContentontent = new helper.Content("text/plain", text)
+	mail.addContent(textContentontent)
+	
+	if (html) {
+		htmlContent = new helper.Content("text/html", html)
+		mail.addContent(htmlContent)
 	}
-	else // we already have a transporter!
-	{
-		sendMailHavingTransporter(to,title,text,html);
-	}
+
+	var sg = require('sendgrid').SendGrid(sendgridApiKey)
+  	var requestBody = mail.toJSON()
+  	var request = sg.emptyRequest()
+  	request.method = 'POST'
+  	request.path = '/v3/mail/send'
+	request.body = requestBody
+	sg.API(request, function (response) {
+		console.log(response.statusCode)
+		console.log(response.body)
+		console.log(response.headers)
+	})
 }
 
 

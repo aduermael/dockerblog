@@ -196,10 +196,16 @@ function postContact(req,res)
 											
 						message.content = message.email + "\n\n" + message.content;
 
-						tools.sendMail(contactBlock.to,contactBlock.title + message.subject,message.content);
-						
-						var ret = {"success":true};
-						tools.returnJSON(res,ret);	
+						tools.getValueForKey(req, "sendgrid_api_key", function(err, sendgridApiKey) {
+							if (err) {
+								var ret = {"success":false};
+								tools.returnJSON(res,ret);	
+							} else {
+								tools.sendMail(sendgridApiKey, contactBlock.to,contactBlock.title + message.subject,message.content);
+								var ret = {"success":true};
+								tools.returnJSON(res,ret);	
+							}
+						});
 					}
 					else // not enough blocks???
 					{
@@ -226,7 +232,7 @@ function postContact(req,res)
 
 
 
-function sendEmailOnAnswer(comID)
+function sendEmailOnAnswer(sendgridApiKey, comID)
 {
 	// comID: the comment that has just been posted or accepted
 	// we have to look if it answers to another comment
@@ -315,7 +321,7 @@ function sendEmailOnAnswer(comID)
 							html += "<a href=\"http://bloglaurel.com/post/" + com.postID + "#com" + com.ID + "\">Answer</a>";
 							html += "</div>";
 
-							tools.sendMail(originalCom.email,com.name + " answered your comment on Laurel's blog",text,html);
+							tools.sendMail(sendgridApiKey, originalCom.email,com.name + " answered your comment on Laurel's blog",text,html);
 						}
 						else
 						{
@@ -1020,10 +1026,12 @@ var acceptComment = function(req,res)
 					tools.returnJSON(res,ret);
 
 					// maybe an email has to be sent if answering comment
-
 					//console.log("comment accepted, maybe we should send an email?");
-					sendEmailOnAnswer(ID);
-
+					tools.getValueForKey(req, "sendgrid_api_key", function(err, sendgridApiKey) {
+						if (!err) {
+							sendEmailOnAnswer(sendgridApiKey, ID);
+						}
+					});
 				}
 				else
 				{
