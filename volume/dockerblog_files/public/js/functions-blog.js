@@ -242,10 +242,12 @@ function validateEmail(email)
 
 
 $(function(){
- 	Galleria.loadTheme('/js/galleria/themes/classic/galleria.classic.min.js');
- 	Galleria.configure({
-	    transition: 'fade', 
-	    lightbox: true, 
-	});
-    Galleria.run('.gallery');
+	if ($(".gallery")[0]){
+		Galleria.loadTheme('/js/galleria/themes/classic/galleria.classic.min.js');
+			Galleria.configure({
+		    transition: 'fade', 
+		    lightbox: true, 
+		});
+		Galleria.run('.gallery');
+	}
 })
