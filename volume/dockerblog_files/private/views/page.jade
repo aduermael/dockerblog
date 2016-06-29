@@ -48,11 +48,11 @@ block content
 					.block.contact
 						.tinyForm(id="contactForm_" + page.ID + "_" + i)
 							div(id="formsending_" + page.ID + "_" + i style="display: none")
-								p Sending message...
+								p #{keys.loc_contact_message_sending}
 							div(id="formsent_" + page.ID + "_" + i style="display: none")
-								p Message sent! I'll answer as soon as I can!
+								p #{keys.loc_contact_message_sent}
 							div(id="formerror_" + page.ID + "_" + i style="display: none")
-								p Error when sending message!
+								p #{keys.loc_contact_message_error}
 								
 							div(id="contactFields_"+page.ID+"_"+i)
 								input.mandatory(id="contactEmail_"+page.ID+"_"+i type="text" value="Your email" 

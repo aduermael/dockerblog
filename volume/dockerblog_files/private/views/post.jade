@@ -50,13 +50,14 @@ block content
 					.block.contact
 						.tinyForm(id="contactForm_" + post.ID + "_" + i)
 							div(id="formsending_" + post.ID + "_" + i style="display: none")
-								p Sending message...
+								p #{keys.loc_contact_message_sending}
 							div(id="formsent_" + post.ID + "_" + i style="display: none")
-								p Message sent! I'll answer as soon as I can!
+								p #{keys.loc_contact_message_sent}
 							div(id="formerror_" + post.ID + "_" + i style="display: none")
-								p Error when sending message!
+								p #{keys.loc_contact_message_error}
 								
 							div(id="contactFields_"+post.ID+"_"+i)
+								input.url.mandatory(id="contactUrl_"+post.ID+"_"+i type="text" value="")
 								input.mandatory(id="contactEmail_"+post.ID+"_"+i type="text" value="Your email" 
 								onfocus="if(this.value == 'Your email') { this.value = ''; } backToOriginalBackground(this);" 
 								onblur="if(this.value == '') { this.value = 'Your email'; }")
@@ -227,6 +228,7 @@ block content
 					#fields
 						input#answerComID(type="hidden" value=-1)
 						input#postID(type="hidden" value=post.ID)
+						input#url(type="text" value="")
 						
 						.user
 							

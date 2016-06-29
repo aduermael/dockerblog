@@ -85,6 +85,21 @@ exports.renderJade = function(req,res,page,options)
 	});
 }
 
+// answers with "success" without doing anything
+// if robots fill trap fields such as "url"
+exports.killStupidRobots = function(req,res,next)
+{
+	if (req.body.url && req.body.url != "") {
+		console.log("just killed one stupid robot.");
+		var obj = {"success":true};		
+		var body = JSON.stringify(obj);
+		res.setHeader('Content-Type', 'application/json');
+		res.setHeader('Content-Length', body.length);
+		res.end(body);
+	} else {
+		next();
+	}
+}
 
 exports.killFastRobots = function(req,res,next)
 {

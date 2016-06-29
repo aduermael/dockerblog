@@ -77,15 +77,22 @@ app.get('/*', function(req, res, next)
 });
 
 // log the original url of all incoming requests
-app.use(log_request_url);
+// app.use(log_request_url);
 
 // blog modules
 app.use('/admin', admin);
 
+// answers with "success" without doing anything
+// if robots fill trap fields such as "url" or "email"
+app.post('*',tools.killStupidRobots);
+
 // For anything posted by a non-admin user
 // We check if the message was posted long enough after page rendering
 // It helps getting rid of some spam robots
-app.post('*',tools.killFastRobots);
+
+// a few users are also blocked for some reason...
+// turning that off for now
+//app.post('*',tools.killFastRobots);
 
 app.use('/lang',lang_module.app);
 app.use(lang_module.use);

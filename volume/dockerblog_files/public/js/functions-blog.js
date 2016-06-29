@@ -18,7 +18,8 @@ function sendMessage(postID,blockID,emailIndication,subjectIndication)
 	message.email = $('#contactEmail_' + postID + '_' + blockID).val();
 	message.subject = $('#contactSubject_' + postID + '_' + blockID).val();
 	message.content = $('#contactContent_' + postID + '_' + blockID).val();
-	
+	message.url = $('#contactUrl_' + postID + '_' + blockID).val();
+
 	var error = false;
 	
 	if ( !validateEmail(message.email) )
@@ -91,6 +92,7 @@ function postComment(nameIndication,emailIndication,websiteIndication,twitterInd
 	var comment = new Object()
 	comment.postID = $('#postID').val();
 	comment.answerComID = $('#answerComID').val();
+	comment.url = $('#url').val();
 	comment.name = $('#commentName').val();
 	comment.email = $('#commentEmail').val();
 	comment.content = $('#commentContent').val();

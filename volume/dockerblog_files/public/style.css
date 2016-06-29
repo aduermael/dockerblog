@@ -402,6 +402,14 @@ input, textarea {
 	line-height:16px;
 }
 
+input#url {
+	display: none;
+}
+
+input.url {
+	display: none;
+}
+
 .user {
 	margin:5px auto;
 	width:370px;
