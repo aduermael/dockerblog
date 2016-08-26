@@ -572,9 +572,14 @@ textarea {
 	display:inline;
 }
 
-.block.gallery {
+.gallery {
 	position: relative;
 	height: 700px;
+}
+
+.galleria-thumbnails-container {
+	display: none;
+	height: 0px;
 }
 
 .slideme {
