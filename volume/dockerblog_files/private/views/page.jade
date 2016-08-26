@@ -2,6 +2,8 @@ extends blog
 	
 block content
 
+	- var galleryData = {}
+
 	.post
 	
 		.block.title
@@ -10,6 +12,8 @@ block content
 			.clearboth
 			
 		- each block,i in page.blocks
+			- var blockID = "post" + page.ID + "-block" + i
+
 			if (block.type == "text")
 				.block.text
 					p !{block.text}
@@ -24,11 +28,19 @@ block content
 							| !{block.data}
 							
 			else if (block.type == "gallery")
-				.block.gallery
-						- var raw = block.data
-						- var arr = raw.split('\n')
-						- each line in arr
-							img(src=line)
+				.block
+					.gallery(id=blockID)
+					- var raw = block.data
+					- var arr = raw.split('\n')
+					- galleryData[blockID] = []
+					- each path in arr
+						- galleryData[blockID].push({image: path})
+					.gallery-pages
+						center
+							select(id=blockID + "-pages")
+								- each path, index in arr
+									option(value= index) page !{index + 1} / !{arr.length}
+
 
 			else if (block.type == "image")
 				.block_img.image
@@ -65,4 +77,6 @@ block content
 								onfocus="backToOriginalBackground(this);")
 								input(type="button" value="Send" onclick="sendMessage(#{page.ID},#{i},'Your email','Subject')")
 			
-				
+	
+	script.
+		var galleryData = !{JSON.stringify(galleryData)}			
