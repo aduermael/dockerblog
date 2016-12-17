@@ -99,6 +99,7 @@ function renderRSS(req,res)
 	{
 		pages(req,postsPerPage ,function(nbPages)
 		{	
+			res.setHeader('Content-Type', 'application/rss+xml');
 			tools.renderJade(req,res,'rss',{ siteName: "Laurel" + " - " + "RSS",
 			posts: content });
 		});
