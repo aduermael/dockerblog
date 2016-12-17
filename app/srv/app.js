@@ -76,6 +76,60 @@ app.get('/*', function(req, res, next)
     else next();
 });
 
+// redirects
+app.get('/*', function (req, res, next)
+{
+    switch(req.url) {
+        case "/comme-convenu":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio2":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio3":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio4":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio5":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio6":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio7":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio8":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio9":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio10":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio11":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio12":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio13":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        case "/studio14":
+            res.redirect(301,'https://commeconvenu.com');
+            break;
+        default:
+            next()
+    }
+})
+
 // log the original url of all incoming requests
 // app.use(log_request_url);
 
