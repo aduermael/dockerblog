@@ -84,56 +84,62 @@ block structure
 					img(src="/img/langs/fr.png" style="float:right;" alt="lang_fr")
 				.floatspace
 				.clearboth
-		.zone
-			h3 !{keys.bio}		
+		
 
 
-		.zone
-			- if (keys.loc_dailystruggle)
-				a(href="/studio")
-					img(src="/img/banners/commeconvenu.jpg" alt="commeconvenu")
-				h2
-					a(href="/studio") #{keys.loc_dailystruggle}
+		- if (!locals.page || !page.name || page.name != "comme-convenu")
 
-		.zone
-			- if (keys.loc_cerise1)
-				a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318")
-					img(src="/img/banners/cerise1.jpg" alt="cerise1")
-				h2
-					a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318") #{keys.loc_cerise1}
-					
-			- if (keys.loc_cerise2)
-				a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004")
-					img(src="/img/banners/cerise2.jpg" alt="cerise2")
-				h2
-					a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004") #{keys.loc_cerise2}
+			.zone
+				h3 !{keys.bio}		
 
-			- if (keys.loc_cerise3)
-				a(href="http://www.amazon.fr/Cerise-Tome-Le-seigneur-animaux/dp/2803636204")
-					img(src="/img/banners/cerise3.jpg" alt="cerise2")
-				h2
-					a(href="http://www.amazon.fr/Cerise-Tome-Le-seigneur-animaux/dp/2803636204") #{keys.loc_cerise3}
-			
-			//		
-				- if (keys.loc_minecraft)
-					a(href="/minecraft")
-						img(src="/img/banners/minecraft.png")
+
+		
+			.zone
+				- if (keys.loc_dailystruggle)
+					a(href="https://commeconvenu.com")
+						img(src="/img/banners/commeconvenu.jpg" alt="commeconvenu")
 					h2
-						a(href="/minecraft") #{keys.loc_minecraft}	
+						a(href="https://commeconvenu.com") #{keys.loc_dailystruggle}
+
+			.zone
+				- if (keys.loc_cerise1)
+					a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318")
+						img(src="/img/banners/cerise1.jpg" alt="cerise1")
+					h2
+						a(href="http://www.amazon.fr/Cerise-1-Avis-bêtes-L/dp/2803631318") #{keys.loc_cerise1}
 						
-					
-			- if (keys.loc_illustrations)
-				a(href="#")
-					img(src="/img/banners/illustrations.jpg" alt="illustrations")
-				h2
-					a(href="#") #{keys.loc_illustrations}	
+				- if (keys.loc_cerise2)
+					a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004")
+						img(src="/img/banners/cerise2.jpg" alt="cerise2")
+					h2
+						a(href="http://www.amazon.fr/Cerise-2-Smart-faune-Laurel/dp/2803632004") #{keys.loc_cerise2}
+
+				- if (keys.loc_cerise3)
+					a(href="http://www.amazon.fr/Cerise-Tome-Le-seigneur-animaux/dp/2803636204")
+						img(src="/img/banners/cerise3.jpg" alt="cerise2")
+					h2
+						a(href="http://www.amazon.fr/Cerise-Tome-Le-seigneur-animaux/dp/2803636204") #{keys.loc_cerise3}
+				
+				//		
+					- if (keys.loc_minecraft)
+						a(href="/minecraft")
+							img(src="/img/banners/minecraft.png")
+						h2
+							a(href="/minecraft") #{keys.loc_minecraft}	
+							
+						
+				- if (keys.loc_illustrations)
+					a(href="#")
+						img(src="/img/banners/illustrations.jpg" alt="illustrations")
+					h2
+						a(href="#") #{keys.loc_illustrations}	
 
 
-			- if (keys.loc_references)		
-				a(href="/references")
-					img(src="/img/banners/references.png" alt="references")
-				h2
-					a(href="/references") #{keys.loc_references}
+				- if (keys.loc_references)		
+					a(href="/references")
+						img(src="/img/banners/references.png" alt="references")
+					h2
+						a(href="/references") #{keys.loc_references}
 
 		
 		.zone
@@ -143,11 +149,13 @@ block structure
 				h2
 					a(href="/contact") #{keys.loc_contactme}		
 		
-		.zone
-			h2
-				a(href="/rss/en") RSS (en)
-			h2
-				a(href="/rss/fr") RSS (fr)
+
+		- if (!locals.page || !page.name || page.name != "comme-convenu")		
+			.zone
+				h2
+					a(href="/rss/en") RSS (en)
+				h2
+					a(href="/rss/fr") RSS (fr)
 				
 
 	.left_column

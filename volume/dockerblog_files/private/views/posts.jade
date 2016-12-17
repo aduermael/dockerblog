@@ -2,8 +2,6 @@ extends blog
 	
 block content
 
-	- var galleryData = {}
-
 	- each post,iPost in posts
 		.post
 			.block.title
@@ -14,8 +12,6 @@ block content
 				.clearboth
 				
 			- each block,i in post.blocks
-				- var blockID = "post" + post.ID + "-block" + i
-
 				if (block.type == "text")
 					.block.text
 						p !{block.text}
@@ -30,18 +26,11 @@ block content
 							| !{block.data}
 
 				else if (block.type == "gallery")
-					.block
-						.gallery(id=blockID)
-						- var raw = block.data
-						- var arr = raw.split('\n')
-						- galleryData[blockID] = []
-						- each path in arr
-							- galleryData[blockID].push({image: path})
-						.gallery-pages
-							center
-								select(id=blockID + "-pages")
-									- each path, index in arr
-										option(value= index) page !{index + 1} / !{arr.length}
+					.block.gallery
+							- var raw = block.data
+							- var arr = raw.split('\n')
+							- each line in arr
+								img(src=line)
 
 				else if (block.type == "image")
 					.block_img.image
@@ -87,9 +76,10 @@ block content
 							| #{post.nbComs} #{keys.loc_comment}
 						- else
 							| #{post.nbComs} #{keys.loc_comments}
-		
-		script.
-			var galleryData = !{JSON.stringify(galleryData)}
+		// - if (iPost < 3)
+		//- #banner
+		//- 	a(href="http://www.ulule.com/comme-convenu")
+		//- 		img(src="/img/comme-convenu.gif")
 		
 	#pages
 		- var i = pages
