@@ -29,3 +29,16 @@ Admin: `/admin`
 Credentials: admin/admin
 
 For now there's a specific design (for bloglaurel.com), but it's going to be updated soon with a generic design and options to customize it.
+
+<!--
+DEV:
+docker run -ti -d -v `pwd`/volume/dockerblog_files:/dockerblog_files -v `pwd`/volume/dockerblog_db:/dockerblog_db --name volume volume
+docker run -ti -d --volumes-from volume --name db db
+docker run -ti -d --name fbcomments fbcomments
+docker run -ti -d --link db:db --link fbcomments:fbcomments \
+-p 80:80 --volumes-from volume --name app app
+
+PROD:
+
+
+-->
