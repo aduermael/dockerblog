@@ -1,0 +1,17 @@
+version: '2'
+services: 
+
+  blog-db:
+    build: 
+      context: ./db
+    container_name: blog-db
+    stdin_open: true
+    tty: true
+    ports: 
+      - "6379:6379"
+    volumes:
+      - blog-data:/blog-data
+
+volumes:
+  blog-data:
+    driver: local
