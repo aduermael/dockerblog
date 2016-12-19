@@ -35,10 +35,10 @@ DEV:
 docker run -ti -d -v `pwd`/volume/dockerblog_files:/dockerblog_files -v `pwd`/volume/dockerblog_db:/dockerblog_db --name volume volume
 docker run -ti -d --volumes-from volume --name db db
 docker run -ti -d --name fbcomments fbcomments
-docker run -ti -d --link db:db --link fbcomments:fbcomments \
--p 80:80 --volumes-from volume --name app app
+docker run -ti -d --link db:db --link fbcomments:fbcomments -p 80:80 --volumes-from volume --name app app
 
 PROD:
-
+docker build -t blog-app app
+docker run -ti -d --link blog-db:db --link blog-fbcomments:fbcomments -p 80:80 --volumes-from blog-volumes --name blog-app blog-app
 
 -->
