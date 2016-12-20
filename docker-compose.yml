@@ -7,8 +7,6 @@ services:
     container_name: blog-db
     stdin_open: true
     tty: true
-    ports: 
-      - "6379:6379"
     volumes:
       - blog-data:/blog-data
 
