@@ -5,6 +5,7 @@ ADD redis.conf /redis/redis.conf
 
 EXPOSE 6379
 
-CMD ["redis-server", "/redis/redis.conf"]
+CMD mkdir -p /blog-data/db && redis-server /redis/redis.conf
+
 
 
