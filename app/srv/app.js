@@ -1,19 +1,7 @@
-//
-// Dockerblog
-//
-//
 
-GLOBAL.redis_server_ip = process.env.DB_PORT_6379_TCP_ADDR;
-GLOBAL.redis_server_port = process.env.DB_PORT_6379_TCP_PORT;
-
-// To communicate with FB comments container
-GLOBAL.fbcomments_server_ip = process.env.FBCOMMENTS_PORT_80_TCP_ADDR;
-GLOBAL.fbcomments_server_port = process.env.FBCOMMENTS_PORT_80_TCP_PORT;
-
-
-GLOBAL.views_dir_path = "/dockerblog_files/private/views";
-GLOBAL.public_dir_path = "/dockerblog_files/public";
-GLOBAL.private_dir_path = "/dockerblog_files/private";
+GLOBAL.views_dir_path = "/blog-data/private/views";
+GLOBAL.public_dir_path = "/blog-data/public";
+GLOBAL.private_dir_path = "/blog-data/private";
 GLOBAL.uploads_dir = "uploads"; // in public directory
 
 // import GLOBAL modules
@@ -25,7 +13,6 @@ var busboy       = require('connect-busboy');
 var session      = require('express-session');
 var RedisStore   = require('connect-redis')(session);
 
-
 // import LOCAL modules
 var posts = require('./modules/posts');
 var pages = require('./modules/pages');
@@ -33,8 +20,6 @@ var lang_module  = require('./modules/lang');
 var admin = require('./modules/admin');
 var tools = require('./modules/tools');
 var fbcomments = require('./modules/fbcomments');
-
-
 
 // create an express server app
 var app = express();
@@ -156,7 +141,6 @@ app.use('/', pages.app);
 app.use('*', posts.renderPosts2);
 
 
-
 // TODO: move that on a config.js file
 var port = 80;
 
@@ -187,5 +171,3 @@ function log_request_url (req, res, next)
 	console.log('--- ' + req.originalUrl);
 	next();
 }
-
-

@@ -2,7 +2,7 @@
 var db 
 var redis = require('redis')
 exports.connect = function() {
-  if (!db) db = redis.createClient(GLOBAL.redis_server_port, GLOBAL.redis_server_ip)
+  if (!db) db = redis.createClient(6379, "blog-db")
   return db
 }
 

@@ -10,6 +10,27 @@ services:
     volumes:
       - blog-data:/blog-data
 
+
+  blog-fbcomments:
+    build: 
+      context: ./plugins/fbcomments
+    container_name: blog-fbcomments
+    stdin_open: true
+    tty: true
+
+
+  blog-app:
+    build: 
+      context: ./app
+    container_name: blog-app
+    ports:
+      - "80:80"
+    stdin_open: true
+    tty: true
+    volumes:
+      - blog-data:/blog-data
+
+
 volumes:
   blog-data:
     driver: local

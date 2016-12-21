@@ -40,6 +40,10 @@ RUN cp -a /tmp/node_modules /srv/
 
 ADD srv /srv
 
+# initial data, files will be copied to /blog-data
+# only they can't be found
+ADD data /data
+
 ########## Define the work directory
 WORKDIR /srv
 

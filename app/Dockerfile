@@ -1,43 +1,13 @@
-#
-# DOCKERBLOG - APP
-#
-#
-#
-
 FROM ubuntu:14.04
-MAINTAINER Gaetan de Villele (gdevillele@gmail.com)
-
-
+MAINTAINER Adrien Duermael (adrien@duermael.com)
 
 # Make sure we don't get notifications we can't answer during building.
 ENV DEBIAN_FRONTEND noninteractive
-
 
 ########## Update packages ##########
 
 RUN apt-get update -y
 RUN apt-get upgrade -y
-
-
-################# USER (for dev) ################
-
-# we define a new root password
-# RUN echo "root:toor" | chpasswd
-
-
-########## SSH SERVER (for dev) ##########
-
-# we install openssh server
-# RUN apt-get install -y openssh-server
-
-# we need to create privilege separation directory
-# RUN mkdir -p /var/run/sshd
-
-# we expose the 22 port of the container to the host
-# to be able to use SSH from a remote client
-# EXPOSE 22
-
-
 
 ########## Install Node.js ##########
 
@@ -49,8 +19,8 @@ RUN rm -r node-v0.10.28-linux-x64
 RUN rm node-v0.10.28-linux-x64.tar.gz
 # install forever globally
 RUN npm install forever -g
-EXPOSE 80
 
+EXPOSE 80
 
 ADD package.json /tmp/package.json
 RUN cd /tmp; npm install;
@@ -66,20 +36,16 @@ ADD redis.conf /etc/redis/redis.conf
 # we expose redis-server service to the other containers
 EXPOSE 6379
 
-
-##### FIX FOR SAFARI BLANK PAGES... #####
-
-# ADD index.js /srv/node_modules/express/node_modules/fresh/index.js
-
 ########## Put blog source files
 
 ADD srv /srv
-#RUN cd /srv; npm install;
 
+# initial data, files will be copied to /blog-data
+# only they can't be found
+ADD data /data
 
 ########## Define the work directory
 WORKDIR /srv
-
 
 ########## Define default command
 # ENTRYPOINT later

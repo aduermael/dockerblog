@@ -1,10 +1,6 @@
 dockerblog
 ==========
 
-A light blog engine made with NodeJS, Redis, Jade &amp; Docker.
-
-I'll add details soon, so far these are only notes for myself.
-
 ### Build Docker images
 
 ```shell

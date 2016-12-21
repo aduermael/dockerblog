@@ -15,15 +15,14 @@ var tools = require('./tools');
 var posts = require('./posts');
 
 
-
 exports.collect = function(intervalObject)
 {
 	// console.log("collect");
 
 
 	var options = {
-		host: GLOBAL.fbcomments_server_ip,
-		port: GLOBAL.fbcomments_server_port,
+		host: "blog-fbcomments",
+		port: 80,
 		path: '/collect',
 		method: 'POST',
 		headers: {
@@ -166,7 +165,4 @@ function collectCallback(success,statusCode,comments)
 	{
 		//console.log("collectCallback: " + success);	
 	}
-
-
 }
-
