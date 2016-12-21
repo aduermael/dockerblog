@@ -1,40 +1,22 @@
-dockerblog
+Dockerblog
 ==========
 
-### Build Docker images
+### Build images
 
 ```shell
-docker build -t app app
-docker build -t db redis
-docker build -t volume volume
-docker build -t fbcomments plugins/fbcomments
+docker-compose build
 ```
 
-### Run the containers (in that order):
+### Run containers
 
 ```shell
-docker run -ti -d --name volume volume
-docker run -ti -d --volumes-from volume --name db db
-docker run -ti -d --name fbcomments fbcomments
-docker run -ti -d --link db:db --link fbcomments:fbcomments \
--p 80:80 --volumes-from volume --name app app
+docker-compose up -d
 ```
 
-Admin: `/admin`
+### Default admin UI
 
-Credentials: admin/admin
+Path: `/admin`
 
-For now there's a specific design (for bloglaurel.com), but it's going to be updated soon with a generic design and options to customize it.
+Username: `admin`
 
-<!--
-DEV:
-docker run -ti -d -v `pwd`/volume/dockerblog_files:/dockerblog_files -v `pwd`/volume/dockerblog_db:/dockerblog_db --name volume volume
-docker run -ti -d --volumes-from volume --name db db
-docker run -ti -d --name fbcomments fbcomments
-docker run -ti -d --link db:db --link fbcomments:fbcomments -p 80:80 --volumes-from volume --name app app
-
-PROD:
-docker build -t blog-app app
-docker run -ti -d --link blog-db:db --link blog-fbcomments:fbcomments -p 80:80 --volumes-from blog-volumes --name blog-app blog-app
-
--->
+Password: `admin`
