@@ -11,6 +11,20 @@ services:
       - blog-data:/blog-data
 
 
+  blog-router:
+    build:
+      context: ./router
+    container_name: blog-router
+    ports:
+      - "80:80"
+    stdin_open: true
+    tty: true
+    environment:
+      - GIN_MODE=release
+    volumes:
+      - blog-data:/blog-data
+
+
   blog-fbcomments:
     build: 
       context: ./plugins/fbcomments
@@ -19,12 +33,10 @@ services:
     tty: true
 
 
-  blog-app:
-    build: 
-      context: ./app
-    container_name: blog-app
-    ports:
-      - "80:80"
+  blog-legacy:
+    build:
+      context: ./legacy
+    container_name: blog-legacy
     stdin_open: true
     tty: true
     volumes:
