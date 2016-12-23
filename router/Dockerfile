@@ -18,11 +18,12 @@ EXPOSE 80
 # Add source files
 # -----------------------
 
-ADD srv /srv
+# initial data, files will be copied to /blog-data
+# only they can't be found
+ADD initial-data /initial-data
 
 # -----------------------
 # Start router
 # -----------------------
 
-WORKDIR /srv
-CMD ["ash", "./start.sh"]
+CMD router

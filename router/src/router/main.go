@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 )
@@ -12,9 +13,24 @@ const (
 )
 
 func main() {
+
+	installInitialData()
+
 	legacyProxy := createLegacyProxy()
 
 	router := gin.Default()
+	router.LoadHTMLGlob("/blog-data/templates/*")
+
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "default.tmpl", gin.H{
+			"title": "test",
+		})
+	})
+
+	router.GET("/user/:name", func(c *gin.Context) {
+		name := c.Param("name")
+		c.String(http.StatusOK, "Hello %s", name)
+	})
 
 	router.Use(func(c *gin.Context) {
 		legacyProxy.ServeHTTP(c.Writer, c.Request)
