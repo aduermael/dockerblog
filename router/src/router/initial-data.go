@@ -33,7 +33,7 @@ func installInitialData() {
 		}
 
 		if srcFileStat.IsDir() {
-			mkdirErr := os.MkdirAll(dst, os.ModeDir)
+			mkdirErr := os.MkdirAll(dst, os.ModePerm)
 			if mkdirErr != nil {
 				log.Fatal(err)
 			}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -20,16 +21,12 @@ func main() {
 
 	router := gin.Default()
 	router.LoadHTMLGlob("/blog-data/templates/*")
+	router.Use(static.ServeRoot("/", "/blog-data/static"))
 
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
 			"title": "test",
 		})
-	})
-
-	router.GET("/user/:name", func(c *gin.Context) {
-		name := c.Param("name")
-		c.String(http.StatusOK, "Hello %s", name)
 	})
 
 	router.Use(func(c *gin.Context) {

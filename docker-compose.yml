@@ -19,10 +19,12 @@ services:
       - "80:80"
     stdin_open: true
     tty: true
-    environment:
-      - GIN_MODE=release
+    # environment: # PROD
+    #   - GIN_MODE=release # PROD
     volumes:
       - blog-data:/blog-data
+      - ./router/initial-data/static:/blog-data/static # DEV
+      - ./router/initial-data/templates:/blog-data/templates # DEV
 
 
   blog-fbcomments:
