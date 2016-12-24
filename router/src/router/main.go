@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -13,9 +14,17 @@ const (
 	SERVER_PORT string = ":80"
 )
 
+var (
+	redisPool *redis.Pool
+)
+
 func main() {
 
 	installInitialData()
+
+	redisPool = newRedisPool("blog-db:6379")
+
+	loadRedisScripts()
 
 	legacyProxy := createLegacyProxy()
 
@@ -24,6 +33,9 @@ func main() {
 	router.Use(static.ServeRoot("/", "/blog-data/static"))
 
 	router.GET("/", func(c *gin.Context) {
+
+		postsList()
+
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
 			"title": "test",
 		})
@@ -44,4 +56,10 @@ func createLegacyProxy() *httputil.ReverseProxy {
 		log.Fatalln(err)
 	}
 	return httputil.NewSingleHostReverseProxy(u)
+}
+
+func loadRedisScripts() {
+
+	postsLoadScripts()
+
 }

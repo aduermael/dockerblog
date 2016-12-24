@@ -16,16 +16,10 @@ const (
 
 func installInitialData() {
 
-	fmt.Println("--- installInitialData")
-
 	filepath.Walk(INITIAL_DATA_DIR, func(path string, info os.FileInfo, err error) error {
-
-		fmt.Println("path:", path)
 
 		dst := strings.TrimPrefix(path, INITIAL_DATA_DIR)
 		dst = filepath.Join(BLOG_DATA_ROOT_DIR, dst)
-
-		fmt.Println("dst:", dst)
 
 		srcFileStat, statErr := os.Stat(path)
 		if statErr != nil {

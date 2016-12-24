@@ -11,6 +11,15 @@ services:
       - blog-data:/blog-data
 
 
+  redis-cli:
+    image: redis:3.2.6-alpine
+    container_name: blog-redis-cli
+    stdin_open: true
+    tty: true
+    # attach then `redis-cli -h blog-db`
+    command: ash
+
+
   blog-router:
     build:
       context: ./router
