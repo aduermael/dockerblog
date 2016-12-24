@@ -15,6 +15,7 @@ body {
 	font-weight: 400;
 	font-family: "Raleway", sans-serif;
 	height: 100%;
+	background-color: #ddd;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -28,9 +29,90 @@ h1, h2 {
 
 a {
 	text-decoration: none;
+	color: #777;
 }
 
 a:hover {
 	text-decoration: underline;
+}
+
+/* HEADER */
+
+#header {
+	width: 100%;
+	padding: 2rem;
+	background-color: #eee;
+	text-align: center;
+}
+
+#header h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 3.0rem;
+	line-height: 3.0rem;
+}
+
+/* MENU */
+
+#menu {
+
+}
+
+#menu ul {
+	text-align: center;
+}
+
+#menu li {
+	display: inline-block;
+}
+
+#menu li a {
+	display: block;
+	padding: 1rem;
+}
+
+#menu li a:hover {
+	background-color: #ccc;
+}
+
+/* CONTENT */
+
+#content {
+	background-color: #fff;
+	padding: 2rem;
+}
+
+/* FOOTER */
+
+#footer {
+	max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #ddd;
+	text-align: center;
+	color: #777;
+}
+
+#footer .column {
+	float: left;
+	width: 25%;
+	text-align: left;
+	padding: 2rem;
+}
+
+#footer .column ul {
+	list-style: none;
+}
+
+#footer .column h2 {
+	font-size: 2.0rem;
+	color: #666;
+	padding-bottom: 1rem;
+}
+
+/* UTILS */
+
+.clear {
+	clear: both;
 }
 
