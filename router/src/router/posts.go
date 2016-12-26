@@ -3,23 +3,12 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"github.com/garyburd/redigo/redis"
 	"log"
 )
 
 var (
-	sha1PostList = ""
-)
-
-func postsLoadScripts() {
-
-}
-
-func postsList() ([]Post, error) {
-
-	redisConn := redisPool.Get()
-	defer redisConn.Close()
-
-	script := `
+	scriptPostList = redis.NewScript(0, `
 		local toStruct = function (bulk)
 			local result = {}
 			local nextkey
@@ -57,8 +46,15 @@ func postsList() ([]Post, error) {
 		end
 
 		return cjson.encode(result)
-	`
-	res, err := redisConn.Do("EVAL", script, 0)
+	`)
+)
+
+func postsList() ([]Post, error) {
+
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	res, err := scriptPostList.Do(redisConn)
 	if err != nil {
 		return nil, err
 	}

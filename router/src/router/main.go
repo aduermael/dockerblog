@@ -24,7 +24,7 @@ func main() {
 
 	redisPool = newRedisPool("blog-db:6379")
 
-	loadRedisScripts()
+	// TODO: flush redis scripts
 
 	legacyProxy := createLegacyProxy()
 
@@ -60,10 +60,4 @@ func createLegacyProxy() *httputil.ReverseProxy {
 		log.Fatalln(err)
 	}
 	return httputil.NewSingleHostReverseProxy(u)
-}
-
-func loadRedisScripts() {
-
-	postsLoadScripts()
-
 }
