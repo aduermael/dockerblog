@@ -34,10 +34,14 @@ func main() {
 
 	router.GET("/", func(c *gin.Context) {
 
-		postsList()
+		posts, err := postsList()
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
 
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
 			"title": "test",
+			"posts": posts,
 		})
 	})
 

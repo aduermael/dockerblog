@@ -5,46 +5,21 @@
 		{{ template "header" . }}
 		{{ template "menu" . }}
 		<div id="content">
+			
 			<div id="posts">
-				<div class="post">
-					<h2><a href="">Post 1</a></h2>
-					<div class="block">
-						<p>Hello world!</p>
+				{{ range .posts }}
+					<div class="post">
+						<h2><a href="">{{ .Title }}</a></h2>
+						{{ range .Blocks }}
+							{{ if eq .type "text" }}
+							<div class="block">
+								<p>{{ .text }}</p>
+							</div>
+							{{ end }}
+						{{ end }}
+						<p>comments: {{ .NbComments }}</p>
 					</div>
-					<div class="block">
-						<p>This is my first post!</p>
-					</div>
-				</div>
-
-				<div class="post">
-					<h2><a href="">Post 1</a></h2>
-					<div class="block">
-						<p>Hello world!</p>
-					</div>
-					<div class="block">
-						<p>This is my first post!</p>
-					</div>
-				</div>
-
-				<div class="post">
-					<h2><a href="">Post 1</a></h2>
-					<div class="block">
-						<p>Hello world!</p>
-					</div>
-					<div class="block">
-						<p>This is my first post!</p>
-					</div>
-				</div>
-
-				<div class="post last">
-					<h2><a href="">Post 1</a></h2>
-					<div class="block">
-						<p>Hello world!</p>
-					</div>
-					<div class="block">
-						<p>This is my first post!</p>
-					</div>
-				</div>
+				{{ end }}
 			</div>
 		</div>
 		{{ template "footer" . }}
