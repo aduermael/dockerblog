@@ -8,7 +8,7 @@
 			 --><div id="posts"><!--
 				 -->{{ range .posts }}<!--
 					 --><div class="post"><!--
-						 --><h2><a href="/{{.Slug}}/{{.ID}}#comments">{{ .Title }}</a></h2><!--
+						 --><h2><a href="/{{.Slug}}/{{.ID}}">{{ .Title }}</a></h2><!--
 						 -->{{ range .Blocks }}<!--
 							 -->{{ if eq .type "text" }}<!--
 									--><div class="block text"><p>{{ .text }}</p></div><!--

@@ -117,6 +117,38 @@ a:hover {
 	padding-bottom: 2rem;
 }
 
+/* COMMENTS */
+
+#content #posts .post .comments .comment {
+	background-color: #eee;
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+
+#content #posts .post .comments .comment h3 {
+	font-weight: normal;
+	font-family: "Lobster", cursive;
+	color: #333;
+	padding-bottom: 1rem;
+}
+
+#content #posts .post .comments .comment h3 .date {
+	font-size: 1.5rem;
+	color: #666;
+	font-family: "Raleway", sans-serif;
+	font-weight: normal;
+}
+
+#content #posts .post .comments .comment p {
+	padding-bottom: 1rem;
+}
+
+#content #posts .post .comments .comment img.avatar {
+	float: left;
+	padding-right: 1rem;
+	padding-bottom: 1rem;
+}
+
 /* FOOTER */
 
 #footer {

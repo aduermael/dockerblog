@@ -1,0 +1,41 @@
+<!DOCTYPE html><!--
+ --><html lang="{{ .lang }}"><!--
+	 -->{{ template "head" . }}<!--
+	 --><body><!--
+		 -->{{ template "header" . }}<!--
+		 -->{{ template "menu" . }}<!--
+		 --><div id="content"><!--
+			 --><div id="posts"><!--
+				 --><div class="post"><!--
+					 --><h2><a href="/{{.post.Slug}}/{{.post.ID}}">{{ .post.Title }}</a></h2><!--
+					 -->{{ range .post.Blocks }}<!--
+						 -->{{ if eq .type "text" }}<!--
+								--><div class="block text"><p>{{ .text }}</p></div><!--
+						 -->{{ else if eq .type "image" }}<!--
+								--><div class="block image"><!--
+									-->{{ if ne .url "" }}<a href="{{.url}}">{{end}}<!--
+									--><img src="{{ .path }}" alt="{{.description}}"><!--
+									-->{{ if ne .url "" }}</a>{{end}}<!--
+								--></div><!--
+						 -->{{ end }}<!--
+					 -->{{ end }}
+					 	
+					 <a id="comments" name="comments" class="anchor"></a>
+					 <h2>{{ .post.NbComments }} Comments</h2>
+					 <div class="comments">
+						 {{ range .post.Comments }}
+						 	<div id="com_{{.ID}}" class="comment">
+						 		<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
+						 		<h3>{{.Name}}<span class="date"> - il y a un certain temps</span></h3>
+						 		<p>{{.Content}}</p>
+						 		<a href="#" onclick="answerComment({{.ID}});return false;">Answer</a>
+						 	</div>
+						 {{ end }}
+					 </div>
+
+				 </div><!--
+			 --></div><!--
+		 --></div><!--
+		 -->{{ template "footer" . }}<!--
+	 --></body><!--
+ --></html>

@@ -40,4 +40,32 @@ type Post struct {
 	Description string      `json:"description,omitempty"`
 	NbComments  int         `json:"nbComs"`
 	Blocks      []PostBlock `json:"blocks"`
+	Comments    []Comment   `json:"comments,omitempty"`
+}
+
+type Comment struct {
+	Valid         bool   `json:"valid"`
+	PostID        int    `json:"postID"`
+	Date          int    `json:"date"`
+	Email         string `json:"email"`
+	Name          string `json:"name"`
+	ID            int    `json:"ID"`
+	GravatarHash  string `json:"gravatar,omitempty"`
+	Content       string `json:"content"`
+	EmailOnAnswer bool   `json:"emailOnAnswer,omitempty"`
+	Twitter       string `json:"twitter,omitempty"`
+	Website       string `json:"website,omitempty"`
+	AnswerComID   int    `json:"answerComID,omitempty"`
+	// Indent is used by OrderAndIndentComments
+	Indent int `json:"-"`
+	// NbAnswers is used by OrderAndIndentComments
+	NbAnswers int `json:"-"`
+}
+
+// OrderAndIndentComments orders given comments by date
+// then moves comments that are answers to other comments
+// setting indentation for them to be displayed correctly
+func OrderAndIndentComments(comments []Comment) []Comment {
+	// TODO: implement
+	return comments
 }

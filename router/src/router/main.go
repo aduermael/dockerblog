@@ -33,24 +33,24 @@ func main() {
 	router.Use(static.ServeRoot("/", "/blog-data/static"))
 
 	router.GET("/:slug/:id", func(c *gin.Context) {
-		slug := c.Param("slug")
 		id := c.Param("id")
-		c.String(http.StatusOK, "post: %s (%s)", slug, id)
 
-		// posts, err := postsList()
-		// if err != nil {
-		// 	c.AbortWithError(http.StatusInternalServerError, err)
-		// }
-		// c.HTML(http.StatusOK, "default.tmpl", gin.H{
-		// 	"title": "test",
-		// 	"posts": posts,
-		// })
+		post, err := postGet(id)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		c.HTML(http.StatusOK, "post.tmpl", gin.H{
+			"title": "test",
+			"post":  post,
+		})
 	})
 
 	router.GET("/", func(c *gin.Context) {
 		posts, err := postsList()
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
 			"title": "test",
