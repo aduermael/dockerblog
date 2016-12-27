@@ -2,11 +2,12 @@ package main
 
 import (
 	"errors"
+	"html/template"
 )
 
 // PostBlock defines a content block in a post
 // It can be text, image, contact form...
-type PostBlock map[string]string
+type PostBlock map[string]template.HTML
 
 type PostBlockType int
 

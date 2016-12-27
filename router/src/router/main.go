@@ -32,13 +32,26 @@ func main() {
 	router.LoadHTMLGlob("/blog-data/templates/*")
 	router.Use(static.ServeRoot("/", "/blog-data/static"))
 
-	router.GET("/", func(c *gin.Context) {
+	router.GET("/:slug/:id", func(c *gin.Context) {
+		slug := c.Param("slug")
+		id := c.Param("id")
+		c.String(http.StatusOK, "post: %s (%s)", slug, id)
 
+		// posts, err := postsList()
+		// if err != nil {
+		// 	c.AbortWithError(http.StatusInternalServerError, err)
+		// }
+		// c.HTML(http.StatusOK, "default.tmpl", gin.H{
+		// 	"title": "test",
+		// 	"posts": posts,
+		// })
+	})
+
+	router.GET("/", func(c *gin.Context) {
 		posts, err := postsList()
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 		}
-
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
 			"title": "test",
 			"posts": posts,

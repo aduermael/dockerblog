@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/garyburd/redigo/redis"
-	"log"
+	// "log"
 )
 
 var (
@@ -72,6 +72,6 @@ func postsList() ([]Post, error) {
 		return nil, err
 	}
 
-	log.Println("posts:", posts)
+	// log.Println("posts:", posts)
 	return posts, nil
 }

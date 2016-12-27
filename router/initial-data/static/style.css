@@ -100,6 +100,23 @@ a:hover {
 	margin-bottom: 0;	
 }
 
+/* BLOCKS */
+
+/*#content #posts .post h2 {
+	padding-bottom: 2rem;
+}*/
+
+#content #posts .post .block.image {
+	text-align: center;
+}
+
+#content #posts .post .block.image img {
+	display: inline-block;
+	vertical-align: middle;
+	max-width: 100%;
+	padding-bottom: 2rem;
+}
+
 /* FOOTER */
 
 #footer {
@@ -142,7 +159,13 @@ a:hover {
 	padding-bottom: 1rem;
 }
 
-#footer .column > h1, h2, h3, h4, h5, h6, p {
+#footer .column h1,
+#footer .column h2,
+#footer .column h3,
+#footer .column h4,
+#footer .column h5,
+#footer .column h6,
+#footer .column p {
 	padding-bottom: 1rem;
 }
 
