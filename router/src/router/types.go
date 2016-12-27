@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"html/template"
+	"sort"
 )
 
 // PostBlock defines a content block in a post
@@ -62,10 +63,45 @@ type Comment struct {
 	NbAnswers int `json:"-"`
 }
 
+type CommentsByDate []Comment
+
+func (a CommentsByDate) Len() int           { return len(a) }
+func (a CommentsByDate) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a CommentsByDate) Less(i, j int) bool { return a[i].Date < a[j].Date }
+
 // OrderAndIndentComments orders given comments by date
 // then moves comments that are answers to other comments
 // setting indentation for them to be displayed correctly
 func OrderAndIndentComments(comments []Comment) []Comment {
-	// TODO: implement
+
+	sort.Sort(CommentsByDate(comments))
+
+	l := len(comments)
+	last := l - 1
+
+	for i := 0; i < l; i++ {
+		comment := comments[i]
+		// comment answers to an older comment
+		if comment.AnswerComID != 0 {
+			for j := i - 1; j >= 0; j-- {
+				if comments[j].ID == comment.AnswerComID {
+					comment.Indent = comments[j].Indent + 1
+					comments[j].NbAnswers++
+
+					// cut
+					if i == last {
+						comments = comments[:i]
+					} else {
+						comments = append(comments[:i], comments[i+1:]...)
+					}
+
+					// insert
+					p := j + comments[j].NbAnswers
+					comments = append(comments[:p], append([]Comment{comment}, comments[p:]...)...)
+				}
+			}
+		}
+	}
+
 	return comments
 }

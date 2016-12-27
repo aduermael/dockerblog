@@ -136,6 +136,8 @@ func postGet(ID string) (Post, error) {
 		return Post{}, err
 	}
 
+	post.Comments = OrderAndIndentComments(post.Comments)
+
 	// log.Println("post:", post)
 	return post, nil
 
