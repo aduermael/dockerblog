@@ -24,7 +24,7 @@
 					 <h2>{{ .post.NbComments }} Comments</h2>
 					 <div class="comments">
 						 {{ range .post.Comments }}
-						 	<div id="com_{{.ID}}" class="comment">
+						 	<div id="com_{{.ID}}" class="comment indent-{{.Indent}}">
 						 		<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
 						 		<h3>{{.Name}}<span class="date"> - il y a un certain temps</span></h3>
 						 		<p>{{.Content}}</p>

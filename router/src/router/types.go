@@ -72,6 +72,9 @@ func (a CommentsByDate) Less(i, j int) bool { return a[i].Date < a[j].Date }
 // OrderAndIndentComments orders given comments by date
 // then moves comments that are answers to other comments
 // setting indentation for them to be displayed correctly
+// NOTE(aduermael): it would be better to create an
+// index for that in DB, and update it when receiving new
+// comments instead of doing this dynamically for each request...
 func OrderAndIndentComments(comments []Comment) []Comment {
 
 	sort.Sort(CommentsByDate(comments))

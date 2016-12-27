@@ -120,10 +120,17 @@ a:hover {
 /* COMMENTS */
 
 #content #posts .post .comments .comment {
-	background-color: #eee;
+	background-color: rgba(0,0,0,0.01);
 	padding: 1rem;
 	margin-bottom: 1rem;
+	margin-left: 40%;
 }
+
+#content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
+#content #posts .post .comments .comment.indent-1 { margin-left: 10%; background-color: rgba(0,0,0,0.07); }
+#content #posts .post .comments .comment.indent-2 { margin-left: 20%; background-color: rgba(0,0,0,0.05); }
+#content #posts .post .comments .comment.indent-3 { margin-left: 30%; background-color: rgba(0,0,0,0.03); }
+
 
 #content #posts .post .comments .comment h3 {
 	font-weight: normal;
