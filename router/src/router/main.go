@@ -12,15 +12,21 @@ import (
 
 const (
 	SERVER_PORT string = ":80"
+	CONFIG_PATH string = "/blog-data/private/config.json"
 )
 
 var (
 	redisPool *redis.Pool
+	config    *Config = &Config{Lang: []string{"en"}, Title: []string{"Title"}, PostsPerPage: 10}
 )
 
 func main() {
 
 	installInitialData()
+	err := LoadAndWatchConfig(config)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	redisPool = newRedisPool("blog-db:6379")
 
@@ -32,6 +38,8 @@ func main() {
 	router.LoadHTMLGlob("/blog-data/templates/*")
 	router.Use(static.ServeRoot("/", "/blog-data/static"))
 
+	router.Use(DefineLang)
+
 	router.GET("/:slug/:id", func(c *gin.Context) {
 		id := c.Param("id")
 
@@ -41,7 +49,7 @@ func main() {
 			return
 		}
 		c.HTML(http.StatusOK, "post.tmpl", gin.H{
-			"title": "test",
+			"title": config.GetTitle("en"),
 			"post":  post,
 		})
 	})
@@ -53,7 +61,7 @@ func main() {
 			return
 		}
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title": "test",
+			"title": config.GetTitle("en"),
 			"posts": posts,
 		})
 	})
