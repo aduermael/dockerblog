@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
-	"strings"
 )
 
 type Config struct {
@@ -35,6 +35,10 @@ func LoadAndWatchConfig(c *Config) error {
 	return nil
 }
 
+func AttachConfig(c *gin.Context) {
+	c.Set("config", *config)
+}
+
 func (c *Config) GetTitle(lang string) string {
 	_, langIndex := c.langToUse(lang)
 	if langIndex >= len(c.Title) {
@@ -50,37 +54,6 @@ func (c *Config) langToUse(requestedLang string) (availableLang string, index in
 		}
 	}
 	// if requested lang is not available, use the first one in the list
-	availableLang = c.Lang[0]
-	index = 0
-	return
-}
-
-func (c *Config) GetMostAppropriateLanguage(acceptedLanguages []string) (availableLang string, index int) {
-
-	bestMatchWithoutVariant := -1
-
-	for _, acceptedLanguage := range acceptedLanguages {
-
-		// en-GB -> en
-		withoutVariant := strings.Split(acceptedLanguage, "-")[0]
-
-		for index, availableLang = range c.Lang {
-			if availableLang == acceptedLanguage {
-				return
-			} else if bestMatchWithoutVariant == -1 && availableLang == withoutVariant {
-				bestMatchWithoutVariant = index
-			}
-		}
-	}
-
-	// in case we found a match without variant
-	if bestMatchWithoutVariant > -1 {
-		availableLang = c.Lang[bestMatchWithoutVariant]
-		index = bestMatchWithoutVariant
-		return
-	}
-
-	// otherwise use first language in config...
 	availableLang = c.Lang[0]
 	index = 0
 	return

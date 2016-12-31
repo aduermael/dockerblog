@@ -38,6 +38,7 @@ func main() {
 	router.LoadHTMLGlob("/blog-data/templates/*")
 	router.Use(static.ServeRoot("/", "/blog-data/static"))
 
+	router.Use(AttachConfig)
 	router.Use(DefineLang)
 
 	router.GET("/:slug/:id", func(c *gin.Context) {
