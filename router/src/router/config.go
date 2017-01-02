@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 )
@@ -39,22 +40,41 @@ func AttachConfig(c *gin.Context) {
 	c.Set("config", *config)
 }
 
-func (c *Config) GetTitle(lang string) string {
-	_, langIndex := c.langToUse(lang)
-	if langIndex >= len(c.Title) {
-		return c.Title[0]
+func GetConfigFromContext(c *gin.Context) (*Config, error) {
+	configInterface, exists := c.Get("config")
+	if !exists {
+		return nil, errors.New("config can't be found in gin context")
 	}
-	return c.Title[langIndex]
+	conf, ok := configInterface.(Config)
+	if !ok {
+		return nil, errors.New("config incorrect format")
+	}
+	return &conf, nil
 }
 
-func (c *Config) langToUse(requestedLang string) (availableLang string, index int) {
-	for index, availableLang = range c.Lang {
-		if availableLang == requestedLang {
-			return
-		}
+func GetTitle(c *gin.Context) string {
+	conf, err := GetConfigFromContext(c)
+	if err != nil {
+		return ""
 	}
-	// if requested lang is not available, use the first one in the list
-	availableLang = c.Lang[0]
-	index = 0
-	return
+
+	if conf.Title == nil || len(conf.Title) == 0 {
+		return ""
+	}
+
+	langIndexInterface, exists := c.Get("langIndex")
+	if !exists {
+		return conf.Title[0]
+	}
+
+	langIndex, ok := langIndexInterface.(int)
+	if !ok {
+		return conf.Title[0]
+	}
+
+	if langIndex >= len(conf.Title) {
+		return conf.Title[0]
+	}
+
+	return conf.Title[langIndex]
 }

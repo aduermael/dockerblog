@@ -50,7 +50,7 @@ func main() {
 			return
 		}
 		c.HTML(http.StatusOK, "post.tmpl", gin.H{
-			"title": config.GetTitle("en"),
+			"title": GetTitle(c),
 			"post":  post,
 		})
 	})
@@ -62,7 +62,7 @@ func main() {
 			return
 		}
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title": config.GetTitle("en"),
+			"title": GetTitle(c),
 			"posts": posts,
 		})
 	})
