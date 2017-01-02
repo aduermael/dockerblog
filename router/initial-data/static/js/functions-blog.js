@@ -1,14 +1,12 @@
 
-
-var mandatoryColor = '#E0E0E0';
-var optionalColor = '#e7e7e7';
-var errorColor = '#f78778';
+var mandatoryColor = '#E0E0E0'
+var optionalColor = '#e7e7e7'
+var errorColor = '#f78778'
 
 $(document).ready(function()
 {
-
-});
-
+	$('.comment').linkify()
+})
 
 function sendMessage(postID,blockID,emailIndication,subjectIndication)
 {	
