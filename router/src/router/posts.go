@@ -158,6 +158,12 @@ func postsList() ([]Post, error) {
 		return nil, errors.New("can't cast response")
 	}
 
+	// empty Lua array is returned as "{}"
+	// we should convert it to "[]" (empty json array)
+	if len(byteSlice) == 2 {
+		byteSlice = []byte("[]")
+	}
+
 	var posts []Post
 
 	err = json.Unmarshal(byteSlice, &posts)
