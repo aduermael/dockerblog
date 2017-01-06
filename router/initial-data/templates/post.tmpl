@@ -20,17 +20,47 @@
 						 -->{{ end }}<!--
 					 -->{{ end }}
 					 	
-					 <a id="comments" name="comments" class="anchor"></a>
-					 <h2>{{ .post.NbComments }} Comments</h2>
-					 <div class="comments">
-						 {{ range .post.Comments }}
-						 	<div id="com_{{.ID}}" class="comment indent-{{.Indent}}">
-						 		<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
-						 		<h3>{{.Name}}<span class="date"> - il y a un certain temps</span></h3>
-						 		<p>{{.Content}}</p>
-						 		<a href="#" onclick="answerComment({{.ID}});return false;">Answer</a>
-						 	</div>
-						 {{ end }}
+					<a id="comments" name="comments" class="anchor"></a>
+					<h2>{{ .post.NbComments }} Comments</h2>
+					<div class="comments">
+						{{ range .post.Comments }}
+							<div id="com_{{.ID}}" class="comment indent-{{.Indent}}">
+								<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
+								<h3>{{.Name}}<span class="date"> - il y a un certain temps</span></h3>
+								<p>{{.Content}}</p>
+								<a href="#" onclick="answerComment({{.ID}});return false;">Answer</a>
+							</div>
+						{{ end }}
+
+						<form id="commentForm">
+						 	<div id="commentSending" style="display: none"><p>Envoi du commentaire...</p></div>
+						 	<div id="commentSent" style="display: none"><p>Commentaire envoyé! En attente de validation!</p></div>
+						 	<div id="commentError" style="display: none"><p>Erreur lors de l'envoi du commentaire! :(</p></div>
+						 	
+							<input id="answerComID" type="hidden" value="-1">
+							<input id="postID" type="hidden" value="912">
+
+							<!-- simple trap for stupid robots -->
+							<input id="url" name="url" type="text" value="">
+							<input id="email" name="email" type="email" value="">
+							
+							<img id="commentGravatar" src="http://www.gravatar.com/avatar/182ff44dc024648f78cd08c5a1009c95?s=81&amp;d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
+							
+							<input id="commentName" type="text" value="Ad" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'name'; }" class="mandatory">
+							
+							<input id="commentEmail" type="email" value="adrien@duermael.com" onkeyup="emailChange(this);" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'email'; }" class="optional">
+
+							<input id="commentWebsite" type="text" value="website" onfocus="if(this.value == 'website') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'website'; }" class="optional">
+							
+							<input id="commentTwitter" type="text" value="aduermael" onfocus="if(this.value == 'twitter') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'twitter'; }" class="optional">
+						 		
+							<textarea id="commentContent" onfocus="backToOriginalBackground(this);"></textarea>
+						 		
+							<input id="commentRemember" type="checkbox" checked><label>Se rappeler de mes informations.</label>
+							<input id="commentEmailOnAnswer" type="checkbox" checked><label>Être tenu au courant des réponses par email.</label>
+						 		
+						 	<input type="button" value="Send" onclick="postComment('name','email','website','twitter')"></div>
+						</div>
 					 </div>
 
 				 </div><!--

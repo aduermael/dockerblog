@@ -100,6 +100,30 @@ a:hover {
 	margin-bottom: 0;	
 }
 
+/* CONTENT - POSTS - COMMENT FORM */
+
+#content #posts .post #commentForm {
+	max-width: 600px;
+	background-color: #eee;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 1rem;
+}
+
+#content #posts .post #commentForm #url,
+#content #posts .post #commentForm #email {
+	max-width: 0 !important;
+	max-height: 0 !important;
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
+	border: none;
+	position: absolute;
+}
+
+
+
+
 /* BLOCKS */
 
 /*#content #posts .post h2 {
