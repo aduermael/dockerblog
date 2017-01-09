@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"regexp"
 )
 
 const (
@@ -37,22 +38,40 @@ func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("/blog-data/templates/*")
 	router.Use(static.ServeRoot("/", "/blog-data/static"))
+	// legacy
+	router.Use(static.ServeRoot("/", "/blog-data/public"))
 
 	router.Use(AttachConfig)
 	router.Use(DefineLang)
 
-	router.GET("/:slug/:id", func(c *gin.Context) {
-		id := c.Param("id")
+	router.GET("/:page/:param", func(c *gin.Context) {
 
-		post, err := postGet(id)
+		param := c.Param("param")
+		paramIsID, err := regexp.MatchString("[0-9]+", param)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		c.HTML(http.StatusOK, "post.tmpl", gin.H{
-			"title": GetTitle(c),
-			"post":  post,
-		})
+
+		// if param is an ID, it means we want to display a post
+		// (and page is just a slugged title)
+		if paramIsID {
+			post, err := postGet(param)
+			if err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+			c.HTML(http.StatusOK, "post.tmpl", gin.H{
+				"title": GetTitle(c),
+				"post":  post,
+			})
+			return
+		}
+
+		// use Node.js legacy for other requests (like /admin routes)
+		// TODO: Go implementation
+		legacyProxy.ServeHTTP(c.Writer, c.Request)
+
 	})
 
 	router.GET("/", func(c *gin.Context) {
@@ -68,6 +87,7 @@ func main() {
 	})
 
 	router.Use(func(c *gin.Context) {
+		log.Println("proxy")
 		legacyProxy.ServeHTTP(c.Writer, c.Request)
 	})
 
