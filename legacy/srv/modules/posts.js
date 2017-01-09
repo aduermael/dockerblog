@@ -195,14 +195,14 @@ function postContact(req,res)
 					{
 						var contactBlock = post.blocks[message.blockID];
 											
-						message.content = message.email + "\n\n" + message.content;
+						message.content = message.content;
 
 						tools.getValueForKey(req, "sendgrid_api_key", function(err, sendgridApiKey) {
 							if (err) {
 								var ret = {"success":false};
 								tools.returnJSON(res,ret);	
 							} else {
-								tools.sendMail(sendgridApiKey, contactBlock.to,contactBlock.title + message.subject,message.content);
+								tools.sendMail(sendgridApiKey, message.email, contactBlock.to,contactBlock.title + message.subject,message.content);
 								var ret = {"success":true};
 								tools.returnJSON(res,ret);	
 							}
@@ -322,7 +322,7 @@ function sendEmailOnAnswer(sendgridApiKey, comID)
 							html += "<a href=\"http://bloglaurel.com/post/" + com.postID + "#com" + com.ID + "\">Answer</a>";
 							html += "</div>";
 
-							tools.sendMail(sendgridApiKey, originalCom.email,com.name + " answered your comment on Laurel's blog",text,html);
+							tools.sendMail(sendgridApiKey, "no-reply@bloglaurel.com", originalCom.email, com.name + " answered your comment on Laurel's blog",text,html);
 						}
 						else
 						{

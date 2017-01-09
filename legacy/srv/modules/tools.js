@@ -143,7 +143,7 @@ exports.deleteMailTransporter = function()
 }
 
 // html is optional
-exports.sendMail = function(sendgridApiKey,to,title,text,html)
+exports.sendMail = function(sendgridApiKey,from,to,title,text,html)
 {
 	console.log("send email to: " + to)
 	console.log("title to send: " + title)
@@ -156,9 +156,8 @@ exports.sendMail = function(sendgridApiKey,to,title,text,html)
 
 	mail = new helper.Mail()
 
-	// TODO: get that from config
-	from = new helper.Email("no-reply@bloglaurel.com", "Bloglaurel")
-  	mail.setFrom(from)
+	fromEmail = new helper.Email(from)
+  	mail.setFrom(fromEmail)
 
   	personalization = new helper.Personalization()
 
