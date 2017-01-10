@@ -44,22 +44,33 @@
 							<input id="url" name="url" type="text" value="">
 							<input id="email" name="email" type="email" value="">
 							
-							<img id="commentGravatar" src="http://www.gravatar.com/avatar/182ff44dc024648f78cd08c5a1009c95?s=81&amp;d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
+							<div class="header">
+								<img id="commentGravatar" src="http://www.gravatar.com/avatar/182ff44dc024648f78cd08c5a1009c95?s=80&amp;d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
 							
-							<input id="commentName" type="text" value="Ad" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'name'; }" class="mandatory">
-							
-							<input id="commentEmail" type="email" value="adrien@duermael.com" onkeyup="emailChange(this);" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'email'; }" class="optional">
+								<div class="nameAndEmail">
+									<input id="commentName" type="text" value="Ad" onfocus="if(this.value == 'name') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'name'; }" class="mandatory">
+									
+									<input id="commentEmail" type="email" value="adrien@duermael.com" onkeyup="emailChange(this);" onfocus="if(this.value == 'email') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'email'; }" class="optional">
+								</div>
+							</div>
 
-							<input id="commentWebsite" type="text" value="website" onfocus="if(this.value == 'website') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'website'; }" class="optional">
-							
-							<input id="commentTwitter" type="text" value="aduermael" onfocus="if(this.value == 'twitter') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'twitter'; }" class="optional">
+							<div class="webProfile">
+								<div class="left">
+									<input id="commentWebsite" type="text" value="website" onfocus="if(this.value == 'website') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'website'; }" class="optional">
+								</div>
+								<div class="right">
+									<input id="commentTwitter" type="text" value="aduermael" onfocus="if(this.value == 'twitter') { this.value = ''; } backToOriginalBackground(this);" onblur="if(this.value == '') { this.value = 'twitter'; }" class="optional">
+								</div>
+							</div>
 						 		
-							<textarea id="commentContent" onfocus="backToOriginalBackground(this);"></textarea>
-						 		
-							<input id="commentRemember" type="checkbox" checked><label>Se rappeler de mes informations.</label>
-							<input id="commentEmailOnAnswer" type="checkbox" checked><label>Être tenu au courant des réponses par email.</label>
-						 		
-						 	<input type="button" value="Send" onclick="postComment('name','email','website','twitter')"></div>
+							<textarea id="commentContent" onfocus="backToOriginalBackground(this);"></textarea><!--
+							--><input type="button" value="Send" onclick="postComment('name','email','website','twitter')">
+
+							<label><input id="commentRemember" type="checkbox" checked>Se rappeler de mes informations.</label>
+							<label><input id="commentEmailOnAnswer" type="checkbox" checked>Être tenu au courant des réponses par email.</label>
+
+							</div>
+
 						</div>
 					 </div>
 

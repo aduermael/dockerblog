@@ -121,14 +121,69 @@ a:hover {
 	position: absolute;
 }
 
+#content #posts .post #commentForm .header {
+	position: relative;
+	width: 100%;
+	height: 80px;
+	margin-bottom: 8px;
+}
 
+#content #posts .post #commentForm .header #commentGravatar { margin-bottom: 8px; width: 80px; height: 80px; }
 
+#content #posts .post #commentForm .header .nameAndEmail {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	padding-left: 88px;
+}
+
+#content #posts .post #commentForm input[type="text"],
+#content #posts .post #commentForm input[type="email"] {
+	font-size: 1.3rem;
+	height: 36px;
+	padding-left: 8px;
+	padding-right: 8px;
+	border: 1px solid #aaa;
+}
+
+#content #posts .post #commentForm textarea { font-size: 1.3rem; line-height: 2.0rem; margin: 0; border: 1px solid #aaa;}
+#content #posts .post #commentForm .header .nameAndEmail #commentName { width: 100%; margin-bottom: 8px; }
+#content #posts .post #commentForm .header .nameAndEmail #commentEmail { width: 100%; }
+#content #posts .post #commentForm .webProfile { width: 100%; height: 36px; margin-bottom: 8px; }
+#content #posts .post #commentForm .webProfile .left { float: left; width: 50%; padding-right: 4px; }
+#content #posts .post #commentForm .webProfile .right { float: left; width: 50%; padding-left: 4px; }
+#content #posts .post #commentForm #commentWebsite { width: 100%; }
+#content #posts .post #commentForm #commentTwitter { width: 100%; }
+#content #posts .post #commentForm #commentContent { width: 100%; padding: 8px; resize: vertical; height: 100px; }
+
+#content #posts .post #commentForm label {
+	display: block;
+	width: 100%;
+	text-align: center;
+}
+
+#content #posts .post #commentForm input[type="checkbox"] {
+	margin: 8px;
+}
+
+#content #posts .post #commentForm input[type="button"] {
+	font-size: 1.3rem;
+	width: 100%;
+	height: 36px;
+	border: 1px solid #aaa;
+	background-color: #ccc;
+	cursor: pointer;
+	margin-bottom: 8px;
+	margin-top: 4px;
+	-webkit-appearance: none;
+}
+
+#content #posts .post #commentForm input[type="button"]:hover {
+	background-color: #bbb;
+}
 
 /* BLOCKS */
-
-/*#content #posts .post h2 {
-	padding-bottom: 2rem;
-}*/
 
 #content #posts .post .block.image {
 	text-align: center;
