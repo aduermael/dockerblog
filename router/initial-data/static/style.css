@@ -79,7 +79,13 @@ a:hover {
 
 #content {
 	background-color: #fff;
-	padding: 2rem;
+	padding: 0;
+}
+
+@media (min-width: 600px) {
+    #content {
+		padding: 2rem;
+	}
 }
 
 /* CONTENT - POSTS */
