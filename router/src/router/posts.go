@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/garyburd/redigo/redis"
-	// "log"
 )
 
 var (
@@ -110,7 +109,13 @@ var (
 
 		post_data.comments = comments
 
-		return cjson.encode(post_data)
+		local jsonResponse = cjson.encode(post_data)
+		-- make sure empty comments table is encoded into json array
+		if #comments == 0 then
+			jsonResponse = string.gsub( jsonResponse, '"comments":{}', '"comments":[]' )
+		end
+
+		return jsonResponse
 	`)
 )
 
@@ -133,7 +138,27 @@ func postGet(ID string) (Post, error) {
 
 	err = json.Unmarshal(byteSlice, &post)
 	if err != nil {
-		return Post{}, err
+		if err != nil {
+			return Post{}, err
+		}
+
+		// var postWithoutComments PostWithoutComments
+		// err = json.Unmarshal(byteSlice, &postWithoutComments)
+		// if err != nil {
+		// 	return Post{}, err
+		// }
+		// post = Post{
+		// 	Title:       postWithoutComments.Title,
+		// 	ID:          postWithoutComments.ID,
+		// 	Date:        postWithoutComments.Date,
+		// 	Slug:        postWithoutComments.Slug,
+		// 	Lang:        postWithoutComments.Lang,
+		// 	Keywords:    postWithoutComments.Keywords,
+		// 	Description: postWithoutComments.Description,
+		// 	NbComments:  postWithoutComments.NbComments,
+		// 	Blocks:      postWithoutComments.Blocks,
+		// 	Comments:    postWithoutComments.Comments,
+		// }
 	}
 
 	post.Comments = OrderAndIndentComments(post.Comments)
