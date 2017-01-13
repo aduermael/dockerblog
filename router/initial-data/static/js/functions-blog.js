@@ -41,7 +41,7 @@ function sendMessage(postID,blockID,emailIndication,subjectIndication)
 	if (!error)
 	{
 		$('#contactFields_' + postID + '_' + blockID).hide();
-		$('#formsending_' + postID + '_' + blockID).show();
+		$('#commentSending_' + postID + '_' + blockID).show();
 		
 		Post('/contact',message,sendMessageCallback,errorCallback);			
 	}
@@ -51,34 +51,31 @@ function sendMessage(postID,blockID,emailIndication,subjectIndication)
 
 var sendMessageCallback = function(data)
 {
-	var res = data;
+	var res = data
 	
 	$( "div[id^='formsending_']" ).each(function( index )
 	{	
 		if ($(this).is(":visible"))
 		{	
-			var id = $(this).attr('id');
-			
-			var elements = id.split('_');
+			var id = $(this).attr('id')
+			var elements = id.split('_')
 			
 			if(res.success)
 			{
-				elements.splice(0,1,"formsent");
-				var idSent = elements.join("_");
-				idSent = "#" + idSent;
-							
-				$(idSent).show();
+				elements.splice(0,1,"formsent")
+				var idSent = elements.join("_")
+				idSent = "#" + idSent
+				$(idSent).show()
 			}
 			else
 			{
-				elements.splice(0,1,"formerror");
-				var idError = elements.join("_");
-				idError = "#" + idError;
-							
-				$(idError).show();			
+				elements.splice(0,1,"formerror")
+				var idError = elements.join("_")
+				idError = "#" + idError
+				$(idError).show()	
 			}
 			
-			$(this).hide();	
+			$(this).hide()
 		}
 	});
 }
@@ -88,83 +85,79 @@ var sendMessageCallback = function(data)
 function postComment(nameIndication,emailIndication,websiteIndication,twitterIndication)
 {
 	var comment = new Object()
-	comment.postID = $('#postID').val();
-	comment.answerComID = $('#answerComID').val();
-	comment.url = $('#url').val();
-	comment.name = $('#commentName').val();
-	comment.email = $('#commentEmail').val();
-	comment.content = $('#commentContent').val();
+	// ids
+	comment.postID = $('#postID').val()
+	comment.answerComID = $('#answerComID').val()
 
-	comment.website = $('#commentWebsite').val();
-	comment.twitter = $('#commentTwitter').val();
+	// simple trap for stupid robots
+	comment.url = $('#url').val()
+	comment.email = $('#email').val()
 	
-	comment.emailOnAnswer = $('#comEmailOnAnswer').is(":checked");
-	comment.remember = $('#comRemember').is(":checked");
-	
-	
+	// content
+	comment.name = $('#commentName').val()
+	comment.email = $('#commentEmail').val()
+	comment.content = $('#commentContent').val()
+	comment.website = $('#commentWebsite').val()
+	comment.twitter = $('#commentTwitter').val()
+	comment.emailOnAnswer = $('#commentEmailOnAnswer').is(":checked")
+	comment.remember = $('#commentRemember').is(":checked")
 	
 	var error = false;
-	
-	
+	// name (mandatory)
 	if (comment.name == "" || comment.name == nameIndication)
 	{
-		setBackgroundColor($('#commentName'),errorColor);
-		error = true;
+		setBackgroundColor($('#commentName'),errorColor)
+		error = true
 	}
-	
+	// email
 	if (comment.email == emailIndication || comment.email == "")
 	{
-		comment.email = "";
+		comment.email = ""
 	}
 	else if ( !validateEmail(comment.email) )
 	{
-		setBackgroundColor($('#commentEmail'),errorColor);
-		error = true;
+		setBackgroundColor($('#commentEmail'),errorColor)
+		error = true
 	}
-
-	// check valid website
+	// website
 	if (comment.website == websiteIndication || comment.website == "")
 	{
-		comment.website = "";
+		comment.website = ""
 	}
-
-	// limit # of characters
+	// twitter
 	if (comment.twitter == twitterIndication || comment.twitter == "")
 	{
-		comment.twitter = "";
+		comment.twitter = ""
 	}
-
-
-	
+	// content (mandatory)
 	if (comment.content == "")
 	{
-		setBackgroundColor($('#commentContent'),errorColor);
-		error = true;
+		setBackgroundColor($('#commentContent'),errorColor)
+		error = true
 	}
 	
 	if (!error)
 	{
-		$('#fields').hide();
-		$('#formsending').show();
-		
-		Post('/comment',comment,postCommentCallback,errorCallback);			
+		$('#commentFields').hide()
+		$('#commentSending').show()
+		Post('/comment',comment,postCommentCallback,errorCallback)
 	}
 }
 
 
 var postCommentCallback = function(data)
 {
-	var res = data;
+	var res = data
 
-	$('#formsending').hide();
+	$('#commentSending').hide();
 		
 	if(res.success)
 	{
-		$('#formsent').show();
+		$('#commentSent').show();
 	}
 	else
 	{
-		$('#formerror').show();
+		$('#commentError').show();
 	}
 }
 
@@ -172,61 +165,58 @@ var postCommentCallback = function(data)
 function answerComment(comID)
 {
 	// reset form
-	$('#fields').show();
-	$('#formsending').hide();
-	$('#formsent').hide();
-	$('#formerror').hide();
-	$('#commentContent').val("");
-
-
-	$('#com_end_' + comID).after($('#form'));
-	$('#answerComID').val(comID);
+	$('#commentFields').show()
+	$('#commentSending').hide()
+	$('#commentSent').hide()
+	$('#commentError').hide()
+	$('#commentContent').val("")
+	// move answer form
+	$('#com_end_' + comID).after($('#form'))
+	$('#answerComID').val(comID)
 }
 
-
+// emailChange tries to load a Gravatar associated
+// to current email in the field.
 function emailChange(emailInput)
 {
 	var hash = getGravatarHash(emailInput.value)
-	console.log("hash: " + hash); 
-	$('#formGravatar').attr("src",'http://www.gravatar.com/avatar/' + hash + '.jpg?s=81');
+	$('#commentGravatar').attr("src",'http://www.gravatar.com/avatar/' + hash + '.jpg?s=80')
 }
 
+// getGravatarHash returns a Gravatar md5 hash 
+// for a given email.
 function getGravatarHash(email)
 {
-	email = $.trim(email);
-	email = email.toLowerCase();
-	var md5 = $.md5(email);
-	return md5;
+	email = $.trim(email)
+	email = email.toLowerCase()
+	var md5 = $.md5(email)
+	return md5
 }
 
-
+// backToOriginalBackground resets background in all fields
 function backToOriginalBackground(obj)
 {			
 	if ($(obj).attr('id') == $('#commentName').attr('id'))
 	{	
-		setBackgroundColor($('#commentName'),mandatoryColor);
+		setBackgroundColor($('#commentName'),mandatoryColor)
 	}
 	else if ($(obj).attr('id') == $('#commentContent').attr('id'))
 	{
-		setBackgroundColor($('#commentContent'),mandatoryColor);
+		setBackgroundColor($('#commentContent'),mandatoryColor)
 	}
 	else if ($(obj).attr('id') == $('#commentEmail').attr('id'))
 	{
-		setBackgroundColor($('#commentEmail'),optionalColor);
+		setBackgroundColor($('#commentEmail'),optionalColor)
 	}
 	else
 	{
-		if ($(obj).hasClass( "mandatory" ))
-		{
-			setBackgroundColor($(obj),mandatoryColor);
-		}
-		else
-		{
-			setBackgroundColor($(obj),optionalColor);
-		}
+		if ($(obj).hasClass( "mandatory" )) { setBackgroundColor($(obj),mandatoryColor) }
+		else { setBackgroundColor($(obj),optionalColor) }
 	}
 }
 
+// setBackgroundColor sets background color for
+// given HTML element (animated)
 function setBackgroundColor(obj,color)
 {
 	obj.stop().animate({
@@ -234,128 +224,10 @@ function setBackgroundColor(obj,color)
 		}, 'fast')
 }
 
+// validateEmail tests wether given string in parameter
+// is a valid email or not.
 function validateEmail(email) 
 {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
-}
-
-
-$(function(){
-
-	Galleria.loadTheme('/js/galleria/themes/classic/galleria.classic.min.js');
-		Galleria.configure({
-	    transition: 'fade', 
-	    lightbox: true, 
-	    thumbnails: 'lazy',
-	});
-
-	Galleria.ready(function(options) {
-
-		var lightboxIndex = 0
-
-		this.bind('lightbox_image', function(e) {
-			var image = (e.imageTarget.getAttribute("src"))
-			for (var i = 0; i < this._data.length; i++) {
-				if (this._data[i].image == image) {
-					lightboxIndex = i;
-					setCookie("gallery-page-" + this._target.id, lightboxIndex)
-					break;
-				}
-			}
-
-			if (this._lightbox.active == this._data.length - 1) {
-				$('.galleria-lightbox-next').hide();
-				$('.galleria-lightbox-nextholder').hide();
-			} else {
-				$('.galleria-lightbox-next').show();
-				$('.galleria-lightbox-nextholder').show();
-			}
-			if (this._lightbox.active == 0) {
-				$('.galleria-lightbox-prev').hide();
-				$('.galleria-lightbox-prevholder').hide();
-			} else {
-				$('.galleria-lightbox-prev').show();
-				$('.galleria-lightbox-prevholder').show();
-			}
-		});
-
-		this.bind('lightbox_close', function(e) {
-			this.show( lightboxIndex )
-		});
-		
-
-		this.bind('image', function(e) {
-			setCookie("gallery-page-" + this._target.id, e.index)
-		});
-
-		this.bind('loadstart', function(e) {
-			var selector = $("#" + this._target.id + "-pages")[0]
-			selector.options.selectedIndex = e.index
-
-			// don't display next for last image
-			if (this._active == this._data.length - 1) {
-				$('.galleria-image-nav-right').hide();
-			} else {
-				$('.galleria-image-nav-right').show();
-			}
-			// don't display previous for first image
-			if (this._active == 0) {
-				$('.galleria-image-nav-left').hide();
-			} else {
-				$('.galleria-image-nav-left').show();
-			}
-		});
-
-	});
-
-	$(".gallery").each( function(index) {
-		// this: gallery block
-		// id: post<ID>-block<number>
-		var gallery = this
-
-		var page = getCookie("gallery-page-" + gallery.id)
-		if (page == "") {
-			page = 0
-		}
-
-		if (page > galleryData[gallery.id].length) {
-			page = 0;
-		}
-
-		Galleria.run(gallery, {
-			dataSource: galleryData[gallery.id], 
-			show: page,
-			extend: function() {
-	            var gallery = this; // "this" is the gallery instance
-	            $("#" + gallery._target.id + "-pages")[0].onchange = function() {
-					gallery.show($(this).val());
-				}
-        	}
-		});
-
-	});
-})
-
-
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + "; " + expires;
-}
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length,c.length);
-        }
-    }
-    return "";
 }
