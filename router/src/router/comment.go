@@ -2,13 +2,16 @@ package main
 
 import (
 	"crypto/md5"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/garyburd/redigo/redis"
 	"net/mail"
 	"net/url"
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 )
 
 type Comment struct {
@@ -94,15 +97,34 @@ func (c *Comment) Accept() (robot bool, err error) {
 		c.Twitter = strings.TrimPrefix("@", c.Twitter)
 	}
 
-	c.save()
+	err = c.save()
+	if err != nil {
+		fmt.Print(err)
+		return false, err
+	}
 
 	// TODO: cookies
 
 	return false, nil
 }
 
-func (c *Comment) save() {
+func (c *Comment) save() error {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
 
+	jsonBytes, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+
+	timestamp := time.Now().Unix()
+
+	_, err = scriptSaveComment.Do(redisConn, string(jsonBytes), timestamp)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type CommentsByDate []Comment
@@ -153,7 +175,13 @@ func OrderAndIndentComments(comments []Comment) []Comment {
 
 var (
 	scriptSaveComment = redis.NewScript(0, `
+		local function notempty(s)
+			return s ~= nil and s ~= ''
+		end
+
 		local commentJson = ARGV[1]
+		local timestamp = ARGV[2]
+
 		local comment = cjson.decode(commentJson)
 			
 		-- check if post exists 
@@ -163,7 +191,7 @@ var (
 		local postID = "post_" .. (comment.postID or "")
 
 		if redis.call('exists', postID) ~= 1 then
-			error("post can't be found")
+			error("post can't be found (id: " .. postID .. ")")
 		end
 
 		-- get post lang (we suppose comment lang == post lang)
@@ -172,9 +200,12 @@ var (
 		local isNew = false
 
 		-- get id for new comments
-		if comment.ID == 0 then
+		if comment.ID == nil or comment.ID == 0 then
 			isNew = true
 			comment.ID = redis.call('incr', 'commentCount')
+			if comment.ID == nil then
+				error("comment.ID == nil")
+			end
 		end
 
 		local commentIDKey = "com_" .. comment.ID
@@ -186,10 +217,7 @@ var (
 			valid = 1
 		end
 
-		local timestamp = os.time()
-
-		redis.call('hmset', commentIDKey, 'ID', comment.ID, 'name', comment.name, 'content', comment.content,
-		'email', comment.email, 'date', timestamp, 'valid', valid, 'postID', comment.postID)
+		redis.call('hmset', commentIDKey, 'ID', comment.ID, 'name', comment.name, 'content', comment.content, 'email', comment.email, 'date', timestamp, 'valid', valid, 'postID', comment.postID)
 
 		-- remove fields that can be spared if empty
 		-- (only if comment already exists)
@@ -199,23 +227,23 @@ var (
 			redis.call('zrem', unvalidated_comments_key, comment.ID)
 		end
 
-		if comment.emailOnAnswer and comment.email ~= "" then
+		if comment.emailOnAnswer and notempty(comment.email) then
 			redis.call('hset', commentIDKey, 'emailOnAnswer', 1)
 		end
 
-		if comment.gravatar ~= "" then
+		if notempty(comment.gravatar) then
 			redis.call('hset', commentIDKey, 'gravatar', comment.gravatar)
 		end
 
-		if comment.twitter ~= "" then
+		if notempty(comment.twitter) then
 			redis.call('hset', commentIDKey, 'twitter', comment.twitter)
 		end
 
-		if comment.website ~= "" then
+		if notempty(comment.website) then
 			redis.call('hset', commentIDKey, 'website', comment.website)
 		end
 
-		if comment.answerComID != 0 then
+		if comment.answerComID ~= nil and comment.answerComID ~= 0 then
 			redis.call('hset', commentIDKey, 'answerComID', comment.answerComID)
 		end
 
@@ -223,7 +251,7 @@ var (
 		redis.call('zadd', all_comments_key, timestamp, comment.ID)
 
 		-- unvalidated comments (to list in admin)
-		if comment.valid == false then
+		if comment.valid == nil or comment.valid == false then
 			redis.call('zadd', unvalidated_comments_key, timestamp, comment.ID)
 		end
 	`)
