@@ -4,7 +4,46 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/garyburd/redigo/redis"
+	"html/template"
 )
+
+// PostBlock defines a content block in a post
+// It can be text, image, contact form...
+type PostBlock map[string]template.HTML
+
+type PostBlockType int
+
+const (
+	PostBlockType_None PostBlockType = iota
+	PostBlockType_Text
+	PostBlockType_Image
+)
+
+func (pb *PostBlock) GetType() (PostBlockType, error) {
+	pbType := (*pb)["type"]
+	switch pbType {
+	case "text":
+		return PostBlockType_Text, nil
+	case "image":
+		return PostBlockType_Image, nil
+	default:
+		return PostBlockType_None, errors.New("block type not supported")
+	}
+}
+
+// Post defines a blog post
+type Post struct {
+	Title       string      `json:"title"`
+	ID          int         `json:"ID"`
+	Date        int         `json:"date"`
+	Slug        string      `json:"slug"`
+	Lang        string      `json:"lang"`
+	Keywords    []string    `json:"keywords,omitempty"`
+	Description string      `json:"description,omitempty"`
+	NbComments  int         `json:"nbComs"`
+	Blocks      []PostBlock `json:"blocks"`
+	Comments    []Comment   `json:"comments,omitempty"`
+}
 
 var (
 	scriptPostList = redis.NewScript(0, `
@@ -141,31 +180,11 @@ func postGet(ID string) (Post, error) {
 		if err != nil {
 			return Post{}, err
 		}
-
-		// var postWithoutComments PostWithoutComments
-		// err = json.Unmarshal(byteSlice, &postWithoutComments)
-		// if err != nil {
-		// 	return Post{}, err
-		// }
-		// post = Post{
-		// 	Title:       postWithoutComments.Title,
-		// 	ID:          postWithoutComments.ID,
-		// 	Date:        postWithoutComments.Date,
-		// 	Slug:        postWithoutComments.Slug,
-		// 	Lang:        postWithoutComments.Lang,
-		// 	Keywords:    postWithoutComments.Keywords,
-		// 	Description: postWithoutComments.Description,
-		// 	NbComments:  postWithoutComments.NbComments,
-		// 	Blocks:      postWithoutComments.Blocks,
-		// 	Comments:    postWithoutComments.Comments,
-		// }
 	}
 
 	post.Comments = OrderAndIndentComments(post.Comments)
 
-	// log.Println("post:", post)
 	return post, nil
-
 }
 
 func postsList() ([]Post, error) {
@@ -196,6 +215,5 @@ func postsList() ([]Post, error) {
 		return nil, err
 	}
 
-	// log.Println("posts:", posts)
 	return posts, nil
 }

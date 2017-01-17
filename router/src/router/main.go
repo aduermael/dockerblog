@@ -86,6 +86,40 @@ func main() {
 		})
 	})
 
+	// receiving comment
+	router.POST("/comment", func(c *gin.Context) {
+		var comment Comment
+		err := c.BindJSON(&comment)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"success": false,
+				"err":     err.Error(),
+			})
+			return
+		}
+
+		robot, err := comment.Accept()
+		if err != nil {
+			if robot {
+				c.JSON(http.StatusOK, gin.H{
+					"success": true,
+				})
+				return
+			} else {
+				c.JSON(http.StatusOK, gin.H{
+					"success": false,
+					"err":     err.Error(),
+				})
+				return
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+		})
+		return
+	})
+
 	router.Use(func(c *gin.Context) {
 		log.Println("proxy")
 		legacyProxy.ServeHTTP(c.Writer, c.Request)
