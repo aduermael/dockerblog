@@ -189,6 +189,18 @@ a:hover {
 	background-color: #bbb;
 }
 
+#content #posts .post #commentForm input.mandatory {
+	background-color: #fff;
+}
+
+#content #posts .post #commentForm input.optional {
+	background-color: #f5f5f5;
+}
+
+#content #posts .post #commentForm input.error {
+	background-color: #f78778 !important;
+}
+
 /* BLOCKS */
 
 #content #posts .post .block.image {

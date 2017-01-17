@@ -1,74 +1,70 @@
+// ---------------
+// CONFIG
+// ---------------
 
-var mandatoryColor = '#E0E0E0'
-var optionalColor = '#e7e7e7'
-var errorColor = '#f78778'
+// var mandatoryColor = '#fff'
+// var optionalColor = '#f5f5f5'
+// var errorColor = '#f78778'
 
+// turns urls into active links 
+// in the list of comments
 $(document).ready(function()
 {
 	$('.comment').linkify()
 })
 
+// ---------------
+// CONTACT FORMS
+// ---------------
+
 function sendMessage(postID,blockID,emailIndication,subjectIndication)
 {	
 	var message = new Object()
-	message.postID = postID;
-	message.blockID = blockID;
-	message.email = $('#contactEmail_' + postID + '_' + blockID).val();
-	message.subject = $('#contactSubject_' + postID + '_' + blockID).val();
-	message.content = $('#contactContent_' + postID + '_' + blockID).val();
-	message.url = $('#contactUrl_' + postID + '_' + blockID).val();
+	message.postID = postID
+	message.blockID = blockID
+	message.email = $('#contactEmail_' + postID + '_' + blockID).val()
+	message.subject = $('#contactSubject_' + postID + '_' + blockID).val()
+	message.content = $('#contactContent_' + postID + '_' + blockID).val()
+	message.url = $('#contactUrl_' + postID + '_' + blockID).val()
 
 	var error = false;
 	
-	if ( !validateEmail(message.email) )
-	{
-		setBackgroundColor($('#contactEmail_' + postID + '_' + blockID),errorColor);
-		error = true;
+	if (!validateEmail(message.email)) {
+		$('#contactEmail_' + postID + '_' + blockID).addClass("error")
+		error = true
 	}
 	
-	if (message.subject == subjectIndication || message.subject == "")
-	{
-		message.subject = "";
+	if (message.subject == subjectIndication || message.subject == "") {
+		message.subject = ""
 	}
 	
-	if (message.content == "")
-	{
-		setBackgroundColor($('#contactContent_' + postID + '_' + blockID),errorColor);
-		error = true;
+	if (message.content == "") {
+		$('#contactContent_' + postID + '_' + blockID).addClass("error")
+		error = true
 	}
 	
-	
-	if (!error)
-	{
-		$('#contactFields_' + postID + '_' + blockID).hide();
-		$('#commentSending_' + postID + '_' + blockID).show();
-		
-		Post('/contact',message,sendMessageCallback,errorCallback);			
+	if (!error) {
+		$('#contactFields_' + postID + '_' + blockID).hide()
+		$('#commentSending_' + postID + '_' + blockID).show()
+		Post('/contact',message,sendMessageCallback,errorCallback)		
 	}
-	
 }
 
 
-var sendMessageCallback = function(data)
-{
+var sendMessageCallback = function(data) {
 	var res = data
 	
-	$( "div[id^='formsending_']" ).each(function( index )
-	{	
-		if ($(this).is(":visible"))
-		{	
+	$( "div[id^='formsending_']" ).each(function( index ) {	
+		if ($(this).is(":visible")) {	
 			var id = $(this).attr('id')
 			var elements = id.split('_')
 			
-			if(res.success)
-			{
+			if(res.success) {
 				elements.splice(0,1,"formsent")
 				var idSent = elements.join("_")
 				idSent = "#" + idSent
 				$(idSent).show()
-			}
-			else
-			{
+			} else {
 				elements.splice(0,1,"formerror")
 				var idError = elements.join("_")
 				idError = "#" + idError
@@ -80,18 +76,19 @@ var sendMessageCallback = function(data)
 	});
 }
 
+// ---------------
+// COMMENTS
+// ---------------
 
-
-function postComment(nameIndication,emailIndication,websiteIndication,twitterIndication)
-{
+function postComment(nameIndication,emailIndication,websiteIndication,twitterIndication) {
 	var comment = new Object()
 	// ids
-	comment.postID = $('#postID').val()
-	comment.answerComID = $('#answerComID').val()
+	comment.postID = parseInt($('#postID').val())
+	comment.answerComID = parseInt($('#answerComID').val())
 
 	// simple trap for stupid robots
-	comment.url = $('#url').val()
-	comment.email = $('#email').val()
+	comment.urltrap = $('#url').val()
+	comment.emailtrap = $('#email').val()
 	
 	// content
 	comment.name = $('#commentName').val()
@@ -103,67 +100,55 @@ function postComment(nameIndication,emailIndication,websiteIndication,twitterInd
 	comment.remember = $('#commentRemember').is(":checked")
 	
 	var error = false;
+
 	// name (mandatory)
-	if (comment.name == "" || comment.name == nameIndication)
-	{
-		setBackgroundColor($('#commentName'),errorColor)
+	if (comment.name == "" || comment.name == nameIndication) {
+		$('#commentName').addClass("error")
 		error = true
 	}
 	// email
-	if (comment.email == emailIndication || comment.email == "")
-	{
+	if (comment.email == emailIndication || comment.email == "") {
 		comment.email = ""
-	}
-	else if ( !validateEmail(comment.email) )
-	{
-		setBackgroundColor($('#commentEmail'),errorColor)
+	} else if ( !validateEmail(comment.email) ) {
+		$('#commentEmail').addClass("error")
 		error = true
 	}
 	// website
-	if (comment.website == websiteIndication || comment.website == "")
-	{
+	if (comment.website == websiteIndication || comment.website == "") {
 		comment.website = ""
 	}
 	// twitter
-	if (comment.twitter == twitterIndication || comment.twitter == "")
-	{
+	if (comment.twitter == twitterIndication || comment.twitter == "") {
 		comment.twitter = ""
+	} else if ( !validateTwitterUsername(comment.twitter) ) {
+		$('#commentTwitter').addClass("error")
+		error = true
 	}
 	// content (mandatory)
-	if (comment.content == "")
-	{
-		setBackgroundColor($('#commentContent'),errorColor)
+	if (comment.content == "") {
+		$('#commentContent').addClass("error")
 		error = true
 	}
 	
-	if (!error)
-	{
+	if (!error) {
 		$('#commentFields').hide()
 		$('#commentSending').show()
 		Post('/comment',comment,postCommentCallback,errorCallback)
 	}
 }
 
-
-var postCommentCallback = function(data)
-{
+// postCommentCallback is used as callback when posting comment
+var postCommentCallback = function(data) {
 	var res = data
-
-	$('#commentSending').hide();
-		
-	if(res.success)
-	{
-		$('#commentSent').show();
-	}
-	else
-	{
-		$('#commentError').show();
-	}
+	$('#commentSending').hide()
+	if(res.success) { $('#commentSent').show() }
+	else { $('#commentError').show() }
 }
 
-
-function answerComment(comID)
-{
+// answerComment moves the form below the comment
+// the user wants to answer to. (resetting fields)
+// (it also sets the answerComID field)
+function answerComment(comID) {
 	// reset form
 	$('#commentFields').show()
 	$('#commentSending').hide()
@@ -177,16 +162,14 @@ function answerComment(comID)
 
 // emailChange tries to load a Gravatar associated
 // to current email in the field.
-function emailChange(emailInput)
-{
+function emailChange(emailInput) {
 	var hash = getGravatarHash(emailInput.value)
 	$('#commentGravatar').attr("src",'http://www.gravatar.com/avatar/' + hash + '.jpg?s=80')
 }
 
 // getGravatarHash returns a Gravatar md5 hash 
 // for a given email.
-function getGravatarHash(email)
-{
+function getGravatarHash(email) {
 	email = $.trim(email)
 	email = email.toLowerCase()
 	var md5 = $.md5(email)
@@ -194,40 +177,25 @@ function getGravatarHash(email)
 }
 
 // backToOriginalBackground resets background in all fields
-function backToOriginalBackground(obj)
-{			
-	if ($(obj).attr('id') == $('#commentName').attr('id'))
-	{	
-		setBackgroundColor($('#commentName'),mandatoryColor)
-	}
-	else if ($(obj).attr('id') == $('#commentContent').attr('id'))
-	{
-		setBackgroundColor($('#commentContent'),mandatoryColor)
-	}
-	else if ($(obj).attr('id') == $('#commentEmail').attr('id'))
-	{
-		setBackgroundColor($('#commentEmail'),optionalColor)
-	}
-	else
-	{
-		if ($(obj).hasClass( "mandatory" )) { setBackgroundColor($(obj),mandatoryColor) }
-		else { setBackgroundColor($(obj),optionalColor) }
-	}
+function backToOriginalBackground(obj) {
+	$(obj).removeClass("error")
 }
 
 // setBackgroundColor sets background color for
-// given HTML element (animated)
-function setBackgroundColor(obj,color)
-{
-	obj.stop().animate({
-			backgroundColor: color
-		}, 'fast')
+// given HTML element
+function setBackgroundColor(obj,color) {
+	obj.css("background-color", color)
 }
 
 // validateEmail tests wether given string in parameter
 // is a valid email or not.
-function validateEmail(email) 
-{
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
+function validateEmail(email) {
+    var re = /^\S+@\S+\.\S+$/
+    return re.test(email)
+}
+
+function validateTwitterUsername(username) {
+	console.log(username)
+    var re = /^@?[a-zA-Z0-9_]+$/
+    return re.test(username)
 }
