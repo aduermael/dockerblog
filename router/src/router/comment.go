@@ -94,7 +94,7 @@ func (c *Comment) Accept() (robot bool, err error) {
 			return false, errors.New("twitter username is not valid")
 		}
 		// keep it simple
-		c.Twitter = strings.TrimPrefix("@", c.Twitter)
+		c.Twitter = strings.TrimPrefix(c.Twitter, "@")
 	}
 
 	err = c.save()
@@ -117,7 +117,7 @@ func (c *Comment) save() error {
 		return err
 	}
 
-	timestamp := time.Now().Unix()
+	timestamp := time.Now().Unix() * 1000
 
 	_, err = scriptSaveComment.Do(redisConn, string(jsonBytes), timestamp)
 	if err != nil {
@@ -223,8 +223,8 @@ var (
 		-- (only if comment already exists)
 		if isNew == false then
 			redis.call('hdel', 'emailOnAnswer', 'gravatar', 'twitter', 'website', 'answerComID')
-			redis.call('zrem', all_comments_key, comment.ID)
-			redis.call('zrem', unvalidated_comments_key, comment.ID)
+			redis.call('zrem', all_comments_key, commentIDKey)
+			redis.call('zrem', unvalidated_comments_key, commentIDKey)
 		end
 
 		if comment.emailOnAnswer and notempty(comment.email) then
@@ -248,11 +248,11 @@ var (
 		end
 
 		-- set for all comments (to be listed in admin)
-		redis.call('zadd', all_comments_key, timestamp, comment.ID)
+		redis.call('zadd', all_comments_key, timestamp, commentIDKey)
 
 		-- unvalidated comments (to list in admin)
 		if comment.valid == nil or comment.valid == false then
-			redis.call('zadd', unvalidated_comments_key, timestamp, comment.ID)
+			redis.call('zadd', unvalidated_comments_key, timestamp, commentIDKey)
 		end
 	`)
 )
