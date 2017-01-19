@@ -936,10 +936,6 @@ var listComments = function(req,page,nbCommentsPerPage,callback)
 {	
 	var content = [];
 
-	console.log("listComments")
-	var key = 'comments_all_' + lang_module.get(req)
-	console.log("key: "+ key)
-
 	db.zrevrange('comments_all_' + lang_module.get(req), page * nbCommentsPerPage, page * nbCommentsPerPage + (nbCommentsPerPage - 1) ,function(error, keys)
 	{
 		if (error)
@@ -959,7 +955,6 @@ var listComments = function(req,page,nbCommentsPerPage,callback)
 			{
 				replies.forEach(function(comment)
 				{
-					console.log("comment: " + JSON.stringify(comment))
 					comment.date = getPostTime(req,comment.date);
 				});
 						
@@ -975,15 +970,10 @@ var listUnvalidatedComments = function(req,page,nbCommentsPerPage,callback)
 {	
 	var content = [];
 
-	console.log("listUnvalidatedComments")
 	var unvalidatedCommentsKey = 'comments_unvalidated_' + lang_module.get(req)
-	console.log("key: "+ unvalidatedCommentsKey)
 
 	var startIndex = page * nbCommentsPerPage
 	var endIndex = page * nbCommentsPerPage + (nbCommentsPerPage - 1)
-
-	console.log("startIndex: "+ startIndex)
-	console.log("endIndex: "+ endIndex)
 
 	db.zrevrange(unvalidatedCommentsKey, startIndex, endIndex ,function(error, keys)
 	{
@@ -997,7 +987,6 @@ var listUnvalidatedComments = function(req,page,nbCommentsPerPage,callback)
 			
 			keys.forEach(function (key)
 			{
-				console.log("comment key: "+ key)
 				multi.hgetall(key);			
 			});
 			
@@ -1005,7 +994,6 @@ var listUnvalidatedComments = function(req,page,nbCommentsPerPage,callback)
 			{
 				replies.forEach(function(comment)
 				{
-					console.log("comment: " + JSON.stringify(comment))
 					comment.date = getPostTime(req,comment.date);
 				});
 						
