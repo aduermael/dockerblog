@@ -155,9 +155,13 @@ function answerComment(comID) {
 	$('#commentSent').hide()
 	$('#commentError').hide()
 	$('#commentContent').val("")
-	// move answer form
-	$('#com_end_' + comID).after($('#form'))
 	$('#answerComID').val(comID)
+	
+	// move answer form
+	$('#commentForm').fadeTo(0, 0.0, function() {
+		$('#commentForm').insertAfter($('#com_' + comID))
+		$('#commentForm').fadeTo(300, 1.0)
+	});
 }
 
 // emailChange tries to load a Gravatar associated

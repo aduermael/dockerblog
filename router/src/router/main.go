@@ -45,7 +45,6 @@ func main() {
 	router.Use(DefineLang)
 
 	router.GET("/:page/:param", func(c *gin.Context) {
-
 		param := c.Param("param")
 		paramIsID, err := regexp.MatchString("[0-9]+", param)
 		if err != nil {
@@ -61,6 +60,13 @@ func main() {
 				c.AbortWithError(http.StatusInternalServerError, err)
 				return
 			}
+
+			// TODO: it should be possible to set that in admin
+			// but currently for all posts, both ShowComments
+			// and AcceptComments are false
+			post.ShowComments = true
+			post.AcceptComments = true
+
 			c.HTML(http.StatusOK, "post.tmpl", gin.H{
 				"title": GetTitle(c),
 				"post":  post,
@@ -71,7 +77,27 @@ func main() {
 		// use Node.js legacy for other requests (like /admin routes)
 		// TODO: Go implementation
 		legacyProxy.ServeHTTP(c.Writer, c.Request)
+	})
 
+	router.GET("/:page", func(c *gin.Context) {
+		page := c.Param("page")
+
+		// use Node.js legacy
+		if page == "admin" {
+			legacyProxy.ServeHTTP(c.Writer, c.Request)
+			return
+		}
+
+		post, err := postGetWithSlug(page)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		c.HTML(http.StatusOK, "post.tmpl", gin.H{
+			"title": GetTitle(c),
+			"post":  post,
+		})
 	})
 
 	router.GET("/", func(c *gin.Context) {
