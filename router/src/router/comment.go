@@ -194,6 +194,8 @@ var (
 			error("post can't be found (id: " .. postID .. ")")
 		end
 
+		-- TODO: make sure comments are opened for this post
+
 		-- get post lang (we suppose comment lang == post lang)
 		local lang = redis.call('hget', postID, 'lang')
 
