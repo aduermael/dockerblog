@@ -10,16 +10,16 @@ import (
 )
 
 const (
-	BLOG_DATA_ROOT_DIR = "/blog-data"
-	INITIAL_DATA_DIR   = "/initial-data"
+	blogDataRootDir = "/blog-data"
+	initialDataDir  = "/initial-data"
 )
 
 func installInitialData() {
 
-	filepath.Walk(INITIAL_DATA_DIR, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(initialDataDir, func(path string, info os.FileInfo, err error) error {
 
-		dst := strings.TrimPrefix(path, INITIAL_DATA_DIR)
-		dst = filepath.Join(BLOG_DATA_ROOT_DIR, dst)
+		dst := strings.TrimPrefix(path, initialDataDir)
+		dst = filepath.Join(blogDataRootDir, dst)
 
 		srcFileStat, statErr := os.Stat(path)
 		if statErr != nil {

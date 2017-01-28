@@ -1,24 +1,25 @@
 package main
 
 import (
-	"github.com/garyburd/redigo/redis"
-	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
+
+	"github.com/garyburd/redigo/redis"
+	"github.com/gin-gonic/contrib/static"
+	"github.com/gin-gonic/gin"
 )
 
 const (
-	SERVER_PORT string = ":80"
-	CONFIG_PATH string = "/blog-data/private/config.json"
+	serverPort = ":80"
+	configPath = "/blog-data/private/config.json"
 )
 
 var (
 	redisPool *redis.Pool
-	config    *Config = &Config{Lang: []string{"en"}, Title: []string{"Title"}, PostsPerPage: 10}
+	config    = &Config{Lang: []string{"en"}, Title: []string{"Title"}, PostsPerPage: 10}
 )
 
 func main() {
@@ -131,13 +132,13 @@ func main() {
 					"success": true,
 				})
 				return
-			} else {
-				c.JSON(http.StatusOK, gin.H{
-					"success": false,
-					"err":     err.Error(),
-				})
-				return
 			}
+
+			c.JSON(http.StatusOK, gin.H{
+				"success": false,
+				"err":     err.Error(),
+			})
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
@@ -151,7 +152,7 @@ func main() {
 		legacyProxy.ServeHTTP(c.Writer, c.Request)
 	})
 
-	router.Run(SERVER_PORT)
+	router.Run(serverPort)
 }
 
 // createLegacyProxy returns an http proxy to send

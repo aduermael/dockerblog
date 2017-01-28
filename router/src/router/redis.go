@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/garyburd/redigo/redis"
 	"time"
+
+	"github.com/garyburd/redigo/redis"
 )
 
 func newRedisPool(addr string) *redis.Pool {

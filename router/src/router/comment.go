@@ -5,15 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
 	"net/mail"
 	"net/url"
 	"regexp"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/garyburd/redigo/redis"
 )
 
+// Comment represents a Post comment
 type Comment struct {
 	Valid         bool   `json:"valid,omitempty"`
 	PostID        int    `json:"postID"`
@@ -33,7 +35,7 @@ type Comment struct {
 	NbAnswers int `json:"-"`
 	// traps for robots
 	EmailTrap string `json:"emailtrap,omitempty"`
-	UrlTrap   string `json:"urltrap,omitempty"`
+	URLTrap   string `json:"urltrap,omitempty"`
 }
 
 // Accept makes sure the comment can be stored
@@ -45,7 +47,7 @@ func (c *Comment) Accept() (robot bool, err error) {
 	// so if one of them is not empty, it means
 	// the comment hasn't been sent by a human being.
 	// Just return that everything is ok. :)
-	if c.EmailTrap != "" || c.UrlTrap != "" {
+	if c.EmailTrap != "" || c.URLTrap != "" {
 		return true, errors.New("author is a robot")
 	}
 
@@ -127,6 +129,7 @@ func (c *Comment) save() error {
 	return nil
 }
 
+// CommentsByDate extends Comment and can be ordered by date
 type CommentsByDate []Comment
 
 func (a CommentsByDate) Len() int           { return len(a) }

@@ -3,31 +3,37 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"github.com/garyburd/redigo/redis"
 	"html/template"
+
+	"github.com/garyburd/redigo/redis"
 )
 
 // PostBlock defines a content block in a post
 // It can be text, image, contact form...
 type PostBlock map[string]template.HTML
 
+// PostBlockType enumerates post block types
 type PostBlockType int
 
 const (
-	PostBlockType_None PostBlockType = iota
-	PostBlockType_Text
-	PostBlockType_Image
+	// PostBlockTypeNone means there's no specific type assigned
+	PostBlockTypeNone PostBlockType = iota
+	// PostBlockTypeText is used for a text block
+	PostBlockTypeText
+	// PostBlockTypeImage is used for an image block
+	PostBlockTypeImage
 )
 
+// GetType returns the post block's type
 func (pb *PostBlock) GetType() (PostBlockType, error) {
 	pbType := (*pb)["type"]
 	switch pbType {
 	case "text":
-		return PostBlockType_Text, nil
+		return PostBlockTypeText, nil
 	case "image":
-		return PostBlockType_Image, nil
+		return PostBlockTypeImage, nil
 	default:
-		return PostBlockType_None, errors.New("block type not supported")
+		return PostBlockTypeNone, errors.New("block type not supported")
 	}
 }
 

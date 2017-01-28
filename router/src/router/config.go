@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
+
+	"github.com/gin-gonic/gin"
 )
 
+// Config describes general blog configuration
 type Config struct {
 	Lang         []string `json:"lang"`
 	Title        []string `json:"title"`
@@ -16,7 +18,7 @@ type Config struct {
 // LoadAndWatchConfig loads configuration at CONFIG_PATH
 // and watches for changes to update config at given pointer
 func LoadAndWatchConfig(c *Config) error {
-	configBytes, err := ioutil.ReadFile(CONFIG_PATH)
+	configBytes, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		return err
 	}
@@ -36,10 +38,12 @@ func LoadAndWatchConfig(c *Config) error {
 	return nil
 }
 
+// AttachConfig attaches config to gin context
 func AttachConfig(c *gin.Context) {
 	c.Set("config", *config)
 }
 
+// GetConfigFromContext returns config for given context
 func GetConfigFromContext(c *gin.Context) (*Config, error) {
 	configInterface, exists := c.Get("config")
 	if !exists {
@@ -52,6 +56,8 @@ func GetConfigFromContext(c *gin.Context) (*Config, error) {
 	return &conf, nil
 }
 
+// GetTitle returns title to be displayed for
+// given context
 func GetTitle(c *gin.Context) string {
 	conf, err := GetConfigFromContext(c)
 	if err != nil {

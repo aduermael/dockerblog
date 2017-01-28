@@ -1,12 +1,16 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"golang.org/x/text/language"
 	"log"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/text/language"
 )
 
+// DefineLang uses gin context's attached configuration,
+// the Accept-Language header eventual cookie to
+// set the lang that should be used in that gin context.
 func DefineLang(c *gin.Context) {
 	tags, _ /*weights*/, err := language.ParseAcceptLanguage(c.Request.Header.Get("Accept-Language"))
 	if err != nil {
@@ -27,17 +31,15 @@ func DefineLang(c *gin.Context) {
 	}
 
 	// get most appropriate lang and its index in configuration
-	lang, langIndex := GetMostAppropriateLanguage(tags, &conf)
+	lang, langIndex := getMostAppropriateLanguage(tags, &conf)
 
 	c.Set("lang", lang)
 	c.Set("langIndex", langIndex)
 
-	// fmt.Println("lang:", lang, "(", langIndex, ")")
-
 	c.Next()
 }
 
-func GetMostAppropriateLanguage(langTags []language.Tag, conf *Config) (availableLang string, index int) {
+func getMostAppropriateLanguage(langTags []language.Tag, conf *Config) (availableLang string, index int) {
 
 	bestMatchWithoutVariant := -1
 
