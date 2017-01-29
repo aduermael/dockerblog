@@ -44,6 +44,24 @@ services:
     tty: true
 
 
+  blog-filesystem:
+    build: 
+      context: ./filesystem
+    container_name: blog-filesystem
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./filesystem/src:/go/src # DEV
+    command: ash # DEV
+
+  # to test
+  filesystem-client:
+    image: golang:1.7.5-alpine3.5
+    container_name: blog-filesystem-client
+    stdin_open: true
+    tty: true
+    command: ash
+
   blog-legacy:
     build:
       context: ./legacy
