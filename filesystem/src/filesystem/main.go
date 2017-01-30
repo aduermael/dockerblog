@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"strings"
 
 	"golang.org/x/crypto/ssh"
 )
@@ -20,6 +21,30 @@ var (
 		AuthLogCallback:             nil,
 	}
 )
+
+// SubsystemOperation defines the different
+// channel subsystems that can be used to
+// deal with different kinds of file system operations
+type SubsystemOperation string
+
+const (
+	// OpRead can be used to read a file
+	OpRead SubsystemOperation = "read"
+	// OpWrite can be used to write a file
+	OpWrite SubsystemOperation = "write"
+	// OpWatch can be used to watch a file (or folder)
+	OpWatch SubsystemOperation = "watch"
+	// OpNone
+	OpNone SubsystemOperation = ""
+	// TODO: handle eval operation to execute scripts
+	// OpEval                     = "eval"
+)
+
+// FSOperation defines file system operation
+type FSOperation struct {
+	Operation SubsystemOperation
+	Path      string
+}
 
 func main() {
 
@@ -81,19 +106,36 @@ func handleConnection(conn net.Conn) {
 			return
 		}
 
-		// only handle "fs" requests
+		opChan := make(chan *FSOperation, 1)
+
+		// only handle file operation requests.
+		// payload should be of this form:
+		// SubsystemOperation:/path/to/file
 		go func(in <-chan *ssh.Request) {
 			for req := range in {
 				buf := req.Payload[:4]
 				var l int32
 				_ = binary.Read(bytes.NewReader(buf), binary.BigEndian, &l)
 				payload := fmt.Sprintf("%s", req.Payload[4:4+l])
-				req.Reply(req.Type == "subsystem" && payload == "fs", nil)
+				parts := strings.SplitN(payload, ":", 2)
+				fsOperation := FSOperation{Operation: OpNone, Path: ""}
+				if len(parts) == 2 {
+					fsOperation.Operation = SubsystemOperation(parts[0])
+					fsOperation.Path = parts[1]
+				}
+				supported := (fsOperation.Operation == OpRead || fsOperation.Operation == OpWrite || fsOperation.Operation == OpWatch)
+				req.Reply(req.Type == "subsystem" && supported, nil)
+				opChan <- &fsOperation
 			}
+			close(opChan)
 		}(requests)
 
 		go func() {
 			defer channel.Close()
+			fsOperation := <-opChan
+			if fsOperation == nil {
+				return
+			}
 			data := make([]byte, 2048)
 			for {
 				n, err := channel.Read(data)
