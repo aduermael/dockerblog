@@ -1,5 +1,4 @@
-FROM redis:3.2.6-alpine
-MAINTAINER Adrien Duermael (adrien@duermael.com)
+FROM redis:3.2.9-alpine
 
 ADD redis.conf /redis/redis.conf
 
