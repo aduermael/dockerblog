@@ -22,7 +22,8 @@ services:
 
   blog-router:
     build:
-      context: ./router
+      context: .
+      dockerfile: router.Dockerfile
     container_name: blog-router
     ports:
       - "80:80"
@@ -32,9 +33,8 @@ services:
     #   - GIN_MODE=release # PROD
     volumes:
       - blog-data:/blog-data
-      - ./router/initial-data/static:/blog-data/static # DEV
-      - ./router/initial-data/templates:/blog-data/templates # DEV
-
+      - ./themes/laurel/templates:/blog-data/templates # DEV
+      - ./themes/laurel/static:/blog-data/static/theme # DEV
 
   blog-fbcomments:
     build: 
@@ -44,23 +44,23 @@ services:
     tty: true
 
 
-  blog-filesystem:
-    build: 
-      context: ./filesystem
-    container_name: blog-filesystem
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./filesystem/src:/go/src # DEV
-    command: ash # DEV
+  # blog-filesystem:
+  #   build: 
+  #     context: ./filesystem
+  #   container_name: blog-filesystem
+  #   stdin_open: true
+  #   tty: true
+  #   volumes:
+  #     - ./filesystem/src:/go/src # DEV
+  #   command: ash # DEV
 
-  # to test
-  filesystem-client:
-    image: golang:1.8.3-alpine3.5
-    container_name: blog-filesystem-client
-    stdin_open: true
-    tty: true
-    command: ash
+  # # to test
+  # filesystem-client:
+  #   build: 
+  #     context: ./filesystem/client
+  #   container_name: blog-filesystem-client
+  #   stdin_open: true
+  #   tty: true
 
   blog-legacy:
     build:

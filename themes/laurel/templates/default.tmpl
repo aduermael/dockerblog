@@ -1,0 +1,30 @@
+<!DOCTYPE html><!--
+ --><html lang="{{ .lang }}"><!--
+	 -->{{ template "head" . }}<!--
+	 --><body><!--
+		 -->{{ template "header" . }}<!--
+		 -->{{ template "menu" . }}<!--
+		 --><div id="content"><!--
+			 --><div id="posts"><!--
+				 -->{{ range .posts }}<!--
+					 --><div class="post"><!--
+						 --><h2><a href="/{{.Slug}}/{{.ID}}">{{ .Title }}</a></h2><!--
+						 -->{{ range .Blocks }}<!--
+							 -->{{ if eq .type "text" }}<!--
+									--><div class="block text"><p>{{ .text }}</p></div><!--
+							 -->{{ else if eq .type "image" }}<!--
+									--><div class="block image"><!--
+										-->{{ if ne .url "" }}<a href="{{.url}}">{{end}}<!--
+										--><img src="{{ .path }}" alt="{{.description}}"><!--
+										-->{{ if ne .url "" }}</a>{{end}}<!--
+									--></div><!--
+							 -->{{ end }}<!--
+						 -->{{ end }}<!--
+						 --><a href="/{{.Slug}}/{{.ID}}#comments">comments: {{ .NbComments }}</a><!--
+					 --></div><!--
+				 -->{{ end }}<!--
+			 --></div><!--
+		 --></div><!--
+		 -->{{ template "footer" . }}<!--
+	 --></body><!--
+ --></html>

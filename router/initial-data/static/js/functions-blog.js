@@ -180,17 +180,6 @@ function getGravatarHash(email) {
 	return md5
 }
 
-// backToOriginalBackground resets background in all fields
-function backToOriginalBackground(obj) {
-	$(obj).removeClass("error")
-}
-
-// setBackgroundColor sets background color for
-// given HTML element
-function setBackgroundColor(obj,color) {
-	obj.css("background-color", color)
-}
-
 // validateEmail tests wether given string in parameter
 // is a valid email or not.
 function validateEmail(email) {
