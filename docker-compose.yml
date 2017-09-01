@@ -33,8 +33,8 @@ services:
     #   - GIN_MODE=release # PROD
     volumes:
       - blog-data:/blog-data
-      - ./themes/laurel/templates:/blog-data/templates # DEV
-      - ./themes/laurel/static:/blog-data/static/theme # DEV
+      # - ./themes/laurel/templates:/blog-data/templates # DEV
+      # - ./themes/laurel/static:/blog-data/static/theme # DEV
 
   blog-fbcomments:
     build: 
