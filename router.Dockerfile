@@ -29,6 +29,7 @@ COPY router/initial-data /initial-data
 # COPY themes/default/static /initial-data/static/theme
 COPY themes/laurel/templates /initial-data/templates
 COPY themes/laurel/static /initial-data/static/theme
+COPY themes/laurel/config.json /initial-data/theme/config.json
 
 # -----------------------
 # Start router

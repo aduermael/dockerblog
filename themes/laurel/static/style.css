@@ -1,3 +1,11 @@
+.devBounds {
+	width: 800px;
+	border-left: 1px solid #f00;
+	border-right: 1px solid #f00;
+	height: 200px;
+	position: absolute;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -62,7 +70,7 @@ form input[type="button"]:hover {
 
 #header {
 	width: 100%;
-	padding: 2rem;
+	padding: 20px;
 	background-color: #eee;
 	text-align: center;
 }
@@ -70,16 +78,50 @@ form input[type="button"]:hover {
 #header h1 {
 	margin: 0;
 	padding: 0;
-	font-size: 3.0rem;
-	line-height: 3.0rem;
+	font-size: 30px;
+	line-height: 40px;
 }
 
 /* MENU */
 
-#menu ul { text-align: center; }
-#menu li { display: inline-block; }
-#menu li a { display: block; padding: 1rem; }
-#menu li a:hover { background-color: #ccc; }
+#menu > #area {
+	
+	max-width: 800px;
+	/*height: 40px;*/
+	margin-right: auto;
+	margin-left: auto;
+	line-height: 40px;
+}
+
+#menu > #area > img {
+	position:absolute;
+	top:10px;
+	left:10px;
+
+	width: 60px;
+	height: 60px;
+
+	border: 1px solid #999;
+	border-bottom-color: #555;
+}
+
+@media (min-width: 700px) {
+	#menu > #area {
+		position: relative;
+	}
+	#menu > #area > img { 
+		top: auto;
+		bottom:10px;
+		left:10px;
+		width: 100px;
+		height: 100px; 
+	}
+}
+
+#menu > #area ul { text-align: center; }
+#menu > #area li { display: inline-block; }
+#menu > #area li a { display: block; padding-left: 10px; padding-right: 10px;}
+#menu > #area li a:hover { background-color: #ccc; }
 
 /* CONTENT */
 
@@ -88,9 +130,9 @@ form input[type="button"]:hover {
 	padding: 0;
 }
 
-@media (min-width: 600px) {
+/*@media (min-width: 600px) {
     #content { padding: 2rem; }
-}
+}*/
 
 /* CONTENT - POSTS */
 
@@ -232,6 +274,8 @@ form input[type="button"]:hover {
 	background-color: #ddd;
 	text-align: center;
 	color: #777;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 #footer #sections {
@@ -239,13 +283,25 @@ form input[type="button"]:hover {
 	margin-bottom: 2rem;
 }
 
-#footer #sections .group { width: 100%; float: left; }
+#footer #sections .group {
+	width: 50%;
+	float: left; 
+}
+
+#footer #sections .group .itemWrapper {
+	width: 100%;
+	padding-top: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	float:left;
+}
+
 
 #footer #sections .group .item {
-	width: 50%;
+	padding: 10px;
 	text-align: center;
-	padding: 2rem;
-	float:left;
+	border: 1px solid #999;
+	border-bottom-color: #555;
 }
 
 #footer #sections .group .item ul { list-style: none; }
@@ -271,26 +327,9 @@ form input[type="button"]:hover {
 	padding: 0.5rem;
 }
 
-#footer #sections .separator {
-	position: absolute; top: 0; bottom: 0;
-	border-left: dashed 1px #aaa;
-}
 
-#footer #sections .separator-1 { left: 0; display: none; }
-#footer #sections .separator-2 { left: 25%; display: none; }
-#footer #sections .separator-3 { left: 50%; }
-#footer #sections .separator-4 { left: 75%; display: none; }
-#footer #sections .separator-5 { left: 100%; display: none; }
-
-@media (min-width: 600px) {
-    #footer #sections .group { width: 50%; }
-	#footer #sections .separator-2 { left: 25%; display: block; }
-	#footer #sections .separator-4 { left: 75%; display: block; }	
-}
-
-@media (min-width: 800px) {
-	#footer #sections .separator-1 { left: 0; display: block; }
-	#footer #sections .separator-5 { left: 100%; display: block; }
+@media (min-width: 700px) {
+	#footer #sections .group .itemWrapper { width: 50%; }
 }
 
 /* UTILS */

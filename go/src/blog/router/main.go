@@ -16,7 +16,7 @@ import (
 
 const (
 	serverPort = ":80"
-	configPath = "/blog-data/private/config.json"
+	configPath = "/blog-data/theme/config.json"
 )
 
 var (
