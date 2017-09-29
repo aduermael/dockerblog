@@ -102,7 +102,9 @@ form input[type="button"]:hover {
 	height: 60px;
 
 	border: 1px solid #999;
-	border-bottom-color: #555;
+	border-radius: 5px;
+	padding: 3px;
+	background-color: #fff;
 }
 
 @media (min-width: 700px) {
@@ -301,7 +303,7 @@ form input[type="button"]:hover {
 	padding: 10px;
 	text-align: center;
 	border: 1px solid #999;
-	border-bottom-color: #555;
+	border-radius: 5px;
 }
 
 #footer #sections .group .item ul { list-style: none; }
