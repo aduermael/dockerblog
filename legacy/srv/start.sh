@@ -2,8 +2,8 @@
 
 /usr/bin/redis-server /etc/redis/redis.conf
 
-# copy initial data not replacing files in /blog-data
-cp -R -u -p /data/* /blog-data/
+# # copy initial data not replacing files in /blog-data
+# cp -R -u -p /data/* /blog-data/
 
 forever start -o /logs.txt -e /logs.txt cluster.js
 

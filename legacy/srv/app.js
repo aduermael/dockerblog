@@ -1,7 +1,7 @@
 
-GLOBAL.views_dir_path = "/blog-data/private/views";
-GLOBAL.public_dir_path = "/blog-data/public";
-GLOBAL.private_dir_path = "/blog-data/private";
+GLOBAL.views_dir_path = "/data/private/views";
+GLOBAL.public_dir_path = "/data/public";
+GLOBAL.private_dir_path = "/data/private";
 GLOBAL.uploads_dir = "uploads"; // in public directory
 
 // import GLOBAL modules

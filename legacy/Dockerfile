@@ -47,8 +47,7 @@ EXPOSE 80
 
 ADD srv /srv
 
-# initial data, files will be copied to /blog-data
-# only they can't be found
+# this data won't be copied to /blog-data, only kept within container
 ADD data /data
 
 # -----------------------
