@@ -142,15 +142,16 @@ form input[type="button"]:hover {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 #content #posts .post{
-	padding: 2rem;
-	box-shadow: 0px 1px 3px #ccc;
-	margin-bottom: 2rem;
+	padding: 10px;
+	margin-bottom: 10px;
 }
 
-#content #posts .post:last-child { margin-bottom: 0; }
+#content #posts .post:last-child { margin-bottom: 0px; }
 
 /* CONTENT - POSTS - COMMENT FORM */
 
@@ -302,7 +303,8 @@ form input[type="button"]:hover {
 #footer #sections .group .item {
 	padding: 10px;
 	text-align: center;
-	border: 1px solid #999;
+	/*border: 1px solid #999;*/
+	background-color: #eee;
 	border-radius: 5px;
 }
 
@@ -327,6 +329,8 @@ form input[type="button"]:hover {
 	max-width: 150px;
 	margin-bottom: 0.5rem;
 	padding: 0.5rem;
+	border-radius: 5px;
+	border: none;
 }
 
 
