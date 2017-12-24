@@ -21,6 +21,27 @@ Username: `admin`
 
 Password: `admin`
 
-### SSH FileSystem
+### Routes
 
-The blog uses a custom file system accessible over ssh. Each FS operation is handled in a dedicated channel (read, write, watch, eval (TODO)).
+- `/`: default template (`default.tmpl`)
+- `/files`: uploaded files
+- `/theme`: files from selected theme (`theme/SELECTED/files`)
+- `/admin`: admin routes
+	- `/admin/theme`: files from admin theme (not customizable)
+- `/post/SLUG/ID`: post
+	- 	`/post/SLUG` redirects to `/post/SLUG/ID`
+	-  `/post/ID` redirects to `/post/SLUG/ID`
+	-  `/SLUG` & `/ID` redirect to `/post/SLUG/ID` when possible (try before showing 404)
+
+Custom routes and redirects can be set in the config:
+
+```json
+{
+	"routes": [
+		{"redirect": "/foo/bar", "to": "/post/test/1"},
+		{"route": "/faq", "post": 1234},
+		{"route": "/boutique", "template": "boutique"},
+		{"route": "/special-event", "template": "event", "post": 1234},
+	]
+}
+```
