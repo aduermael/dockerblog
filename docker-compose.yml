@@ -10,7 +10,6 @@ services:
     volumes:
       - blog-data:/blog-data
 
-
   redis-cli:
     image: redis:3.2.9-alpine
     container_name: blog-redis-cli
@@ -18,7 +17,6 @@ services:
     tty: true
     # attach then `redis-cli -h blog-db`
     command: ash
-
 
   blog-router:
     build:
@@ -29,12 +27,15 @@ services:
       - "80:80"
     stdin_open: true
     tty: true
-    # environment: # PROD
-    #   - GIN_MODE=release # PROD
+    environment: # PROD
+      - GIN_MODE=release # PROD
     volumes:
       - blog-data:/blog-data
+      # when using these lines, installInitialData should be commented
+      # in router/main.go
       # - ./themes/laurel/templates:/blog-data/templates # DEV
       # - ./themes/laurel/static:/blog-data/static/theme # DEV
+      # - ./themes/laurel/config.json:/blog-data/theme/config.json # DEV
 
   blog-fbcomments:
     build: 
@@ -42,25 +43,6 @@ services:
     container_name: blog-fbcomments
     stdin_open: true
     tty: true
-
-
-  # blog-filesystem:
-  #   build: 
-  #     context: ./filesystem
-  #   container_name: blog-filesystem
-  #   stdin_open: true
-  #   tty: true
-  #   volumes:
-  #     - ./filesystem/src:/go/src # DEV
-  #   command: ash # DEV
-
-  # # to test
-  # filesystem-client:
-  #   build: 
-  #     context: ./filesystem/client
-  #   container_name: blog-filesystem-client
-  #   stdin_open: true
-  #   tty: true
 
   blog-legacy:
     build:
@@ -70,7 +52,6 @@ services:
     tty: true
     volumes:
       - blog-data:/blog-data
-
 
 volumes:
   blog-data:
