@@ -61,6 +61,7 @@ func main() {
 	jsPath := filepath.Join(blogDataRootDir, "js")
 
 	router.LoadHTMLGlob(filepath.Join(themePath, "templates", "*"))
+	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
 	router.Use(static.ServeRoot("/files/", filepath.Join(themePath, "files")))
 	router.Use(static.ServeRoot("/js/", jsPath))
 
