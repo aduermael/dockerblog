@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"path/filepath"
 	"regexp"
 
 	"github.com/garyburd/redigo/redis"
@@ -15,19 +16,23 @@ import (
 )
 
 const (
-	serverPort = ":80"
-	configPath = "/blog-data/theme/config.json"
+	serverPort      = ":80"
+	configPath      = "/blog-data/config.json"
+	blogDataRootDir = "/blog-data"
+	initialDataDir  = "/initial-data"
 )
 
 var (
 	redisPool *redis.Pool
-	config    = &Config{Lang: []string{"en"}, Title: []string{"Title"}, PostsPerPage: 10}
+	config    *Config
 )
 
 func main() {
-	installInitialData([]string{"/templates", "/static/theme"})
+	var err error
 
-	err := LoadAndWatchConfig(config)
+	installInitialData([]string{"/themes/default", "/js"})
+
+	config, err = LoadConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,7 +42,6 @@ func main() {
 	// TODO: flush redis scripts
 
 	legacyProxy := createLegacyProxy()
-	// themeProxy := createThemeProxy()
 
 	router := gin.Default()
 	adminPathRegexp := regexp.MustCompile("^/admin/")
@@ -53,11 +57,12 @@ func main() {
 		c.Next()
 	})
 
-	router.LoadHTMLGlob("/blog-data/templates/*")
-	router.Use(static.ServeRoot("/", "/blog-data/static"))
+	themePath := filepath.Join(blogDataRootDir, "themes", config.Theme)
+	jsPath := filepath.Join(blogDataRootDir, "js")
 
-	// legacy
-	// router.Use(static.ServeRoot("/", "/blog-data/public"))
+	router.LoadHTMLGlob(filepath.Join(themePath, "templates", "*"))
+	router.Use(static.ServeRoot("/files/", filepath.Join(themePath, "files")))
+	router.Use(static.ServeRoot("/js/", jsPath))
 
 	router.Use(AttachConfig)
 	router.Use(DefineLang)
@@ -176,16 +181,6 @@ func main() {
 // requests to the legacy Node.js server
 func createLegacyProxy() *httputil.ReverseProxy {
 	u, err := url.Parse("http://blog-legacy")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return httputil.NewSingleHostReverseProxy(u)
-}
-
-// createThemeProxy returns an http proxy to send
-// requests to the container that serves the theme.
-func createThemeProxy() *httputil.ReverseProxy {
-	u, err := url.Parse("http://blog-theme")
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -21,15 +21,10 @@ EXPOSE 80
 # -----------------------
 
 # initial data, files will be copied to /blog-data
-# only if they can't be found
-# (except for the theme & templates)
+# (only if they can't be found)
 COPY router/initial-data /initial-data
-
-# COPY themes/default/templates /initial-data/templates
-# COPY themes/default/static /initial-data/static/theme
-COPY themes/laurel/templates /initial-data/templates
-COPY themes/laurel/static /initial-data/static/theme
-COPY themes/laurel/config.json /initial-data/theme/config.json
+COPY sample/config.json /initial-data/config.json
+COPY sample/themes/default /initial-data/themes/default
 
 # -----------------------
 # Start router

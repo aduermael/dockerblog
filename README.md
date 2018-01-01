@@ -24,7 +24,8 @@ Password: `admin`
 ### Routes
 
 - `/`: default template (`default.tmpl`)
-- `/files`: uploaded files
+- `/js`: global js functions
+- `/files`: uploaded files (static)
 - `/theme`: files from selected theme (`theme/SELECTED/files`)
 - `/admin`: admin routes
 	- `/admin/theme`: files from admin theme (not customizable)
@@ -32,6 +33,7 @@ Password: `admin`
 	- 	`/post/SLUG` redirects to `/post/SLUG/ID`
 	-  `/post/ID` redirects to `/post/SLUG/ID`
 	-  `/SLUG` & `/ID` redirect to `/post/SLUG/ID` when possible (try before showing 404)
+-   `/user` user routes
 
 Custom routes and redirects can be set in the config:
 

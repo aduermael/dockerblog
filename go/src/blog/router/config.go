@@ -13,19 +13,22 @@ type Config struct {
 	Lang         []string `json:"lang"`
 	Title        []string `json:"title"`
 	PostsPerPage int      `json:"postsPerPage"`
+	Theme        string   `json:"theme"`
 }
 
-// LoadAndWatchConfig loads configuration at CONFIG_PATH
-// and watches for changes to update config at given pointer
-func LoadAndWatchConfig(c *Config) error {
+// LoadConfig loads configuration at configPath
+func LoadConfig() (*Config, error) {
+
+	config := &Config{}
+
 	configBytes, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = json.Unmarshal(configBytes, c)
+	err = json.Unmarshal(configBytes, config)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// TODO: make sure config file is correct
@@ -33,9 +36,7 @@ func LoadAndWatchConfig(c *Config) error {
 	// and fields are in expected format
 	// we can also use default values
 
-	// TODO: watch for changes
-
-	return nil
+	return config, nil
 }
 
 // AttachConfig attaches config to gin context

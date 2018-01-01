@@ -27,15 +27,14 @@ services:
       - "80:80"
     stdin_open: true
     tty: true
-    environment: # PROD
-      - GIN_MODE=release # PROD
+    # environment: # PROD
+    #   - GIN_MODE=release # PROD
     volumes:
       - blog-data:/blog-data
-      # when using these lines, installInitialData should be commented
-      # in router/main.go
-      # - ./themes/laurel/templates:/blog-data/templates # DEV
-      # - ./themes/laurel/static:/blog-data/static/theme # DEV
-      # - ./themes/laurel/config.json:/blog-data/theme/config.json # DEV
+      - ./sample/themes:/blog-data/themes # DEV
+      - ./sample/config.json:/blog-data/config.json # DEV
+      - ./go/src:/go/src # DEV
+    command: ash # DEV
 
   blog-fbcomments:
     build: 

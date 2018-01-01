@@ -9,11 +9,6 @@ import (
 	"strings"
 )
 
-const (
-	blogDataRootDir = "/blog-data"
-	initialDataDir  = "/initial-data"
-)
-
 // override: prefixes of paths to be overridden
 func installInitialData(overrides []string) {
 
@@ -27,14 +22,12 @@ func installInitialData(overrides []string) {
 		}
 	}
 
-	fmt.Println("installInitialData Walk:")
+	fmt.Println("install initial data:")
 
 	filepath.Walk(initialDataDir, func(path string, info os.FileInfo, err error) error {
 
 		dst := strings.TrimPrefix(path, initialDataDir)
 		dst = filepath.Join(blogDataRootDir, dst)
-
-		fmt.Println(dst)
 
 		srcFileStat, statErr := os.Stat(path)
 		if statErr != nil {
@@ -54,7 +47,7 @@ func installInitialData(overrides []string) {
 		// no file at destination already
 		_, statErr = os.Stat(dst)
 		if statErr == nil || os.IsNotExist(statErr) == false {
-			fmt.Println("file exists at destination")
+			fmt.Println("already exists:", dst)
 			return nil
 		}
 
@@ -79,6 +72,8 @@ func installInitialData(overrides []string) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		fmt.Println(path, "->", dst)
 
 		return nil
 	})
