@@ -3,6 +3,7 @@ package main
 import (
 	"blog/util"
 	"log"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"path/filepath"
@@ -49,6 +50,8 @@ func main() {
 	adminJsPath := filepath.Join(blogDataRootDir, "admin", "js")
 
 	router.LoadHTMLGlob(filepath.Join(themePath, "templates", "*"))
+	router.LoadHTMLGlob(filepath.Join(adminThemePath, "templates", "*"))
+
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
 	router.Use(static.ServeRoot("/files/", filepath.Join(themePath, "files")))
 	router.Use(static.ServeRoot("/js/", jsPath))
@@ -60,20 +63,18 @@ func main() {
 
 	adminGroup := router.Group("/admin")
 	{
-		adminGroup.Use(func(c *gin.Context) {
-			log.Println("TEST")
-			c.Abort()
-			c.JSON(200, gin.H{"foo": "bar"})
-		})
+		// adminGroup.Use(func(c *gin.Context) {
+		// 	log.Println("TEST")
+		// 	c.Abort()
+		// 	c.JSON(200, gin.H{"foo": "bar"})
+		// })
 
-		router.LoadHTMLGlob(filepath.Join(adminThemePath, "templates", "*"))
 		adminGroup.Use(static.ServeRoot("/theme/", filepath.Join(adminThemePath, "files")))
 		adminGroup.Use(static.ServeRoot("/js/", adminJsPath))
 
-		adminGroup.Any("/:test", func(c *gin.Context) {
-			c.JSON(200, gin.H{"foo": "bar"})
+		adminGroup.GET("/", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "admin.tmpl", gin.H{})
 		})
-
 	}
 
 	// // ---------------
