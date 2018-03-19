@@ -110,7 +110,13 @@ var (
 
 		local post_id = "post_" .. ARGV[1]
 
-		local post_data = toStruct(redis.call('hgetall', post_id))
+		local res = redis.call('hgetall', post_id)
+		-- check if not found
+		if res[1] == nil then
+			error("can't find post for id")
+		end
+
+		local post_data = toStruct(res)
 		-- blocks are stored in raw json format
 		post_data.blocks = cjson.decode(post_data.blocks)
 
