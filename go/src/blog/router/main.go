@@ -1,12 +1,15 @@
 package main
 
 import (
+	"blog/types"
 	"blog/util"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/contrib/static"
@@ -49,8 +52,29 @@ func main() {
 	adminThemePath := filepath.Join(blogDataRootDir, "admin", "theme")
 	adminJsPath := filepath.Join(blogDataRootDir, "admin", "js")
 
-	router.LoadHTMLGlob(filepath.Join(themePath, "templates", "*"))
-	router.LoadHTMLGlob(filepath.Join(adminThemePath, "templates", "*"))
+	templates := []string{}
+
+	// current theme's templates
+	filepath.Walk(filepath.Join(themePath, "templates"),
+		func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" {
+				templates = append(templates, path)
+				log.Println(path)
+			}
+			return nil
+		})
+
+	// admin theme's templates
+	filepath.Walk(filepath.Join(adminThemePath, "templates"),
+		func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" {
+				templates = append(templates, path)
+				log.Println(path)
+			}
+			return nil
+		})
+
+	router.LoadHTMLFiles(templates...)
 
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
 	router.Use(static.ServeRoot("/files/", filepath.Join(themePath, "files")))
@@ -73,72 +97,68 @@ func main() {
 		adminGroup.Use(static.ServeRoot("/js/", adminJsPath))
 
 		adminGroup.GET("/", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "admin.tmpl", gin.H{})
+
+			c.HTML(http.StatusOK, "admin.tmpl", gin.H{
+				"lang": getLangForContext(c),
+			})
 		})
 	}
 
-	// // ---------------
-	// // ADMIN
-	// // ---------------
+	// POSTS
 
-	// adminPathRegexp := regexp.MustCompile("^/admin/")
+	postGroup := router.Group("/post")
+	{
+		postGroup.GET("/:slug/:id", func(c *gin.Context) {
 
-	// router.Use(func(c *gin.Context) {
-	// 	if c.Request.URL.Path == "/admin" || adminPathRegexp.MatchString(c.Request.URL.Path) {
-	// 		c.Abort()
-	// 		c.JSON(200, gin.H{"foo": "bar"})
-	// 		return
-	// 	}
-	// })
+			ID := c.Param("id")
+			validID, err := regexp.MatchString("[0-9]+", ID)
+			if err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+
+			if validID {
+				post, err := types.PostGet(ID)
+				if err != nil {
+					c.AbortWithError(http.StatusInternalServerError, err)
+					return
+				}
+
+				// TODO: it should be possible to set that in admin
+				// but currently for all posts, both ShowComments
+				// and AcceptComments are true
+				post.ShowComments = true
+				post.AcceptComments = true
+
+				c.HTML(http.StatusOK, "post.tmpl", gin.H{
+					"title": GetTitle(c),
+					"post":  post,
+				})
+				return
+			}
+
+		})
+	}
+
+	router.GET("/", func(c *gin.Context) {
+		posts, err := types.PostsList()
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		c.HTML(http.StatusOK, "default.tmpl", gin.H{
+			"title": GetTitle(c),
+			"posts": posts,
+		})
+	})
 
 	// // ---------------
 	// // PUBLIC
 	// // ---------------
 
-	// router.GET("/:page/:param", func(c *gin.Context) {
-	// 	param := c.Param("param")
-	// 	paramIsID, err := regexp.MatchString("[0-9]+", param)
-	// 	if err != nil {
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 		return
-	// 	}
-
-	// 	// if param is an ID, it means we want to display a post
-	// 	// (and page is just a slugged title)
-	// 	if paramIsID {
-	// 		post, err := types.PostGet(param)
-	// 		if err != nil {
-	// 			c.AbortWithError(http.StatusInternalServerError, err)
-	// 			return
-	// 		}
-
-	// 		// TODO: it should be possible to set that in admin
-	// 		// but currently for all posts, both ShowComments
-	// 		// and AcceptComments are false
-	// 		post.ShowComments = true
-	// 		post.AcceptComments = true
-
-	// 		c.HTML(http.StatusOK, "post.tmpl", gin.H{
-	// 			"title": GetTitle(c),
-	// 			"post":  post,
-	// 		})
-	// 		return
-	// 	}
-
-	// 	// use Node.js legacy for other requests (like /admin routes)
-	// 	// TODO: Go implementation
-	// 	legacyProxy.ServeHTTP(c.Writer, c.Request)
-	// })
-
 	// router.GET("/:page", func(c *gin.Context) {
 	// 	page := c.Param("page")
 	// 	log.Println("GET PAGE:", page)
-
-	// 	// use Node.js legacy
-	// 	if page == "admin" {
-	// 		legacyProxy.ServeHTTP(c.Writer, c.Request)
-	// 		return
-	// 	}
 
 	// 	post, err := types.PostGetWithSlug(page)
 	// 	if err != nil {
@@ -149,18 +169,6 @@ func main() {
 	// 	c.HTML(http.StatusOK, "post.tmpl", gin.H{
 	// 		"title": GetTitle(c),
 	// 		"post":  post,
-	// 	})
-	// })
-
-	// router.GET("/", func(c *gin.Context) {
-	// 	posts, err := types.PostsList()
-	// 	if err != nil {
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 		return
-	// 	}
-	// 	c.HTML(http.StatusOK, "default.tmpl", gin.H{
-	// 		"title": GetTitle(c),
-	// 		"posts": posts,
 	// 	})
 	// })
 
