@@ -1,14 +1,11 @@
 package main
 
 import (
-	"blog/types"
 	"blog/util"
 	"log"
-	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"path/filepath"
-	"regexp"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/contrib/static"
@@ -30,7 +27,7 @@ var (
 func main() {
 	var err error
 
-	installInitialData([]string{"/themes/default", "/js"})
+	installInitialData([]string{"/themes/default", "/js", "/admin"})
 
 	config, err = LoadConfig()
 	if err != nil {
@@ -41,24 +38,15 @@ func main() {
 
 	// TODO: flush redis scripts
 
-	legacyProxy := createLegacyProxy()
+	// legacyProxy := createLegacyProxy()
 
 	router := gin.Default()
-	adminPathRegexp := regexp.MustCompile("^/admin/")
-
-	// proxy /admin path to legacy container
-	router.Use(func(c *gin.Context) {
-		log.Println("-- proxy? path:", c.Request.URL.Path)
-		if c.Request.URL.Path == "/admin" || adminPathRegexp.MatchString(c.Request.URL.Path) {
-			legacyProxy.ServeHTTP(c.Writer, c.Request)
-			c.Done()
-			return
-		}
-		c.Next()
-	})
 
 	themePath := filepath.Join(blogDataRootDir, "themes", config.Theme)
 	jsPath := filepath.Join(blogDataRootDir, "js")
+
+	adminThemePath := filepath.Join(blogDataRootDir, "admin", "theme")
+	adminJsPath := filepath.Join(blogDataRootDir, "admin", "js")
 
 	router.LoadHTMLGlob(filepath.Join(themePath, "templates", "*"))
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
@@ -68,112 +56,151 @@ func main() {
 	router.Use(AttachConfig)
 	router.Use(DefineLang)
 
-	router.GET("/:page/:param", func(c *gin.Context) {
-		param := c.Param("param")
-		paramIsID, err := regexp.MatchString("[0-9]+", param)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
+	// ADMIN
 
-		// if param is an ID, it means we want to display a post
-		// (and page is just a slugged title)
-		if paramIsID {
-			post, err := types.PostGet(param)
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-
-			// TODO: it should be possible to set that in admin
-			// but currently for all posts, both ShowComments
-			// and AcceptComments are false
-			post.ShowComments = true
-			post.AcceptComments = true
-
-			c.HTML(http.StatusOK, "post.tmpl", gin.H{
-				"title": GetTitle(c),
-				"post":  post,
-			})
-			return
-		}
-
-		// use Node.js legacy for other requests (like /admin routes)
-		// TODO: Go implementation
-		legacyProxy.ServeHTTP(c.Writer, c.Request)
-	})
-
-	router.GET("/:page", func(c *gin.Context) {
-		page := c.Param("page")
-
-		// use Node.js legacy
-		if page == "admin" {
-			legacyProxy.ServeHTTP(c.Writer, c.Request)
-			return
-		}
-
-		post, err := types.PostGetWithSlug(page)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
-		c.HTML(http.StatusOK, "post.tmpl", gin.H{
-			"title": GetTitle(c),
-			"post":  post,
+	adminGroup := router.Group("/admin")
+	{
+		adminGroup.Use(func(c *gin.Context) {
+			log.Println("TEST")
+			c.Abort()
+			c.JSON(200, gin.H{"foo": "bar"})
 		})
-	})
 
-	router.GET("/", func(c *gin.Context) {
-		posts, err := types.PostsList()
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title": GetTitle(c),
-			"posts": posts,
+		router.LoadHTMLGlob(filepath.Join(adminThemePath, "templates", "*"))
+		adminGroup.Use(static.ServeRoot("/theme/", filepath.Join(adminThemePath, "files")))
+		adminGroup.Use(static.ServeRoot("/js/", adminJsPath))
+
+		adminGroup.Any("/:test", func(c *gin.Context) {
+			c.JSON(200, gin.H{"foo": "bar"})
 		})
-	})
 
-	// receiving comment
-	router.POST("/comment", func(c *gin.Context) {
-		var comment types.Comment
-		err := c.BindJSON(&comment)
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"success": false,
-				"err":     err.Error(),
-			})
-			return
-		}
+	}
 
-		robot, err := comment.Accept()
-		if err != nil {
-			if robot {
-				c.JSON(http.StatusOK, gin.H{
-					"success": true,
-				})
-				return
-			}
+	// // ---------------
+	// // ADMIN
+	// // ---------------
 
-			c.JSON(http.StatusOK, gin.H{
-				"success": false,
-				"err":     err.Error(),
-			})
-			return
-		}
+	// adminPathRegexp := regexp.MustCompile("^/admin/")
 
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-		})
-		return
-	})
+	// router.Use(func(c *gin.Context) {
+	// 	if c.Request.URL.Path == "/admin" || adminPathRegexp.MatchString(c.Request.URL.Path) {
+	// 		c.Abort()
+	// 		c.JSON(200, gin.H{"foo": "bar"})
+	// 		return
+	// 	}
+	// })
 
-	router.Use(func(c *gin.Context) {
-		legacyProxy.ServeHTTP(c.Writer, c.Request)
-		c.Done()
-	})
+	// // ---------------
+	// // PUBLIC
+	// // ---------------
+
+	// router.GET("/:page/:param", func(c *gin.Context) {
+	// 	param := c.Param("param")
+	// 	paramIsID, err := regexp.MatchString("[0-9]+", param)
+	// 	if err != nil {
+	// 		c.AbortWithError(http.StatusInternalServerError, err)
+	// 		return
+	// 	}
+
+	// 	// if param is an ID, it means we want to display a post
+	// 	// (and page is just a slugged title)
+	// 	if paramIsID {
+	// 		post, err := types.PostGet(param)
+	// 		if err != nil {
+	// 			c.AbortWithError(http.StatusInternalServerError, err)
+	// 			return
+	// 		}
+
+	// 		// TODO: it should be possible to set that in admin
+	// 		// but currently for all posts, both ShowComments
+	// 		// and AcceptComments are false
+	// 		post.ShowComments = true
+	// 		post.AcceptComments = true
+
+	// 		c.HTML(http.StatusOK, "post.tmpl", gin.H{
+	// 			"title": GetTitle(c),
+	// 			"post":  post,
+	// 		})
+	// 		return
+	// 	}
+
+	// 	// use Node.js legacy for other requests (like /admin routes)
+	// 	// TODO: Go implementation
+	// 	legacyProxy.ServeHTTP(c.Writer, c.Request)
+	// })
+
+	// router.GET("/:page", func(c *gin.Context) {
+	// 	page := c.Param("page")
+	// 	log.Println("GET PAGE:", page)
+
+	// 	// use Node.js legacy
+	// 	if page == "admin" {
+	// 		legacyProxy.ServeHTTP(c.Writer, c.Request)
+	// 		return
+	// 	}
+
+	// 	post, err := types.PostGetWithSlug(page)
+	// 	if err != nil {
+	// 		c.AbortWithError(http.StatusInternalServerError, err)
+	// 		return
+	// 	}
+
+	// 	c.HTML(http.StatusOK, "post.tmpl", gin.H{
+	// 		"title": GetTitle(c),
+	// 		"post":  post,
+	// 	})
+	// })
+
+	// router.GET("/", func(c *gin.Context) {
+	// 	posts, err := types.PostsList()
+	// 	if err != nil {
+	// 		c.AbortWithError(http.StatusInternalServerError, err)
+	// 		return
+	// 	}
+	// 	c.HTML(http.StatusOK, "default.tmpl", gin.H{
+	// 		"title": GetTitle(c),
+	// 		"posts": posts,
+	// 	})
+	// })
+
+	// // receiving comment
+	// router.POST("/comment", func(c *gin.Context) {
+	// 	var comment types.Comment
+	// 	err := c.BindJSON(&comment)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusOK, gin.H{
+	// 			"success": false,
+	// 			"err":     err.Error(),
+	// 		})
+	// 		return
+	// 	}
+
+	// 	robot, err := comment.Accept()
+	// 	if err != nil {
+	// 		if robot {
+	// 			c.JSON(http.StatusOK, gin.H{
+	// 				"success": true,
+	// 			})
+	// 			return
+	// 		}
+
+	// 		c.JSON(http.StatusOK, gin.H{
+	// 			"success": false,
+	// 			"err":     err.Error(),
+	// 		})
+	// 		return
+	// 	}
+
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"success": true,
+	// 	})
+	// 	return
+	// })
+
+	// router.Use(func(c *gin.Context) {
+	// 	legacyProxy.ServeHTTP(c.Writer, c.Request)
+	// 	c.Done()
+	// })
 
 	router.Run(serverPort)
 }
