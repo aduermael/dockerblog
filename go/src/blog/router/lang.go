@@ -39,6 +39,22 @@ func DefineLang(c *gin.Context) {
 	c.Next()
 }
 
+func getLangForContext(c *gin.Context) string {
+	lang, exists := c.Get("lang")
+	if !exists {
+		return ""
+	}
+	return lang.(string)
+}
+
+func getLangIndexForContext(c *gin.Context) int {
+	langIndex, exists := c.Get("langIndex")
+	if !exists {
+		return -1
+	}
+	return langIndex.(int)
+}
+
 func getMostAppropriateLanguage(langTags []language.Tag, conf *Config) (availableLang string, index int) {
 
 	bestMatchWithoutVariant := -1
