@@ -10,18 +10,6 @@ html {
 	height: 100%;
 }
 
-/*.devBounds {
-	width: 800px;
-	border-left: 1px solid #f00;
-	border-right: 1px solid #f00;
-	height: 200px;
-	position: absolute;
-}
-
-
-
-
-
 body {
 	font-size: 1.5em;
 	line-height: 1.5em;
@@ -49,7 +37,86 @@ a:hover {
 	text-decoration: underline;
 }
 
-/* FORMS */
+#menu ul {
+	text-align: center;
+}
+
+#menu ul li {
+	display: inline-block;
+}
+
+#menu ul li a {
+	display: block;
+	padding: 10px;
+}
+
+#menu ul li a:hover {
+	background-color: #ccc;
+}
+
+#content {
+	max-width: 800px;
+	padding: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #fff;
+}
+
+#content input {
+	width: 100%;
+	font-size: 1.3rem;
+	border: none;
+	padding: 10px;
+	background-color: #f2f2f2;
+
+}
+
+#content input.title {
+	font-size: 2.0rem;
+}
+
+#content input:focus { 
+	outline: none; 
+	background-color: #999;
+	color: #fff;
+}
+
+#content > div {
+	margin-top: 10px;
+}
+
+#addBlockButtons a,span {
+	margin: 5px;
+}
+
+#content #submit {
+	margin-top: 20px;
+	text-align: center;
+}
+
+#content #submit a {
+	display: inline-block;
+	padding: 10px;
+	background-color: #7DCB35;
+	color: #fff;
+}
+
+#content #submit a:hover {
+	text-decoration: none;
+	background-color: #A3E65C
+}
+
+
+
+
+/*.devBounds {
+	width: 800px;
+	border-left: 1px solid #f00;
+	border-right: 1px solid #f00;
+	height: 200px;
+	position: absolute;
+}
+
 
 form input {
 	width: 100%;
@@ -71,7 +138,7 @@ form input[type="button"]:hover {
 	background-color: #bbb;
 }
 
-/* HEADER */
+// HEADER
 
 #header {
 	width: 100%;
@@ -87,12 +154,10 @@ form input[type="button"]:hover {
 	line-height: 40px;
 }
 
-/* MENU */
+// MENU
 
 #menu > #area {
-	
 	max-width: 800px;
-	/*height: 40px;*/
 	margin-right: auto;
 	margin-left: auto;
 	line-height: 40px;
@@ -130,18 +195,15 @@ form input[type="button"]:hover {
 #menu > #area li a { display: block; padding-left: 10px; padding-right: 10px;}
 #menu > #area li a:hover { background-color: #ccc; }
 
-/* CONTENT */
+// CONTENT
 
 #content {
 	background-color: #fff;
 	padding: 0;
 }
 
-/*@media (min-width: 600px) {
-    #content { padding: 2rem; }
-}*/
 
-/* CONTENT - POSTS */
+// CONTENT - POSTS
 
 #content #posts{
 	max-width: 800px;
@@ -158,7 +220,7 @@ form input[type="button"]:hover {
 
 #content #posts .post:last-child { margin-bottom: 0px; }
 
-/* CONTENT - POSTS - COMMENT FORM */
+// CONTENT - POSTS - COMMENT FORM
 
 #content #posts .post #commentForm {
 	max-width: 600px;
@@ -221,7 +283,7 @@ form input[type="button"]:hover {
 #content #posts .post #commentForm input.mandatory { background-color: #fff; }
 #content #posts .post #commentForm input.error { background-color: #f78778 !important; }
 
-/* BLOCKS */
+// BLOCKS
 
 #content #posts .post .block.image { text-align: center; }
 
@@ -232,7 +294,7 @@ form input[type="button"]:hover {
 	padding-bottom: 2rem;
 }
 
-/* COMMENTS */
+// COMMENTS
 
 #content #posts .post .comments .comment-block {
 	margin-bottom: 1rem;
@@ -273,7 +335,7 @@ form input[type="button"]:hover {
 	padding-bottom: 1rem;
 }
 
-/* FOOTER */
+// FOOTER
 
 #footer {
 	max-width: 800px;
@@ -308,7 +370,6 @@ form input[type="button"]:hover {
 #footer #sections .group .item {
 	padding: 10px;
 	text-align: center;
-	/*border: 1px solid #999;*/
 	background-color: #eee;
 	border-radius: 5px;
 }
@@ -343,7 +404,7 @@ form input[type="button"]:hover {
 	#footer #sections .group .itemWrapper { width: 50%; }
 }
 
-/* UTILS */
+// UTILS
 
 .clear { clear: both; }
 
@@ -357,8 +418,10 @@ form input[type="button"]:hover {
 
 .image-bubbles a:hover img { border: 2px solid #555; }
 
-::-webkit-input-placeholder { color: #888; } /* Chrome/Opera/Safari */
-::-moz-placeholder { color: #888; } /* Firefox 19+ */
-:-ms-input-placeholder { color: #888; } /* IE 10+ */
-:-moz-placeholder { color: #888; } /* Firefox 18- */
+::-webkit-input-placeholder { color: #888; } /* Chrome/Opera/Safari *\/
+::-moz-placeholder { color: #888; } /* Firefox 19+ *\/
+:-ms-input-placeholder { color: #888; } /* IE 10+ *\/
+:-moz-placeholder { color: #888; } /* Firefox 18- *\/
+
+
 */

@@ -24,14 +24,50 @@ const (
 )
 
 var (
-	redisPool *redis.Pool
-	config    *Config
+	redisPool      *redis.Pool
+	config         *Config
+	router         *gin.Engine
+	themePath      string
+	jsPath         string
+	adminThemePath string
+	adminJsPath    string
 )
+
+func loadTemplates() {
+	templates := []string{}
+
+	// current theme's templates
+	filepath.Walk(filepath.Join(themePath, "templates"),
+		func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" {
+				templates = append(templates, path)
+			}
+			return nil
+		})
+
+	// admin theme's templates
+	filepath.Walk(filepath.Join(adminThemePath, "templates"),
+		func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" {
+				templates = append(templates, path)
+			}
+			return nil
+		})
+
+	router.LoadHTMLFiles(templates...)
+}
 
 func main() {
 	var err error
 
-	installInitialData([]string{"/themes/default", "/js", "/admin"})
+	// do not override everything when debugging
+	// because if origin is mounted at destination,
+	// files get deleted when installing initial data.
+	if gin.IsDebugging() {
+		installInitialData([]string{"/themes/default", "/js"})
+	} else {
+		installInitialData([]string{"/themes/default", "/js", "/admin"})
+	}
 
 	config, err = LoadConfig()
 	if err != nil {
@@ -42,42 +78,18 @@ func main() {
 
 	// TODO: flush redis scripts
 
-	// legacyProxy := createLegacyProxy()
+	// paths
+	themePath = filepath.Join(blogDataRootDir, "themes", config.Theme)
+	jsPath = filepath.Join(blogDataRootDir, "js")
+	adminThemePath = filepath.Join(blogDataRootDir, "admin", "theme")
+	adminJsPath = filepath.Join(blogDataRootDir, "admin", "js")
 
-	router := gin.Default()
+	router = gin.Default()
 
-	themePath := filepath.Join(blogDataRootDir, "themes", config.Theme)
-	jsPath := filepath.Join(blogDataRootDir, "js")
-
-	adminThemePath := filepath.Join(blogDataRootDir, "admin", "theme")
-	adminJsPath := filepath.Join(blogDataRootDir, "admin", "js")
-
-	templates := []string{}
-
-	// current theme's templates
-	filepath.Walk(filepath.Join(themePath, "templates"),
-		func(path string, info os.FileInfo, err error) error {
-			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" {
-				templates = append(templates, path)
-				log.Println(path)
-			}
-			return nil
-		})
-
-	// admin theme's templates
-	filepath.Walk(filepath.Join(adminThemePath, "templates"),
-		func(path string, info os.FileInfo, err error) error {
-			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" {
-				templates = append(templates, path)
-				log.Println(path)
-			}
-			return nil
-		})
-
-	router.LoadHTMLFiles(templates...)
+	loadTemplates()
 
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
-	router.Use(static.ServeRoot("/files/", filepath.Join(themePath, "files")))
+	router.Use(static.ServeRoot("/files/", filepath.Join(blogDataRootDir, "files")))
 	router.Use(static.ServeRoot("/js/", jsPath))
 
 	router.Use(AttachConfig)
@@ -93,15 +105,14 @@ func main() {
 		// 	c.JSON(200, gin.H{"foo": "bar"})
 		// })
 
-		adminGroup.Use(static.ServeRoot("/theme/", filepath.Join(adminThemePath, "files")))
-		adminGroup.Use(static.ServeRoot("/js/", adminJsPath))
+		adminGroup.Static("/theme", filepath.Join(adminThemePath, "files"))
+		adminGroup.Static("/js", adminJsPath)
 
-		adminGroup.GET("/", func(c *gin.Context) {
+		adminGroup.GET("/posts", adminPosts)
+		adminGroup.GET("/", adminPosts)
 
-			c.HTML(http.StatusOK, "admin.tmpl", gin.H{
-				"lang": getLangForContext(c),
-			})
-		})
+		adminGroup.GET("/new", adminNewPost)
+
 	}
 
 	// POSTS

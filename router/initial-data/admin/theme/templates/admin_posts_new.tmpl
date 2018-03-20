@@ -1,0 +1,28 @@
+<!DOCTYPE html>	
+ <html lang="{{ .lang }}">
+ 	{{ template "admin_head" . }}
+	 <body>
+	 	{{ template "admin_menu" . }}
+	 	<div id="content">
+	 		<h1>New post</h1>
+
+	 		<input class="title" id="postTitle" type="text" placeholder="Title" onfocus="this.placeholder =''" onblur="this.placeholder = 'Title'">
+
+	 		<div id="addBlockButtons">
+	 			<span class="fas fa-plus"></span>
+	 			<a href="#"></span>Text</a>
+	 			<a href="#"></span>Image</a>
+	 			<a href="#"></span>Contact form</a>
+	 			<a href="#"></span>File</a>
+	 			<a href="#"></span>HTML</a>
+	 			<a href="#"></span>Gallery</a>
+	 		</div>
+
+	 		<div id="submit">
+	 			<a href="#" onclick="sendPost(this);return false;">Post</a>
+	 		</div>
+	 	</div>
+
+
+	 </body>	
+ </html>

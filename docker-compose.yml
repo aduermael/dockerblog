@@ -34,7 +34,7 @@ services:
       - ./sample/themes:/blog-data/themes # DEV
       - ./sample/config.json:/blog-data/config.json # DEV
       - ./go/src:/go/src # DEV
-      - ./router/initial-data/admin:/initial-data/admin # DEV
+      - ./router/initial-data/admin:/blog-data/admin # DEV
     command: ash # DEV
 
   blog-fbcomments:
