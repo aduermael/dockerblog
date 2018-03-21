@@ -38,12 +38,92 @@ function PostFiles(path,formData,callback,errorCallback)
 
 // ADMIN
 
+function pasteHtmlAtCaret(html, selectPastedContent) {
+    var sel, range;
+    if (window.getSelection) {
+        // IE9 and non-IE
+        sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+
+            // Range.createContextualFragment() would be useful here but is
+            // only relatively recently standardized and is not supported in
+            // some browsers (IE9, for one)
+            var el = document.createElement("div");
+            el.innerHTML = html;
+            var frag = document.createDocumentFragment(), node, lastNode;
+            while ( (node = el.firstChild) ) {
+                lastNode = frag.appendChild(node);
+            }
+            var firstNode = frag.firstChild;
+            range.insertNode(frag);
+
+            // Preserve the selection
+            if (lastNode) {
+                range = range.cloneRange();
+                range.setStartAfter(lastNode);
+                if (selectPastedContent) {
+                    range.setStartBefore(firstNode);
+                } else {
+                    range.collapse(true);
+                }
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    } else if ( (sel = document.selection) && sel.type != "Control") {
+        // IE < 9
+        var originalRange = sel.createRange();
+        originalRange.collapse(true);
+        sel.createRange().pasteHTML(html);
+        if (selectPastedContent) {
+            range = sel.createRange();
+            range.setEndPoint("StartToStart", originalRange);
+            range.select();
+        }
+    }
+}
+
+function divKeyDown(e) {
+	if (event.which == 13 || e.keyCode == 13) {
+		e.preventDefault();
+
+		// make sure there's always an extra <br>
+		// at the end to prevent Safari/Chrome bug
+		// Noticed Firfox does this...
+		var nbLineBreakAtEnd = 0;
+		for (i = e.target.childNodes.length-1;i >= 0; i--) {
+			if (e.target.childNodes[i].nodeType == 1) {
+				if (e.target.childNodes[i].nodeName == "BR") {
+					nbLineBreakAtEnd++;	
+				} else {
+					break;
+				}
+			} else if (e.target.childNodes[i].nodeType == 3) { // text
+				if (e.target.childNodes[i].nodeValue != "") {
+					break;
+				}
+			}
+		}
+		if (nbLineBreakAtEnd == 0) {
+			var br = document.createElement("br");
+			e.target.appendChild(br);
+		}
+
+		pasteHtmlAtCaret("<br>", false);
+		
+        return false;
+    }
+    return true;
+}
+
 function addTextBlock(sender)
 {
   nextBlock++;
   var blockName = "block" + nextBlock;
 
-  $("#blocks").append("<div placeholder=\"coucou\" contenteditable=\"true\" id=\"" + blockName +"\" class=\"block block_text\">Text</div>");
+  $("#blocks").append("<div onkeydown=\"return divKeyDown(event)\" contenteditable=\"true\" id=\"" + blockName +"\" class=\"block block_text\">Text</div>");
 
   // myNicEditor.addInstance(blockName);
 }
