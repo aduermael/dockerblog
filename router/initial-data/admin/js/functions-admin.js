@@ -153,8 +153,9 @@ function blurBlock(sender) {
 	// $("#blockToolBar").hide();
 }
 
+var activeEditor = null;
 
-function focusTextBlock(sender) {
+function showToolBar(editor) {
 
 	// console.log("TEST")
 
@@ -162,8 +163,28 @@ function focusTextBlock(sender) {
 	// 	theme: 'snow'
 	// });
 
-	$("#blockToolBar").insertBefore(sender);
+	activeEditor = editor;
+
+	$("#blockToolBar").insertBefore(editor.container);
 	$("#blockToolBar").show();
+}
+
+function bold() {
+	if (activeEditor == null) return;
+	var format = activeEditor.getFormat();
+	activeEditor.format('bold', format.bold == null || format.bold == false);
+}
+
+function italic() {
+	if (activeEditor == null) return;
+	var format = activeEditor.getFormat();
+	activeEditor.format('italic', format.italic == null || format.italic == false);
+}
+
+function underline() {
+	if (activeEditor == null) return;
+	var format = activeEditor.getFormat();
+	activeEditor.format('underline', format.underline == null || format.underline == false);	
 }
 
 // var editor = null;
@@ -203,7 +224,7 @@ function addTextBlock(sender)
 	      console.log('User has highlighted', text);
 	    }
 
-	    focusTextBlock(editor.container)
+	    showToolBar(editor)
 
 	  } else {
 	    console.log('Cursor not in the editor');
