@@ -2,6 +2,7 @@
  <html lang="{{ .lang }}">
  	{{ template "admin_head" . }}
 	 <body>
+
 	 	{{ template "admin_menu" . }}
 	 	<div id="content">
 	 		<h1>New post</h1>
@@ -12,7 +13,7 @@
 
 	 			<div id="blockToolBar" onmousedown="return false;">
 	 				<div id="textTools">
-	 					<a href="#" onclick="return false;"><span class="fas fa-bold"></span></a>
+	 					<a href="#" onclick="surroundWithElementAtCaret('b'); return false;"><span class="fas fa-bold"></span></a>
 	 					<a href="#" onclick="return false;"><span class="fas fa-italic"></span></a>
 	 					<a href="#" onclick="return false;"><span class="fas fa-link"></span></a>
 	 					<a href="#" onclick="return false;"><span class="fas fa-unlink"></span></a>
@@ -30,7 +31,7 @@
 
 	 		<div id="addBlockButtons">
 	 			<span class="fas fa-plus"></span>
-	 			<a href="#" onmousedown="return false;" onclick="addTextBlock(this);return false;"></span>Text</a>
+	 			<a href="#" onclick="addTextBlock(this);return false;"></span>Text</a>
 	 			<a href="#">Image</a>
 	 			<a href="#">Contact form</a>
 	 			<a href="#">File</a>
@@ -43,6 +44,7 @@
 	 		</div>
 	 	</div>
 
+	 	<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 	 </body>	
  </html>

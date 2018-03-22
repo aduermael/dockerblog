@@ -13,10 +13,12 @@ function nextBlock() {
 	$('#blocks >').each(function(i,obj)
 	{
 		id = $(obj).attr('id');
-		var blockID = parseInt(id.substring(5));
-
-		if (!isNaN(blockID)) {
-			if (n <= blockID) n = blockID + 1;
+		
+		if (id != null) {
+			var blockID = parseInt(id.substring(5));
+			if (!isNaN(blockID)) {
+				if (n <= blockID) n = blockID + 1;
+			}	
 		}
 	})
 
@@ -52,44 +54,66 @@ function PostFiles(path,formData,callback,errorCallback)
 
 // ADMIN
 
+function surroundWithElementAtCaret(element) {
+	var sel, range;
+	if (window.getSelection) {
+		// IE9 and non-IE
+		sel = window.getSelection();
+		if (sel.getRangeAt && sel.rangeCount) {
+			range = sel.getRangeAt(0);
+
+			var newNode = document.createElement(element);
+			range.surroundContents(newNode);
+
+			// range.setStartAfter(newNode);
+			range.setStartBefore(newNode);
+			range.setEndAfter(newNode);
+			// range.collapse(false);
+
+			sel.removeAllRanges();
+			sel.addRange(range);
+		}
+	}
+	// IE < 9 not supported
+}
+
 function pasteHtmlAtCaret(html, selectPastedContent) {
-    var sel, range;
-    if (window.getSelection) {
-        // IE9 and non-IE
-        sel = window.getSelection();
-        if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
+	var sel, range;
+	if (window.getSelection) {
+		// IE9 and non-IE
+		sel = window.getSelection();
+		if (sel.getRangeAt && sel.rangeCount) {
+			range = sel.getRangeAt(0);
+			range.deleteContents();
 
-            // Range.createContextualFragment() would be useful here but is
-            // only relatively recently standardized and is not supported in
-            // some browsers (IE9, for one)
-            var el = document.createElement("div");
-            el.innerHTML = html;
-            var frag = document.createDocumentFragment();
-            var node, lastNode;
-            while ( (node = el.firstChild) ) {
-                lastNode = frag.appendChild(node);
-            }
-            var firstNode = frag.firstChild;
-            range.insertNode(frag);
+			// Range.createContextualFragment() would be useful here but is
+			// only relatively recently standardized and is not supported in
+			// some browsers (IE9, for one)
+			var el = document.createElement("div");
+			el.innerHTML = html;
+			var frag = document.createDocumentFragment();
+			var node, lastNode;
+			while ( (node = el.firstChild) ) {
+				lastNode = frag.appendChild(node);
+			}
+			var firstNode = frag.firstChild;
+			range.insertNode(frag);
 
-            // Preserve the selection
-            if (lastNode) {
-                range = range.cloneRange();
-                range.setStartAfter(lastNode);
-                if (selectPastedContent) {
-                    range.setStartBefore(firstNode);
-                } else {
-                    range.collapse(true);
-                }
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        }
-    } else {
-    	// IE < 9 not supported
-    }
+			// Preserve the selection
+			if (lastNode) {
+				range = range.cloneRange();
+				range.setStartAfter(lastNode);
+				if (selectPastedContent) {
+					range.setStartBefore(firstNode);
+				} else {
+					range.collapse(true);
+				}
+				sel.removeAllRanges();
+				sel.addRange(range);
+			}
+		}
+	}
+    // IE < 9 not supported
 }
 
 function divKeyDown(e) {
@@ -126,22 +150,70 @@ function divKeyDown(e) {
 }
 
 function blurBlock(sender) {
-	$("#blockToolBar").hide();
+	// $("#blockToolBar").hide();
 }
 
+
 function focusTextBlock(sender) {
+
+	// console.log("TEST")
+
+	// editor = new Quill(sender, {
+	// 	theme: 'snow'
+	// });
+
 	$("#blockToolBar").insertBefore(sender);
 	$("#blockToolBar").show();
 }
 
+// var editor = null;
+
 function addTextBlock(sender)
 {
+	if (editor != null) {
+		console.log(editor)
+		console.log(editor.root.innerHTML)
+		// editor.container.innerHTML = editor.root.innerHTML;
+		return 
+	}
+
   	var blockName = "block" + nextBlock();
 
-  	var block = $("<div onblur=\"blurBlock(this); return true;\" onfocus=\"focusTextBlock(this); return false;\" onkeydown=\"return divKeyDown(event)\" contenteditable=\"true\" id=\"" + blockName +"\" class=\"block block_text\"></div>");
+  	// var block = $("<div onblur=\"blurBlock(this); return true;\" onfocus=\"focusTextBlock(this); return false;\" onkeydown=\"return divKeyDown(event)\" contenteditable=\"true\" id=\"" + blockName +"\" class=\"block block_text\"></div>");
 
-	block.appendTo($("#blocks")).focus();
+  	var block = $("<div id=\"" + blockName +"\" class=\"block block_text\"></div>");
+
+	block.appendTo($("#blocks"))
+
+	console.log("block:", block.get(0));
+
+	var editor = new Quill(block.get(0), {
+		theme: 'snow',
+		"modules": {
+			"toolbar": false
+  		}
+	});
+
+	editor.on('selection-change', function(range, oldRange, source) {
+	  if (range) {
+	    if (range.length == 0) {
+	      console.log('User cursor is on', range.index);
+	    } else {
+	      var text = editor.getText(range.index, range.length);
+	      console.log('User has highlighted', text);
+	    }
+
+	    focusTextBlock(editor.container)
+
+	  } else {
+	    console.log('Cursor not in the editor');
+	  }
+	});
+
+	editor.focus()
 }
+
+// ling ling qi
 
 
 /*
