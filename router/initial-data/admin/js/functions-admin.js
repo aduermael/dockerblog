@@ -4,10 +4,24 @@
 //
 //
 
-var myNicEditor;
-var nextBlock = 0;
 var reorder_mode = false;
 
+function nextBlock() {
+	var n = 1;
+	var id;
+
+	$('#blocks >').each(function(i,obj)
+	{
+		id = $(obj).attr('id');
+		var blockID = parseInt(id.substring(5));
+
+		if (!isNaN(blockID)) {
+			if (n <= blockID) n = blockID + 1;
+		}
+	})
+
+	return n;
+}
 
 function PostFiles(path,formData,callback,errorCallback)
 {
@@ -52,7 +66,8 @@ function pasteHtmlAtCaret(html, selectPastedContent) {
             // some browsers (IE9, for one)
             var el = document.createElement("div");
             el.innerHTML = html;
-            var frag = document.createDocumentFragment(), node, lastNode;
+            var frag = document.createDocumentFragment();
+            var node, lastNode;
             while ( (node = el.firstChild) ) {
                 lastNode = frag.appendChild(node);
             }
@@ -72,16 +87,8 @@ function pasteHtmlAtCaret(html, selectPastedContent) {
                 sel.addRange(range);
             }
         }
-    } else if ( (sel = document.selection) && sel.type != "Control") {
-        // IE < 9
-        var originalRange = sel.createRange();
-        originalRange.collapse(true);
-        sel.createRange().pasteHTML(html);
-        if (selectPastedContent) {
-            range = sel.createRange();
-            range.setEndPoint("StartToStart", originalRange);
-            range.select();
-        }
+    } else {
+    	// IE < 9 not supported
     }
 }
 
@@ -118,16 +125,26 @@ function divKeyDown(e) {
     return true;
 }
 
-function addTextBlock(sender)
-{
-  nextBlock++;
-  var blockName = "block" + nextBlock;
-
-  $("#blocks").append("<div onkeydown=\"return divKeyDown(event)\" contenteditable=\"true\" id=\"" + blockName +"\" class=\"block block_text\">Text</div>");
-
-  // myNicEditor.addInstance(blockName);
+function blurBlock(sender) {
+	$("#blockToolBar").hide();
 }
 
+function focusTextBlock(sender) {
+	$("#blockToolBar").insertBefore(sender);
+	$("#blockToolBar").show();
+}
+
+function addTextBlock(sender)
+{
+  	var blockName = "block" + nextBlock();
+
+  	var block = $("<div onblur=\"blurBlock(this); return true;\" onfocus=\"focusTextBlock(this); return false;\" onkeydown=\"return divKeyDown(event)\" contenteditable=\"true\" id=\"" + blockName +"\" class=\"block block_text\"></div>");
+
+	block.appendTo($("#blocks")).focus();
+}
+
+
+/*
 function addHtmlBlock(sender)
 {
   nextBlock++;
@@ -1038,12 +1055,7 @@ $(document).ready(function()
 		document.location = "/admin/lang/" + selectedLang;
 	})
 
-	$('#content_blocks >').each(function(i,obj)
-	{
-		var blockID = parseInt($(obj).attr('id').substring(5));
-		if (nextBlock <= blockID) nextBlock = blockID + 1;
-		console.log('child: ' + $(obj).attr('id').substring(5));
-	})
+	
 
 
 	$('#reorderBtn').click(function()
@@ -1117,43 +1129,8 @@ $(document).ready(function()
 			reorder_mode = false;
 		}
 	});
+	
 
-	/*
-	myNicEditor = new nicEditor({buttonList : ['bold','underline','link','unlink']});
-	myNicEditor.setPanel('myNicPanel');
-
-	myNicEditor.addEvent('focus', function(e)
-	{
-		if (!reorder_mode)
-		{
-			var id = myNicEditor.selectedInstance.e.id;
-
-			$("#myNicPanel").show();
-
-			$("#myNicPanel").css(
-			{
-				top:($("#"+id).offset().top - 10) +'px',
-				left:(-$("#myNicPanel").outerWidth()) +'px',
-			});
-		}
-	});
-
-	myNicEditor.addEvent('panel', function(e)
-	{
-		console.log("PANEL");
-	});
-
-
-	myNicEditor.addEvent('blur', function(e)
-	{
-		$("#myNicPanel").hide();
-	});
-
-	$('.block_text').each(function (i, obj)
-	{
-		myNicEditor.addInstance($(obj).attr('id'));
-	});
-	*/
 
 	$("form#upload_image_form").submit(function(e)
 	{
@@ -1230,3 +1207,5 @@ var uploadFileCallback = function(data)
 		alert("FAILED");
 	}
 }
+
+*/

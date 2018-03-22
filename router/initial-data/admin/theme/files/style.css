@@ -77,8 +77,8 @@ a:hover {
 
 #content input:focus { 
 	outline: none; 
-	background-color: #999;
-	color: #fff;
+	/*background-color: #999;*/
+	/*color: #fff;*/
 }
 
 #content > div {
@@ -114,9 +114,45 @@ a:hover {
 
 #blocks .block:focus { 
 	outline: none; 
-	background-color: #999;
+	/*background-color: #999;*/
+	/*color: #fff;*/
+}
+
+#blocks #blockToolBar {
+	display: none;
+	margin-bottom: -10px;
+	margin-top: 10px;
+	width: 100%;
+	background-color: #ccc;
+}
+
+#blocks #blockToolBar {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#blocks #blockToolBar a {
+	display: inline-block;
+	padding: 5px;
+}
+
+#blocks #blockToolBar a:hover {
 	color: #fff;
 }
+
+#blocks #blockToolBar #textTools {
+	float: left;
+}
+
+#blocks #blockToolBar #globalTools {
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
+
+
 
 
 /*.devBounds {
