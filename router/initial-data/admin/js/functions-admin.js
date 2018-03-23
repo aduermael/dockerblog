@@ -50,18 +50,48 @@ function PostFiles(path,formData,callback,errorCallback)
 // ADMIN
 
 var activeEditor = null;
+var editingLink = false;
+var linkRange = null;
 
 function hideToolBar(editor) {
 	if (editor === activeEditor) {
 		$("#blockToolBar").hide();
 		activeEditor = null;
+		editingLink = false;
 	}
 }
+
 function showToolBar(editor) {
 	activeEditor = editor;
 	$("#blockToolBar").insertBefore(editor.container);
 	$("#blockToolBar").show();
 }
+
+// return true only if clicking on text input
+function toolBarMouseDownShouldPropagate(event) {
+	var propagate = false;
+
+	if ($("#urlField").prop('disabled')) {
+		return propagate;
+	}
+
+	$("#textTools >").each(function() {
+		if ($(this).attr('id') != null && $(this).attr('id') == "urlField") {
+			var bounds = $(this).get(0).getBoundingClientRect()
+			if (event.clientX >= bounds.x && event.clientX <= bounds.x + bounds.width &&
+				event.clientY >= bounds.y && event.clientY <= bounds.y + bounds.height) {
+				console.log("HIT !!!!")
+
+				
+
+				propagate = true;
+			}
+		}
+	})
+	return propagate;
+}
+
+
 
 function bold() {
 	if (activeEditor == null) return;
@@ -81,7 +111,51 @@ function underline() {
 	activeEditor.format('underline', format.underline == null || format.underline == false);	
 }
 
-// var editor = null;
+function enableURLField(val) {
+	$("#urlField").prop('disabled', false);
+	$("#unlinkBtn").prop('disabled', false);
+	
+	$("#urlField").fadeTo(0, 1)
+	$("#linkIcon").fadeTo(0, 1)
+	$("#unlinkBtn").fadeTo(0, 1)
+
+	if (val != null) {
+		$("#urlField").val(val)
+	}
+}
+
+function disableURLField() {
+	$("#urlField").prop('disabled', true);
+	$("#unlinkBtn").prop('disabled', true);
+	
+	$("#urlField").fadeTo(0, 0.5)
+	$("#linkIcon").fadeTo(0, 0.5)
+	$("#unlinkBtn").fadeTo(0, 0.5)
+
+	$("#urlField").val("")
+}
+
+function removeLink() {
+	$("#urlField").val("")
+	activeEditor.format('link', false);
+}
+
+function applyLinkReturnKey(e) {
+	if (e.keyCode == 13) { // return
+		activeEditor.focus()
+	}
+}
+
+function applyLink() {
+	if (linkRange == null) return
+
+	activeEditor.formatText(linkRange.index, linkRange.length, 'link', $("#urlField").val());
+	activeEditor.formatText(linkRange.index, linkRange.length, 'background', false);
+
+	editingLink = false
+	linkRange = null
+	disableURLField()
+}
 
 function addTextBlock(sender)
 {
@@ -108,20 +182,46 @@ function addTextBlock(sender)
 	});
 
 	editor.on('selection-change', function(range, oldRange, source) {
-	  if (range) {
-	    if (range.length == 0) {
-	      console.log('User cursor is on', range.index);
-	    } else {
-	      var text = editor.getText(range.index, range.length);
-	      console.log('User has highlighted', text);
-	    }
 
-	    showToolBar(editor)
+		if (!editingLink) {
+			disableURLField()
+		}
 
-	  } else {
-	    console.log('Cursor not in the editor');
-	    hideToolBar(editor)
-	  }
+		if (range) {
+			if (editingLink && linkRange != null) {
+				// still editing link
+				if (range.index == linkRange.index && range.length == linkRange.length) {
+				} else { // done editing
+					applyLink()
+				}
+			}
+			if (range.length == 0) { // cursor on range.index
+			} else { // 1 or more characters selected
+				enableURLField(editor.getFormat()['link'])
+			}
+
+			showToolBar(editor)
+
+		} else { // Cursor not in the editor
+
+			if ($("#urlField").is(":focus")) {
+
+				if (editingLink == false) {
+					// this line will put the focus back on the editor:
+					editor.format('background', '#88DDEE')
+					linkRange = editor.getSelection()
+					
+					console.log("set linkRange:", linkRange)
+					// now we should go back to url field:
+					$("#urlField").focus()
+					// needs to be done after focus
+					// because input's onblur ends link edition
+					editingLink = true;
+				}
+			} else {
+				hideToolBar(editor)	
+			}
+		}
 	});
 
 	editor.focus()

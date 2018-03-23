@@ -162,6 +162,19 @@ a:hover {
 	float: left;
 }
 
+#linkIcon {
+	color: #f2f2f2;
+}
+
+#blocks #blockToolBar input {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	display: inline-block;
+	width: 200px;
+}
+
 #blocks #blockToolBar #globalTools {
 	float: right;
 }
