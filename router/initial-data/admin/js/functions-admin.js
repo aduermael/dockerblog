@@ -1,8 +1,3 @@
-//
-//
-//
-//
-//
 
 var reorder_mode = false;
 
@@ -54,117 +49,16 @@ function PostFiles(path,formData,callback,errorCallback)
 
 // ADMIN
 
-function surroundWithElementAtCaret(element) {
-	var sel, range;
-	if (window.getSelection) {
-		// IE9 and non-IE
-		sel = window.getSelection();
-		if (sel.getRangeAt && sel.rangeCount) {
-			range = sel.getRangeAt(0);
-
-			var newNode = document.createElement(element);
-			range.surroundContents(newNode);
-
-			// range.setStartAfter(newNode);
-			range.setStartBefore(newNode);
-			range.setEndAfter(newNode);
-			// range.collapse(false);
-
-			sel.removeAllRanges();
-			sel.addRange(range);
-		}
-	}
-	// IE < 9 not supported
-}
-
-function pasteHtmlAtCaret(html, selectPastedContent) {
-	var sel, range;
-	if (window.getSelection) {
-		// IE9 and non-IE
-		sel = window.getSelection();
-		if (sel.getRangeAt && sel.rangeCount) {
-			range = sel.getRangeAt(0);
-			range.deleteContents();
-
-			// Range.createContextualFragment() would be useful here but is
-			// only relatively recently standardized and is not supported in
-			// some browsers (IE9, for one)
-			var el = document.createElement("div");
-			el.innerHTML = html;
-			var frag = document.createDocumentFragment();
-			var node, lastNode;
-			while ( (node = el.firstChild) ) {
-				lastNode = frag.appendChild(node);
-			}
-			var firstNode = frag.firstChild;
-			range.insertNode(frag);
-
-			// Preserve the selection
-			if (lastNode) {
-				range = range.cloneRange();
-				range.setStartAfter(lastNode);
-				if (selectPastedContent) {
-					range.setStartBefore(firstNode);
-				} else {
-					range.collapse(true);
-				}
-				sel.removeAllRanges();
-				sel.addRange(range);
-			}
-		}
-	}
-    // IE < 9 not supported
-}
-
-function divKeyDown(e) {
-	if (event.which == 13 || e.keyCode == 13) {
-		e.preventDefault();
-
-		// make sure there's always an extra <br>
-		// at the end to prevent Safari/Chrome bug
-		// Noticed Firfox does this...
-		var nbLineBreakAtEnd = 0;
-		for (i = e.target.childNodes.length-1;i >= 0; i--) {
-			if (e.target.childNodes[i].nodeType == 1) {
-				if (e.target.childNodes[i].nodeName == "BR") {
-					nbLineBreakAtEnd++;	
-				} else {
-					break;
-				}
-			} else if (e.target.childNodes[i].nodeType == 3) { // text
-				if (e.target.childNodes[i].nodeValue != "") {
-					break;
-				}
-			}
-		}
-		if (nbLineBreakAtEnd == 0) {
-			var br = document.createElement("br");
-			e.target.appendChild(br);
-		}
-
-		pasteHtmlAtCaret("<br>", false);
-		
-        return false;
-    }
-    return true;
-}
-
-function blurBlock(sender) {
-	// $("#blockToolBar").hide();
-}
-
 var activeEditor = null;
 
+function hideToolBar(editor) {
+	if (editor === activeEditor) {
+		$("#blockToolBar").hide();
+		activeEditor = null;
+	}
+}
 function showToolBar(editor) {
-
-	// console.log("TEST")
-
-	// editor = new Quill(sender, {
-	// 	theme: 'snow'
-	// });
-
 	activeEditor = editor;
-
 	$("#blockToolBar").insertBefore(editor.container);
 	$("#blockToolBar").show();
 }
@@ -200,8 +94,6 @@ function addTextBlock(sender)
 
   	var blockName = "block" + nextBlock();
 
-  	// var block = $("<div onblur=\"blurBlock(this); return true;\" onfocus=\"focusTextBlock(this); return false;\" onkeydown=\"return divKeyDown(event)\" contenteditable=\"true\" id=\"" + blockName +"\" class=\"block block_text\"></div>");
-
   	var block = $("<div id=\"" + blockName +"\" class=\"block block_text\"></div>");
 
 	block.appendTo($("#blocks"))
@@ -228,6 +120,7 @@ function addTextBlock(sender)
 
 	  } else {
 	    console.log('Cursor not in the editor');
+	    hideToolBar(editor)
 	  }
 	});
 
