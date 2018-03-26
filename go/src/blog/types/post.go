@@ -50,7 +50,7 @@ type Post struct {
 	Description    string      `json:"description,omitempty"`
 	NbComments     int         `json:"nbComs"`
 	Blocks         []PostBlock `json:"blocks"`
-	Comments       []Comment   `json:"comments,omitempty"`
+	Comments       []*Comment  `json:"comments,omitempty"`
 	ShowComments   bool        `json:"showComs,omitempty"`
 	AcceptComments bool        `json:"acceptComs,omitempty"`
 	// Since is a formatted duration that can be
@@ -262,11 +262,13 @@ func (p *Post) DateTime() time.Time {
 // based on unix timestamp (post.Date)
 func (p *Post) ComputeSince() {
 	p.Since = humanize.DisplayDuration(time.Since(p.DateTime()), nil)
+	CommentComputeSince(p.Comments)
 }
 
 func PostComputeSince(posts []*Post) {
 	for _, post := range posts {
 		post.ComputeSince()
+		CommentComputeSince(post.Comments)
 	}
 }
 

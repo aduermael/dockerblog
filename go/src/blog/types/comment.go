@@ -1,6 +1,7 @@
 package types
 
 import (
+	"blog/humanize"
 	"crypto/md5"
 	"encoding/json"
 	"errors"
@@ -36,6 +37,10 @@ type Comment struct {
 	// traps for robots
 	EmailTrap string `json:"emailtrap,omitempty"`
 	URLTrap   string `json:"urltrap,omitempty"`
+
+	// Since is a formatted duration that can be
+	// computed from Date
+	Since string `json:"-"`
 }
 
 // Accept makes sure the comment can be stored
@@ -110,6 +115,22 @@ func (c *Comment) Accept() (robot bool, err error) {
 	return false, nil
 }
 
+func (c *Comment) DateTime() time.Time {
+	return time.Unix(int64(c.Date/1000), 0)
+}
+
+// Note: this could be done client side with javascript
+// based on unix timestamp (post.Date)
+func (c *Comment) ComputeSince() {
+	c.Since = humanize.DisplayDuration(time.Since(c.DateTime()), nil)
+}
+
+func CommentComputeSince(comments []*Comment) {
+	for _, comment := range comments {
+		comment.ComputeSince()
+	}
+}
+
 // Save saves a comment in DB
 func (c *Comment) Save() error {
 	redisConn := redisPool.Get()
@@ -131,7 +152,7 @@ func (c *Comment) Save() error {
 }
 
 // CommentsByDate extends Comment and can be ordered by date
-type CommentsByDate []Comment
+type CommentsByDate []*Comment
 
 func (a CommentsByDate) Len() int           { return len(a) }
 func (a CommentsByDate) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
@@ -143,7 +164,7 @@ func (a CommentsByDate) Less(i, j int) bool { return a[i].Date < a[j].Date }
 // NOTE(aduermael): it would be better to create an
 // index for that in DB, and update it when receiving new
 // comments instead of doing this dynamically for each request...
-func OrderAndIndentComments(comments []Comment) []Comment {
+func OrderAndIndentComments(comments []*Comment) []*Comment {
 	sort.Sort(CommentsByDate(comments))
 
 	l := len(comments)
@@ -167,7 +188,7 @@ func OrderAndIndentComments(comments []Comment) []Comment {
 
 					// insert
 					p := j + comments[j].NbAnswers
-					comments = append(comments[:p], append([]Comment{comment}, comments[p:]...)...)
+					comments = append(comments[:p], append([]*Comment{comment}, comments[p:]...)...)
 				}
 			}
 		}

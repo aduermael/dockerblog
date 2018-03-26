@@ -32,7 +32,7 @@
 						{{ range .post.Comments }}
 							<div id="com_{{.ID}}" class="comment comment-block indent-{{.Indent}}">
 								<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=81&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
-								<h3>{{.Name}}<span class="date"> - il y a un certain temps</span></h3>
+								<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
 								<p>{{.Content}}</p>
 								<a href="#" onclick="answerComment({{.ID}});return false;">Answer</a>
 							</div>
