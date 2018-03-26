@@ -9,6 +9,7 @@ services:
     tty: true
     volumes:
       - blog-data:/blog-data
+      - ./sample/db:/blog-data/db # DEV
 
   redis-cli:
     image: redis:3.2.9-alpine
@@ -33,6 +34,7 @@ services:
       - blog-data:/blog-data
       - ./sample/themes:/blog-data/themes # DEV
       - ./sample/config.json:/blog-data/config.json # DEV
+      - ./sample/files:/blog-data/files # DEV
       - ./go/src:/go/src # DEV
       - ./router/initial-data/admin:/blog-data/admin # DEV
     command: ash # DEV
