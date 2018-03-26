@@ -1,6 +1,12 @@
 
 var reorder_mode = false;
 
+/*
+$( document ).ready(function() {
+  
+});
+*/
+
 function nextBlock() {
 	var n = 1;
 	var id;
@@ -454,6 +460,7 @@ function editPage(sender)
 
 
 
+*/
 
 var editPostCallBack = function(data)
 {
@@ -469,6 +476,7 @@ var editPostCallBack = function(data)
 	}
 }
 
+/*
 
 var editPageCallBack = function(data)
 {
@@ -485,14 +493,13 @@ var editPageCallBack = function(data)
 }
 
 
-
+*/
 
 function sendPost(sender)
 {
 	var postContent = new Object()
 	var blocks = new Array();
 	var i = 0;
-
 
 	// to link post with a FB post and merge comments
 	var fbPostID = $('#fbpostID').val();
@@ -502,9 +509,7 @@ function sendPost(sender)
 		postContent.fbpostID = $('#fbpostID').val();
 	}
 
-
-
-	$('#content_blocks').children().each(function ()
+	$('#blocks').children().each(function ()
 	{
 		blocks[i] = new Object();
 		//postContent[i].id = this.id;
@@ -571,7 +576,7 @@ function sendPost(sender)
 	Post('/admin/new',postContent,editPostCallBack,errorCallback);
 }
 
-
+/*
 
 
 function sendPage(sender)

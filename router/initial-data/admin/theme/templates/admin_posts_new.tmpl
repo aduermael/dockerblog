@@ -4,6 +4,10 @@
 	 <body>
 	 	<script type="text/javascript">
 	 		window.onload = function() {
+
+	 			$("#datepicker").datepicker();
+	 			$("#timepicker").timepicker();
+
 				window.addEventListener("beforeunload", function (e) {
 					return "Are you sure you want to leave this page?"
 				});
@@ -47,6 +51,16 @@
 	 			<a href="#">HTML</a>
 	 			<a href="#">Gallery</a>
 	 		</div>
+
+	 		<div>
+	 			<input id="fbpostID" type="text" placeholder="Facebook post ID" onfocus="this.placeholder =''" onblur="this.placeholder = 'Facebook post ID'">
+	 		</div>
+
+	 		<div>
+	 			<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
+	 			--><input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
+	 		</div>
+
 
 	 		<div id="submit">
 	 			<a href="#" onclick="sendPost(this);return false;">Post</a>

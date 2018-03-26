@@ -179,6 +179,13 @@ a:hover {
 	float: right;
 }
 
+#content #datepicker, #content #timepicker {
+	width: 200px;
+	display: inline-block;
+}
+
+#content #datepicker { margin-right: 10px; }
+
 .clear {
 	clear: both;
 }
