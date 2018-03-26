@@ -5,11 +5,16 @@
 	 	<script type="text/javascript">
 	 		window.onload = function() {
 
+	 			notDirty()
+	 			
 	 			$("#datepicker").datepicker();
 	 			$("#timepicker").timepicker();
 
 				window.addEventListener("beforeunload", function (e) {
-					return "Are you sure you want to leave this page?"
+					if (isDirty()) {
+						return "Are you sure you want to leave this page?"	
+					}
+					return null;
 				});
 			}
 	 	</script>

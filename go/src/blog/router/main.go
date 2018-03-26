@@ -113,6 +113,7 @@ func main() {
 
 		adminGroup.GET("/new", adminNewPost)
 
+		adminGroup.POST("/new", adminSaveNewPost)
 	}
 
 	// POSTS

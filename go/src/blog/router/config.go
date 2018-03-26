@@ -14,6 +14,7 @@ type Config struct {
 	Title        []string `json:"title"`
 	PostsPerPage int      `json:"postsPerPage"`
 	Theme        string   `json:"theme"`
+	Timezone     string   `json:"timezone"`
 }
 
 // LoadConfig loads configuration at configPath
@@ -84,4 +85,12 @@ func GetTitle(c *gin.Context) string {
 	}
 
 	return conf.Title[langIndex]
+}
+
+func GetConfigTimezone(c *gin.Context) string {
+	conf, err := GetConfigFromContext(c)
+	if err != nil {
+		return ""
+	}
+	return conf.Timezone
 }

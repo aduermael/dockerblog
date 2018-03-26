@@ -249,6 +249,13 @@ var (
 	`)
 )
 
+// GetType returns the post block's type
+func (p *Post) Save() error {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+	return nil
+}
+
 // PostGet returns a post for given ID
 func PostGet(ID string) (Post, error) {
 	redisConn := redisPool.Get()

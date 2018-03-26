@@ -1,11 +1,20 @@
 
-var reorder_mode = false;
+var savedBlocksHTML = ""
+var savedTitle = ""
+var savedFBPostID = ""
 
-/*
-$( document ).ready(function() {
-  
-});
-*/
+function isDirty() {
+	var a = $('#blocks').html() != savedBlocksHTML
+	var b = $('#postTitle').val() != savedTitle
+	var c = $('#fbpostID').val() != savedFBPostID
+	return (a || b || c)
+}
+
+function notDirty() {
+	savedBlocksHTML = $('#blocks').html()
+	savedTitle = $("#postTitle").val()
+	savedFBPostID = $('#fbpostID').val()
+}
 
 function nextBlock() {
 	var n = 1;
@@ -60,6 +69,8 @@ var editingLink = false;
 var linkRange = null;
 
 function hideToolBar(editor) {
+	if (editor == null) return
+
 	if (editor === activeEditor) {
 		$("#blockToolBar").hide();
 		activeEditor = null;
@@ -496,7 +507,9 @@ var editPageCallBack = function(data)
 */
 
 function sendPost(sender)
-{
+{	
+	hideToolBar(activeEditor)
+
 	var postContent = new Object()
 	var blocks = new Array();
 	var i = 0;
@@ -511,67 +524,77 @@ function sendPost(sender)
 
 	$('#blocks').children().each(function ()
 	{
-		blocks[i] = new Object();
+		var block = new Object()
+		var insert = true
 		//postContent[i].id = this.id;
 
 		if ($(this).hasClass("block_text"))
 		{
-			blocks[i].type = "text";
-			blocks[i].text = $(this).html();
+			block.type = "text"
+			block.text = $(this).html()
+			// cleanup
+			block.text = block.text.replace(/<[\/]*(div|span)[^>]*>/g, '')
 		}
 		else if ($(this).hasClass("block_file"))
 		{
-			blocks[i].type = "file";
-			blocks[i].url = $(this).html();
-			blocks[i].filename = "error"
+			block.type = "file"
+			block.url = $(this).html()
+			block.filename = "error"
 
-			var components = blocks[i].url.split("/");
+			var components = block.url.split("/");
 			if (components.length > 0) {
-				blocks[i].filename = components[components.length-1]	
+				block.filename = components[components.length-1]	
 			}
 		}
 		else if ($(this).hasClass("block_html"))
 		{
-			blocks[i].type = "html";
-			blocks[i].data = $(this).children('textarea')[0].value;
+			block.type = "html"
+			block.data = $(this).children('textarea')[0].value
 		}
 		else if ($(this).hasClass("block_gallery"))
 		{
-			blocks[i].type = "gallery";
-			blocks[i].data = $(this).children('textarea')[0].value;
+			block.type = "gallery"
+			block.data = $(this).children('textarea')[0].value
 		}
 		else if ($(this).hasClass("block_image"))
 		{
-			blocks[i].type = "image";
-			blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
+			block.type = "image"
+			block.path = $($(this).children('img')[0]).attr( 'src' )
 
-			blocks[i].url = $($(this).children('input')[0]).val();
-			if (blocks[i].url == "URL") blocks[i].url = "";
+			block.url = $($(this).children('input')[0]).val()
+			if (block.url == "URL") blocks[i].url = ""
 
-			blocks[i].description = $($(this).children('input')[1]).val();
-			if (blocks[i].description == "Description") blocks[i].description = "";
+			block.description = $($(this).children('input')[1]).val()
+			if (block.description == "Description") blocks[i].description = ""
 		}
 		else if ($(this).hasClass("block_contact"))
 		{
-			blocks[i].type = "contact";
-			blocks[i].to = $($(this).children('div')[0]).children('input')[0].value;
-			blocks[i].title = $($(this).children('div')[1]).children('input')[0].value;
+			block.type = "contact"
+			block.to = $($(this).children('div')[0]).children('input')[0].value
+			block.title = $($(this).children('div')[1]).children('input')[0].value
 		}
 		else if ($(this).hasClass("block_video"))
 		{
-			blocks[i].type = "video";
+			block.type = "video"
 		}
 		else
 		{
-			blocks[i].type = "unknown type";
+			insert = false
+			block.type = "unknown type"
 		}
 
-		i++;
-
+		if (insert) {
+			blocks[i] = block;
+			i++;
+		}
 	});
 
 	postContent.blocks = blocks;
-	postContent.postTitle = $("#postTitle").val();
+	postContent.title = $("#postTitle").val();
+
+	console.log(postContent)
+
+	notDirty()
 
 	Post('/admin/new',postContent,editPostCallBack,errorCallback);
 }
