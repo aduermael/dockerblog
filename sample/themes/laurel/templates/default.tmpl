@@ -8,7 +8,11 @@
 			 <div id="posts">
 				 {{ range .posts }}
 					 <div class="post">	
-						 <h2><a href="/{{.Slug}}/{{.ID}}">{{ .Title }}</a></h2>	
+					 	<div class="title">
+							<h2><a href="/{{.Slug}}/{{.ID}}">{{ .Title }}</a></h2>	
+							<p class="post-date">{{ .Since }}</p>
+							<div class="clear"></div>
+						</div>
 						 {{ range .Blocks }}	
 							 {{ if eq .type "text" }}	
 									<div class="block text"><p>{{ .text }}</p></div>	

@@ -8,8 +8,11 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/contrib/static"
@@ -89,7 +92,10 @@ func main() {
 	loadTemplates()
 
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
+
 	router.Use(static.ServeRoot("/files/", filepath.Join(blogDataRootDir, "files")))
+	router.Use(static.ServeRoot("/uploads/", filepath.Join(blogDataRootDir, "files")))
+
 	router.Use(static.ServeRoot("/js/", jsPath))
 
 	router.Use(AttachConfig)
@@ -112,7 +118,6 @@ func main() {
 		adminGroup.GET("/", adminPosts)
 
 		adminGroup.GET("/new", adminNewPost)
-
 		adminGroup.POST("/new", adminSaveNewPost)
 	}
 
@@ -142,6 +147,8 @@ func main() {
 				post.ShowComments = true
 				post.AcceptComments = true
 
+				post.ComputeSince()
+
 				c.HTML(http.StatusOK, "post.tmpl", gin.H{
 					"title": GetTitle(c),
 					"post":  post,
@@ -158,6 +165,9 @@ func main() {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
+
+		types.PostComputeSince(posts)
+
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
 			"title": GetTitle(c),
 			"posts": posts,
@@ -222,6 +232,53 @@ func main() {
 	// 	legacyProxy.ServeHTTP(c.Writer, c.Request)
 	// 	c.Done()
 	// })
+
+	router.NoRoute(func(c *gin.Context) {
+
+		log.Println("no route:", c.Request.URL.Path)
+
+		p := strings.TrimSpace(path.Clean(c.Request.URL.Path))
+
+		//Cut off the leading slash
+		if strings.HasPrefix(p, "/") {
+			p = p[1:]
+		}
+
+		components := strings.Split(p, "/")
+
+		postIDStr := ""
+		postSlug := ""
+
+		if len(components) == 2 {
+			postSlug = components[0]
+			postIDStr = components[1]
+		} else if len(components) == 1 {
+			postSlug = components[0]
+			postIDStr = components[0]
+		}
+
+		// try to find a post with ID first
+		if postIDStr != "" {
+			_, err := strconv.Atoi(postIDStr)
+			if err == nil {
+				post, err := types.PostGet(postIDStr)
+				if err == nil {
+					movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
+					c.Redirect(http.StatusMovedPermanently, movedTo)
+					return
+				}
+			}
+		}
+		// then try with slug
+		if postSlug != "" {
+			post, err := types.PostGetWithSlug(postSlug)
+			if err == nil {
+				movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
+				c.Redirect(http.StatusMovedPermanently, movedTo)
+				return
+			}
+		}
+	})
 
 	router.Run(serverPort)
 }

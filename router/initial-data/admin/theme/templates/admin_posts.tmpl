@@ -6,6 +6,21 @@
 	 	<div id="content">
 	 		<h1>Posts</h1>
 	 		<a href="/admin/new"><span class="fas fa-plus"></span> New post</a>
+	 		<div id="posts">
+	 			{{ range .posts }}
+	 			<div class="post">
+	 				<div class="title">
+	 					<a href="/admin/edit/{{ .ID }}">{{ .Title }}</a>
+	 				</div>
+	 				<div class="options">
+	 					<a href="#" onclick="return false;"><span class="fas fa-trash-alt"></span></a>
+	 				</div>
+	 				<div class="clear"></div>
+	 			</div>
+	 			{{ else }}
+	 			<p>no posts</p>
+	 			{{ end }}
+	 		</div>
 	 	</div>
 	 </body>	
  </html>

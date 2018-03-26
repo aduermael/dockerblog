@@ -1,9 +1,11 @@
 package types
 
 import (
+	"blog/humanize"
 	"encoding/json"
 	"errors"
 	"html/template"
+	"time"
 
 	"github.com/garyburd/redigo/redis"
 )
@@ -51,6 +53,9 @@ type Post struct {
 	Comments       []Comment   `json:"comments,omitempty"`
 	ShowComments   bool        `json:"showComs,omitempty"`
 	AcceptComments bool        `json:"acceptComs,omitempty"`
+	// Since is a formatted duration that can be
+	// computed from Date
+	Since string `json:"-"`
 }
 
 var (
@@ -249,6 +254,22 @@ var (
 	`)
 )
 
+func (p *Post) DateTime() time.Time {
+	return time.Unix(int64(p.Date/1000), 0)
+}
+
+// Note: this could be done client side with javascript
+// based on unix timestamp (post.Date)
+func (p *Post) ComputeSince() {
+	p.Since = humanize.DisplayDuration(time.Since(p.DateTime()), nil)
+}
+
+func PostComputeSince(posts []*Post) {
+	for _, post := range posts {
+		post.ComputeSince()
+	}
+}
+
 // GetType returns the post block's type
 func (p *Post) Save() error {
 	redisConn := redisPool.Get()
@@ -326,7 +347,7 @@ func PostGetWithSlug(slug string) (Post, error) {
 // TODO: pagination
 // TODO: from what feed?
 // TODO: sort option
-func PostsList() ([]Post, error) {
+func PostsList() ([]*Post, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
@@ -347,7 +368,7 @@ func PostsList() ([]Post, error) {
 		byteSlice = []byte("[]")
 	}
 
-	var posts []Post
+	var posts []*Post
 
 	err = json.Unmarshal(byteSlice, &posts)
 	if err != nil {

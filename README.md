@@ -26,6 +26,7 @@ Password: `admin`
 - `/`: default template (`default.tmpl`)
 - `/js`: global js functions
 - `/files`: uploaded files (static)
+- `/uploads`: redirect to `/files` (deprecated)
 - `/theme`: files from selected theme (`theme/SELECTED/files`)
 - `/admin`: admin routes
 	- `/admin/theme`: files from admin theme (not customizable)

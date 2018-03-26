@@ -190,6 +190,22 @@ a:hover {
 	clear: both;
 }
 
+#content #posts .post {
+	width: 100%;
+	padding: 10px;
+	background-color: #f2f2f2;
+	margin-top: 10px;
+}
+
+#content #posts .post .title {
+	display: inline-block;
+	float: left;
+}
+
+#content #posts .post .options {
+	display: inline-block;
+	float: right;
+}
 
 
 

@@ -24,9 +24,13 @@ func ok(c *gin.Context) {
 }
 
 func adminPosts(c *gin.Context) {
+
+	posts, _ := types.PostsList()
+
 	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
 		"title": "Admin - posts",
 		"lang":  getLangForContext(c),
+		"posts": posts,
 	})
 }
 

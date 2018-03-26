@@ -153,6 +153,18 @@ form input[type="button"]:hover {
 
 #content #posts .post:last-child { margin-bottom: 0px; }
 
+
+#content #posts .post .title {
+	/*background-color: #eee;*/
+}
+#content #posts .post .title h2 {
+	float: left;
+}
+
+#content #posts .post .title p {
+	float: right
+}
+
 /* CONTENT - POSTS - COMMENT FORM */
 
 #content #posts .post #commentForm {

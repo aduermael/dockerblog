@@ -6,9 +6,14 @@
 		 -->{{ template "menu" . }}<!--
 		 --><div id="content"><!--
 			 --><div id="posts"><!--
-				 --><div class="post"><!--
-					 --><h2><a href="/{{.post.Slug}}/{{.post.ID}}">{{ .post.Title }}</a></h2><!--
-					 -->{{ range .post.Blocks }}<!--
+				 --><div class="post">
+				 		<div class="title">
+				 			<h2><a href="/{{.post.Slug}}/{{.post.ID}}">{{ .post.Title }}</a></h2>
+				 			<p class="post-date">{{ .post.Since }}</p>
+				 			<div class="clear"></div>
+				 		</div>
+					 	
+					 	{{ range .post.Blocks }}<!--
 						 -->{{ if eq .type "text" }}<!--
 								--><div class="block text"><p>{{ .text }}</p></div><!--
 						 -->{{ else if eq .type "image" }}<!--
