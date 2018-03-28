@@ -27,7 +27,10 @@
 					 	
 					{{ if .post.ShowComments }}
 					<a id="comments" name="comments" class="anchor"></a>
-					<h2>{{ .post.NbComments }} Comments</h2>
+					<div class="number-of-comments">
+						<a href="/{{.post.Slug}}/{{.post.ID}}#comments">
+						{{ if eq .post.NbComments 1 }}1 commentaire{{ else if gt .post.NbComments 1 }}{{ .post.NbComments }} commentaires{{ else }}Commentaires{{ end }}</a>	
+					</div>
 					<div class="comments">
 						{{ range .post.Comments }}
 							<div id="com_{{.ID}}" class="comment comment-block indent-{{.Indent}}">

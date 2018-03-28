@@ -143,15 +143,16 @@ form input[type="button"]:hover {
 	margin-left: auto;
 	margin-right: auto;
 	padding-top: 10px;
-	padding-bottom: 10px;
 }
 
 #content #posts .post{
 	padding: 10px;
-	margin-bottom: 10px;
+	border-bottom: 2px solid #ddd;
 }
 
-#content #posts .post:last-child { margin-bottom: 0px; }
+#content #posts .post:last-child { 
+	border-bottom: none;
+}
 
 
 #content #posts .post .title {
@@ -161,8 +162,12 @@ form input[type="button"]:hover {
 	float: left;
 }
 
+/* date */
 #content #posts .post .title p {
-	float: right
+	padding: 0;
+	margin: 0;
+	float: right;
+	color: #999;
 }
 
 /* CONTENT - POSTS - COMMENT FORM */
@@ -230,13 +235,28 @@ form input[type="button"]:hover {
 
 /* BLOCKS */
 
+#content #posts .post .number-of-comments {
+	font-size: 1.1em;
+	text-align: center;
+}
+
+#content #posts .post .block {
+	margin-bottom: 20px;
+}
+#content #posts .post .block:last-child {
+	margin-bottom: 0;
+}
+
+#content #posts .post .block p {
+	padding-bottom: 0;
+}
+
 #content #posts .post .block.image { text-align: center; }
 
 #content #posts .post .block.image img {
 	display: inline-block;
 	vertical-align: middle;
 	max-width: 100%;
-	padding-bottom: 2rem;
 }
 
 /* COMMENTS */
