@@ -4,6 +4,7 @@ import (
 	"blog/humanize"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"html/template"
 	"time"
 
@@ -44,6 +45,7 @@ type Post struct {
 	Title          string      `json:"title"`
 	ID             int         `json:"ID"`
 	Date           int         `json:"date"`
+	Update         int         `json:"update"`
 	Slug           string      `json:"slug"`
 	Lang           string      `json:"lang"`
 	Keywords       []string    `json:"keywords,omitempty"`
@@ -53,6 +55,7 @@ type Post struct {
 	Comments       []*Comment  `json:"comments,omitempty"`
 	ShowComments   bool        `json:"showComs,omitempty"`
 	AcceptComments bool        `json:"acceptComs,omitempty"`
+	FBPostID       string      `json:"fbPostID"` // to sync with FB posts
 	// Since is a formatted duration that can be
 	// computed from Date
 	Since string `json:"-"`
@@ -91,7 +94,9 @@ var (
 			-- convert number strings to actual numbers
 			post_data.ID = tonumber(post_data.ID)
 			post_data.date = tonumber(post_data.date)
+			post_data.update = tonumber(post_data.update)
 			post_data.nbComs = tonumber(post_data.nbComs)
+
 
 			result[#result+1] = post_data
 		end
@@ -128,6 +133,7 @@ var (
 		-- convert number strings to actual numbers
 		post_data.ID = tonumber(post_data.ID)
 		post_data.date = tonumber(post_data.date)
+		post_data.update = tonumber(post_data.update)
 		post_data.nbComs = tonumber(post_data.nbComs)
 
 		-- get comments
@@ -205,6 +211,7 @@ var (
 		-- convert number strings to actual numbers
 		post_data.ID = tonumber(post_data.ID)
 		post_data.date = tonumber(post_data.date)
+		post_data.update = tonumber(post_data.update)
 		post_data.nbComs = tonumber(post_data.nbComs)
 
 		-- get comments
@@ -252,6 +259,37 @@ var (
 
 		return jsonResponse
 	`)
+
+	scriptPostSave = redis.NewScript(0, `
+		local post = cjson.decode(ARGV[1])
+
+		-- assign unique post ID if post is new (ID == 0)
+		if post.ID == 0 then 
+			post.ID = tonumber(redis.call('incr', 'postCount'))
+		end
+
+		local kID = 'post_' .. post.ID
+		local kDateOrdered = 'posts_' .. post.lang
+
+		local blocksStr = "[]" -- avoid "{}"
+		if #post.blocks > 0 then
+			blocksStr = cjson.encode(post.blocks)
+		end
+
+		redis.call('hmset', kID, 'blocks', blocksStr, 'date', post.date, 'update', post.update, 'ID', post.ID, 'slug', post.slug, 'title', post.title, 'lang', post.lang)
+		redis.call('zadd', kDateOrdered, post.date, kID)
+
+		if post.fbPostID ~= "" then
+			redis.call('hmset', kID, 'fbpostID', post.fbPostID)
+			-- comments from FB will be collected for post for a period of time
+			local fbcommentInfos = { postUpdate = post.update , fbPostID = post.fbPostID, postID = post.ID, since = 0 }
+			redis.call('hset', 'fbcomments', post.ID, cjson.encode(fbcommentInfos))
+		end
+
+		local jsonResponse = cjson.encode(post)
+
+		return jsonResponse
+	`)
 )
 
 func (p *Post) DateTime() time.Time {
@@ -272,10 +310,36 @@ func PostComputeSince(posts []*Post) {
 	}
 }
 
-// GetType returns the post block's type
+// Save saves post in DB
+// An new ID is assigned to the post if post.ID == -1
 func (p *Post) Save() error {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
+
+	b, err := json.Marshal(p)
+	if err != nil {
+		fmt.Println("ERROR (1):", err)
+		return err
+	}
+
+	res, err := scriptPostSave.Do(redisConn, string(b))
+	if err != nil {
+		fmt.Println("ERROR (2):", err)
+		return err
+	}
+
+	byteSlice, ok := res.([]byte)
+	if !ok {
+		fmt.Println("ERROR (3)")
+		return errors.New("can't cast response")
+	}
+
+	err = json.Unmarshal(byteSlice, p)
+	if err != nil {
+		fmt.Println("ERROR (4):", err)
+		return err
+	}
+
 	return nil
 }
 
@@ -299,9 +363,7 @@ func PostGet(ID string) (Post, error) {
 
 	err = json.Unmarshal(byteSlice, &post)
 	if err != nil {
-		if err != nil {
-			return Post{}, err
-		}
+		return Post{}, err
 	}
 
 	post.Comments = OrderAndIndentComments(post.Comments)

@@ -17,6 +17,13 @@ func badRequest(c *gin.Context, message string) {
 	})
 }
 
+func serverError(c *gin.Context, message string) {
+	c.JSON(http.StatusInternalServerError, gin.H{
+		"message": message,
+		"success": false,
+	})
+}
+
 func ok(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
@@ -25,7 +32,12 @@ func ok(c *gin.Context) {
 
 func adminPosts(c *gin.Context) {
 
-	posts, _ := types.PostsList()
+	posts, err := types.PostsList()
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		serverError(c, err.Error())
+		return
+	}
 
 	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
 		"title": "Admin - posts",
@@ -61,9 +73,10 @@ func adminSaveNewPost(c *gin.Context) {
 	}
 
 	// post.ID empty on purpose (new post)
-	post.ID = -1
+	post.ID = 0
 	// TODO: use user defined date when necessary
-	post.Date = int(time.Now().Unix())
+	post.Date = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
+	post.Update = post.Date
 	post.Slug = slug.Make(post.Title)
 	post.Lang = getLangForContext(c)
 	// TODO? post.Keywords
@@ -73,7 +86,15 @@ func adminSaveNewPost(c *gin.Context) {
 	post.ShowComments = true
 	post.AcceptComments = true
 
-	fmt.Printf("%#v\n", post)
+	fmt.Printf("\n%#v\n", post)
+
+	err = post.Save()
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	fmt.Printf("\n%#v\n\n", post)
 
 	/*
 		Title          string      `json:"title"`
