@@ -26,7 +26,7 @@
 						 {{ end }}	
 						 <div class="number-of-comments">
 						 	<a href="/{{.Slug}}/{{.ID}}#comments">
-						 		{{ if eq .NbComments 1 }}1 commentaire{{ else if gt .NbComments 1 }}{{ .NbComments }} commentaires{{ else }}Commentaires{{ end }}
+						 		{{ if eq .NbComments 1 }}<strong>1</strong> commentaire{{ else if gt .NbComments 1 }}<strong>{{ .NbComments }}</strong> commentaires{{ else }}Commentaires{{ end }}
 						 	</a>
 						</div>
 					 </div>	

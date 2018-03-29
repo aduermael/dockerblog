@@ -21,6 +21,7 @@ type DurationFormat struct {
 	UpTo   time.Duration
 }
 
+/*
 var defaultDurations = []DurationFormat{
 	{"now", 0, time.Second},
 	{"1 second", 0, time.Second * 2},
@@ -38,6 +39,26 @@ var defaultDurations = []DurationFormat{
 	{"1 year", 0, 18 * Month},
 	{"2 years", 0, 2 * Year},
 	{"%d years", Year, math.MaxInt64},
+}*/
+
+// TODO: load from config.json + support several languages
+var defaultDurations = []DurationFormat{
+	{"à l'instant", 0, time.Second},
+	{"il y a une seconde", 0, time.Second * 2},
+	{"il y a %d secondes", time.Second, time.Minute},
+	{"il y a une minute", 0, 2 * time.Minute},
+	{"il y a %d minutes", time.Minute, time.Hour},
+	{"il y a une heure", 0, 2 * time.Hour},
+	{"il y a %d heures", time.Hour, Day},
+	{"il y a un jour", 0, 2 * Day},
+	{"il y a %d jours", Day, Week},
+	{"il y a une semaine", 0, 2 * Week},
+	{"il y a %d semaines", Week, Month},
+	{"il y a un mois", 0, 2 * Month},
+	{"il y a %d mois", Month, Year},
+	{"il y a un an", 0, 18 * Month},
+	{"il y a 2 ans", 0, 2 * Year},
+	{"il y a %d ans", Year, math.MaxInt64},
 }
 
 func DisplayDuration(duration time.Duration, formats []DurationFormat) string {

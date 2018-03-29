@@ -125,6 +125,20 @@ form input[type="button"]:hover {
 #menu > #area li a { display: block; padding-left: 10px; padding-right: 10px;}
 #menu > #area li a:hover { background-color: #ccc; }
 
+#menu > #lire {
+	display: none;
+	background-color: #777;
+	/*max-width: 800px;
+	margin-right: auto;
+	margin-left: auto;*/
+	line-height: 40px;
+}
+
+#menu > #lire ul { text-align: center; }
+#menu > #lire li { display: inline-block; }
+#menu > #lire li a { color: #eee; display: block; padding-left: 10px; padding-right: 10px;}
+#menu > #lire li a:hover { /**/ }
+
 /* CONTENT */
 
 #content {
@@ -142,12 +156,13 @@ form input[type="button"]:hover {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
-	padding-top: 10px;
 }
 
 #content #posts .post{
 	padding: 10px;
-	border-bottom: 2px solid #ddd;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #ddd;
 }
 
 #content #posts .post:last-child { 
@@ -177,7 +192,7 @@ form input[type="button"]:hover {
 	background-color: #eee;
 	margin-left: auto;
 	margin-right: auto;
-	padding: 1rem;
+	padding: 10px;
 }
 
 #content #posts .post #commentForm #url,
@@ -195,7 +210,12 @@ form input[type="button"]:hover {
 	margin-bottom: 8px;
 }
 
-#content #posts .post #commentForm .header #commentGravatar { margin-bottom: 8px; width: 80px; height: 80px; }
+#content #posts .post #commentForm .header #commentGravatar {
+	margin-bottom: 8px;
+	width: 80px;
+	height: 80px; 
+	border-radius: 5px;
+}
 
 #content #posts .post #commentForm .header .nameAndEmail {
 	position: absolute;
@@ -205,7 +225,18 @@ form input[type="button"]:hover {
 	padding-left: 88px;
 }
 
-#content #posts .post #commentForm textarea { font-size: 1.3rem; line-height: 2.0rem; margin: 0; border: 1px solid #aaa;}
+#content #posts .post #commentForm textarea,
+#content #posts .post #commentForm input[type="text"],
+#content #posts .post #commentForm input[type="email"] {
+	border-radius: 5px;
+}
+
+#content #posts .post #commentForm input[type="text"],
+#content #posts .post #commentForm input[type="email"] {
+	background-color: #ddd;
+}
+
+#content #posts .post #commentForm textarea { font-size: 1.3rem; line-height: 2.0rem; margin: 0; border: 1px solid #ccc;}
 #content #posts .post #commentForm .header .nameAndEmail #commentName { width: 100%; margin-bottom: 8px; }
 #content #posts .post #commentForm .header .nameAndEmail #commentEmail { width: 100%; }
 #content #posts .post #commentForm .webProfile { width: 100%; height: 36px; margin-bottom: 8px; }
@@ -226,18 +257,27 @@ form input[type="button"]:hover {
 	text-align: left;
 	padding-left: 8px;
 	padding-right: 8px;
+	border: none;
 }
 
 #content #posts .post #commentForm input[type="checkbox"] { width: auto; height: auto; margin-right: 8px; }
-#content #posts .post #commentForm input[type="button"] { text-align: center; margin-bottom: 8px; }
 #content #posts .post #commentForm input.mandatory { background-color: #fff; }
 #content #posts .post #commentForm input.error { background-color: #f78778 !important; }
+
+#content #posts .post #commentForm input[type="button"] { 
+	background-color: #67CFEC;
+	text-align: center;
+	margin-bottom: 8px; 
+	border-radius: 5px;
+	box-shadow: 0px 2px 5px #aaa;
+}
 
 /* BLOCKS */
 
 #content #posts .post .number-of-comments {
 	font-size: 1.1em;
 	text-align: center;
+	/*margin-bottom: 20px;*/
 }
 
 #content #posts .post .block {
@@ -257,12 +297,18 @@ form input[type="button"]:hover {
 	display: inline-block;
 	vertical-align: middle;
 	max-width: 100%;
+	border-radius: 5px;
 }
 
 /* COMMENTS */
 
+#content #posts .post .comments {
+	padding-top: 20px;
+}
+
 #content #posts .post .comments .comment-block {
 	margin-bottom: 1rem;
+	border-radius: 5px;
 }
 
 #content #posts .post .comments .comment-block:last-child { margin-bottom: 0; }
@@ -296,9 +342,11 @@ form input[type="button"]:hover {
 
 #content #posts .post .comments .comment img.avatar {
 	float: left;
-	padding-right: 1rem;
-	padding-bottom: 1rem;
+	margin-right: 1rem;
+	margin-bottom: 1rem;
+	border-radius: 5px;
 }
+
 
 /* FOOTER */
 

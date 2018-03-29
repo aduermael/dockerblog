@@ -8,3 +8,7 @@ function backToOriginalBackground(obj) {
 function setBackgroundColor(obj,color) {
 	obj.css("background-color", color)
 }
+
+function toggleLire() {
+	$("#lire").toggle()
+}

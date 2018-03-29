@@ -29,7 +29,8 @@
 					<a id="comments" name="comments" class="anchor"></a>
 					<div class="number-of-comments">
 						<a href="/{{.post.Slug}}/{{.post.ID}}#comments">
-						{{ if eq .post.NbComments 1 }}1 commentaire{{ else if gt .post.NbComments 1 }}{{ .post.NbComments }} commentaires{{ else }}Commentaires{{ end }}</a>	
+						{{ if eq .post.NbComments 1 }}<strong>1</strong> commentaire{{ else if gt .post.NbComments 1 }}<strong>{{ .post.NbComments }}</strong> commentaires{{ else }}Commentaires{{ end }}
+						</a>	
 					</div>
 					<div class="comments">
 						{{ range .post.Comments }}
@@ -76,7 +77,7 @@
 									</div><!-- webProfile -->
 								 		
 									<textarea id="commentContent" onfocus="backToOriginalBackground(this);"></textarea><!--
-									--><input type="button" value="Send" onclick="postComment('name','email','website','twitter')">
+									--><input type="button" value="ENVOYER" onclick="postComment('name','email','website','twitter')">
 
 									<label><input id="commentRemember" type="checkbox" checked>Se rappeler de mes informations.</label>
 									<label><input id="commentEmailOnAnswer" type="checkbox" checked>Être tenu au courant des réponses par email.</label>
