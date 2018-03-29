@@ -269,7 +269,10 @@ var (
 		end
 
 		local kID = 'post_' .. post.ID
+		-- index (per date)
 		local kDateOrdered = 'posts_' .. post.lang
+		-- index (by slug)
+		local kSlugs = 'slugs_' .. post.lang
 
 		local blocksStr = "[]" -- avoid "{}"
 		if #post.blocks > 0 then
@@ -278,6 +281,7 @@ var (
 
 		redis.call('hmset', kID, 'blocks', blocksStr, 'date', post.date, 'update', post.update, 'ID', post.ID, 'slug', post.slug, 'title', post.title, 'lang', post.lang)
 		redis.call('zadd', kDateOrdered, post.date, kID)
+		redis.call('hset', kSlugs, post.slug, kID)
 
 		if post.fbPostID ~= "" then
 			redis.call('hmset', kID, 'fbpostID', post.fbPostID)
