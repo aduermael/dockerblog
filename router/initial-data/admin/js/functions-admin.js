@@ -56,7 +56,6 @@ function nextBlock() {
 function PostFiles(path,formData,callback,errorCallback)
 {
 	var url = 'http://' + location.host + path;
-	console.log('url : '+url);
 
 	$.ajax
 	(
@@ -115,10 +114,6 @@ function toolBarMouseDownShouldPropagate(event) {
 			var bounds = $(this).get(0).getBoundingClientRect()
 			if (event.clientX >= bounds.x && event.clientX <= bounds.x + bounds.width &&
 				event.clientY >= bounds.y && event.clientY <= bounds.y + bounds.height) {
-				console.log("HIT !!!!")
-
-				
-
 				propagate = true;
 			}
 		}
@@ -286,7 +281,6 @@ function addImageBlock(sender)
 
 // used to init all blocks when editing a post
 function initExistingBlocks() {
-	console.log("initExistingBlocks")
 	$('#blocks').children().each(function ()
 	{
 		if ($(this).hasClass("block_text"))
@@ -299,9 +293,6 @@ function initExistingBlocks() {
 function moveUp() {
 	var toMove = $("#blockToolBar").next()
 	var swapWith = $("#blockToolBar").prev()
-
-	console.log("toMove:", toMove)
-	console.log("swapWith:", swapWith)
 
 	if (swapWith != null) {
 		toMove.insertBefore(swapWith)
@@ -316,9 +307,6 @@ function moveUp() {
 function moveDown() {
 	var toMove = $("#blockToolBar").next()
 	var swapWith = toMove.next()
-
-	console.log("toMove:", toMove)
-	console.log("swapWith:", swapWith)
 
 	if (swapWith != null) {
 		toMove.insertAfter(swapWith)
@@ -358,11 +346,8 @@ var uploadImageCallback = function(data)
 }
 
 var uploadFile = function(form, evt) {
-	console.log("upload!!!")
-
 	evt.preventDefault()
 
-	console.log("form:", form)
 	//grab all form data
 	var formData = new FormData(form)
 	var inputs = document.getElementById('uploaderFile')
@@ -379,10 +364,8 @@ var uploadFile = function(form, evt) {
 
 
 var sendImage = function(sender) {
-	console.log("TEST")
 	$("#uploader").submit()
 	$(sender).val("")
-	console.log(sender)
 }
 
 
@@ -647,8 +630,6 @@ function sendPost(sender)
 
 	postContent.blocks = blocks;
 	postContent.title = $("#postTitle").val();
-
-	console.log(postContent)
 
 	notDirty()
 
