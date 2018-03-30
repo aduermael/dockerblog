@@ -260,7 +260,41 @@ function initExistingBlocks() {
 	})
 }
 
-function removeBlock(sender) {
+function moveUp() {
+	var toMove = $("#blockToolBar").next()
+	var swapWith = $("#blockToolBar").prev()
+
+	console.log("toMove:", toMove)
+	console.log("swapWith:", swapWith)
+
+	if (swapWith != null) {
+		toMove.insertBefore(swapWith)
+		$("#blockToolBar").insertBefore(toMove)
+	}
+
+	if (activeEditor != null) {
+		activeEditor.focus()
+	}
+}
+
+function moveDown() {
+	var toMove = $("#blockToolBar").next()
+	var swapWith = toMove.next()
+
+	console.log("toMove:", toMove)
+	console.log("swapWith:", swapWith)
+
+	if (swapWith != null) {
+		toMove.insertAfter(swapWith)
+		$("#blockToolBar").insertBefore(toMove)
+	}
+
+	if (activeEditor != null) {
+		activeEditor.focus()
+	}
+}
+
+function removeBlock() {
 	$("#blockToolBar").next().remove()
 	hideToolBar()
 }
