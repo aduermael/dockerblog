@@ -162,7 +162,7 @@ func main() {
 	}
 
 	router.GET("/", func(c *gin.Context) {
-		posts, err := types.PostsList()
+		posts, err := types.PostsList(false)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return

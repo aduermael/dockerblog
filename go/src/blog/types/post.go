@@ -90,13 +90,22 @@ var (
 			return result
 		end
 
+		local now = ARGV[1]
+		local includeFuture = ARGV[2]
+
 		local key = "posts_fr"
 		local nb_posts_per_page = 10
 		local page = 0
 		local first_post = page * nb_posts_per_page
 		local last_post = first_post + (nb_posts_per_page - 1)
 
-		local post_ids = redis.call('zrevrange', key, first_post, last_post)
+		local post_ids
+
+		if includeFuture == "1" then
+			post_ids = redis.call('zrevrangebyscore', key, '+inf', '-inf', 'LIMIT', first_post, last_post)
+		else
+			post_ids = redis.call('zrevrangebyscore', key, now, '-inf', 'LIMIT', first_post, last_post)
+		end
 
 		local result = {}
 
@@ -444,11 +453,13 @@ func PostGetWithSlug(slug string) (Post, error) {
 // TODO: pagination
 // TODO: from what feed?
 // TODO: sort option
-func PostsList() ([]*Post, error) {
+func PostsList(includeFuture bool) ([]*Post, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
-	res, err := scriptPostList.Do(redisConn)
+	now := int(time.Now().Unix()) * 1000
+
+	res, err := scriptPostList.Do(redisConn, now, includeFuture)
 	if err != nil {
 		return nil, err
 	}

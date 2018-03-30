@@ -32,7 +32,7 @@ func ok(c *gin.Context) {
 
 func adminPosts(c *gin.Context) {
 
-	posts, err := types.PostsList()
+	posts, err := types.PostsList(true)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
