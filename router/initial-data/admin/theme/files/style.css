@@ -135,6 +135,15 @@ a:hover {
 	/*color: #fff;*/
 }
 
+#blocks .block_image {
+	text-align: center;
+}
+
+#blocks .block_image img {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+}
 
 #blocks #blockToolBar {
 	display: none;

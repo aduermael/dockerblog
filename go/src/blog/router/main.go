@@ -118,7 +118,9 @@ func main() {
 		adminGroup.GET("/", adminPosts)
 
 		adminGroup.GET("/new", adminNewPost)
-		adminGroup.POST("/new", adminSaveNewPost)
+		adminGroup.POST("/save", adminSavePost)
+
+		adminGroup.GET("/edit/:id", adminEditPost)
 	}
 
 	// POSTS

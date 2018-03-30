@@ -4,18 +4,20 @@
 	 <body>
 	 	<script type="text/javascript">
 	 		window.onload = function() {
+	 			
+	 			initExistingBlocks()
+
+	 			$("#datepicker").datepicker()
+	 			$("#timepicker").timepicker()
 
 	 			notDirty()
-	 			
-	 			$("#datepicker").datepicker();
-	 			$("#timepicker").timepicker();
 
 				window.addEventListener("beforeunload", function (e) {
 					if (isDirty()) {
 						return "Are you sure you want to leave this page?"	
 					}
-					return null;
-				});
+					return null
+				})
 			}
 	 	</script>
 
@@ -55,7 +57,7 @@
 	 				<div id="globalTools">
 	 					<a href="#" onclick="return false;"><span class="fas fa-hand-point-up"></span></a>
 	 					<a href="#" onclick="return false;"><span class="fas fa-hand-point-down"></span></a>
-	 					<a href="#" onclick="return false;"><span class="fas fa-trash-alt"></span></a>
+	 					<a href="#" onclick="removeBlock(); return false;"><span class="fas fa-trash-alt"></span></a>
 	 				</div>
 
 	 				<div class="clear"></div>
@@ -80,7 +82,6 @@
 	 			<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
 	 			--><input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
 	 		</div>
-
 
 	 		<div id="submit">
 	 			<a href="#" onclick="sendPost(this);return false;">Post</a>

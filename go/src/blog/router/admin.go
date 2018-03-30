@@ -47,13 +47,27 @@ func adminPosts(c *gin.Context) {
 }
 
 func adminNewPost(c *gin.Context) {
-	c.HTML(http.StatusOK, "admin_posts_new.tmpl", gin.H{
+	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title": "Admin - new post",
 		"lang":  getLangForContext(c),
 	})
 }
 
-func adminSaveNewPost(c *gin.Context) {
+func adminEditPost(c *gin.Context) {
+	post, err := types.PostGet(c.Param("id"))
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
+		"title": "Admin - new post",
+		"lang":  getLangForContext(c),
+		"post":  post,
+	})
+}
+
+func adminSavePost(c *gin.Context) {
 
 	fmt.Println("save new post")
 
@@ -72,8 +86,8 @@ func adminSaveNewPost(c *gin.Context) {
 		return
 	}
 
-	// post.ID empty on purpose (new post)
-	post.ID = 0
+	// NOTE: if post.ID == 0, a new post will be created
+
 	// TODO: use user defined date when necessary
 	post.Date = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
 	post.Update = post.Date

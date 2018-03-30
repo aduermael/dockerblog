@@ -17,7 +17,7 @@ function notDirty() {
 }
 
 function nextBlock() {
-	var n = 1;
+	var n = 0;
 	var id;
 
 	$('#blocks >').each(function(i,obj)
@@ -174,22 +174,11 @@ function applyLink() {
 	disableURLField()
 }
 
-function addTextBlock(sender)
-{
-	if (editor != null) {
-		console.log(editor)
-		console.log(editor.root.innerHTML)
-		// editor.container.innerHTML = editor.root.innerHTML;
-		return 
-	}
+function initTextBlock(block) {
 
-  	var blockName = "block" + nextBlock();
-
-  	var block = $("<div id=\"" + blockName +"\" class=\"block block_text\"></div>");
-
-	block.appendTo($("#blocks"))
-
-	console.log("block:", block.get(0));
+	// for some reason, when creating the editor, a new line is added.
+	// saving block's html content now to re-assign it after initialization.
+	var htmlContent = block.html()
 
 	var editor = new Quill(block.get(0), {
 		theme: 'snow',
@@ -197,6 +186,9 @@ function addTextBlock(sender)
 			"toolbar": false
   		}
 	});
+
+	// re-assigning html content...
+	block.children().first().html(htmlContent)
 
 	editor.on('selection-change', function(range, oldRange, source) {
 
@@ -227,8 +219,7 @@ function addTextBlock(sender)
 					// this line will put the focus back on the editor:
 					editor.format('background', '#88DDEE')
 					linkRange = editor.getSelection()
-					
-					console.log("set linkRange:", linkRange)
+
 					// now we should go back to url field:
 					$("#urlField").focus()
 					// needs to be done after focus
@@ -241,11 +232,38 @@ function addTextBlock(sender)
 		}
 	});
 
+	return editor
+}
+
+function addTextBlock(sender)
+{
+  	var blockName = "block" + nextBlock();
+
+  	var block = $("<div id=\"" + blockName +"\" class=\"block block_text\"><p><br></p></div>");
+
+	block.appendTo($("#blocks"))
+
+	var editor = initTextBlock(block)
+
 	editor.focus()
 }
 
-// ling ling qi
+// used to init all blocks when editing a post
+function initExistingBlocks() {
+	console.log("initExistingBlocks")
+	$('#blocks').children().each(function ()
+	{
+		if ($(this).hasClass("block_text"))
+		{
+			initTextBlock($(this))
+		}
+	})
+}
 
+function removeBlock(sender) {
+	$("#blockToolBar").next().remove()
+	hideToolBar()
+}
 
 /*
 function addHtmlBlock(sender)
@@ -306,91 +324,6 @@ function addContactForm(sender)
 			+ "<div style=\"clear:both;\"></div>"
 		+ "</div>"		
 	+ "</div>");
-}
-
-
-function editPost(sender)
-{
-	var postContent = new Object()
-	postContent.ID = $('#postID').attr('value');
-	var blocks = new Array();
-	var i = 0;
-
-	// to link post with a FB post and merge comments
-	var fbPostID = $('#fbpostID').val();
-
-	if (fbPostID && fbPostID != "" && fbPostID != "postID") // not empty and not default value
-	{
-		postContent.fbpostID = $('#fbpostID').val();
-	}
-
-
-	$('#content_blocks').children().each(function ()
-	{
-		blocks[i] = new Object();
-
-		if ($(this).hasClass("block_text"))
-		{
-			blocks[i].type = "text";
-			blocks[i].text = $(this).html();
-		}
-		else if ($(this).hasClass("block_file"))
-		{
-			blocks[i].type = "file";
-			blocks[i].url = $(this).html();
-			blocks[i].filename = "error"
-
-			var components = blocks[i].url.split("/");
-			if (components.length > 0) {
-				blocks[i].filename = components[components.length-1]	
-			}
-		}
-		else if ($(this).hasClass("block_html"))
-		{
-			blocks[i].type = "html";
-			blocks[i].data = $(this).children('textarea')[0].value;
-		}
-		else if ($(this).hasClass("block_gallery"))
-		{
-			blocks[i].type = "gallery";
-			blocks[i].data = $(this).children('textarea')[0].value;
-		}
-		else if ($(this).hasClass("block_image"))
-		{
-			blocks[i].type = "image";
-
-			blocks[i].path = $($(this).children('img')[0]).attr( 'src' );
-
-			blocks[i].url = $($(this).children('input')[0]).val();
-			if (blocks[i].url == "URL") blocks[i].url = "";
-
-			blocks[i].description = $($(this).children('input')[1]).val();
-			if (blocks[i].description == "Description") blocks[i].description = "";
-		}
-		else if ($(this).hasClass("block_contact"))
-		{
-			blocks[i].type = "contact";
-			blocks[i].to = $($(this).children('div')[0]).children('input')[0].value;
-			blocks[i].title = $($(this).children('div')[1]).children('input')[0].value;
-		}
-		else if ($(this).hasClass("block_video"))
-		{
-			blocks[i].type = "video";
-		}
-		else
-		{
-			blocks[i].type = "unknown type";
-		}
-
-		i++;
-
-	});
-
-
-	postContent.blocks = blocks;
-	postContent.postTitle = $("#postTitle").val();
-
-	Post('/admin/edit',postContent,editPostCallBack,errorCallback);
 }
 
 
@@ -514,6 +447,12 @@ function sendPost(sender)
 	var blocks = new Array();
 	var i = 0;
 
+	if ($("#postID")) {
+		postContent.ID = parseInt($("#postID").val())
+	} else {
+		postContent.ID = 0
+	}
+
 	// to link post with a FB post and merge comments
 	var fbPostID = $('#fbpostID').val();
 
@@ -596,7 +535,7 @@ function sendPost(sender)
 
 	notDirty()
 
-	Post('/admin/new',postContent,editPostCallBack,errorCallback);
+	Post('/admin/save',postContent,editPostCallBack,errorCallback);
 }
 
 /*

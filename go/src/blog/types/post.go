@@ -40,6 +40,14 @@ func (pb *PostBlock) GetType() (PostBlockType, error) {
 	}
 }
 
+func (pb *PostBlock) IsOfType(t string) bool {
+	return string((*pb)["type"]) == t
+}
+
+func (pb *PostBlock) ValueForKey(key string) template.HTML {
+	return (*pb)[key]
+}
+
 // Post defines a blog post
 type Post struct {
 	Title          string      `json:"title"`
@@ -88,8 +96,13 @@ var (
 
 		for _, post_id in ipairs(post_ids) do
 			local post_data = toStruct(redis.call('hgetall', post_id))
+
 			-- blocks are stored in raw json format
 			post_data.blocks = cjson.decode(post_data.blocks)
+			-- remove if empty to avoid table to be serialized as '{}'
+			if next(post_data.blocks) == nil then
+				post_data.blocks = nil
+			end
 
 			-- convert number strings to actual numbers
 			post_data.ID = tonumber(post_data.ID)
@@ -127,8 +140,13 @@ var (
 		end
 
 		local post_data = toStruct(res)
+		
 		-- blocks are stored in raw json format
 		post_data.blocks = cjson.decode(post_data.blocks)
+		-- remove if empty to avoid table to be serialized as '{}'
+		if next(post_data.blocks) == nil then
+			post_data.blocks = nil
+		end
 
 		-- convert number strings to actual numbers
 		post_data.ID = tonumber(post_data.ID)
@@ -205,8 +223,13 @@ var (
 		end
 
 		local post_data = toStruct(redis.call('hgetall', post_id))
+		
 		-- blocks are stored in raw json format
 		post_data.blocks = cjson.decode(post_data.blocks)
+		-- remove if empty to avoid table to be serialized as '{}'
+		if next(post_data.blocks) == nil then
+			post_data.blocks = nil
+		end
 
 		-- convert number strings to actual numbers
 		post_data.ID = tonumber(post_data.ID)
