@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,11 @@ type Config struct {
 	Timezone     string   `json:"timezone"`
 }
 
+var (
+	// TimeLocation is defined based on the Timezone
+	TimeLocation *time.Location
+)
+
 // LoadConfig loads configuration at configPath
 func LoadConfig() (*Config, error) {
 
@@ -28,6 +34,11 @@ func LoadConfig() (*Config, error) {
 	}
 
 	err = json.Unmarshal(configBytes, config)
+	if err != nil {
+		return nil, err
+	}
+
+	TimeLocation, err = time.LoadLocation(config.Timezone)
 	if err != nil {
 		return nil, err
 	}

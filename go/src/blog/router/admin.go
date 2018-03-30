@@ -60,6 +60,10 @@ func adminEditPost(c *gin.Context) {
 		return
 	}
 
+	t := time.Unix(int64(post.Date/1000), 0) // ÷1000 because of legacy (we used to store milliseconds)
+	post.DateString = t.In(TimeLocation).Format("01/02/2006")
+	post.TimeString = t.In(TimeLocation).Format("3:04pm")
+
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title": "Admin - new post",
 		"lang":  getLangForContext(c),
@@ -86,11 +90,32 @@ func adminSavePost(c *gin.Context) {
 		return
 	}
 
-	// NOTE: if post.ID == 0, a new post will be created
+	if post.DateString != "" {
+		var d = post.DateString
+		if post.TimeString != "" {
+			d = d + " " + post.TimeString
+		} else {
+			// Note: default time could be set in config
+			d = d + " " + "8:00am"
+		}
 
-	// TODO: use user defined date when necessary
-	post.Date = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
-	post.Update = post.Date
+		// month/day/year
+		t, err := time.ParseInLocation("01/02/2006 3:04pm", d, TimeLocation)
+		if err != nil {
+			badRequest(c, "can't read date")
+			return
+		}
+		fmt.Println("DATE:", t)
+
+		post.Date = int(t.Unix() * 1000) // x1000 for legacy (we used to store milliseconds)
+	} else {
+		// DATE : NOW
+		post.Date = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
+	}
+
+	// NOTE: if post.ID == 0, a new post is created in database
+
+	post.Update = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
 	post.Slug = slug.Make(post.Title)
 	post.Lang = getLangForContext(c)
 	// TODO? post.Keywords
@@ -109,21 +134,6 @@ func adminSavePost(c *gin.Context) {
 	}
 
 	fmt.Printf("\n%#v\n\n", post)
-
-	/*
-		Title          string      `json:"title"`
-		ID             int         `json:"ID"`
-		Date           int         `json:"date"`
-		Slug           string      `json:"slug"`
-		Lang           string      `json:"lang"`
-		Keywords       []string    `json:"keywords,omitempty"`
-		Description    string      `json:"description,omitempty"`
-		NbComments     int         `json:"nbComs"`
-		Blocks         []PostBlock `json:"blocks"`
-		Comments       []Comment   `json:"comments,omitempty"`
-		ShowComments   bool        `json:"showComs,omitempty"`
-		AcceptComments bool        `json:"acceptComs,omitempty"`
-	*/
 
 	ok(c)
 }

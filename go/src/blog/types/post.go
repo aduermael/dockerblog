@@ -67,6 +67,12 @@ type Post struct {
 	// Since is a formatted duration that can be
 	// computed from Date
 	Since string `json:"-"`
+	// not saved in database
+	// DateString & TimeString can be sent when adding a new post
+	// or editing one. Date can be obtained from it using
+	// timezone information from configuration
+	DateString string `json:"datestring,omitempty"`
+	TimeString string `json:"timestring,omitempty"`
 }
 
 var (

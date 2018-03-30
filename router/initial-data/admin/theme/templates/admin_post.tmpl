@@ -79,8 +79,13 @@
 	 		</div>
 
 	 		<div>
-	 			<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
-	 			--><input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
+	 			{{ if .post}}
+	 				<input value="{{ .post.DateString }}" id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
+	 				--><input value="{{ .post.TimeString }}" id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
+	 			{{ else }}
+					<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
+	 				--><input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
+	 			{{ end }}
 	 		</div>
 
 	 		<div id="submit">

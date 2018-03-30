@@ -490,10 +490,14 @@ function sendPost(sender)
 	// to link post with a FB post and merge comments
 	var fbPostID = $('#fbpostID').val();
 
-	if (fbPostID && fbPostID != "" && fbPostID != "postID") // not empty and not default value
+	if (fbPostID && fbPostID != "") // not empty
 	{
 		postContent.fbpostID = $('#fbpostID').val();
 	}
+
+	// date
+	postContent.datestring = $('#datepicker').val();
+	postContent.timestring = $('#timepicker').val();
 
 	$('#blocks').children().each(function ()
 	{
