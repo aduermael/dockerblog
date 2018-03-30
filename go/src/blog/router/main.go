@@ -20,10 +20,11 @@ import (
 )
 
 const (
-	serverPort      = ":80"
-	configPath      = "/blog-data/config.json"
-	blogDataRootDir = "/blog-data"
-	initialDataDir  = "/initial-data"
+	serverPort       = ":80"
+	configPath       = "/blog-data/config.json"
+	blogDataRootDir  = "/blog-data"
+	initialDataDir   = "/initial-data"
+	blogFilesRootDir = blogDataRootDir + "/files"
 )
 
 var (
@@ -121,6 +122,8 @@ func main() {
 		adminGroup.POST("/save", adminSavePost)
 
 		adminGroup.GET("/edit/:id", adminEditPost)
+
+		adminGroup.POST("/upload", adminUpload)
 	}
 
 	// POSTS

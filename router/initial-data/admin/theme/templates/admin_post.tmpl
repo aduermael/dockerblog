@@ -4,7 +4,6 @@
 	 <body>
 	 	<script type="text/javascript">
 	 		window.onload = function() {
-	 			
 	 			initExistingBlocks()
 
 	 			$("#datepicker").datepicker()
@@ -13,22 +12,30 @@
 	 			notDirty()
 
 				window.addEventListener("beforeunload", function (e) {
-					if (isDirty()) {
-						return "Are you sure you want to leave this page?"	
-					}
-					return null
+					return alertIfDirty()
 				})
+
+				// $("#uploader").submit(function(event) {
+				// 	event.preventDefault()
+				// 	console.log("submit !!!")
+				// 	return false
+				// })
+
+				// input
+				// document.getElementById("uploaderFile").onchange = function() {
+    // 				document.getElementById("uploader").submit()
+				// };
 			}
 	 	</script>
 
 	 	{{ template "admin_menu" . }}
 	 	<div id="content">
-	 		{{ if .post}}
-	 			<h1>Edit post</h1>
-	 			<input id="postID" type="hidden" value="{{ .post.ID }}">
-	 		{{ else }}
-	 			<h1>New post</h1>
-	 		{{ end }}
+			{{ if .post}}
+				<h1>Edit post</h1>
+				<input id="postID" type="hidden" value="{{ .post.ID }}">
+			{{ else }}
+				<h1>New post</h1>
+			{{ end }}
 
 	 		<input {{ if .post}}value="{{ .post.Title }}"{{ end}} class="title" id="postTitle" type="text" placeholder="Title" onfocus="this.placeholder =''" onblur="this.placeholder = 'Title'">
 
@@ -44,53 +51,58 @@
 	 				{{ end}}
 	 			{{ end }}
 
-	 			<div id="blockToolBar" onmousedown="return toolBarMouseDownShouldPropagate(event);">
-	 				<div id="textTools">
-	 					<a href="#" onclick="bold(); return false;"><span class="fas fa-bold"></span></a>
-	 					<a href="#" onclick="italic(); return false;"><span class="fas fa-italic"></span></a>
-	 					<a href="#" onclick="underline();return false;"><span class="fas fa-underline"></span></a>
-	 					<span id="linkIcon" class="fas fa-link"></span>
-	 					<input onkeyup="applyLinkReturnKey(event);" onblur="applyLink();" id="urlField" type="text" placeholder="url" />
-	 					<a href="#" id="unlinkBtn" onclick="removeLink();"><span class="fas fa-unlink"></span></a>
-	 				</div>
+				<div id="blockToolBar" onmousedown="return toolBarMouseDownShouldPropagate(event);">
+					<div id="textTools">
+						<a href="#" onclick="bold(); return false;"><span class="fas fa-bold"></span></a>
+						<a href="#" onclick="italic(); return false;"><span class="fas fa-italic"></span></a>
+						<a href="#" onclick="underline();return false;"><span class="fas fa-underline"></span></a>
+						<span id="linkIcon" class="fas fa-link"></span>
+						<input onkeyup="applyLinkReturnKey(event);" onblur="applyLink();" id="urlField" type="text" placeholder="url" />
+						<a href="#" id="unlinkBtn" onclick="removeLink();"><span class="fas fa-unlink"></span></a>
+					</div>
 
-	 				<div id="globalTools">
-	 					<a href="#" onclick="moveUp();return false;"><span class="fas fa-hand-point-up"></span></a>
-	 					<a href="#" onclick="moveDown();return false;"><span class="fas fa-hand-point-down"></span></a>
+					<div id="globalTools">
+						<a href="#" onclick="moveUp();return false;"><span class="fas fa-hand-point-up"></span></a>
+						<a href="#" onclick="moveDown();return false;"><span class="fas fa-hand-point-down"></span></a>
 	 					<a href="#" onclick="removeBlock();return false;"><span class="fas fa-trash-alt"></span></a>
-	 				</div>
+					</div>
 
-	 				<div class="clear"></div>
-	 			</div>
-	 		</div>
+					<div class="clear"></div>
+				</div>
+			</div>
 
-	 		<div id="addBlockButtons">
-	 			<span class="fas fa-plus"></span>
-	 			<a href="#" onclick="addTextBlock(this);return false;"></span>Text</a>
-	 			<a href="#">Image</a>
-	 			<a href="#">Contact form</a>
-	 			<a href="#">File</a>
-	 			<a href="#">HTML</a>
-	 			<a href="#">Gallery</a>
-	 		</div>
+			<div id="addBlockButtons">
+				<span class="fas fa-plus"></span>
+				<a href="#" onclick="addTextBlock(this);return false;">Text</a>
+				<a href="#" onclick="addImageBlock(this);return false;">Image</a>
+				<a href="#">Contact form</a>
+				<a href="#">File</a>
+				<a href="#">HTML</a>
+				<a href="#">Gallery</a>
+			</div>
 
-	 		<div>
-	 			<input id="fbpostID" type="text" placeholder="Facebook post ID" onfocus="this.placeholder =''" onblur="this.placeholder = 'Facebook post ID'">
-	 		</div>
+			<div>
+				<input id="fbpostID" type="text" placeholder="Facebook post ID" onfocus="this.placeholder =''" onblur="this.placeholder = 'Facebook post ID'">
+			</div>
 
-	 		<div>
-	 			{{ if .post}}
-	 				<input value="{{ .post.DateString }}" id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
+			<div>
+				{{ if .post}}
+					<input value="{{ .post.DateString }}" id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
 	 				--><input value="{{ .post.TimeString }}" id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
-	 			{{ else }}
+				{{ else }}
 					<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
 	 				--><input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
-	 			{{ end }}
-	 		</div>
+				{{ end }}<div>
+			</div>
 
-	 		<div id="submit">
-	 			<a href="#" onclick="sendPost(this);return false;">Post</a>
-	 		</div>
-	 	</div>
-	 </body>	
+			<div id="submit">
+				<a href="#" onclick="sendPost(this);return false;">Post</a>
+			</div>
+
+			<form onsubmit="uploadFile(this,event)" action method="POST" enctype="multipart/form-data" style="display:none;" id="uploader" name="uploader">
+				<input id="uploaderFile" type="file" name="upload" accept="image/*" onchange="sendImage(this);">
+			</form>
+
+		</div>
+	</body>	
  </html>

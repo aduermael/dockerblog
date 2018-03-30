@@ -3,11 +3,29 @@ var savedBlocksHTML = ""
 var savedTitle = ""
 var savedFBPostID = ""
 
+var errCallback = function(data) {
+	if (data) {
+		var res = JSON.parse(data)	
+		if (res && res.message) {
+			alert(res.message)
+			return
+		}
+	}
+	alert("error")
+}
+
 function isDirty() {
 	var a = $('#blocks').html() != savedBlocksHTML
 	var b = $('#postTitle').val() != savedTitle
 	var c = $('#fbpostID').val() != savedFBPostID
 	return (a || b || c)
+}
+
+function alertIfDirty() {
+	if (isDirty()) {
+		return "Are you sure you want to leave this page?"
+	}
+	return null
 }
 
 function notDirty() {
@@ -38,7 +56,7 @@ function nextBlock() {
 function PostFiles(path,formData,callback,errorCallback)
 {
 	var url = 'http://' + location.host + path;
-	// console.log('fullpath : '+fullpath);
+	console.log('url : '+url);
 
 	$.ajax
 	(
@@ -248,6 +266,24 @@ function addTextBlock(sender)
 	editor.focus()
 }
 
+function addImageBlock(sender)
+{
+	// var blockName = "block" + nextBlock();
+
+ //  	var block = $("<div id=\"" + blockName +"\" class=\"block block_image\"><div class=\"upload\">Upload</div></div>");
+
+	// block.appendTo($("#blocks"))
+
+	// block.children().first().uploadFile({
+	// 	url:"/admin/upload",
+	// 	multiple: false,
+	// 	allowedTypes: "jpg,jpeg,png,gif",
+	// 	filename: "upload"
+	// });
+
+  	$('#uploaderFile').click();
+}
+
 // used to init all blocks when editing a post
 function initExistingBlocks() {
 	console.log("initExistingBlocks")
@@ -296,8 +332,60 @@ function moveDown() {
 
 function removeBlock() {
 	$("#blockToolBar").next().remove()
-	hideToolBar()
+	hideToolBar(activeEditor)
 }
+
+
+var uploadImageCallback = function(data)
+{	
+	var res = JSON.parse(data);
+	
+	if(res.success)
+	{
+		var blockName = "block" + nextBlock();
+
+	  	var block = $("<div id=\"" + blockName +"\" class=\"block block_image\"><img src=\"" + res.filepaths[0] + "\"/>" +
+	  		"<input id=\"imageurl\" placeholder=\"URL\" name=\"imageurl\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'URL'\"/></div>");
+
+		block.appendTo($("#blocks"))
+		
+		// $("#blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.file_path + "\"/><input id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"URL\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'URL') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'URL'; }\"/><input id=\"imagedescription\" name=\"imagedescription\" type=\"text\" value=\"Description\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'Description') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'Description'; }\"/><div style=\"margin:0;padding:0;clear:both;\"></div></div>");
+	}
+	else
+	{
+		alert(res.message);
+	}
+}
+
+var uploadFile = function(form, evt) {
+	console.log("upload!!!")
+
+	evt.preventDefault()
+
+	console.log("form:", form)
+	//grab all form data
+	var formData = new FormData(form)
+	var inputs = document.getElementById('uploaderFile')
+
+	if (inputs.files.length > 0) {
+		PostFiles('/admin/upload',formData,uploadImageCallback,errCallback)
+	}
+	else {
+		console.log("nothing to send")
+	}
+
+	return false
+}
+
+
+var sendImage = function(sender) {
+	console.log("TEST")
+	$("#uploader").submit()
+	console.log(sender)
+}
+
+
+
 
 /*
 function addHtmlBlock(sender)
@@ -321,19 +409,9 @@ function addImageToGallery(blockName) {
 	console.log("block name:" + blockName)
 }
 
-function sendImage(sender)
-{
-  $("#upload_image_form").submit();
-}
-
 function sendFile(sender)
 {
   $("#upload_file_form").submit();
-}
-
-function addImageBlock(sender)
-{
-  $('#upload_image_input').click();
 }
 
 function addFileBlock(sender)
@@ -573,7 +651,7 @@ function sendPost(sender)
 
 	notDirty()
 
-	Post('/admin/save',postContent,editPostCallBack,errorCallback);
+	Post('/admin/save',postContent,editPostCallBack,errCallback);
 }
 
 /*
@@ -1263,23 +1341,6 @@ $(document).ready(function()
 
 });
 
-
-var uploadImageCallback = function(data)
-{	
-	var res = JSON.parse(data);
-	
-	if(res.success)
-	{
-		nextBlock++;
-		var blockName = "block" + nextBlock;
-		
-		$("#content_blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.file_path + "\"/><input id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"URL\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'URL') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'URL'; }\"/><input id=\"imagedescription\" name=\"imagedescription\" type=\"text\" value=\"Description\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'Description') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'Description'; }\"/><div style=\"margin:0;padding:0;clear:both;\"></div></div>");
-	}
-	else
-	{
-		alert("FAILED");
-	}
-}
 
 
 var uploadFileCallback = function(data)
