@@ -381,6 +381,7 @@ var uploadFile = function(form, evt) {
 var sendImage = function(sender) {
 	console.log("TEST")
 	$("#uploader").submit()
+	$(sender).val("")
 	console.log(sender)
 }
 
