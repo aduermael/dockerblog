@@ -3,6 +3,13 @@ var savedBlocksHTML = ""
 var savedTitle = ""
 var savedFBPostID = ""
 
+$( document ).ready(function() {
+    $(".date").each(function(index) {
+    	$(this).show()
+    	$(this).html(moment($(this).html(), "x").format('- MM-DD-YYYY h:mm a (dddd)'))
+    })
+});
+
 var errCallback = function(data) {
 	if (data) {
 		var res = JSON.parse(data)	

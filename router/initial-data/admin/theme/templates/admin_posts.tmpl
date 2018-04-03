@@ -10,10 +10,10 @@
 	 			{{ range .posts }}
 	 			<div class="post">
 	 				<div class="title">
-	 					<a href="/admin/edit/{{ .ID }}">{{ .Title }}</a>
+	 					<a href="/admin/edit/{{ .ID }}">{{ .Title }}</a><span style="display:none" class="date">{{ .Date }}</span>
 	 				</div>
 	 				<div class="options">
-	 					<a href="#" onclick="return false;"><span class="fas fa-trash-alt"></span></a>
+	 					<a class="trash" href="#" onclick="return false;"><span class="fas fa-trash-alt"></span></a>
 	 				</div>
 	 				<div class="clear"></div>
 	 			</div>

@@ -34,6 +34,10 @@ a {
 	color: #777;
 }
 
+a.trash {
+	color: #cc3333 !important;
+}
+
 a:hover {
 	text-decoration: underline;
 }
@@ -102,9 +106,6 @@ a:hover {
 	position: relative;
 	*overflow: hidden;
 }
-
-
-
 
 #addBlockButtons a,span {
 	margin: 5px;
@@ -235,6 +236,14 @@ a:hover {
 	padding: 10px;
 	background-color: #f2f2f2;
 	margin-top: 10px;
+}
+
+#content #posts .post a {
+	color: #3399ff;
+}
+
+#content #posts .post .date {
+	color: #777;
 }
 
 #content #posts .post .title {
