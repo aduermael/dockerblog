@@ -97,7 +97,7 @@
 			</div>
 
 			<div id="submit">
-				<a href="#" onclick="sendPost(this);return false;">Post</a>
+				<a href="#" onclick="sendPost(this);return false;">{{ if .post}}Save{{ else }}Post{{ end }}</a>
 			</div>
 
 			<form onsubmit="uploadImage(this,event)" action method="POST" enctype="multipart/form-data" style="display:none;" id="imageUploader" name="imageUploader">
