@@ -330,8 +330,10 @@ function moveDown() {
 }
 
 function removeBlock() {
-	$("#blockToolBar").next().remove()
-	hideToolBar(toolBarRetainer)
+	if (confirm("Are you sure? 😮")) {
+		$("#blockToolBar").next().remove()
+		hideToolBar(toolBarRetainer)	
+	}
 }
 
 
