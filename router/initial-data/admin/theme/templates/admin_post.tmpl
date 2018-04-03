@@ -14,17 +14,6 @@
 				window.addEventListener("beforeunload", function (e) {
 					return alertIfDirty()
 				})
-
-				// $("#uploader").submit(function(event) {
-				// 	event.preventDefault()
-				// 	console.log("submit !!!")
-				// 	return false
-				// })
-
-				// input
-				// document.getElementById("uploaderFile").onchange = function() {
-    // 				document.getElementById("uploader").submit()
-				// };
 			}
 	 	</script>
 
@@ -46,7 +35,11 @@
 		 				{{ if ($block.IsOfType "text") }}
 		 					<div id="block{{ $id }}" class="block block_text">{{ .ValueForKey "text" }}</div>
 		 				{{ else if ($block.IsOfType "image") }}
-		 					<div id="block{{ $id }}" class="block block_image"><img src="{{ .ValueForKey "path" }}"></div>
+		 					<div onclick="showToolBar(this)" id="block{{ $id }}" class="block block_image">
+		 						<img src="{{ .ValueForKey "path" }}">
+								<input value="{{ .ValueForKey "url" }}" placeholder="URL" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'URL'"/>
+								<input value="{{ .ValueForKey "description" }}" placeholder="Description" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Description'"/>
+							</div>
 		 				{{ end }}
 	 				{{ end}}
 	 			{{ end }}
@@ -75,14 +68,22 @@
 				<span class="fas fa-plus"></span>
 				<a href="#" onclick="addTextBlock(this);return false;">Text</a>
 				<a href="#" onclick="addImageBlock(this);return false;">Image</a>
-				<a href="#">Contact form</a>
-				<a href="#">File</a>
 				<a href="#">HTML</a>
+				<a href="#">Comments</a>
+				<a href="#">File</a>
 				<a href="#">Gallery</a>
 			</div>
 
 			<div>
 				<input id="fbpostID" type="text" placeholder="Facebook post ID" onfocus="this.placeholder =''" onblur="this.placeholder = 'Facebook post ID'">
+			</div>
+
+			<div>
+				<input id="password" type="text" placeholder="Password" onfocus="this.placeholder =''" onblur="this.placeholder = 'Password'">
+			</div>
+
+			<div>
+				<label id="commentsLabel"><input id="comments" type="checkbox" name="comments" checked> Comments</label>
 			</div>
 
 			<div>
@@ -99,8 +100,8 @@
 				<a href="#" onclick="sendPost(this);return false;">Post</a>
 			</div>
 
-			<form onsubmit="uploadFile(this,event)" action method="POST" enctype="multipart/form-data" style="display:none;" id="uploader" name="uploader">
-				<input id="uploaderFile" type="file" name="upload" accept="image/*" onchange="sendImage(this);">
+			<form onsubmit="uploadImage(this,event)" action method="POST" enctype="multipart/form-data" style="display:none;" id="imageUploader" name="imageUploader">
+				<input id="imageFile" type="file" name="upload" accept="image/*" onchange="sendImage(this)">
 			</form>
 
 		</div>

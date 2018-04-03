@@ -81,24 +81,48 @@ function PostFiles(path,formData,callback,errorCallback)
 
 // ADMIN
 
-var activeEditor = null;
-var editingLink = false;
-var linkRange = null;
+var activeEditor = null
+var editingLink = false
+var linkRange = null
+// instance that's retaining the toolbar
+// only that instance can ask for the toolbar to be hidden
+var toolBarRetainer = null
 
-function hideToolBar(editor) {
-	if (editor == null) return
+function hideToolBar(retainer) {
+	if (toolBarRetainer == null) return
 
-	if (editor === activeEditor) {
-		$("#blockToolBar").hide();
-		activeEditor = null;
-		editingLink = false;
+	if (retainer === toolBarRetainer) {
+		$("#blockToolBar").hide()
+		toolBarRetainer = null
+
+		activeEditor = null
+		editingLink = false
 	}
 }
 
-function showToolBar(editor) {
-	activeEditor = editor;
-	$("#blockToolBar").insertBefore(editor.container);
-	$("#blockToolBar").show();
+function showToobarForTextEditor(editor) {
+	activeEditor = editor
+	toolBarRetainer = editor
+	$("#blockToolBar").insertBefore(editor.container)
+	$("#blockToolBar").show()
+	$("#textTools").show()
+}
+
+function showToolBar(sender) {
+	$("#textTools").hide()
+	// image
+	if ($(sender).hasClass("block_image")) {
+		$("#blockToolBar").insertBefore(sender)
+		$("#blockToolBar").show()
+	} else {
+		return
+	}
+
+	toolBarRetainer = sender
+	// stop focusing on text editor if active
+	if (activeEditor != null) {
+		activeEditor.blur()
+	}	
 }
 
 // return true only if clicking on text input
@@ -222,7 +246,7 @@ function initTextBlock(block) {
 				enableURLField(editor.getFormat()['link'])
 			}
 
-			showToolBar(editor)
+			showToobarForTextEditor(editor)
 
 		} else { // Cursor not in the editor
 
@@ -263,20 +287,7 @@ function addTextBlock(sender)
 
 function addImageBlock(sender)
 {
-	// var blockName = "block" + nextBlock();
-
- //  	var block = $("<div id=\"" + blockName +"\" class=\"block block_image\"><div class=\"upload\">Upload</div></div>");
-
-	// block.appendTo($("#blocks"))
-
-	// block.children().first().uploadFile({
-	// 	url:"/admin/upload",
-	// 	multiple: false,
-	// 	allowedTypes: "jpg,jpeg,png,gif",
-	// 	filename: "upload"
-	// });
-
-  	$('#uploaderFile').click();
+  	$('#imageFile').click();
 }
 
 // used to init all blocks when editing a post
@@ -320,37 +331,33 @@ function moveDown() {
 
 function removeBlock() {
 	$("#blockToolBar").next().remove()
-	hideToolBar(activeEditor)
+	hideToolBar(toolBarRetainer)
 }
 
 
-var uploadImageCallback = function(data)
-{	
-	var res = JSON.parse(data);
+var uploadImageCallback = function(data) {
+	var res = JSON.parse(data)
 	
-	if(res.success)
-	{
-		var blockName = "block" + nextBlock();
-
-	  	var block = $("<div id=\"" + blockName +"\" class=\"block block_image\"><img src=\"" + res.filepaths[0] + "\"/>" +
-	  		"<input id=\"imageurl\" placeholder=\"URL\" name=\"imageurl\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'URL'\"/></div>");
-
+	if(res.success) {
+		var blockName = "block" + nextBlock()
+	  	var block = $("<div onclick=\"showToolBar(this)\" id=\"" + blockName +"\" class=\"block block_image\"><img src=\"" + res.filepaths[0] + "\"/>" +
+	  		"<input placeholder=\"URL\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'URL'\"/>" +
+	  		"<input placeholder=\"Description\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'Description'\"/>" +
+	  		"</div>")
 		block.appendTo($("#blocks"))
-		
-		// $("#blocks").append("<div id=\"" + blockName +"\" class=\"edit_post_zone backgroundLevel_8 block_image sortable\"><img src=\"" + res.file_path + "\"/><input id=\"imageurl\" name=\"imageurl\" type=\"text\" value=\"URL\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'URL') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'URL'; }\"/><input id=\"imagedescription\" name=\"imagedescription\" type=\"text\" value=\"Description\" style=\"float:left;width:500px;margin:0;margin-top:10px;height:20px;\" onfocus=\"if(this.value == 'Description') { this.value = ''; }\" onblur=\"if(this.value == '') { this.value = 'Description'; }\"/><div style=\"margin:0;padding:0;clear:both;\"></div></div>");
+		block.click()
 	}
-	else
-	{
-		alert(res.message);
+	else {
+		alert(res.message)
 	}
 }
 
-var uploadFile = function(form, evt) {
+var uploadImage = function(form, evt) {
 	evt.preventDefault()
 
 	//grab all form data
 	var formData = new FormData(form)
-	var inputs = document.getElementById('uploaderFile')
+	var inputs = document.getElementById('imageFile')
 
 	if (inputs.files.length > 0) {
 		PostFiles('/admin/upload',formData,uploadImageCallback,errCallback)
@@ -362,9 +369,8 @@ var uploadFile = function(form, evt) {
 	return false
 }
 
-
 var sendImage = function(sender) {
-	$("#uploader").submit()
+	$("#imageUploader").submit()
 	$(sender).val("")
 }
 
@@ -599,12 +605,8 @@ function sendPost(sender)
 		{
 			block.type = "image"
 			block.path = $($(this).children('img')[0]).attr( 'src' )
-
 			block.url = $($(this).children('input')[0]).val()
-			if (block.url == "URL") blocks[i].url = ""
-
 			block.description = $($(this).children('input')[1]).val()
-			if (block.description == "Description") blocks[i].description = ""
 		}
 		else if ($(this).hasClass("block_contact"))
 		{
@@ -1282,26 +1284,6 @@ $(document).ready(function()
 	});
 	
 
-
-	$("form#upload_image_form").submit(function(e)
-	{
-		e.preventDefault();
-		//grab all form data
-		var formData = new FormData($(this)[0]);
-		var inputs = document.getElementById('upload_image_input');
-
-		if (inputs.files.length > 0)
-		{
-			PostFiles('/admin/image',formData,uploadImageCallback,errorCallback);
-		}
-		else
-		{
-			console.log("nothing to send");
-		}
-		return false;
-	});
-
-
 	$("form#upload_file_form").submit(function(e)
 	{
 		e.preventDefault();
@@ -1322,7 +1304,6 @@ $(document).ready(function()
 
 
 });
-
 
 
 var uploadFileCallback = function(data)

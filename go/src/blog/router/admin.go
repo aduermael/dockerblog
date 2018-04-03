@@ -27,6 +27,7 @@ func badRequest(c *gin.Context, message string) {
 }
 
 func serverError(c *gin.Context, message string) {
+	fmt.Println("ERROR:", message)
 	c.JSON(http.StatusInternalServerError, gin.H{
 		"message": message,
 		"success": false,
@@ -182,7 +183,7 @@ func adminUpload(c *gin.Context) {
 
 		dirPath := filepath.Join(blogFilesRootDir, year, month)
 
-		err = os.MkdirAll(dirPath, 0555)
+		err = os.MkdirAll(dirPath, 0755)
 		if err != nil {
 			serverError(c, "can't store file (2)")
 			return
@@ -242,7 +243,7 @@ func adminUpload(c *gin.Context) {
 		destination := filepath.Join(dirPath, newName)
 		out, err := os.Create(destination)
 		if err != nil {
-			serverError(c, "can't store file (6)")
+			serverError(c, "can't store file (6) ("+destination+") - "+err.Error())
 			return
 		}
 

@@ -17,6 +17,7 @@ body {
 	font-family: "Raleway", sans-serif;
 	height: 100%;
 	background-color: #ddd;
+	padding-top: 10px;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -85,6 +86,26 @@ a:hover {
 	margin-top: 10px;
 }
 
+
+#commentsLabel {
+	display: block;
+  	padding-left: 15px;
+  	text-indent: -15px;
+}
+
+#commentsLabel > input {
+	width: 13px;
+	height: 13px;
+	padding: 0;
+	margin:0;
+	vertical-align: center;
+	position: relative;
+	*overflow: hidden;
+}
+
+
+
+
 #addBlockButtons a,span {
 	margin: 5px;
 }
@@ -137,6 +158,15 @@ a:hover {
 
 #blocks .block_image {
 	text-align: center;
+	background-color: #ddd;
+	font-size: 0;
+	letter-spacing: 0;
+	word-spacing: 0;
+	line-height: 0;
+}
+
+#blocks .block_image input {
+	margin-top: 10px;
 }
 
 #blocks .block_image img {
