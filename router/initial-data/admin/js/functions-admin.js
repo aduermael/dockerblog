@@ -343,6 +343,12 @@ function removeBlock() {
 	}
 }
 
+function removePost() {
+	if (confirm("Are you sure? 😮")) {
+		
+	}
+}
+
 
 var uploadImageCallback = function(data) {
 	var res = JSON.parse(data)
