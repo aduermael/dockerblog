@@ -328,9 +328,28 @@ var (
 			redis.call('hset', 'fbcomments', post.ID, cjson.encode(fbcommentInfos))
 		end
 
-		local jsonResponse = cjson.encode(post)
+		return cjson.encode(post)
+	`)
 
-		return jsonResponse
+	scriptGetOldestAndNewest = redis.NewScript(0, `
+		local lang = ARGV[1]
+		local kDateOrdered = 'posts_' .. lang
+
+		local oldest = redis.call('zrangebyscore', kDateOrdered, '-inf', '+inf', 'LIMIT', 0, 1, 'WITHSCORES')
+		if #oldest ~= 2 then 
+			error("posts not found")
+		end
+
+		local newest = redis.call('zrevrangebyscore', kDateOrdered, '+inf', '-inf', 'LIMIT', 0, 1, 'WITHSCORES')
+		if #newest ~= 2 then 
+			error("posts not found")
+		end
+
+		local result = {}
+		result.oldest = tonumber(oldest[2])
+		result.newest = tonumber(newest[2])
+
+		return cjson.encode(post)
 	`)
 )
 
@@ -484,4 +503,53 @@ func PostsList(includeFuture bool) ([]*Post, error) {
 	}
 
 	return posts, nil
+}
+
+var defaultMonths = []string{
+	"January", "February", "March",
+	"April", "May", "June",
+	"July", "August", "September",
+	"October", "November", "December",
+}
+
+type Archive struct {
+	Name string
+	// timestamps (ms)
+	Start int
+	End   int
+}
+
+type ArchiveLimits struct {
+	Oldest int64 `json:"oldest"`
+	Newest int64 `json:"newest"`
+}
+
+func PostGetArchiveMonths(lang string, months []string) ([]Archive, error) {
+	if months == nil {
+		months = defaultMonths
+	}
+
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	res, err := scriptGetOldestAndNewest.Do(redisConn, lang)
+	if err != nil {
+		return nil, err
+	}
+
+	byteSlice, ok := res.([]byte)
+	if !ok {
+		return nil, errors.New("can't cast response")
+	}
+
+	var limits ArchiveLimits
+
+	err = json.Unmarshal(byteSlice, &limits)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: list all months between oldest and newest
+
+	return nil, nil
 }
