@@ -124,6 +124,8 @@ func main() {
 		adminGroup.GET("/edit/:id", adminEditPost)
 
 		adminGroup.POST("/upload", adminUpload)
+
+		adminGroup.GET("/settings", adminSettings)
 	}
 
 	// POSTS

@@ -21,7 +21,11 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, p {
-	padding-bottom: 2rem;
+	padding-bottom: 14px;
+}
+
+p:last-child {
+	padding-bottom: 0;
 }
 
 h1, h2 {
@@ -32,6 +36,14 @@ h1, h2 {
 a {
 	text-decoration: none;
 	color: #777;
+}
+
+a.primary-action.positive {
+	color: #3399ff;
+}
+
+a.primary-action.negative {
+	color: #cc3333;
 }
 
 a.trash {
@@ -230,6 +242,30 @@ a:hover {
 .clear {
 	clear: both;
 }
+
+#content #settings > div {
+	width: 100%;
+	padding: 20px;
+	background-color: #f2f2f2;
+	margin-top: 10px;
+}
+
+#content #settings > div p {
+	/*padding-bottom: 10px;*/
+}
+
+#content #settings > div > input {
+	background-color: #777;
+	color: #fff;
+	margin-bottom: 14px;
+}
+
+#content #settings > div > input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+	color: #ccc;
+	opacity: 1; /* Firefox */
+}
+
+
 
 #content #posts .post {
 	width: 100%;

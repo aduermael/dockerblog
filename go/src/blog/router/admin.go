@@ -267,3 +267,10 @@ func adminUpload(c *gin.Context) {
 		"filepaths": filePaths,
 	})
 }
+
+func adminSettings(c *gin.Context) {
+	c.HTML(http.StatusOK, "admin_settings.tmpl", gin.H{
+		"title": "Admin - settings",
+		"lang":  getLangForContext(c),
+	})
+}
