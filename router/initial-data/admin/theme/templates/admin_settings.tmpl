@@ -49,6 +49,7 @@
 
 				<div>
 					<h2>Sendgrid</h2>
+					<p style="color: #f00;">NOT WIRED</p>
 					<p>Send emails (comment answers, contact forms)</p>
 
 					<input type="text" name="" placeholder="API Key" />
@@ -58,6 +59,7 @@
 
 				<div>
 					<h2>Admin credentials</h2>
+					<p style="color: #f00;">NOT WIRED</p>
 					<p>Username and password to control this blog.</p>
 
 					<input type="text" name="" placeholder="Username" />
@@ -69,8 +71,20 @@
 				</div>
 
 				<div>
-					<h2>Timezone</h2>
-					<p>The timezone that's being used when scheduling posts.</p>
+					<h2>General</h2>
+					<p style="color: #f00;">NOT WIRED</p>
+					<p><strong>Title</strong> - Default blog title (to be defined in localization keys when supporting more that 1 language).</p>
+					<input type="text" name="" placeholder="Title" />
+					<p><strong>Supported languages</strong> - Comma-separated supported languages.</p>
+					<input type="text" name="" placeholder="en,fr" />
+					<p><strong>Theme</strong> - Displayed blog theme.</p>
+					<select>
+						<option value="default">Default</option>
+						<option value="laurel" selected>Laurel</option>
+					</select>
+					<p><strong>Posts per page</strong> - The amount of posts displayed on one page.</p>
+					<input type="text" name="" placeholder="10" />
+					<p><strong>Timezone</strong> - The timezone that's being used when scheduling posts.</p>
 					<input type="text" name="" placeholder="Europe/Paris" />
 					<a href="#" class="primary-action positive">Update</a>
 				</div>
