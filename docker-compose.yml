@@ -37,6 +37,7 @@ services:
       - ./sample/files:/blog-data/files # DEV
       - ./go/src:/go/src # DEV
       - ./router/initial-data/admin:/blog-data/admin # DEV
+      - ./router/initial-data/js:/blog-data/js # DEV
     command: ash # DEV
 
   blog-fbcomments:

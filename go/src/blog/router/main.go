@@ -69,7 +69,7 @@ func main() {
 	// because if origin is mounted at destination,
 	// files get deleted when installing initial data.
 	if gin.IsDebugging() {
-		installInitialData([]string{"/themes/default", "/js"})
+		installInitialData([]string{"/themes/default"})
 	} else {
 		installInitialData([]string{"/themes/default", "/js", "/admin"})
 	}
