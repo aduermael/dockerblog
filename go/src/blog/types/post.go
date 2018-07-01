@@ -233,10 +233,21 @@ var (
 
 		local post_slug = ARGV[1]
 
-		local post_id = redis.call('hget', 'pages_fr', post_slug)
+		-- index (by slug)
+		local kSlugs = 'slugs_fr' -- TODO: stop using hardcoded lang
+
+		-- 'pages_<lang>' was used to store page slugs
+		-- keep looking into it for legacy.
+		-- Now post and page slugs are both indexed in 'slugs_<lang>'
+
+		local post_id = redis.call('hget', kSlugs, post_slug)
 
 		if post_id == nil then
-			error("can't find post for slug")
+			-- legacy
+			post_id = redis.call('hget', 'pages_fr', post_slug)
+			if post_id == nil then
+				error("can't find post for slug")
+			end
 		end
 
 		local post_data = toStruct(redis.call('hgetall', post_id))
@@ -514,6 +525,7 @@ func PostGetWithSlug(slug string) (Post, error) {
 // TODO: pagination
 // TODO: from what feed?
 // TODO: sort option
+// TODO: lang shouldn't hardcoded to "fr"
 func PostsList(includeFuture bool) ([]*Post, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()

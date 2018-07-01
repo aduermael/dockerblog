@@ -25,6 +25,7 @@ const (
 	blogDataRootDir  = "/blog-data"
 	initialDataDir   = "/initial-data"
 	blogFilesRootDir = blogDataRootDir + "/files"
+	hardcodedLang    = "fr"
 )
 
 var (
@@ -157,9 +158,16 @@ func main() {
 
 				post.ComputeSince()
 
+				archives, err := types.PostGetArchiveMonths(hardcodedLang, TimeLocation, nil)
+				if err != nil {
+					c.AbortWithError(http.StatusInternalServerError, err)
+					return
+				}
+
 				c.HTML(http.StatusOK, "post.tmpl", gin.H{
-					"title": GetTitle(c),
-					"post":  post,
+					"title":    GetTitle(c),
+					"post":     post,
+					"archives": archives,
 				})
 				return
 			}
@@ -176,7 +184,7 @@ func main() {
 
 		types.PostComputeSince(posts)
 
-		archives, err := types.PostGetArchiveMonths("fr", TimeLocation, nil)
+		archives, err := types.PostGetArchiveMonths(hardcodedLang, TimeLocation, nil)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -265,8 +273,13 @@ func main() {
 		postSlug := ""
 
 		if len(components) == 2 {
-			postSlug = components[0]
-			postIDStr = components[1]
+			if components[0] == "post" {
+				postSlug = components[1]
+				postIDStr = components[1]
+			} else {
+				postSlug = components[0]
+				postIDStr = components[1]
+			}
 		} else if len(components) == 1 {
 			postSlug = components[0]
 			postIDStr = components[0]
