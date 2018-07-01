@@ -81,9 +81,31 @@ func adminEditPost(c *gin.Context) {
 	})
 }
 
-func adminSavePost(c *gin.Context) {
+func adminDeletePost(c *gin.Context) {
+	post := types.Post{}
+	err := c.BindJSON(&post)
+	if err != nil {
+		badRequest(c, "incorrect data")
+		return
+	}
 
-	fmt.Println("save new post")
+	// post is incomplete at this stage, get it from database
+	post, err = types.PostGet(strconv.Itoa(post.ID))
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	err = post.Delete()
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	ok(c)
+}
+
+func adminSavePost(c *gin.Context) {
 
 	post := &types.Post{}
 
@@ -135,15 +157,11 @@ func adminSavePost(c *gin.Context) {
 	post.ShowComments = true
 	post.AcceptComments = true
 
-	fmt.Printf("\n%#v\n", post)
-
 	err = post.Save()
 	if err != nil {
 		serverError(c, err.Error())
 		return
 	}
-
-	fmt.Printf("\n%#v\n\n", post)
 
 	ok(c)
 }

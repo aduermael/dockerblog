@@ -120,6 +120,7 @@ func main() {
 
 		adminGroup.GET("/new", adminNewPost)
 		adminGroup.POST("/save", adminSavePost)
+		adminGroup.POST("/delete", adminDeletePost)
 
 		adminGroup.GET("/edit/:id", adminEditPost)
 

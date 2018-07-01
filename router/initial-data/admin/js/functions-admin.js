@@ -343,9 +343,13 @@ function removeBlock() {
 	}
 }
 
-function removePost() {
+function removePost(postID) {
 	if (confirm("Are you sure? 😮")) {
-		
+		Post('/admin/delete', {ID: parseInt(postID)}, function(response){
+			$("#post-"+postID).remove()
+		}, function(errorResponse){
+			alert("ERROR:", JSON.stringify(errorResponse))
+		})
 	}
 }
 

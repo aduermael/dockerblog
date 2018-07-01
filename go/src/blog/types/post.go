@@ -331,6 +331,23 @@ var (
 		return cjson.encode(post)
 	`)
 
+	scriptPostDelete = redis.NewScript(0, `
+		local post = cjson.decode(ARGV[1])
+
+		local kID = 'post_' .. post.ID
+		-- index (per date)
+		local kDateOrdered = 'posts_' .. post.lang
+		-- index (by slug)
+		local kSlugs = 'slugs_' .. post.lang
+
+		redis.call('del', kID)
+		redis.call('zrem', kDateOrdered, kID)
+		redis.call('hdel', kSlugs, post.slug)
+
+		-- in case post is registered to sync fb comments
+		redis.call('hdel', 'fbcomments', post.ID)
+	`)
+
 	scriptGetOldestAndNewest = redis.NewScript(0, `
 		local lang = ARGV[1]
 		local kDateOrdered = 'posts_' .. lang
@@ -398,6 +415,29 @@ func (p *Post) Save() error {
 	err = json.Unmarshal(byteSlice, p)
 	if err != nil {
 		fmt.Println("ERROR (4):", err)
+		return err
+	}
+
+	return nil
+}
+
+// Delete removes post from database.
+// The Post instance is still valid after the operation.
+func (p *Post) Delete() error {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	fmt.Println("DELETE POST #", p.ID)
+
+	b, err := json.Marshal(p)
+	if err != nil {
+		fmt.Println("ERROR (1):", err)
+		return err
+	}
+
+	_, err = scriptPostDelete.Do(redisConn, string(b))
+	if err != nil {
+		fmt.Println("ERROR (2):", err)
 		return err
 	}
 
@@ -512,6 +552,7 @@ var defaultMonths = []string{
 	"October", "November", "December",
 }
 
+// Archive ...
 type Archive struct {
 	Name string
 	// timestamps (ms)
@@ -519,11 +560,13 @@ type Archive struct {
 	End   int
 }
 
+// ArchiveLimits ...
 type ArchiveLimits struct {
 	Oldest int64 `json:"oldest"`
 	Newest int64 `json:"newest"`
 }
 
+// PostGetArchiveMonths ...
 func PostGetArchiveMonths(lang string, months []string) ([]Archive, error) {
 	if months == nil {
 		months = defaultMonths
