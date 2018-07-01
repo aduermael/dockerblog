@@ -4,7 +4,6 @@ var SERVER = "http://" + location.host;
 
 function Get(path,callback,errorCallback)
 {
-	alert(SERVER + path);
 	$.ajax
 	({
 		url: SERVER + path,
@@ -18,7 +17,7 @@ function Get(path,callback,errorCallback)
 		},
 		error: function(jqXHR, textStatus, errorThrown) 
 		{
-			errorCallback();
+			errorCallback(JSON.parse(jqXHR.responseText));
 		}
 	});
 }
@@ -39,8 +38,8 @@ function Post(path,obj,callback,errorCallback)
 			callback(data);
 		},
 		error: function(jqXHR, textStatus, errorThrown) 
-		{
-			errorCallback();
+		{	
+			errorCallback(JSON.parse(jqXHR.responseText));
 		}
 	});
 }
