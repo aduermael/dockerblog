@@ -176,9 +176,16 @@ func main() {
 
 		types.PostComputeSince(posts)
 
+		archives, err := types.PostGetArchiveMonths("fr", TimeLocation, nil)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title": GetTitle(c),
-			"posts": posts,
+			"title":    GetTitle(c),
+			"posts":    posts,
+			"archives": archives,
 		})
 	})
 

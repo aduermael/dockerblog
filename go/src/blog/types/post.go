@@ -40,10 +40,12 @@ func (pb *PostBlock) GetType() (PostBlockType, error) {
 	}
 }
 
+// IsOfType ...
 func (pb *PostBlock) IsOfType(t string) bool {
 	return string((*pb)["type"]) == t
 }
 
+// ValueForKey ...
 func (pb *PostBlock) ValueForKey(key string) template.HTML {
 	return (*pb)[key]
 }
@@ -366,7 +368,7 @@ var (
 		result.oldest = tonumber(oldest[2])
 		result.newest = tonumber(newest[2])
 
-		return cjson.encode(post)
+		return cjson.encode(result)
 	`)
 )
 
@@ -556,8 +558,8 @@ var defaultMonths = []string{
 type Archive struct {
 	Name string
 	// timestamps (ms)
-	Start int
-	End   int
+	Start int64
+	End   int64
 }
 
 // ArchiveLimits ...
@@ -567,7 +569,7 @@ type ArchiveLimits struct {
 }
 
 // PostGetArchiveMonths ...
-func PostGetArchiveMonths(lang string, months []string) ([]Archive, error) {
+func PostGetArchiveMonths(lang string, timeLocation *time.Location, months []string) ([]*Archive, error) {
 	if months == nil {
 		months = defaultMonths
 	}
@@ -592,7 +594,48 @@ func PostGetArchiveMonths(lang string, months []string) ([]Archive, error) {
 		return nil, err
 	}
 
-	// TODO: list all months between oldest and newest
+	oldest := time.Unix(limits.Oldest/1000, 0) // ÷1000 because of legacy (we used to store milliseconds)
+	newest := time.Unix(limits.Newest/1000, 0) // ÷1000 because of legacy (we used to store milliseconds)
 
-	return nil, nil
+	oldest = oldest.In(timeLocation)
+	newest = newest.In(timeLocation)
+
+	newestMonth := int(newest.Month())
+	newestYear := int(newest.Year())
+	oldestMonth := int(oldest.Month())
+	oldestYear := int(oldest.Year())
+
+	nBMonths := 0
+	if oldestYear == newestYear {
+		nBMonths = newestMonth - oldestMonth + 1
+	} else {
+		// last year months
+		nBMonths = newestMonth
+		// full years
+		nBMonths += (newestYear - (oldestYear + 1)) * 12
+		// first year months
+		nBMonths += 13 - oldestMonth
+	}
+
+	archives := make([]*Archive, nBMonths)
+
+	currentMonth := oldest.Month()
+	currentYear := oldest.Year()
+
+	for i := nBMonths - 1; i >= 0; i-- {
+		archives[i] = &Archive{
+			Name:  fmt.Sprintf("%s %d", months[currentMonth-1], currentYear),
+			Start: time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, timeLocation).Unix(),
+			End:   time.Date(currentYear, currentMonth+1, 1, 0, 0, 0, 0, timeLocation).Unix(),
+		}
+
+		if currentMonth == time.December {
+			currentMonth = time.January
+			currentYear += 1
+		} else {
+			currentMonth += 1
+		}
+	}
+
+	return archives, nil
 }
