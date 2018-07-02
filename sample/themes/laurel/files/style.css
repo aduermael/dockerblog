@@ -347,6 +347,16 @@ form input[type="button"]:hover {
 	border-radius: 5px;
 }
 
+#content #archives-info {
+	text-align: center;
+	padding: 20px;
+}
+
+#content #archives-info h2 {
+	padding: 0;
+	margin: 0;
+}
+
 
 /* FOOTER */
 

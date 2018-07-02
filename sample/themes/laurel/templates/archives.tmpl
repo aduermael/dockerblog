@@ -1,0 +1,23 @@
+{{ define "archives" }}
+	{{ $months := array "Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet" "Aout" "Septembre" "Octobre" "Novembre" "Décembre" }}
+	<select onchange="showArchives(this);">
+		<option value="">Archives</option>
+		{{ if and .month .year }}
+			{{ $month := .month }}
+			{{ $year := .year }}
+			{{ range .archives }}
+				{{ $i := decr .Month }}
+				{{ if sameDate .Month $month .Year $year }}
+					<option value="{{ .Year }}-{{ .Month }}" selected>{{ index $months $i }} {{ .Year }}</option>
+				{{ else }}
+					<option value="{{ .Year }}-{{ .Month }}">{{ index $months $i }} {{ .Year }}</option>
+				{{ end }}
+			{{ end }}
+		{{ else }}
+			{{ range .archives }}
+				{{ $i := decr .Month }}
+				<option value="{{ .Year }}-{{ .Month }}">{{ index $months $i }} {{ .Year }}</option>
+			{{ end }}
+		{{ end }}
+	</select>
+{{ end }}

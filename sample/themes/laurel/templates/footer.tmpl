@@ -6,12 +6,7 @@
 				<div class="item">
 					<h2>Pages</h2>
 					<ul>
-						<li><select onchange="showArchives(this);">
-							<option>Archives</option>
-							{{ range .archives }}
-							<option value="{{ .Start }}-{{ .End }}">{{ .Name }}</option>
-							{{ end }}
-						</select></li>
+						<li>{{ template "archives" . }}</li>
 						<li><a href="/">Contact</a></li>
 						<li><a href="https://commeconvenu.com"><i>Comme convenu</i></a></li>
 						<li><a href="https://particubes.com"><i>Particubes</i></a></li>

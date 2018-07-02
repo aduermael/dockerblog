@@ -4,6 +4,7 @@ import (
 	"blog/types"
 	"blog/util"
 	"errors"
+	"html/template"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -92,6 +93,13 @@ func main() {
 
 	router = gin.Default()
 
+	router.SetFuncMap(template.FuncMap{
+		"array":    makeArray,
+		"incr":     incr,
+		"decr":     decr,
+		"sameDate": sameDate,
+	})
+
 	loadTemplates()
 
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
@@ -133,8 +141,8 @@ func main() {
 
 	// POSTS
 
-	router.GET("/archives/:between", func(c *gin.Context) {
-		between := c.Param("between")
+	router.GET("/archives/:yearAndMonth", func(c *gin.Context) {
+		between := c.Param("yearAndMonth")
 		validBetween, err := regexp.MatchString("[0-9]+-[0-9]+", between)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -152,19 +160,19 @@ func main() {
 			return
 		}
 
-		start, err := strconv.ParseInt(parts[0], 10, 64)
+		year, err := strconv.ParseInt(parts[0], 10, 64)
 		if err != nil {
 			c.AbortWithError(http.StatusBadRequest, errors.New("invalid parameter"))
 			return
 		}
 
-		end, err := strconv.ParseInt(parts[1], 10, 64)
+		month, err := strconv.ParseInt(parts[1], 10, 64)
 		if err != nil {
 			c.AbortWithError(http.StatusBadRequest, errors.New("invalid parameter"))
 			return
 		}
 
-		posts, err := types.PostsList(false, start, end)
+		posts, err := types.PostsList(false, int(year), int(month), TimeLocation)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -182,6 +190,8 @@ func main() {
 			"title":    GetTitle(c),
 			"posts":    posts,
 			"archives": archives,
+			"month":    int(month),
+			"year":     int(year),
 		})
 	})
 
@@ -228,7 +238,7 @@ func main() {
 	}
 
 	router.GET("/", func(c *gin.Context) {
-		posts, err := types.PostsList(false, -1, -1)
+		posts, err := types.PostsList(false, -1, -1, TimeLocation)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -361,6 +371,22 @@ func main() {
 	})
 
 	router.Run(serverPort)
+}
+
+func decr(i int) int {
+	return i - 1
+}
+
+func incr(i int) int {
+	return i + 1
+}
+
+func sameDate(month1, month2, year1, year2 int) bool {
+	return month1 == month2 && year1 == year2
+}
+
+func makeArray(args ...interface{}) []interface{} {
+	return args
 }
 
 // createLegacyProxy returns an http proxy to send

@@ -1,38 +1,44 @@
 <!DOCTYPE html>	
  <html lang="{{ .lang }}">	
-	 {{ template "head" . }}	
-	 <body>	
-		 {{ template "header" . }}	
-		 {{ template "menu" . }}	
-		 <div id="content">	
-			 <div id="posts">
-				 {{ range .posts }}
-					 <div class="post">	
-					 	<div class="title">
+	{{ template "head" . }}
+	<body>
+		{{ $months := array "Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet" "Aout" "Septembre" "Octobre" "Novembre" "Décembre" }}
+		{{ template "header" . }}
+		{{ template "menu" . }}
+		<div id="content">
+			{{ if and .month .year }}
+				<div id="archives-info">
+					<h2>{{ template "archives" . }}</h2>
+				</div>
+			{{ end }}
+			<div id="posts">
+				{{ range .posts }}
+					<div class="post">	
+						<div class="title">
 							<h2><a href="/{{.Slug}}/{{.ID}}">{{ .Title }}</a></h2>	
 							<p class="post-date">{{ .Since }}</p>
 							<div class="clear"></div>
 						</div>
-						 {{ range .Blocks }}	
-							 {{ if eq .type "text" }}	
-									<div class="block text"><p>{{ .text }}</p></div>	
-							 {{ else if eq .type "image" }}	
-									<div class="block image">	
-										{{ if ne .url "" }}<a href="{{.url}}">{{end}}	
-										<img src="{{ .path }}" alt="{{.description}}">	
-										{{ if ne .url "" }}</a>{{end}}	
-									</div>	
-							 {{ end }}	
-						 {{ end }}	
-						 <div class="number-of-comments">
-						 	<a href="/{{.Slug}}/{{.ID}}#comments">
-						 		{{ if eq .NbComments 1 }}<strong>1</strong> commentaire{{ else if gt .NbComments 1 }}<strong>{{ .NbComments }}</strong> commentaires{{ else }}Commentaires{{ end }}
-						 	</a>
+						{{ range .Blocks }}	
+							{{ if eq .type "text" }}	
+								<div class="block text"><p>{{ .text }}</p></div>	
+							{{ else if eq .type "image" }}	
+								<div class="block image">	
+									{{ if ne .url "" }}<a href="{{.url}}">{{end}}	
+									<img src="{{ .path }}" alt="{{.description}}">	
+									{{ if ne .url "" }}</a>{{end}}	
+								</div>	
+							{{ end }}	
+						{{ end }}	
+						<div class="number-of-comments">
+							<a href="/{{.Slug}}/{{.ID}}#comments">
+								{{ if eq .NbComments 1 }}<strong>1</strong> commentaire{{ else if gt .NbComments 1 }}<strong>{{ .NbComments }}</strong> commentaires{{ else }}Commentaires{{ end }}
+							</a>
 						</div>
-					 </div>	
-				 {{ end }}	
-			 </div>	
-		 </div>	
-		 {{ template "footer" . }}	
-	 </body>	
+					</div>	
+				{{ end }}	
+			</div>	
+		</div>	
+		{{ template "footer" . }}	
+	</body>	
  </html>

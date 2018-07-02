@@ -530,16 +530,24 @@ func PostGetWithSlug(slug string) (Post, error) {
 // TODO: from what feed?
 // TODO: sort option
 // TODO: lang shouldn't be hardcoded to "fr"
-func PostsList(includeFuture bool, start int64, end int64) ([]*Post, error) {
+func PostsList(includeFuture bool, year int, month int, timeLocation *time.Location) ([]*Post, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
 	now := int(time.Now().Unix()) * 1000
-	if start != -1 {
-		start = start * 1000
-	}
-	if end != -1 {
-		end = end * 1000
+
+	start := int64(-1)
+	end := int64(-1)
+
+	if year != -1 && month != -1 {
+		start = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
+		nextMonth := month + 1
+		nextYear := year
+		if nextMonth > 12 {
+			nextMonth = 1
+			nextYear += 1
+		}
+		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
 	}
 
 	res, err := scriptPostList.Do(redisConn, now, includeFuture, start, end)
@@ -578,10 +586,8 @@ var defaultMonths = []string{
 
 // Archive ...
 type Archive struct {
-	Name string
-	// timestamps (ms)
-	Start int64
-	End   int64
+	Month int
+	Year  int
 }
 
 // ArchiveLimits ...
@@ -646,9 +652,8 @@ func PostGetArchiveMonths(lang string, timeLocation *time.Location, months []str
 
 	for i := nBMonths - 1; i >= 0; i-- {
 		archives[i] = &Archive{
-			Name:  fmt.Sprintf("%s %d", months[currentMonth-1], currentYear),
-			Start: time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, timeLocation).Unix(),
-			End:   time.Date(currentYear, currentMonth+1, 1, 0, 0, 0, 0, timeLocation).Unix(),
+			Month: int(currentMonth),
+			Year:  int(currentYear),
 		}
 
 		if currentMonth == time.December {

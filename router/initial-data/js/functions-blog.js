@@ -195,7 +195,7 @@ function validateTwitterUsername(username) {
 
 function showArchives(sender) {
 	var optionSelected = $(sender).find(":selected")
-	if (optionSelected != null) {
+	if (optionSelected != null && optionSelected.val() != "") {
 		window.location.href = "/archives/" + optionSelected.val()
 	}
 }
