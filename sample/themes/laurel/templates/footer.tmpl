@@ -6,11 +6,11 @@
 				<div class="item">
 					<h2>Pages</h2>
 					<ul>
-						<li><select>
+						<li><select onchange="showArchives(this);">
 							<option>Archives</option>
 							{{ range .archives }}
 							<option value="{{ .Start }}-{{ .End }}">{{ .Name }}</option>
-							{{ end }}							
+							{{ end }}
 						</select></li>
 						<li><a href="/">Contact</a></li>
 						<li><a href="https://commeconvenu.com"><i>Comme convenu</i></a></li>

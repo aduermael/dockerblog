@@ -192,3 +192,10 @@ function validateTwitterUsername(username) {
     var re = /^@?[a-zA-Z0-9_]+$/
     return re.test(username)
 }
+
+function showArchives(sender) {
+	var optionSelected = $(sender).find(":selected")
+	if (optionSelected != null) {
+		window.location.href = "/archives/" + optionSelected.val()
+	}
+}

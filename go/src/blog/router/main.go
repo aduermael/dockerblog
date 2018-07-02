@@ -3,6 +3,7 @@ package main
 import (
 	"blog/types"
 	"blog/util"
+	"errors"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -132,6 +133,58 @@ func main() {
 
 	// POSTS
 
+	router.GET("/archives/:between", func(c *gin.Context) {
+		between := c.Param("between")
+		validBetween, err := regexp.MatchString("[0-9]+-[0-9]+", between)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		if !validBetween {
+			c.AbortWithError(http.StatusBadRequest, errors.New("invalid parameter"))
+			return
+		}
+
+		parts := strings.Split(between, "-")
+		if len(parts) != 2 {
+			c.AbortWithError(http.StatusBadRequest, errors.New("invalid parameter"))
+			return
+		}
+
+		start, err := strconv.ParseInt(parts[0], 10, 64)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, errors.New("invalid parameter"))
+			return
+		}
+
+		end, err := strconv.ParseInt(parts[1], 10, 64)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, errors.New("invalid parameter"))
+			return
+		}
+
+		posts, err := types.PostsList(false, start, end)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		types.PostComputeSince(posts)
+
+		archives, err := types.PostGetArchiveMonths(hardcodedLang, TimeLocation, nil)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		c.HTML(http.StatusOK, "default.tmpl", gin.H{
+			"title":    GetTitle(c),
+			"posts":    posts,
+			"archives": archives,
+		})
+	})
+
 	postGroup := router.Group("/post")
 	{
 		postGroup.GET("/:slug/:id", func(c *gin.Context) {
@@ -171,12 +224,11 @@ func main() {
 				})
 				return
 			}
-
 		})
 	}
 
 	router.GET("/", func(c *gin.Context) {
-		posts, err := types.PostsList(false)
+		posts, err := types.PostsList(false, -1, -1)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
