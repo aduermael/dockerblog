@@ -94,10 +94,11 @@ func main() {
 	router = gin.Default()
 
 	router.SetFuncMap(template.FuncMap{
-		"array":    makeArray,
-		"incr":     incr,
-		"decr":     decr,
-		"sameDate": sameDate,
+		"array":              makeArray,
+		"incr":               incr,
+		"decr":               decr,
+		"sameDate":           sameDate,
+		"pagesAroundCurrent": pagesAroundCurrent,
 	})
 
 	loadTemplates()
@@ -172,7 +173,11 @@ func main() {
 			return
 		}
 
-		posts, err := types.PostsList(false, int(year), int(month), TimeLocation)
+		// TODO: pagination shouldn't be hardcoded
+		// Guessing 200 posts is a maximum in one month for now.
+		perPage := 200
+
+		posts, err := types.PostsList(false, 0, perPage, int(year), int(month), TimeLocation)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -186,12 +191,20 @@ func main() {
 			return
 		}
 
+		nbPages, err := types.PostsNbPages(false, perPage, int(year), int(month), TimeLocation)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title":    GetTitle(c),
-			"posts":    posts,
-			"archives": archives,
-			"month":    int(month),
-			"year":     int(year),
+			"title":       GetTitle(c),
+			"posts":       posts,
+			"archives":    archives,
+			"month":       int(month),
+			"year":        int(year),
+			"nbPages":     int(nbPages),
+			"currentPage": 0,
 		})
 	})
 
@@ -238,7 +251,7 @@ func main() {
 	}
 
 	router.GET("/", func(c *gin.Context) {
-		posts, err := types.PostsList(false, -1, -1, TimeLocation)
+		posts, err := types.PostsList(false, 0, config.PostsPerPage, -1, -1, TimeLocation)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -252,10 +265,18 @@ func main() {
 			return
 		}
 
+		nbPages, err := types.PostsNbPages(false, config.PostsPerPage, -1, -1, TimeLocation)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title":    GetTitle(c),
-			"posts":    posts,
-			"archives": archives,
+			"title":       GetTitle(c),
+			"posts":       posts,
+			"archives":    archives,
+			"nbPages":     int(nbPages),
+			"currentPage": 0,
 		})
 	})
 
@@ -371,6 +392,39 @@ func main() {
 	})
 
 	router.Run(serverPort)
+}
+
+func pagesAroundCurrent(currentPage, around, nbPages int) []int {
+	// pages start at 0
+	// we want to display them starting at 1
+	currentPage++
+
+	// -1 in the array will be used to display "..." between page areas
+	arr := make([]int, 0)
+
+	for i := currentPage - around; i <= currentPage+around; i++ {
+		if i > 0 && i <= nbPages {
+			arr = append(arr, i)
+		}
+	}
+
+	firstValue := arr[0]
+
+	if firstValue == 2 {
+		arr = append([]int{1}, arr...)
+	} else if firstValue > 2 {
+		arr = append([]int{1, -1}, arr...)
+	}
+
+	lastValue := arr[len(arr)-1]
+
+	if lastValue == nbPages-1 {
+		arr = append(arr, nbPages)
+	} else if lastValue < nbPages-1 {
+		arr = append(arr, []int{-1, nbPages}...)
+	}
+
+	return arr
 }
 
 func decr(i int) int {

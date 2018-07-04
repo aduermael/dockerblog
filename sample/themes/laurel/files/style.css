@@ -357,6 +357,21 @@ form input[type="button"]:hover {
 	margin: 0;
 }
 
+#content #pages {
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	padding: 20px;
+}
+
+#content #pages .page-link {
+	display: inline-block;
+	padding: 10px;
+	margin: 5px;
+	background-color: #ccc;
+}
+
 
 /* FOOTER */
 

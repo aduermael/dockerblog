@@ -42,17 +42,25 @@ func ok(c *gin.Context) {
 
 func adminPosts(c *gin.Context) {
 
-	posts, err := types.PostsList(true, -1, -1, TimeLocation)
+	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, TimeLocation)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
 		return
 	}
 
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
 	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
-		"title": "Admin - posts",
-		"lang":  getLangForContext(c),
-		"posts": posts,
+		"title":       "Admin - posts",
+		"lang":        getLangForContext(c),
+		"posts":       posts,
+		"nbPages":     int(nbPages),
+		"currentPage": 0,
 	})
 }
 

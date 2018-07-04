@@ -37,7 +37,29 @@
 						</div>
 					</div>	
 				{{ end }}	
-			</div>	
+			</div>
+			<div id="pages">
+				{{ $pages := pagesAroundCurrent .currentPage 2 .nbPages}}
+				{{ $currentPlusOne := incr .currentPage }}
+				{{ $currentPlusTwo := incr $currentPlusOne }}
+
+				{{ if gt .currentPage 0 }}
+					<a class="page-link" href="/posts/page/1">&lt;</a>
+				{{ end }}
+
+				{{ range $pages }}
+					{{ if eq . -1}}
+					<span class="page-gap">...</span>
+					{{ else }}
+					<a class="page-link" href="/posts/page/{{ . }}">{{ . }}</a>
+					{{ end }}
+				{{ end }}
+
+
+				{{ if lt $currentPlusOne .nbPages }}
+					<a class="page-link" href="/posts/page/{{ $currentPlusTwo }}">&gt;</a>
+				{{ end }}
+			</div>
 		</div>	
 		{{ template "footer" . }}	
 	</body>	

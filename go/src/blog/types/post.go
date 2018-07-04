@@ -78,6 +78,28 @@ type Post struct {
 }
 
 var (
+	scriptNbPosts = redis.NewScript(0, `
+		local key = "posts_fr"
+
+		local now = ARGV[1]
+		local includeFuture = ARGV[2]
+		local startDate = ARGV[3]
+		local endDate = ARGV[4]
+		local perPage = tonumber(ARGV[5])
+
+		local count
+
+		if startDate ~= "-1" and endDate ~= "-1" then
+			count = redis.call('zcount', key, startDate, endDate)
+		elseif includeFuture == "1" then
+			count = redis.call('zcount', key, '-inf', '+inf')
+		else
+			count = redis.call('zcount', key, '-inf', now)
+		end
+
+		return count
+		`)
+
 	scriptPostList = redis.NewScript(0, `
 		local toStruct = function (bulk)
 			local result = {}
@@ -92,21 +114,22 @@ var (
 			return result
 		end
 
+		local key = "posts_fr"
+
 		local now = ARGV[1]
 		local includeFuture = ARGV[2]
 		local startDate = ARGV[3]
 		local endDate = ARGV[4]
+		local page = tonumber(ARGV[5])
+		local perPage = tonumber(ARGV[6])
 
-		local key = "posts_fr"
-		local nb_posts_per_page = 10
-		local page = 0
-		local first_post = page * nb_posts_per_page
-		local last_post = first_post + (nb_posts_per_page - 1)
+		local first_post = page * perPage
+		local last_post = first_post + perPage
 
 		local post_ids
 
 		if startDate ~= "-1" and endDate ~= "-1" then
-			post_ids = redis.call('zrevrangebyscore', key, endDate, startDate)
+			post_ids = redis.call('zrevrangebyscore', key, endDate, startDate, 'LIMIT', first_post, last_post)
 		elseif includeFuture == "1" then
 			post_ids = redis.call('zrevrangebyscore', key, '+inf', '-inf', 'LIMIT', first_post, last_post)
 		else
@@ -525,14 +548,17 @@ func PostGetWithSlug(slug string) (Post, error) {
 	return post, nil
 }
 
-// PostsList returns a list of posts
-// TODO: pagination
-// TODO: from what feed?
-// TODO: sort option
-// TODO: lang shouldn't be hardcoded to "fr"
-func PostsList(includeFuture bool, year int, month int, timeLocation *time.Location) ([]*Post, error) {
+// Number of pages for posts with given parameters
+func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLocation *time.Location) (int64, error) {
+
+	fmt.Println("PostsNbPages")
+
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
+
+	if perPage < 1 {
+		return 0, errors.New("page < 1")
+	}
 
 	now := int(time.Now().Unix()) * 1000
 
@@ -545,12 +571,69 @@ func PostsList(includeFuture bool, year int, month int, timeLocation *time.Locat
 		nextYear := year
 		if nextMonth > 12 {
 			nextMonth = 1
-			nextYear += 1
+			nextYear++
 		}
 		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
 	}
 
-	res, err := scriptPostList.Do(redisConn, now, includeFuture, start, end)
+	res, err := scriptNbPosts.Do(redisConn, now, includeFuture, start, end, perPage)
+	if err != nil {
+		return 0, err
+	}
+
+	nbPosts, ok := res.(int64)
+
+	if !ok {
+		return 0, errors.New("can't cast response")
+	}
+
+	perPageInt64 := int64(perPage)
+
+	nbPages := nbPosts / perPageInt64
+	if nbPosts%perPageInt64 > 0 {
+		nbPages += 1
+	}
+
+	return nbPages, nil
+}
+
+// PostsList returns a list of posts
+// page has to be >= 0
+// perPage has to be >= 1
+// pagination starts from most recent post
+// year & month can be set to list all posts of a given month (pagination still applies)
+// To list all posts set year & month to -1
+// TODO: feeds (categories)
+// TODO: lang shouldn't be hardcoded to "fr"
+func PostsList(includeFuture bool, page int, perPage int, year int, month int, timeLocation *time.Location) ([]*Post, error) {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	if page < 0 {
+		return nil, errors.New("page < 0")
+	}
+
+	if perPage < 1 {
+		return nil, errors.New("perPage < 1")
+	}
+
+	now := int(time.Now().Unix()) * 1000
+
+	start := int64(-1)
+	end := int64(-1)
+
+	if year != -1 && month != -1 {
+		start = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
+		nextMonth := month + 1
+		nextYear := year
+		if nextMonth > 12 {
+			nextMonth = 1
+			nextYear++
+		}
+		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
+	}
+
+	res, err := scriptPostList.Do(redisConn, now, includeFuture, start, end, page, perPage)
 	if err != nil {
 		return nil, err
 	}
