@@ -372,6 +372,10 @@ form input[type="button"]:hover {
 	background-color: #ccc;
 }
 
+#content #pages .page-link.current {
+	background-color: #4EF9BE;
+}
+
 
 /* FOOTER */
 
