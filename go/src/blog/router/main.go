@@ -4,6 +4,7 @@ import (
 	"blog/types"
 	"blog/util"
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -250,34 +251,21 @@ func main() {
 		})
 	}
 
+	router.GET("/posts/page/:page", func(c *gin.Context) {
+		page := c.Param("page")
+		pageInt, err := strconv.Atoi(page)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "/posts/:page - can't parse page: "+page+"\n")
+			c.Redirect(http.StatusMovedPermanently, "/")
+			return
+		}
+		// page indexes start at zero, not one
+		pageInt--
+		posts(c, pageInt)
+	})
+
 	router.GET("/", func(c *gin.Context) {
-		posts, err := types.PostsList(false, 0, config.PostsPerPage, -1, -1, TimeLocation)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
-		types.PostComputeSince(posts)
-
-		archives, err := types.PostGetArchiveMonths(hardcodedLang, TimeLocation, nil)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
-		nbPages, err := types.PostsNbPages(false, config.PostsPerPage, -1, -1, TimeLocation)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
-		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title":       GetTitle(c),
-			"posts":       posts,
-			"archives":    archives,
-			"nbPages":     int(nbPages),
-			"currentPage": 0,
-		})
+		posts(c, 0)
 	})
 
 	// // ---------------

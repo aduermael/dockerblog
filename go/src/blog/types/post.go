@@ -124,16 +124,15 @@ var (
 		local perPage = tonumber(ARGV[6])
 
 		local first_post = page * perPage
-		local last_post = first_post + perPage
 
 		local post_ids
 
 		if startDate ~= "-1" and endDate ~= "-1" then
-			post_ids = redis.call('zrevrangebyscore', key, endDate, startDate, 'LIMIT', first_post, last_post)
+			post_ids = redis.call('zrevrangebyscore', key, endDate, startDate, 'LIMIT', first_post, perPage)
 		elseif includeFuture == "1" then
-			post_ids = redis.call('zrevrangebyscore', key, '+inf', '-inf', 'LIMIT', first_post, last_post)
+			post_ids = redis.call('zrevrangebyscore', key, '+inf', '-inf', 'LIMIT', first_post, perPage)
 		else
-			post_ids = redis.call('zrevrangebyscore', key, now, '-inf', 'LIMIT', first_post, last_post)
+			post_ids = redis.call('zrevrangebyscore', key, now, '-inf', 'LIMIT', first_post, perPage)
 		end
 
 		local result = {}
