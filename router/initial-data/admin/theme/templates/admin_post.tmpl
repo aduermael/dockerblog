@@ -101,7 +101,11 @@
 				{{ else }}
 					<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''">
 					<input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
-				{{ end }}<div>
+				{{ end }}
+			</div>
+
+			<div>
+				<input id="slug" type="text" placeholder="Slug" onfocus="this.placeholder =''" onblur="if (this.value==''){this.placeholder='Slug'}">
 			</div>
 
 			<div id="submit">
