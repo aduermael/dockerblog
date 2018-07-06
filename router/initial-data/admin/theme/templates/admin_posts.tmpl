@@ -8,17 +8,17 @@
 	 		<a href="/admin/new"><span class="fas fa-plus"></span> New post</a>
 	 		<div id="posts">
 				{{ range .posts }}
-				<div id="post-{{ .ID }}" class="post">
-					<div class="title">
-						<a href="/admin/edit/{{ .ID }}">{{ .Title }}</a><span style="display:none" class="date">{{ .Date }}</span> - #{{ .ID }}
+					<div id="post-{{ .ID }}" class="post">
+						<div class="title">
+							<a href="/admin/edit/{{ .ID }}">{{ .Title }}</a><span style="display:none" class="date">{{ .Date }}</span> - #{{ .ID }}
+						</div>
+						<div class="options">
+							<a class="trash" href="#" onclick="removePost('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
+						</div>
+						<div class="clear"></div>
 					</div>
-					<div class="options">
-						<a class="trash" href="#" onclick="removePost('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
-					</div>
-					<div class="clear"></div>
-				</div>
 				{{ else }}
-				<p>no posts</p>
+					<p>no posts</p>
 				{{ end }}
 
 				{{ if .nbPages }}

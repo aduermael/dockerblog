@@ -42,14 +42,14 @@ func ok(c *gin.Context) {
 
 func adminPosts(c *gin.Context) {
 
-	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, TimeLocation)
+	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, TimeLocation, false)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
 		return
 	}
 
-	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation)
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -75,14 +75,14 @@ func adminPostsPage(c *gin.Context) {
 	// page indexes start at zero, not one
 	pageInt--
 
-	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, TimeLocation)
+	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, TimeLocation, false)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
 		return
 	}
 
-	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation)
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -95,6 +95,24 @@ func adminPostsPage(c *gin.Context) {
 		"nbPages":     int(nbPages),
 		"currentPage": pageInt,
 	})
+}
+
+func adminPages(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"not": "implemented"})
+}
+
+func adminPagesPage(c *gin.Context) {
+	page := c.Param("page")
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "/admin/posts/:page - can't parse page: "+page+"\n")
+		c.Redirect(http.StatusMovedPermanently, "/admin")
+		return
+	}
+	// page indexes start at zero, not one
+	pageInt--
+
+	c.JSON(http.StatusOK, gin.H{"not": "implemented"})
 }
 
 func adminNewPost(c *gin.Context) {

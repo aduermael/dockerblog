@@ -65,7 +65,8 @@ type Post struct {
 	Comments       []*Comment  `json:"comments,omitempty"`
 	ShowComments   bool        `json:"showComs,omitempty"`
 	AcceptComments bool        `json:"acceptComs,omitempty"`
-	FBPostID       string      `json:"fbPostID"` // to sync with FB posts
+	FBPostID       string      `json:"fbPostID,omitempty"`     // to sync with FB posts
+	IsStaticPage   bool        `json:"isStaticPage,omitempty"` // true if post is a static page (not in blog feed, not in RSS)
 	// Since is a formatted duration that can be
 	// computed from Date
 	Since string `json:"-"`
@@ -548,7 +549,7 @@ func PostGetWithSlug(slug string) (Post, error) {
 }
 
 // Number of pages for posts with given parameters
-func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLocation *time.Location) (int64, error) {
+func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLocation *time.Location, staticPages bool) (int64, error) {
 
 	fmt.Println("PostsNbPages")
 
@@ -602,9 +603,8 @@ func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLoca
 // pagination starts from most recent post
 // year & month can be set to list all posts of a given month (pagination still applies)
 // To list all posts set year & month to -1
-// TODO: feeds (categories)
 // TODO: lang shouldn't be hardcoded to "fr"
-func PostsList(includeFuture bool, page int, perPage int, year int, month int, timeLocation *time.Location) ([]*Post, error) {
+func PostsList(includeFuture bool, page int, perPage int, year int, month int, timeLocation *time.Location, staticPages bool) ([]*Post, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 

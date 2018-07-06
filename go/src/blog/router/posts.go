@@ -10,7 +10,7 @@ import (
 
 func posts(c *gin.Context, page int) {
 	fmt.Println("posts per page:", config.PostsPerPage)
-	posts, err := types.PostsList(false, page, config.PostsPerPage, -1, -1, TimeLocation)
+	posts, err := types.PostsList(false, page, config.PostsPerPage, -1, -1, TimeLocation, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -24,7 +24,7 @@ func posts(c *gin.Context, page int) {
 		return
 	}
 
-	nbPages, err := types.PostsNbPages(false, config.PostsPerPage, -1, -1, TimeLocation)
+	nbPages, err := types.PostsNbPages(false, config.PostsPerPage, -1, -1, TimeLocation, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

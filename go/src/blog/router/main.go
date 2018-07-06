@@ -131,6 +131,9 @@ func main() {
 		adminGroup.GET("/posts/page/:page", adminPostsPage)
 		adminGroup.GET("/", adminPosts)
 
+		adminGroup.GET("/pages", adminPages)
+		adminGroup.GET("/pages/page/:page", adminPagesPage)
+
 		adminGroup.GET("/new", adminNewPost)
 		adminGroup.POST("/save", adminSavePost)
 		adminGroup.POST("/delete", adminDeletePost)
@@ -179,7 +182,7 @@ func main() {
 		// Guessing 200 posts is a maximum in one month for now.
 		perPage := 200
 
-		posts, err := types.PostsList(false, 0, perPage, int(year), int(month), TimeLocation)
+		posts, err := types.PostsList(false, 0, perPage, int(year), int(month), TimeLocation, false)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -193,7 +196,7 @@ func main() {
 			return
 		}
 
-		nbPages, err := types.PostsNbPages(false, perPage, int(year), int(month), TimeLocation)
+		nbPages, err := types.PostsNbPages(false, perPage, int(year), int(month), TimeLocation, false)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
