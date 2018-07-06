@@ -7,19 +7,46 @@
 	 		<h1>Posts</h1>
 	 		<a href="/admin/new"><span class="fas fa-plus"></span> New post</a>
 	 		<div id="posts">
-	 			{{ range .posts }}
-	 			<div id="post-{{ .ID }}" class="post">
-	 				<div class="title">
-	 					<a href="/admin/edit/{{ .ID }}">{{ .Title }}</a><span style="display:none" class="date">{{ .Date }}</span> - #{{ .ID }}
-	 				</div>
-	 				<div class="options">
-	 					<a class="trash" href="#" onclick="removePost('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
-	 				</div>
-	 				<div class="clear"></div>
-	 			</div>
-	 			{{ else }}
-	 			<p>no posts</p>
-	 			{{ end }}
+				{{ range .posts }}
+				<div id="post-{{ .ID }}" class="post">
+					<div class="title">
+						<a href="/admin/edit/{{ .ID }}">{{ .Title }}</a><span style="display:none" class="date">{{ .Date }}</span> - #{{ .ID }}
+					</div>
+					<div class="options">
+						<a class="trash" href="#" onclick="removePost('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
+					</div>
+					<div class="clear"></div>
+				</div>
+				{{ else }}
+				<p>no posts</p>
+				{{ end }}
+
+				{{ if .nbPages }}
+					{{ if gt .nbPages 1}}
+						<div id="pages">
+							{{ $pages := pagesAroundCurrent .currentPage 2 .nbPages}}
+							{{ $currentPlusOne := incr .currentPage }}
+							{{ $currentPlusTwo := incr $currentPlusOne }}
+
+							{{ if gt .currentPage 0 }}
+								<a class="page-link" href="/admin/posts/page/{{ .currentPage }}">&lt;</a>
+							{{ end }}
+
+							{{ range $pages }}
+								{{ if eq . -1}}
+								<span class="page-gap">...</span>
+								{{ else }}
+								<a class="page-link{{if eq . $currentPlusOne}} current{{ end }}" href="/admin/posts/page/{{ . }}">{{ . }}</a>
+								{{ end }}
+							{{ end }}
+
+
+							{{ if lt $currentPlusOne .nbPages }}
+								<a class="page-link" href="/admin/posts/page/{{ $currentPlusTwo }}">&gt;</a>
+							{{ end }}
+						</div>
+					{{ end }}
+				{{ end }}
 	 		</div>
 	 	</div>
 	 </body>	

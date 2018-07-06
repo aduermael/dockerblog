@@ -103,12 +103,13 @@ a:hover {
 }
 
 
-#commentsLabel {
+#isPageLabel, #commentsLabel {
 	display: block;
   	padding-left: 15px;
   	text-indent: -15px;
 }
 
+#isPageLabel > input,
 #commentsLabel > input {
 	width: 13px;
 	height: 13px;
@@ -292,321 +293,23 @@ a:hover {
 	float: right;
 }
 
-
-
-/*.devBounds {
-	width: 800px;
-	border-left: 1px solid #f00;
-	border-right: 1px solid #f00;
-	height: 200px;
-	position: absolute;
-}
-
-
-form input {
-	width: 100%;
-	font-size: 1.3rem;
+#content #posts #pages {
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
 	text-align: center;
-	border: 1px solid #aaa;
-	background-color: #ccc;
-	color: #000;
-}
-
-form input[type="button"] {
-	border-color: #888;
-	background-color: #aaa;
-	cursor: pointer;
-	-webkit-appearance: none;
-}
-
-form input[type="button"]:hover {
-	background-color: #bbb;
-}
-
-// HEADER
-
-#header {
-	width: 100%;
 	padding: 20px;
-	background-color: #eee;
-	text-align: center;
+	padding-bottom: 0;
 }
 
-#header h1 {
-	margin: 0;
-	padding: 0;
-	font-size: 30px;
-	line-height: 40px;
-}
-
-// MENU
-
-#menu > #area {
-	max-width: 800px;
-	margin-right: auto;
-	margin-left: auto;
-	line-height: 40px;
-}
-
-#menu > #area > img {
-	position:absolute;
-	top:10px;
-	left:10px;
-
-	width: 60px;
-	height: 60px;
-
-	border: 1px solid #999;
-	border-radius: 5px;
-	padding: 3px;
-	background-color: #fff;
-}
-
-@media (min-width: 700px) {
-	#menu > #area {
-		position: relative;
-	}
-	#menu > #area > img { 
-		top: auto;
-		bottom:10px;
-		left:10px;
-		width: 100px;
-		height: 100px; 
-	}
-}
-
-#menu > #area ul { text-align: center; }
-#menu > #area li { display: inline-block; }
-#menu > #area li a { display: block; padding-left: 10px; padding-right: 10px;}
-#menu > #area li a:hover { background-color: #ccc; }
-
-// CONTENT
-
-#content {
-	background-color: #fff;
-	padding: 0;
-}
-
-
-// CONTENT - POSTS
-
-#content #posts{
-	max-width: 800px;
-	margin-left: auto;
-	margin-right: auto;
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
-#content #posts .post{
-	padding: 10px;
-	margin-bottom: 10px;
-}
-
-#content #posts .post:last-child { margin-bottom: 0px; }
-
-// CONTENT - POSTS - COMMENT FORM
-
-#content #posts .post #commentForm {
-	max-width: 600px;
-	background-color: #eee;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 1rem;
-}
-
-#content #posts .post #commentForm #url,
-#content #posts .post #commentForm #email {
-	max-width: 0 !important; max-height: 0 !important;
-	padding: 0; margin: 0;
-	background-color: transparent;
-	border: none; position: absolute;
-}
-
-#content #posts .post #commentForm .header {
-	position: relative;
-	width: 100%;
-	height: 80px;
-	margin-bottom: 8px;
-}
-
-#content #posts .post #commentForm .header #commentGravatar { margin-bottom: 8px; width: 80px; height: 80px; }
-
-#content #posts .post #commentForm .header .nameAndEmail {
-	position: absolute;
-	width: 100%;
-	top: 0;
-	left: 0;
-	padding-left: 88px;
-}
-
-#content #posts .post #commentForm textarea { font-size: 1.3rem; line-height: 2.0rem; margin: 0; border: 1px solid #aaa;}
-#content #posts .post #commentForm .header .nameAndEmail #commentName { width: 100%; margin-bottom: 8px; }
-#content #posts .post #commentForm .header .nameAndEmail #commentEmail { width: 100%; }
-#content #posts .post #commentForm .webProfile { width: 100%; height: 36px; margin-bottom: 8px; }
-#content #posts .post #commentForm .webProfile .left { float: left; width: 50%; padding-right: 4px; }
-#content #posts .post #commentForm .webProfile .right { float: left; width: 50%; padding-left: 4px; }
-#content #posts .post #commentForm #commentWebsite { width: 100%; }
-#content #posts .post #commentForm #commentTwitter { width: 100%; }
-#content #posts .post #commentForm #commentContent { width: 100%; padding: 8px; resize: vertical; height: 100px; }
-
-#content #posts .post #commentForm label {
-	display: block;
-	width: 100%;
-	text-align: center;
-}
-
-#content #posts .post #commentForm input {
-	height: 36px;
-	text-align: left;
-	padding-left: 8px;
-	padding-right: 8px;
-}
-
-#content #posts .post #commentForm input[type="checkbox"] { width: auto; height: auto; margin-right: 8px; }
-#content #posts .post #commentForm input[type="button"] { text-align: center; margin-bottom: 8px; }
-#content #posts .post #commentForm input.mandatory { background-color: #fff; }
-#content #posts .post #commentForm input.error { background-color: #f78778 !important; }
-
-// BLOCKS
-
-#content #posts .post .block.image { text-align: center; }
-
-#content #posts .post .block.image img {
+#content #posts #pages .page-link {
 	display: inline-block;
-	vertical-align: middle;
-	max-width: 100%;
-	padding-bottom: 2rem;
-}
-
-// COMMENTS
-
-#content #posts .post .comments .comment-block {
-	margin-bottom: 1rem;
-}
-
-#content #posts .post .comments .comment-block:last-child { margin-bottom: 0; }
-
-#content #posts .post .comments .comment {
-	background-color: rgba(0,0,0,0.01);
-	padding: 1rem;
-	margin-left: 40%;
-}
-
-#content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
-#content #posts .post .comments .comment.indent-1 { margin-left: 10%; background-color: rgba(0,0,0,0.07); }
-#content #posts .post .comments .comment.indent-2 { margin-left: 20%; background-color: rgba(0,0,0,0.05); }
-#content #posts .post .comments .comment.indent-3 { margin-left: 30%; background-color: rgba(0,0,0,0.03); }
-
-#content #posts .post .comments .comment h3 {
-	font-weight: normal;
-	font-family: "Lobster", cursive;
-	color: #333;
-	padding-bottom: 1rem;
-}
-
-#content #posts .post .comments .comment h3 .date {
-	font-size: 1.5rem;
-	color: #666;
-	font-family: "Raleway", sans-serif;
-	font-weight: normal;
-}
-
-#content #posts .post .comments .comment p { padding-bottom: 1rem; }
-
-#content #posts .post .comments .comment img.avatar {
-	float: left;
-	padding-right: 1rem;
-	padding-bottom: 1rem;
-}
-
-// FOOTER
-
-#footer {
-	max-width: 800px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: #ddd;
-	text-align: center;
-	color: #777;
-	padding-right: 5px;
-	padding-left: 5px;
-}
-
-#footer #sections {
-	position: relative;
-	margin-bottom: 2rem;
-}
-
-#footer #sections .group {
-	width: 50%;
-	float: left; 
-}
-
-#footer #sections .group .itemWrapper {
-	width: 100%;
-	padding-top: 10px;
-	padding-left: 5px;
-	padding-right: 5px;
-	float:left;
-}
-
-
-#footer #sections .group .item {
 	padding: 10px;
-	text-align: center;
-	background-color: #eee;
-	border-radius: 5px;
+	margin: 5px;
+	background-color: #ccc;
 }
 
-#footer #sections .group .item ul { list-style: none; }
-
-#footer #sections .group .item h2 {
-	font-size: 2.0rem; color: #666;
-	padding-bottom: 1rem;
+#content #posts #pages .page-link.current {
+	background-color: #3399ff;
+	color: #FFFFFF;
 }
-
-#footer #sections .group .item h1,
-#footer #sections .group .item h2,
-#footer #sections .group .item h3,
-#footer #sections .group .item h4,
-#footer #sections .group .item h5,
-#footer #sections .group .item h6,
-#footer #sections .group .item p {
-	padding-bottom: 1rem;
-}
-
-#footer #sections .group .item form input {
-	max-width: 150px;
-	margin-bottom: 0.5rem;
-	padding: 0.5rem;
-	border-radius: 5px;
-	border: none;
-}
-
-
-@media (min-width: 700px) {
-	#footer #sections .group .itemWrapper { width: 50%; }
-}
-
-// UTILS
-
-.clear { clear: both; }
-
-.image-bubbles img {
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	border: none;
-	background-color: #555;
-}
-
-.image-bubbles a:hover img { border: 2px solid #555; }
-
-::-webkit-input-placeholder { color: #888; } /* Chrome/Opera/Safari *\/
-::-moz-placeholder { color: #888; } /* Firefox 19+ *\/
-:-ms-input-placeholder { color: #888; } /* IE 10+ *\/
-:-moz-placeholder { color: #888; } /* Firefox 18- *\/
-
-
-*/

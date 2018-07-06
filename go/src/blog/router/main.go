@@ -128,6 +128,7 @@ func main() {
 		adminGroup.Static("/js", adminJsPath)
 
 		adminGroup.GET("/posts", adminPosts)
+		adminGroup.GET("/posts/page/:page", adminPostsPage)
 		adminGroup.GET("/", adminPosts)
 
 		adminGroup.GET("/new", adminNewPost)

@@ -64,6 +64,39 @@ func adminPosts(c *gin.Context) {
 	})
 }
 
+func adminPostsPage(c *gin.Context) {
+	page := c.Param("page")
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "/admin/posts/:page - can't parse page: "+page+"\n")
+		c.Redirect(http.StatusMovedPermanently, "/admin")
+		return
+	}
+	// page indexes start at zero, not one
+	pageInt--
+
+	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, TimeLocation)
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		serverError(c, err.Error())
+		return
+	}
+
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
+		"title":       "Admin - posts",
+		"lang":        getLangForContext(c),
+		"posts":       posts,
+		"nbPages":     int(nbPages),
+		"currentPage": pageInt,
+	})
+}
+
 func adminNewPost(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title": "Admin - new post",

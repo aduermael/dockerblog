@@ -1,24 +1,24 @@
 <!DOCTYPE html>	
  <html lang="{{ .lang }}">
- 	{{ template "admin_head" . }}
-	 <body>
-	 	<script type="text/javascript">
-	 		window.onload = function() {
-	 			initExistingBlocks()
+	{{ template "admin_head" . }}
+	<body>
+		<script type="text/javascript">
+			window.onload = function() {
+					initExistingBlocks()
 
-	 			$("#datepicker").datepicker()
-	 			$("#timepicker").timepicker()
+					$("#datepicker").datepicker()
+					$("#timepicker").timepicker()
 
-	 			notDirty()
+					notDirty()
 
 				window.addEventListener("beforeunload", function (e) {
 					return alertIfDirty()
 				})
 			}
-	 	</script>
+		</script>
 
-	 	{{ template "admin_menu" . }}
-	 	<div id="content">
+		{{ template "admin_menu" . }}
+		<div id="content">
 			{{ if .post}}
 				<h1>Edit post</h1>
 				<input id="postID" type="hidden" value="{{ .post.ID }}">
@@ -26,23 +26,23 @@
 				<h1>New post</h1>
 			{{ end }}
 
-	 		<input {{ if .post}}value="{{ .post.Title }}"{{ end}} class="title" id="postTitle" type="text" placeholder="Title" onfocus="this.placeholder =''" onblur="this.placeholder = 'Title'">
+			<input {{ if .post}}value="{{ .post.Title }}"{{ end}} class="title" id="postTitle" type="text" placeholder="Title" onfocus="this.placeholder =''" onblur="this.placeholder = 'Title'">
 
-	 		<div id="blocks">
+			<div id="blocks">
 
-	 			{{ with .post }}
-	 				{{ range $id, $block := .Blocks }}
-		 				{{ if ($block.IsOfType "text") }}
-		 					<div id="block{{ $id }}" class="block block_text">{{ .ValueForKey "text" }}</div>
-		 				{{ else if ($block.IsOfType "image") }}
-		 					<div onclick="showToolBar(this)" id="block{{ $id }}" class="block block_image">
-		 						<img src="{{ .ValueForKey "path" }}">
+				{{ with .post }}
+					{{ range $id, $block := .Blocks }}
+						{{ if ($block.IsOfType "text") }}
+							<div id="block{{ $id }}" class="block block_text">{{ .ValueForKey "text" }}</div>
+						{{ else if ($block.IsOfType "image") }}
+							<div onclick="showToolBar(this)" id="block{{ $id }}" class="block block_image">
+								<img src="{{ .ValueForKey "path" }}">
 								<input value="{{ .ValueForKey "url" }}" placeholder="URL" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'URL'"/>
 								<input value="{{ .ValueForKey "description" }}" placeholder="Description" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Description'"/>
 							</div>
-		 				{{ end }}
-	 				{{ end}}
-	 			{{ end }}
+						{{ end }}
+					{{ end}}
+				{{ end }}
 
 				<div id="blockToolBar" onmousedown="return toolBarMouseDownShouldPropagate(event);">
 					<div id="textTools">
@@ -57,7 +57,7 @@
 					<div id="globalTools">
 						<a href="#" onclick="moveUp();return false;"><span class="fas fa-hand-point-up"></span></a>
 						<a href="#" onclick="moveDown();return false;"><span class="fas fa-hand-point-down"></span></a>
-	 					<a href="#" onclick="removeBlock();return false;"><span class="fas fa-trash-alt"></span></a>
+						<a href="#" onclick="removeBlock();return false;"><span class="fas fa-trash-alt"></span></a>
 					</div>
 
 					<div class="clear"></div>
@@ -91,12 +91,16 @@
 			</div>
 
 			<div>
+				<label id="isPageLabel"><input id="isPage" type="checkbox" name="isPage"> Static page (not in blog feed, not in RSS)</label>
+			</div>
+
+			<div>
 				{{ if .post}}
-					<input value="{{ .post.DateString }}" id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
-	 				--><input value="{{ .post.TimeString }}" id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
+					<input value="{{ .post.DateString }}" id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''">
+					<input value="{{ .post.TimeString }}" id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
 				{{ else }}
-					<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''"><!--
-	 				--><input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
+					<input id="datepicker" type="text" placeholder="Date" onfocus="this.placeholder =''">
+					<input id="timepicker" type="text" placeholder="Time" onfocus="this.placeholder =''">
 				{{ end }}<div>
 			</div>
 
