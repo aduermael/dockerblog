@@ -2,6 +2,7 @@ package types
 
 import (
 	"blog/humanize"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -361,7 +362,7 @@ var (
 		redis.call('zadd', kDateOrdered, post.date, kID)
 		redis.call('hset', kSlugs, post.slug, kID)
 
-		if post.fbPostID ~= "" then
+		if post.fbPostID ~= nil and post.fbPostID ~= "" then
 			redis.call('hmset', kID, 'fbpostID', post.fbPostID)
 			-- comments from FB will be collected for post for a period of time
 			local fbcommentInfos = { postUpdate = post.update , fbPostID = post.fbPostID, postID = post.ID, since = 0 }
@@ -451,6 +452,13 @@ func (p *Post) Save() error {
 		fmt.Println("ERROR (3)")
 		return errors.New("can't cast response")
 	}
+
+	// empty Lua array is returned as "{}"
+	// we should convert it to "[]" (empty json array)
+	if len(byteSlice) == 2 {
+		byteSlice = []byte("[]")
+	}
+	byteSlice = bytes.Replace(byteSlice, []byte("{}"), []byte("[]"), -1)
 
 	err = json.Unmarshal(byteSlice, p)
 	if err != nil {
