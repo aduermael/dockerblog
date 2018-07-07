@@ -105,7 +105,7 @@
 			</div>
 
 			<div>
-				<input id="slug" type="text" placeholder="Slug" onfocus="this.placeholder =''" onblur="if (this.value==''){this.placeholder='Slug'}">
+				<input {{ if .post.Slug }}value="{{ .post.Slug }}"{{end}} id="slug" type="text" placeholder="Slug" onfocus="this.placeholder =''" onblur="if (this.value==''){this.placeholder='Slug'}">
 			</div>
 
 			<div id="submit">

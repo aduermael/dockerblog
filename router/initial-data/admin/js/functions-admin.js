@@ -586,6 +586,10 @@ function sendPost(sender)
 	postContent.datestring = $('#datepicker').val();
 	postContent.timestring = $('#timepicker').val();
 
+	if ($('#slug').val() != "") {
+		postContent.slug = $('#slug').val()
+	}
+
 	$('#blocks').children().each(function ()
 	{
 		var block = new Object()

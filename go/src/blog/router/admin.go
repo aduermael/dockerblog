@@ -207,7 +207,17 @@ func adminSavePost(c *gin.Context) {
 	// NOTE: if post.ID == 0, a new post is created in database
 
 	post.Update = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
-	post.Slug = slug.Make(post.Title)
+
+	// slug
+	// - make from title if empty
+	// - fix if not empty but incorrect
+	post.Slug = strings.TrimSpace(post.Slug)
+	if post.Slug == "" {
+		post.Slug = slug.Make(post.Title)
+	} else if slug.IsSlug(post.Slug) == false {
+		post.Slug = slug.Make(post.Slug)
+	}
+
 	post.Lang = getLangForContext(c)
 	// TODO? post.Keywords
 	// TODO? post.Description
