@@ -87,9 +87,10 @@
 			</div>
 
 			<div>
-				<div class="inlineInput"><input id="showComments" type="checkbox" name="comments" checked> Show comments</div>
-				<div class="inlineInput"><input id="acceptComments" type="checkbox" name="comments"> Accept comments without validation</div>
-				<div class="inlineInput disabled"><input id="isPage" type="checkbox" name="isPage" {{ if .post}}{{ if .post.IsStaticPage }}checked{{ end }}{{ else }}{{ if .isPage }}checked{{ end }}{{ end }} disabled> Static page (not in blog feed, not in RSS)</div>
+				<div class="inlineInput"><input id="showComments" type="checkbox" name="comments" {{ if .post.ShowComments }}checked{{ end }}> Show comments</div>
+				<div class="inlineInput"><input id="acceptComments" type="checkbox" name="comments" {{ if .post.AcceptComments }}checked{{ end }}> Accept comments</div>
+				<div class="inlineInput"><input id="commentsRequireApproval" type="checkbox" name="comments" {{ if .post.CommentsRequireApproval }}checked{{ end }}> Comments require approval</div>
+				<div class="inlineInput disabled"><input id="isPage" type="checkbox" name="isPage" {{ if .post}}{{ if .post.IsPage }}checked{{ end }}{{ else }}{{ if .isPage }}checked{{ end }}{{ end }} disabled> Static page (not in blog feed, not in RSS)</div>
 			</div>
 
 			<div>

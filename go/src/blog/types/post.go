@@ -53,21 +53,23 @@ func (pb *PostBlock) ValueForKey(key string) template.HTML {
 
 // Post defines a blog post
 type Post struct {
-	Title          string      `json:"title"`
-	ID             int         `json:"ID"`
-	Date           int         `json:"date"`
-	Update         int         `json:"update"`
-	Slug           string      `json:"slug"`
-	Lang           string      `json:"lang"`
-	Keywords       []string    `json:"keywords,omitempty"`
-	Description    string      `json:"description,omitempty"`
-	NbComments     int         `json:"nbComs"`
-	Blocks         []PostBlock `json:"blocks"`
-	Comments       []*Comment  `json:"comments,omitempty"`
-	ShowComments   bool        `json:"showComs,omitempty"`
-	AcceptComments bool        `json:"acceptComs,omitempty"`
-	FBPostID       string      `json:"fbPostID,omitempty"`     // to sync with FB posts
-	IsStaticPage   bool        `json:"isStaticPage,omitempty"` // true if post is a static page (not in blog feed, not in RSS)
+	Title                   string      `json:"title"`
+	ID                      int         `json:"ID"`
+	Date                    int         `json:"date"`
+	Update                  int         `json:"update"`
+	Slug                    string      `json:"slug"`
+	Lang                    string      `json:"lang"`
+	Keywords                []string    `json:"keywords,omitempty"`
+	Description             string      `json:"description,omitempty"`
+	NbComments              int         `json:"nbComs"`
+	Blocks                  []PostBlock `json:"blocks"`
+	Comments                []*Comment  `json:"comments,omitempty"`
+	ShowComments            bool        `json:"showComs,omitempty"`
+	AcceptComments          bool        `json:"acceptComs,omitempty"`
+	CommentsRequireApproval bool        `json:"approveComs,omitempty"`
+
+	FBPostID string `json:"fbPostID,omitempty"` // to sync with FB posts
+	IsPage   bool   `json:"isPage,omitempty"`   // true if post is a page (not in blog feed, not in RSS)
 	// Since is a formatted duration that can be
 	// computed from Date
 	Since string `json:"-"`
@@ -172,6 +174,11 @@ var (
 			post_data.update = tonumber(post_data.update)
 			post_data.nbComs = tonumber(post_data.nbComs)
 
+			-- convert boolean strings to actual booleans
+			post_data.showComs = post_data.showComs ~= nil and post_data.showComs == "1"
+			post_data.acceptComs = post_data.acceptComs ~= nil and post_data.acceptComs == "1"
+			post_data.approveComs = post_data.approveComs ~= nil and post_data.approveComs == "1"
+			post_data.isPage = post_data.isPage ~= nil and post_data.isPage == "1"
 
 			result[#result+1] = post_data
 		end
@@ -215,6 +222,12 @@ var (
 		post_data.date = tonumber(post_data.date)
 		post_data.update = tonumber(post_data.update)
 		post_data.nbComs = tonumber(post_data.nbComs)
+
+		-- convert boolean strings to actual booleans
+		post_data.showComs = post_data.showComs ~= nil and post_data.showComs == "1"
+		post_data.acceptComs = post_data.acceptComs ~= nil and post_data.acceptComs == "1"
+		post_data.approveComs = post_data.approveComs ~= nil and post_data.approveComs == "1"
+		post_data.isPage = post_data.isPage ~= nil and post_data.isPage == "1"
 
 		-- get comments
 
@@ -359,31 +372,52 @@ var (
 	scriptPostSave = redis.NewScript(0, `
 		local post = cjson.decode(ARGV[1])
 
-		-- assign unique post ID if post is new (ID == 0)
-		if post.ID == 0 then 
-			post.ID = tonumber(redis.call('incr', 'postCount'))
-		end
-
-		local kID = 'post_' .. post.ID
-		-- index (per date)
-		local kDateOrdered = 'posts_' .. post.lang
-		-- index (by slug)
-		local kSlugs = 'slugs_' .. post.lang
-
+		-- encode blocks
 		local blocksStr = "[]" -- avoid "{}"
 		if #post.blocks > 0 then
 			blocksStr = cjson.encode(post.blocks)
 		end
 
-		redis.call('hmset', kID, 'blocks', blocksStr, 'date', post.date, 'update', post.update, 'ID', post.ID, 'slug', post.slug, 'title', post.title, 'lang', post.lang)
-		redis.call('zadd', kDateOrdered, post.date, kID)
+		-- assign unique post ID if post is new (ID == 0)
+		if post.ID == 0 then 
+			post.ID = tonumber(redis.call('incr', 'postCount'))
+		end
+		
+		-- save post hash
+		local kID = 'post_' .. post.ID
+
+		local showComs = post.showComs and 1 or 0
+		local acceptComs = post.acceptComs and 1 or 0
+		local approveComs = post.approveComs and 1 or 0
+		local isPage = post.isPage and 1 or 0
+
+		redis.call('hmset', kID, 'blocks', blocksStr, 'date', post.date, 'update', post.update, 'ID', post.ID, 'slug', post.slug, 'title', post.title, 'lang', post.lang, 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, 'isPage', isPage)
+
+		-- index by slug
+		local kSlugs = 'slugs_' .. post.lang
 		redis.call('hset', kSlugs, post.slug, kID)
 
+		-- specific indexes for post & pages
+		if post.isPage then
+			-- hash where pages are stored (indexed by slug)
+			local kPages = 'pages_' .. post.lang -- hash
+			redis.call('hset', kPages, post.slug, kID) -- TODO: make sure not to erase another page
+		else
+			-- index (per date)
+			local kDateOrdered = 'posts_' .. post.lang -- ordered set
+			redis.call('zadd', kDateOrdered, post.date, kID)
+		end
+
+		-- register post to collect Facebook comments
 		if post.fbPostID ~= nil and post.fbPostID ~= "" then
 			redis.call('hmset', kID, 'fbpostID', post.fbPostID)
 			-- comments from FB will be collected for post for a period of time
 			local fbcommentInfos = { postUpdate = post.update , fbPostID = post.fbPostID, postID = post.ID, since = 0 }
 			redis.call('hset', 'fbcomments', post.ID, cjson.encode(fbcommentInfos))
+		else 
+			-- remove existing values (if any)
+			redis.call('hdel', kID, 'fbpostID')
+			redis.call('hdel', 'fbcomments', post.ID)
 		end
 
 		return cjson.encode(post)

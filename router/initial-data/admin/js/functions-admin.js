@@ -12,11 +12,8 @@ $( document ).ready(function() {
 
 var errCallback = function(data) {
 	if (data) {
-		var res = JSON.parse(data)	
-		if (res && res.message) {
-			alert(res.message)
-			return
-		}
+		alert(data.message)
+		return
 	}
 	alert("error")
 }
@@ -575,16 +572,22 @@ function sendPost(sender)
 	}
 
 	// to link post with a FB post and merge comments
-	var fbPostID = $('#fbpostID').val();
+	var fbPostID = $('#fbpostID').val()
 
 	if (fbPostID && fbPostID != "") // not empty
 	{
-		postContent.fbpostID = $('#fbpostID').val();
+		postContent.fbpostID = $('#fbpostID').val()
 	}
 
 	// date
-	postContent.datestring = $('#datepicker').val();
-	postContent.timestring = $('#timepicker').val();
+	postContent.datestring = $('#datepicker').val()
+	postContent.timestring = $('#timepicker').val()
+
+	// config
+	postContent.showComs = $('#showComments').is(':checked')
+	postContent.acceptComs = $('#acceptComments').is(':checked')
+	postContent.approveComs = $('#commentsRequireApproval').is(':checked')
+	postContent.isPage = $('#isPage').is(':checked')
 
 	if ($('#slug').val() != "") {
 		postContent.slug = $('#slug').val()

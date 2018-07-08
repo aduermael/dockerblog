@@ -198,7 +198,7 @@ func adminEditPage(c *gin.Context) {
 	post.DateString = t.In(TimeLocation).Format("01/02/2006")
 	post.TimeString = t.In(TimeLocation).Format("3:04pm")
 
-	post.IsStaticPage = true
+	post.IsPage = true
 
 	// legacy (pages didn't have slugs, but "name"s)
 	if post.Slug == "" {
@@ -293,12 +293,11 @@ func adminSavePost(c *gin.Context) {
 	post.Slug = strings.Replace(post.Slug, ".", "", -1)
 
 	post.Lang = getLangForContext(c)
+
 	// TODO? post.Keywords
 	// TODO? post.Description
-	post.NbComments = 0
 
-	post.ShowComments = true
-	post.AcceptComments = true
+	post.NbComments = 0
 
 	err = post.Save()
 	if err != nil {
