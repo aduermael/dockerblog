@@ -384,6 +384,8 @@ func main() {
 				return
 			}
 		}
+
+		c.Redirect(http.StatusMovedPermanently, "/")
 	})
 
 	router.Run(serverPort)
