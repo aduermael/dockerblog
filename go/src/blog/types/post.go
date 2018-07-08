@@ -81,7 +81,8 @@ type Post struct {
 
 var (
 	scriptNbPosts = redis.NewScript(0, `
-		local key = "posts_fr"
+		-- TODO: stop using harcoded lang
+		local lang = "fr"
 
 		local now = ARGV[1]
 		local includeFuture = ARGV[2]
@@ -91,6 +92,8 @@ var (
 
 		local count
 
+		local key = "posts_" .. lang
+
 		if startDate ~= "-1" and endDate ~= "-1" then
 			count = redis.call('zcount', key, startDate, endDate)
 		elseif includeFuture == "1" then
@@ -98,7 +101,7 @@ var (
 		else
 			count = redis.call('zcount', key, '-inf', now)
 		end
-
+		
 		return count
 		`)
 
@@ -116,7 +119,8 @@ var (
 			return result
 		end
 
-		local key = "posts_fr"
+		-- TODO: stop using harcoded lang
+		local lang = "fr"
 
 		local now = ARGV[1]
 		local includeFuture = ARGV[2]
@@ -124,17 +128,25 @@ var (
 		local endDate = ARGV[4]
 		local page = tonumber(ARGV[5])
 		local perPage = tonumber(ARGV[6])
+		local staticPages = ARGV[7]
 
 		local first_post = page * perPage
 
 		local post_ids
 
-		if startDate ~= "-1" and endDate ~= "-1" then
-			post_ids = redis.call('zrevrangebyscore', key, endDate, startDate, 'LIMIT', first_post, perPage)
-		elseif includeFuture == "1" then
-			post_ids = redis.call('zrevrangebyscore', key, '+inf', '-inf', 'LIMIT', first_post, perPage)
+		if staticPages == "1" then
+			local key = "pages_" .. lang
+			post_ids = redis.call('hvals', key)
 		else
-			post_ids = redis.call('zrevrangebyscore', key, now, '-inf', 'LIMIT', first_post, perPage)
+			local key = "posts_" .. lang
+
+			if startDate ~= "-1" and endDate ~= "-1" then
+				post_ids = redis.call('zrevrangebyscore', key, endDate, startDate, 'LIMIT', first_post, perPage)
+			elseif includeFuture == "1" then
+				post_ids = redis.call('zrevrangebyscore', key, '+inf', '-inf', 'LIMIT', first_post, perPage)
+			else
+				post_ids = redis.call('zrevrangebyscore', key, now, '-inf', 'LIMIT', first_post, perPage)
+			end
 		end
 
 		local result = {}
@@ -559,6 +571,11 @@ func PostGetWithSlug(slug string) (Post, error) {
 // Number of pages for posts with given parameters
 func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLocation *time.Location, staticPages bool) (int64, error) {
 
+	// force one page for static pages
+	if staticPages {
+		return 1, nil
+	}
+
 	fmt.Println("PostsNbPages")
 
 	redisConn := redisPool.Get()
@@ -584,7 +601,7 @@ func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLoca
 		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
 	}
 
-	res, err := scriptNbPosts.Do(redisConn, now, includeFuture, start, end, perPage)
+	res, err := scriptNbPosts.Do(redisConn, now, includeFuture, start, end, perPage, staticPages)
 	if err != nil {
 		return 0, err
 	}
@@ -640,7 +657,7 @@ func PostsList(includeFuture bool, page int, perPage int, year int, month int, t
 		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
 	}
 
-	res, err := scriptPostList.Do(redisConn, now, includeFuture, start, end, page, perPage)
+	res, err := scriptPostList.Do(redisConn, now, includeFuture, start, end, page, perPage, staticPages)
 	if err != nil {
 		return nil, err
 	}

@@ -98,7 +98,26 @@ func adminPostsPage(c *gin.Context) {
 }
 
 func adminPages(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"not": "implemented"})
+	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, TimeLocation, true)
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		serverError(c, err.Error())
+		return
+	}
+
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, true)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "admin_pages.tmpl", gin.H{
+		"title":       "Admin - pages",
+		"lang":        getLangForContext(c),
+		"posts":       posts,
+		"nbPages":     int(nbPages),
+		"currentPage": 0,
+	})
 }
 
 func adminPagesPage(c *gin.Context) {
@@ -112,7 +131,26 @@ func adminPagesPage(c *gin.Context) {
 	// page indexes start at zero, not one
 	pageInt--
 
-	c.JSON(http.StatusOK, gin.H{"not": "implemented"})
+	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, TimeLocation, true)
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		serverError(c, err.Error())
+		return
+	}
+
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, true)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "admin_pages.tmpl", gin.H{
+		"title":       "Admin - pages",
+		"lang":        getLangForContext(c),
+		"posts":       posts,
+		"nbPages":     int(nbPages),
+		"currentPage": pageInt,
+	})
 }
 
 func adminNewPost(c *gin.Context) {
@@ -217,6 +255,8 @@ func adminSavePost(c *gin.Context) {
 	} else if slug.IsSlug(post.Slug) == false {
 		post.Slug = slug.Make(post.Slug)
 	}
+
+	post.Slug = strings.Replace(post.Slug, ".", "", -1)
 
 	post.Lang = getLangForContext(c)
 	// TODO? post.Keywords
