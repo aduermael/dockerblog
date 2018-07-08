@@ -77,6 +77,11 @@ type Post struct {
 	// timezone information from configuration
 	DateString string `json:"datestring,omitempty"`
 	TimeString string `json:"timestring,omitempty"`
+	// DEPRECATED
+	// Static page posts used to have "names" instead of "slugs"
+	// "name" field won't be used anymore when saving. Keeping
+	// it to generate correct slugs for existing pages.
+	Name string `json:"name,omitempty"`
 }
 
 var (

@@ -155,8 +155,17 @@ func adminPagesPage(c *gin.Context) {
 
 func adminNewPost(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
-		"title": "Admin - new post",
-		"lang":  getLangForContext(c),
+		"title":  "Admin - new post",
+		"lang":   getLangForContext(c),
+		"isPage": false,
+	})
+}
+
+func adminNewPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
+		"title":  "Admin - new post",
+		"lang":   getLangForContext(c),
+		"isPage": true,
 	})
 }
 
@@ -170,6 +179,32 @@ func adminEditPost(c *gin.Context) {
 	t := time.Unix(int64(post.Date/1000), 0) // ÷1000 because of legacy (we used to store milliseconds)
 	post.DateString = t.In(TimeLocation).Format("01/02/2006")
 	post.TimeString = t.In(TimeLocation).Format("3:04pm")
+
+	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
+		"title": "Admin - new post",
+		"lang":  getLangForContext(c),
+		"post":  post,
+	})
+}
+
+func adminEditPage(c *gin.Context) {
+	post, err := types.PostGet(c.Param("id"))
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	t := time.Unix(int64(post.Date/1000), 0) // ÷1000 because of legacy (we used to store milliseconds)
+	post.DateString = t.In(TimeLocation).Format("01/02/2006")
+	post.TimeString = t.In(TimeLocation).Format("3:04pm")
+
+	post.IsStaticPage = true
+
+	// legacy (pages didn't have slugs, but "name"s)
+	if post.Slug == "" {
+		post.Slug = slug.Make(post.Name)
+		post.Slug = strings.Replace(post.Slug, ".", "", -1)
+	}
 
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title": "Admin - new post",
@@ -255,7 +290,6 @@ func adminSavePost(c *gin.Context) {
 	} else if slug.IsSlug(post.Slug) == false {
 		post.Slug = slug.Make(post.Slug)
 	}
-
 	post.Slug = strings.Replace(post.Slug, ".", "", -1)
 
 	post.Lang = getLangForContext(c)

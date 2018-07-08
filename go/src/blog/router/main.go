@@ -134,11 +134,14 @@ func main() {
 		adminGroup.GET("/pages", adminPages)
 		adminGroup.GET("/pages/page/:page", adminPagesPage)
 
-		adminGroup.GET("/new", adminNewPost)
+		adminGroup.GET("/post/new", adminNewPost)
+		adminGroup.GET("/page/new", adminNewPage)
+
+		adminGroup.GET("/post/edit/:id", adminEditPost)
+		adminGroup.GET("/page/edit/:id", adminEditPage)
+
 		adminGroup.POST("/save", adminSavePost)
 		adminGroup.POST("/delete", adminDeletePost)
-
-		adminGroup.GET("/edit/:id", adminEditPost)
 
 		adminGroup.POST("/upload", adminUpload)
 

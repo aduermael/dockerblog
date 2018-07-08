@@ -23,7 +23,7 @@
 				<h1>Edit</h1>
 				<input id="postID" type="hidden" value="{{ .post.ID }}">
 			{{ else }}
-				<h1>New post</h1>
+				<h1>New</h1>
 			{{ end }}
 
 			<input {{ if .post}}value="{{ .post.Title }}"{{ end}} class="title" id="postTitle" type="text" placeholder="Title" onfocus="this.placeholder =''" onblur="this.placeholder = 'Title'">
@@ -87,11 +87,9 @@
 			</div>
 
 			<div>
-				<label id="commentsLabel"><input id="comments" type="checkbox" name="comments" checked> Comments</label>
-			</div>
-
-			<div>
-				<label id="isPageLabel"><input id="isPage" type="checkbox" name="isPage"> Static page (not in blog feed, not in RSS)</label>
+				<div class="inlineInput"><input id="showComments" type="checkbox" name="comments" checked> Show comments</div>
+				<div class="inlineInput"><input id="acceptComments" type="checkbox" name="comments"> Accept comments without validation</div>
+				<div class="inlineInput disabled"><input id="isPage" type="checkbox" name="isPage" {{ if .post}}{{ if .post.IsStaticPage }}checked{{ end }}{{ else }}{{ if .isPage }}checked{{ end }}{{ end }} disabled> Static page (not in blog feed, not in RSS)</div>
 			</div>
 
 			<div>

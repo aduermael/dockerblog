@@ -103,14 +103,14 @@ a:hover {
 }
 
 
-#isPageLabel, #commentsLabel {
+#content .inlineInput {
 	display: block;
   	padding-left: 15px;
   	text-indent: -15px;
 }
 
-#isPageLabel > input,
-#commentsLabel > input {
+#content .inlineInput > input {
+	display: inline-block;
 	width: 13px;
 	height: 13px;
 	padding: 0;
@@ -118,6 +118,10 @@ a:hover {
 	vertical-align: center;
 	position: relative;
 	*overflow: hidden;
+}
+
+#content .disabled {
+	color: #aaa;
 }
 
 #addBlockButtons a,span {
