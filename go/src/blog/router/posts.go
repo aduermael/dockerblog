@@ -8,6 +8,12 @@ import (
 )
 
 func posts(c *gin.Context, page int) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	posts, err := types.PostsList(false, page, config.PostsPerPage, -1, -1, config.TimeLocation, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

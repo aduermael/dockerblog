@@ -33,7 +33,6 @@ const (
 
 var (
 	redisPool      *redis.Pool
-	config         *types.Config
 	router         *gin.Engine
 	themePath      string
 	jsPath         string
@@ -77,7 +76,7 @@ func main() {
 		installInitialData([]string{"/themes/default", "/js", "/admin"})
 	}
 
-	config, err = types.LoadConfig(configPath)
+	config, err := types.LoadConfig(configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,7 +109,7 @@ func main() {
 	router.Use(static.ServeRoot("/js/", jsPath))
 
 	router.Use(ContextSetConfig)
-	router.Use(DefineLang)
+	router.Use(ContextSetLang)
 
 	// ADMIN
 

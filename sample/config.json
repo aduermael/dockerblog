@@ -1,8 +1,15 @@
 {
-	"theme": "laurel",
-	"title": ["Laurel"],
 	"langs": ["fr"],
+	"theme": "laurel",
 	"postsPerPage": 10,
-	"timezone": "Europe/Paris"
+	"timezone": "Europe/Paris",
+	"facebook": {
+		"appid": ""
+	},
+	"localized": {
+		"fr": {
+			"title": "Laurel"
+		}
+	}
 }
 

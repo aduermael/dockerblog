@@ -41,6 +41,11 @@ func ok(c *gin.Context) {
 }
 
 func adminPosts(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
 	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, config.TimeLocation, false)
 	if err != nil {
@@ -65,6 +70,12 @@ func adminPosts(c *gin.Context) {
 }
 
 func adminPostsPage(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	page := c.Param("page")
 	pageInt, err := strconv.Atoi(page)
 	if err != nil {
@@ -98,6 +109,12 @@ func adminPostsPage(c *gin.Context) {
 }
 
 func adminPages(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, config.TimeLocation, true)
 	if err != nil {
 		fmt.Println("ERROR:", err)
@@ -121,6 +138,12 @@ func adminPages(c *gin.Context) {
 }
 
 func adminPagesPage(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	page := c.Param("page")
 	pageInt, err := strconv.Atoi(page)
 	if err != nil {
@@ -170,6 +193,12 @@ func adminNewPage(c *gin.Context) {
 }
 
 func adminEditPost(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	post, err := types.PostGet(c.Param("id"))
 	if err != nil {
 		serverError(c, err.Error())
@@ -188,6 +217,12 @@ func adminEditPost(c *gin.Context) {
 }
 
 func adminEditPage(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	post, err := types.PostGet(c.Param("id"))
 	if err != nil {
 		serverError(c, err.Error())
@@ -238,10 +273,15 @@ func adminDeletePost(c *gin.Context) {
 }
 
 func adminSavePost(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
 
 	post := &types.Post{}
 
-	err := c.BindJSON(post)
+	err = c.BindJSON(post)
 
 	if err != nil {
 		badRequest(c, "incorrect data")
@@ -309,6 +349,11 @@ func adminSavePost(c *gin.Context) {
 }
 
 func adminUpload(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
 
 	multipart, err := c.Request.MultipartReader()
 	if err != nil {
