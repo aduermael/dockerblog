@@ -33,7 +33,7 @@ const (
 
 var (
 	redisPool      *redis.Pool
-	config         *Config
+	config         *types.Config
 	router         *gin.Engine
 	themePath      string
 	jsPath         string
@@ -77,14 +77,12 @@ func main() {
 		installInitialData([]string{"/themes/default", "/js", "/admin"})
 	}
 
-	config, err = LoadConfig()
+	config, err = types.LoadConfig(configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	redisPool = util.NewRedisPool("blog-db:6379")
-
-	// TODO: flush redis scripts
 
 	// paths
 	themePath = filepath.Join(blogDataRootDir, "themes", config.Theme)
@@ -111,7 +109,7 @@ func main() {
 
 	router.Use(static.ServeRoot("/js/", jsPath))
 
-	router.Use(AttachConfig)
+	router.Use(ContextSetConfig)
 	router.Use(DefineLang)
 
 	// ADMIN
@@ -185,7 +183,7 @@ func main() {
 		// Guessing 200 posts is a maximum in one month for now.
 		perPage := 200
 
-		posts, err := types.PostsList(false, 0, perPage, int(year), int(month), TimeLocation, false)
+		posts, err := types.PostsList(false, 0, perPage, int(year), int(month), config.TimeLocation, false)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -193,20 +191,20 @@ func main() {
 
 		types.PostComputeSince(posts)
 
-		archives, err := types.PostGetArchiveMonths(hardcodedLang, TimeLocation, nil)
+		archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 
-		nbPages, err := types.PostsNbPages(false, perPage, int(year), int(month), TimeLocation, false)
+		nbPages, err := types.PostsNbPages(false, perPage, int(year), int(month), config.TimeLocation, false)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 
 		c.HTML(http.StatusOK, "default.tmpl", gin.H{
-			"title":       GetTitle(c),
+			"title":       ContextTitle(c),
 			"posts":       posts,
 			"archives":    archives,
 			"month":       int(month),
@@ -242,14 +240,14 @@ func main() {
 
 				post.ComputeSince()
 
-				archives, err := types.PostGetArchiveMonths(hardcodedLang, TimeLocation, nil)
+				archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
 				if err != nil {
 					c.AbortWithError(http.StatusInternalServerError, err)
 					return
 				}
 
 				c.HTML(http.StatusOK, "post.tmpl", gin.H{
-					"title":    GetTitle(c),
+					"title":    ContextTitle(c),
 					"post":     post,
 					"archives": archives,
 				})
@@ -290,7 +288,7 @@ func main() {
 	// 	}
 
 	// 	c.HTML(http.StatusOK, "post.tmpl", gin.H{
-	// 		"title": GetTitle(c),
+	// 		"title": ContextTitle(c),
 	// 		"post":  post,
 	// 	})
 	// })

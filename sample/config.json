@@ -1,7 +1,7 @@
 {
 	"theme": "laurel",
 	"title": ["Laurel"],
-	"lang": ["fr"],
+	"langs": ["fr"],
 	"postsPerPage": 10,
 	"timezone": "Europe/Paris"
 }

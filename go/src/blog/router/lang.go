@@ -1,6 +1,7 @@
 package main
 
 import (
+	"blog/types"
 	"log"
 	"strings"
 
@@ -25,13 +26,13 @@ func DefineLang(c *gin.Context) {
 		log.Fatalln("config can't be found in gin context")
 	}
 
-	conf, ok := configInterface.(Config)
+	conf, ok := configInterface.(*types.Config)
 	if !ok {
 		log.Fatalln("config incorrect format")
 	}
 
 	// get most appropriate lang and its index in configuration
-	lang, langIndex := getMostAppropriateLanguage(tags, &conf)
+	lang, langIndex := getMostAppropriateLanguage(tags, conf)
 
 	c.Set("lang", lang)
 	c.Set("langIndex", langIndex)
@@ -39,23 +40,7 @@ func DefineLang(c *gin.Context) {
 	c.Next()
 }
 
-func getLangForContext(c *gin.Context) string {
-	lang, exists := c.Get("lang")
-	if !exists {
-		return ""
-	}
-	return lang.(string)
-}
-
-func getLangIndexForContext(c *gin.Context) int {
-	langIndex, exists := c.Get("langIndex")
-	if !exists {
-		return -1
-	}
-	return langIndex.(int)
-}
-
-func getMostAppropriateLanguage(langTags []language.Tag, conf *Config) (availableLang string, index int) {
+func getMostAppropriateLanguage(langTags []language.Tag, conf *types.Config) (availableLang string, index int) {
 
 	bestMatchWithoutVariant := -1
 
@@ -64,7 +49,7 @@ func getMostAppropriateLanguage(langTags []language.Tag, conf *Config) (availabl
 		// en-GB -> en
 		withoutVariant := strings.Split(tagStr, "-")[0]
 
-		for index, availableLang = range conf.Lang {
+		for index, availableLang = range conf.Langs {
 			if availableLang == tagStr {
 				return
 			} else if bestMatchWithoutVariant == -1 && availableLang == withoutVariant {
@@ -75,13 +60,13 @@ func getMostAppropriateLanguage(langTags []language.Tag, conf *Config) (availabl
 
 	// in case we found a match without variant
 	if bestMatchWithoutVariant > -1 {
-		availableLang = conf.Lang[bestMatchWithoutVariant]
+		availableLang = conf.Langs[bestMatchWithoutVariant]
 		index = bestMatchWithoutVariant
 		return
 	}
 
 	// otherwise use first language in config...
-	availableLang = conf.Lang[0]
+	availableLang = conf.Langs[0]
 	index = 0
 	return
 }

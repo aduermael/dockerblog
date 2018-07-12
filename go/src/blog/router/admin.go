@@ -42,14 +42,14 @@ func ok(c *gin.Context) {
 
 func adminPosts(c *gin.Context) {
 
-	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, TimeLocation, false)
+	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, config.TimeLocation, false)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
 		return
 	}
 
-	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, false)
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, config.TimeLocation, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -57,7 +57,7 @@ func adminPosts(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
 		"title":       "Admin - posts",
-		"lang":        getLangForContext(c),
+		"lang":        ContextLang(c),
 		"posts":       posts,
 		"nbPages":     int(nbPages),
 		"currentPage": 0,
@@ -75,14 +75,14 @@ func adminPostsPage(c *gin.Context) {
 	// page indexes start at zero, not one
 	pageInt--
 
-	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, TimeLocation, false)
+	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, config.TimeLocation, false)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
 		return
 	}
 
-	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, false)
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, config.TimeLocation, false)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -90,7 +90,7 @@ func adminPostsPage(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
 		"title":       "Admin - posts",
-		"lang":        getLangForContext(c),
+		"lang":        ContextLang(c),
 		"posts":       posts,
 		"nbPages":     int(nbPages),
 		"currentPage": pageInt,
@@ -98,14 +98,14 @@ func adminPostsPage(c *gin.Context) {
 }
 
 func adminPages(c *gin.Context) {
-	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, TimeLocation, true)
+	posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, config.TimeLocation, true)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
 		return
 	}
 
-	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, true)
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, config.TimeLocation, true)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -113,7 +113,7 @@ func adminPages(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "admin_pages.tmpl", gin.H{
 		"title":       "Admin - pages",
-		"lang":        getLangForContext(c),
+		"lang":        ContextLang(c),
 		"posts":       posts,
 		"nbPages":     int(nbPages),
 		"currentPage": 0,
@@ -131,14 +131,14 @@ func adminPagesPage(c *gin.Context) {
 	// page indexes start at zero, not one
 	pageInt--
 
-	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, TimeLocation, true)
+	posts, err := types.PostsList(true, pageInt, config.PostsPerPage, -1, -1, config.TimeLocation, true)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		serverError(c, err.Error())
 		return
 	}
 
-	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, TimeLocation, true)
+	nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, config.TimeLocation, true)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -146,7 +146,7 @@ func adminPagesPage(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "admin_pages.tmpl", gin.H{
 		"title":       "Admin - pages",
-		"lang":        getLangForContext(c),
+		"lang":        ContextLang(c),
 		"posts":       posts,
 		"nbPages":     int(nbPages),
 		"currentPage": pageInt,
@@ -156,7 +156,7 @@ func adminPagesPage(c *gin.Context) {
 func adminNewPost(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title":  "Admin - new post",
-		"lang":   getLangForContext(c),
+		"lang":   ContextLang(c),
 		"isPage": false,
 	})
 }
@@ -164,7 +164,7 @@ func adminNewPost(c *gin.Context) {
 func adminNewPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title":  "Admin - new post",
-		"lang":   getLangForContext(c),
+		"lang":   ContextLang(c),
 		"isPage": true,
 	})
 }
@@ -177,12 +177,12 @@ func adminEditPost(c *gin.Context) {
 	}
 
 	t := time.Unix(int64(post.Date/1000), 0) // ÷1000 because of legacy (we used to store milliseconds)
-	post.DateString = t.In(TimeLocation).Format("01/02/2006")
-	post.TimeString = t.In(TimeLocation).Format("3:04pm")
+	post.DateString = t.In(config.TimeLocation).Format("01/02/2006")
+	post.TimeString = t.In(config.TimeLocation).Format("3:04pm")
 
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title": "Admin - new post",
-		"lang":  getLangForContext(c),
+		"lang":  ContextLang(c),
 		"post":  post,
 	})
 }
@@ -195,8 +195,8 @@ func adminEditPage(c *gin.Context) {
 	}
 
 	t := time.Unix(int64(post.Date/1000), 0) // ÷1000 because of legacy (we used to store milliseconds)
-	post.DateString = t.In(TimeLocation).Format("01/02/2006")
-	post.TimeString = t.In(TimeLocation).Format("3:04pm")
+	post.DateString = t.In(config.TimeLocation).Format("01/02/2006")
+	post.TimeString = t.In(config.TimeLocation).Format("3:04pm")
 
 	post.IsPage = true
 
@@ -208,7 +208,7 @@ func adminEditPage(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title": "Admin - new post",
-		"lang":  getLangForContext(c),
+		"lang":  ContextLang(c),
 		"post":  post,
 	})
 }
@@ -264,7 +264,7 @@ func adminSavePost(c *gin.Context) {
 		}
 
 		// month/day/year
-		t, err := time.ParseInLocation("01/02/2006 3:04pm", d, TimeLocation)
+		t, err := time.ParseInLocation("01/02/2006 3:04pm", d, config.TimeLocation)
 		if err != nil {
 			badRequest(c, "can't read date")
 			return
@@ -292,7 +292,7 @@ func adminSavePost(c *gin.Context) {
 	}
 	post.Slug = strings.Replace(post.Slug, ".", "", -1)
 
-	post.Lang = getLangForContext(c)
+	post.Lang = ContextLang(c)
 
 	// TODO? post.Keywords
 	// TODO? post.Description
@@ -337,7 +337,7 @@ func adminUpload(c *gin.Context) {
 
 		defer mimePart.Close()
 
-		t := time.Now().In(TimeLocation)
+		t := time.Now().In(config.TimeLocation)
 		month := t.Format("01")
 		year := t.Format("2006")
 
@@ -431,6 +431,6 @@ func adminUpload(c *gin.Context) {
 func adminSettings(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_settings.tmpl", gin.H{
 		"title": "Admin - settings",
-		"lang":  getLangForContext(c),
+		"lang":  ContextLang(c),
 	})
 }
