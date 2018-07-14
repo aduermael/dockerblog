@@ -97,6 +97,7 @@ func main() {
 		"decr":               decr,
 		"sameDate":           sameDate,
 		"pagesAroundCurrent": pagesAroundCurrent,
+		"join":               join,
 	})
 
 	loadTemplates()
@@ -110,6 +111,11 @@ func main() {
 
 	router.Use(ContextSetConfig)
 	router.Use(ContextSetLang)
+
+	// router.Use(func(c *gin.Context) {
+	// 	fmt.Println("REQUEST:", c.Request.RequestURI)
+	// 	c.Next()
+	// })
 
 	// ADMIN
 
@@ -143,6 +149,9 @@ func main() {
 		adminGroup.POST("/upload", adminUpload)
 
 		adminGroup.GET("/settings", adminSettings)
+		adminGroup.POST("/settings", adminSaveSettings)
+
+		adminGroup.GET("/localized", adminLocalizedSettings)
 	}
 
 	// POSTS
@@ -435,6 +444,10 @@ func sameDate(month1, month2, year1, year2 int) bool {
 
 func makeArray(args ...interface{}) []interface{} {
 	return args
+}
+
+func join(arr []string) string {
+	return strings.Join(arr, ",")
 }
 
 // createLegacyProxy returns an http proxy to send

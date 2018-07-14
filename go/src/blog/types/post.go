@@ -615,8 +615,6 @@ func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLoca
 		return 1, nil
 	}
 
-	fmt.Println("PostsNbPages")
-
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 

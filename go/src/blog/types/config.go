@@ -11,13 +11,16 @@ import (
 
 // Config describes general blog configuration
 type Config struct {
-	Langs          []string                   `json:"langs"`
-	PostsPerPage   int                        `json:"postsPerPage"`
-	Theme          string                     `json:"theme"`
-	Timezone       string                     `json:"timezone"`
-	FacebookAppID  string                     `json:"facebookAppID"`
-	SendgridAPIKey string                     `json:"sendgridAPIKey"`
-	Localized      map[string]LocalizedConfig `json:"localized,omitempty"`
+	Langs                   []string                   `json:"langs"`
+	PostsPerPage            int                        `json:"postsPerPage"`
+	Theme                   string                     `json:"theme"`
+	Timezone                string                     `json:"timezone"`
+	ShowComments            bool                       `json:"showComments"`
+	AcceptComments          bool                       `json:"acceptComments"`
+	CommentsRequireApproval bool                       `json:"approveComments"`
+	FacebookAppID           string                     `json:"facebookAppID"`
+	SendgridAPIKey          string                     `json:"sendgridAPIKey"`
+	Localized               map[string]LocalizedConfig `json:"localized,omitempty"`
 
 	TimeLocation *time.Location `json:"-"`
 }
@@ -35,7 +38,12 @@ var (
 		-- store full config as json for quick access
 		redis.call('set', 'config_full', ARGV[1])
 
-		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', config.timezone, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey)
+
+		local showComs = config.showComments and 1 or 0
+		local acceptComs = config.acceptComments and 1 or 0
+		local approveComs = config.approveComments and 1 or 0
+
+		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, config.timezone, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey)
 
 		redis.call('del', 'config_langs')
 		redis.call('sadd', 'config_langs', unpack(config.langs))
@@ -96,6 +104,42 @@ func CurrentConfig() (*Config, error) {
 	}
 
 	return config, nil
+}
+
+func (c *Config) Save(path string) error {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	var err error
+
+	c.TimeLocation, err = time.LoadLocation(c.Timezone)
+	if err != nil {
+		return err
+	}
+
+	jsonBytes, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+
+	jsonBytesReadable, err := json.MarshalIndent(c, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	// save config in database
+	_, err = scriptConfigSave.Do(redisConn, string(jsonBytes))
+	if err != nil {
+		return err
+	}
+
+	// save config on file
+	err = ioutil.WriteFile(path, jsonBytesReadable, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // LoadConfig loads configuration path

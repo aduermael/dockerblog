@@ -474,8 +474,54 @@ func adminUpload(c *gin.Context) {
 }
 
 func adminSettings(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, "can't get current configuration")
+	}
+
 	c.HTML(http.StatusOK, "admin_settings.tmpl", gin.H{
-		"title": "Admin - settings",
+		"title":  "Admin - settings",
+		"lang":   ContextLang(c),
+		"config": config,
+	})
+}
+
+type saveGeneralSettingsRequest struct {
+	Langs                   []string `json:"langs"`
+	PostsPerPage            int      `json:"postsPerPage"`
+	Timezone                string   `json:"timezone"`
+	ShowComments            bool     `json:"showComments"`
+	AcceptComments          bool     `json:"acceptComments"`
+	CommentsRequireApproval bool     `json:"approveComments"`
+}
+
+func adminSaveSettings(c *gin.Context) {
+	req := &saveGeneralSettingsRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		badRequest(c, err.Error())
+	}
+
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+	}
+
+	config.Langs = req.Langs
+	config.PostsPerPage = req.PostsPerPage
+	config.Timezone = req.Timezone
+	config.ShowComments = req.ShowComments
+	config.AcceptComments = req.AcceptComments
+	config.CommentsRequireApproval = req.CommentsRequireApproval
+
+	config.Save(configPath)
+
+	ok(c)
+}
+
+func adminLocalizedSettings(c *gin.Context) {
+	c.HTML(http.StatusOK, "admin_localized_settings.tmpl", gin.H{
+		"title": "Admin - localized settings",
 		"lang":  ContextLang(c),
 	})
 }

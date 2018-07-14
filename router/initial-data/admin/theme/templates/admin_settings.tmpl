@@ -27,6 +27,37 @@
 	 		<h1>Settings</h1>
 	 		<div id="settings">
 	 			<div>
+					<h2>General</h2>
+					<p><strong>Supported languages</strong> - Comma-separated supported languages.</p>
+					<input id="config-langs" type="text" value="{{ join .config.Langs }}"/>
+					<p><strong>Posts per page</strong> - The amount of posts displayed on one page.</p>
+					<input id="config-postsPerPage" type="text" value="{{ .config.PostsPerPage }}" />
+					<p><strong>Timezone</strong> - The timezone that's being used when scheduling posts.</p>
+					<input id="config-timezone" type="text" placeholder="Europe/Paris" value="{{ .config.Timezone }}" />
+					<div class="inlineInput"><input id="config-showComments" type="checkbox" {{ if .config.ShowComments }}checked{{ end }}> Show comments by default</div>
+					<div class="inlineInput"><input id="config-acceptComments" type="checkbox" {{ if .config.AcceptComments }}checked{{ end }}> Accept comments by default</div>
+					<div class="inlineInput"><input id="config-approveComments" type="checkbox" {{ if .config.CommentsRequireApproval }}checked{{ end }}> Comments require approval by default</div>
+
+					<div id="submit">
+						<a href="#" onclick="saveGeneralSettings(this);return false;">Save</a>
+					</div>
+
+				</div>
+
+				<div>
+					<h2>Admin credentials</h2>
+					<p style="color: #f00;">NOT WIRED</p>
+					<p>Username and password to control this blog.</p>
+
+					<input type="text" name="" placeholder="Username" />
+					<input type="text" name="" placeholder="Current password" />
+					<input type="text" name="" placeholder="New password" />
+					<input type="text" name="" placeholder="Repeat new password" />
+
+					<a href="#" class="primary-action positive">Update</a>
+				</div>
+
+				<div>
 	 				<h2>Facebook</h2>
 	 				<p>Merge Facebook comments with blog post comments</p>
 					
@@ -54,38 +85,6 @@
 
 					<input type="text" name="" placeholder="API Key" />
 
-					<a href="#" class="primary-action positive">Update</a>
-				</div>
-
-				<div>
-					<h2>Admin credentials</h2>
-					<p style="color: #f00;">NOT WIRED</p>
-					<p>Username and password to control this blog.</p>
-
-					<input type="text" name="" placeholder="Username" />
-					<input type="text" name="" placeholder="Current password" />
-					<input type="text" name="" placeholder="New password" />
-					<input type="text" name="" placeholder="Repeat new password" />
-
-					<a href="#" class="primary-action positive">Update</a>
-				</div>
-
-				<div>
-					<h2>General</h2>
-					<p style="color: #f00;">NOT WIRED</p>
-					<p><strong>Title</strong> - Default blog title (to be defined in localization keys when supporting more that 1 language).</p>
-					<input type="text" name="" placeholder="Title" />
-					<p><strong>Supported languages</strong> - Comma-separated supported languages.</p>
-					<input type="text" name="" placeholder="en,fr" />
-					<p><strong>Theme</strong> - Displayed blog theme.</p>
-					<select>
-						<option value="default">Default</option>
-						<option value="laurel" selected>Laurel</option>
-					</select>
-					<p><strong>Posts per page</strong> - The amount of posts displayed on one page.</p>
-					<input type="text" name="" placeholder="10" />
-					<p><strong>Timezone</strong> - The timezone that's being used when scheduling posts.</p>
-					<input type="text" name="" placeholder="Europe/Paris" />
 					<a href="#" class="primary-action positive">Update</a>
 				</div>
 	 		</div>

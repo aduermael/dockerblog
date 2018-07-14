@@ -664,6 +664,37 @@ function sendPost(sender)
 	Post('/admin/save',postContent,editPostCallBack,errCallback);
 }
 
+function saveGeneralSettings() {
+
+	var config = new Object()
+
+	config.langs = $("#config-langs").val().split(",")
+
+	var postsPerPage = parseInt($("#config-postsPerPage").val())
+	if (isNaN(postsPerPage)) {
+		alert("Posts per page: not a number")
+		return
+	}
+	config.postsPerPage = postsPerPage
+
+	config.timezone = $("#config-timezone").val()
+
+	config.showComments = $('#config-showComments').is(':checked')
+	config.acceptComments = $('#config-acceptComments').is(':checked')
+	config.approveComments = $('#config-approveComments').is(':checked')
+
+	Post('/admin/settings',config,function(response) {
+
+
+	}, function(errorResponse){
+		if (errorResponse.message) {
+			alert(errorResponse.message)
+		} else {
+			alert("error!")
+		}
+	})
+}
+
 /*
 
 
