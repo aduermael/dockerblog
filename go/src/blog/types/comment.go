@@ -151,6 +151,56 @@ func (c *Comment) Save() error {
 	return nil
 }
 
+// ListAllComments ...
+func ListAllComments(lang string, paginated bool, page, perPage int) ([]*Comment, error) {
+	return listComments("all", lang, paginated, page, perPage)
+}
+
+// ListUnvalidatedComments ...
+func ListUnvalidatedComments(lang string, paginated bool, page, perPage int) ([]*Comment, error) {
+	return listComments("waiting", lang, paginated, page, perPage)
+}
+
+// ListCommentsForPost returns validated comments for given post ID
+func ListCommentsForPost(postID string, paginated bool, page, perPage int) ([]*Comment, error) {
+	return listComments("post", postID, paginated, page, perPage)
+}
+
+func listComments(category string, langOrPostID string, paginated bool, page, perPage int) ([]*Comment, error) {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	pagination := 0
+	if paginated {
+		pagination = 1
+	}
+
+	res, err := scriptListComments.Do(redisConn, category, langOrPostID, pagination, page, perPage)
+	if err != nil {
+		return nil, err
+	}
+
+	byteSlice, ok := res.([]byte)
+	if !ok {
+		return nil, errors.New("can't cast response")
+	}
+
+	// empty Lua array is returned as "{}"
+	// we should convert it to "[]" (empty json array)
+	if len(byteSlice) == 2 {
+		byteSlice = []byte("[]")
+	}
+
+	var comments []*Comment
+
+	err = json.Unmarshal(byteSlice, &comments)
+	if err != nil {
+		return nil, err
+	}
+
+	return comments, nil
+}
+
 // CommentsByDate extends Comment and can be ordered by date
 type CommentsByDate []*Comment
 
@@ -219,7 +269,33 @@ var (
 			error("post can't be found (id: " .. postID .. ")")
 		end
 
-		-- TODO: make sure comments are opened for this post
+		-- See if comment can be accepted and/or approved
+
+		local res = redis.call('hget', 'config', 'acceptComs')
+		local acceptComsDefault = res == nil or res == "1"
+		res = redis.call('hget', 'config', 'approveComs')
+		local approveComsDefault = res == nil or res == "1"
+
+		res = redis.call('hget', postID, 'acceptComs')
+		local acceptComs = res ~= nil and res == "1"
+		if res == nil then
+			acceptComs = acceptComsDefault
+		end
+		
+		res = redis.call('hget', postID, 'approveComs')
+		local approveComs = res ~= nil and res == "1"
+		if res == nil then
+			approveComs = approveComsDefault
+		end
+
+		if acceptComs == false then
+			error("this post does not accept comments")
+		end
+
+		-- set comment.valid = true if there's no need to approve comments
+		if approveComs == false then
+			comment.valid = true
+		end
 
 		-- get post lang (we suppose comment lang == post lang)
 		local lang = redis.call('hget', postID, 'lang')
@@ -238,6 +314,7 @@ var (
 		local commentIDKey = "com_" .. comment.ID
 		local all_comments_key = "comments_all_" .. lang
 		local unvalidated_comments_key = "comments_unvalidated_" .. lang
+		local post_comments_key = "comments_" .. comment.postID
 
 		local valid = 0
 		if comment.valid then
@@ -247,11 +324,12 @@ var (
 		redis.call('hmset', commentIDKey, 'ID', comment.ID, 'name', comment.name, 'content', comment.content, 'email', comment.email, 'date', timestamp, 'valid', valid, 'postID', comment.postID)
 
 		-- remove fields that can be spared if empty
+		-- also remove comment from indexes to re-insert at the right place
 		-- (only if comment already exists)
 		if isNew == false then
-			redis.call('hdel', 'emailOnAnswer', 'gravatar', 'twitter', 'website', 'answerComID')
-			redis.call('zrem', all_comments_key, commentIDKey)
+			redis.call('hdel', commentIDKey, 'emailOnAnswer', 'gravatar', 'twitter', 'website', 'answerComID')
 			redis.call('zrem', unvalidated_comments_key, commentIDKey)
+			-- note: no need to remove from all_comments_key (timestamp will be updated)
 		end
 
 		if comment.emailOnAnswer and notempty(comment.email) then
@@ -280,6 +358,90 @@ var (
 		-- unvalidated comments (to list in admin)
 		if comment.valid == nil or comment.valid == false then
 			redis.call('zadd', unvalidated_comments_key, timestamp, commentIDKey)
+		else 
+			redis.call('zadd', post_comments_key, timestamp, commentIDKey)
+			local nbComs = redis.call('zcard', post_comments_key)
+			redis.call('hset', postID, 'nbComs', nbComs)
 		end
+	`)
+
+	scriptListComments = redis.NewScript(0, `
+		local toStruct = function (bulk)
+			local result = {}
+			local nextkey
+			for i, v in ipairs(bulk) do
+				if i % 2 == 1 then
+					nextkey = v
+				else
+					result[nextkey] = v
+				end
+			end
+			return result
+		end
+
+		-- "all", "waiting", "post"
+		local what = ARGV[1]
+		local lang = ARGV[2]
+
+		local comment_set_id
+
+		if what == "all" then 
+			local lang = ARGV[2]
+			comment_set_id = "comments_all_" .. lang
+		elseif what == "waiting" then 
+			local lang = ARGV[2]
+			comment_set_id = "comments_unvalidated_" .. lang
+		elseif what == "post" then
+			local postID = ARGV[2]
+			comment_set_id = "comments_" .. postID
+		else 
+			error("can't find comments")
+		end
+
+		local paginated = tonumber(ARGV[3]) == 1
+		local page = tonumber(ARGV[4])
+		local perPage = tonumber(ARGV[5])
+
+		local first = page * perPage
+
+		local comment_ids
+
+		if paginated == false then
+			comment_ids = redis.call('zrange', comment_set_id, 0, -1)
+		else
+			-- TODO: paginated IDs
+			comment_ids = redis.call('zrevrangebyscore', comment_set_id, '+inf', '-inf', 'LIMIT', first, perPage)
+		end
+
+		local comments = {}
+
+		for _, comment_id in ipairs(comment_ids) do
+			local comment_data = toStruct(redis.call('hgetall', comment_id))
+			
+			-- convert number strings to actual numbers
+			comment_data.ID = tonumber(comment_data.ID)
+			comment_data.postID = tonumber(comment_data.postID)
+			comment_data.date = tonumber(comment_data.date)
+			
+			if comment_data.answerComID ~= nil then
+				comment_data.answerComID = tonumber(comment_data.answerComID)
+			end
+
+			if comment_data.valid ~= nil and comment_data.valid == "1" then 
+				comment_data.valid = true
+			else
+				comment_data.valid = false
+			end
+
+			if comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1" then 
+				comment_data.emailOnAnswer = true
+			else
+				comment_data.emailOnAnswer = false
+			end
+
+			comments[#comments+1] = comment_data
+		end
+
+		return cjson.encode(comments)
 	`)
 )

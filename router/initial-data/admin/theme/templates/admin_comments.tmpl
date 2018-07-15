@@ -1,0 +1,48 @@
+<!DOCTYPE html>	
+ <html lang="{{ .lang }}">
+ 	{{ template "admin_head" . }}
+	 <body>
+	 	{{ template "admin_menu" . }}
+	 	<div id="content">
+	 		<h1>Comments</h1>
+	 		<div id="comments">
+				{{ range .comments }}
+					<div id="comment-{{ .ID }}" class="comment">
+						<div class="title">{{ .Name }}<span style="display:none" class="date">{{ .Date }}</span> - #{{ .ID }}</div>
+						<div class="comment-content">{{ .Content }}</div>
+						<div class="clear"></div>
+					</div>
+				{{ else }}
+					<p>no comments</p>
+				{{ end }}
+
+				{{ if .nbPages }}
+					{{ if gt .nbPages 1}}
+						<div id="pages">
+							{{ $pages := pagesAroundCurrent .currentPage 2 .nbPages}}
+							{{ $currentPlusOne := incr .currentPage }}
+							{{ $currentPlusTwo := incr $currentPlusOne }}
+
+							{{ if gt .currentPage 0 }}
+								<a class="page-link" href="/admin/comments/{{ .currentPage }}">&lt;</a>
+							{{ end }}
+
+							{{ range $pages }}
+								{{ if eq . -1}}
+								<span class="page-gap">...</span>
+								{{ else }}
+								<a class="page-link{{if eq . $currentPlusOne}} current{{ end }}" href="/admin/comments/{{ . }}">{{ . }}</a>
+								{{ end }}
+							{{ end }}
+
+
+							{{ if lt $currentPlusOne .nbPages }}
+								<a class="page-link" href="/admin/comments/{{ $currentPlusTwo }}">&gt;</a>
+							{{ end }}
+						</div>
+					{{ end }}
+				{{ end }}
+	 		</div>
+	 	</div>
+	 </body>	
+ </html>

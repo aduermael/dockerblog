@@ -43,7 +43,7 @@ var (
 		local acceptComs = config.acceptComments and 1 or 0
 		local approveComs = config.approveComments and 1 or 0
 
-		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, config.timezone, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey)
+		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', config.timezone, 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey)
 
 		redis.call('del', 'config_langs')
 		redis.call('sadd', 'config_langs', unpack(config.langs))

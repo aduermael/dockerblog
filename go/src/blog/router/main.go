@@ -152,6 +152,91 @@ func main() {
 		adminGroup.POST("/settings", adminSaveSettings)
 
 		adminGroup.GET("/localized", adminLocalizedSettings)
+
+		adminGroup.GET("/comments", func(c *gin.Context) {
+			comments, err := types.ListAllComments("fr", true, 0, 100)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
+			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
+				"title":    "Admin - comments",
+				"lang":     ContextLang(c),
+				"comments": comments,
+				// "nbPages":     int(nbPages),
+				// "currentPage": 0,
+			})
+
+		})
+
+		adminGroup.GET("/comments/:page", func(c *gin.Context) {
+			page := c.Param("page")
+			pageInt, err := strconv.Atoi(page)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "/admin/comments/:page - can't parse page: "+page+"\n")
+				c.Redirect(http.StatusMovedPermanently, "/admin")
+				return
+			}
+			// page indexes start at zero, not one
+			pageInt--
+
+			comments, err := types.ListAllComments("fr", true, pageInt, 100)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
+			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
+				"title":    "Admin - comments",
+				"lang":     ContextLang(c),
+				"comments": comments,
+				// "nbPages":     int(nbPages),
+				// "currentPage": 0,
+			})
+		})
+
+		adminGroup.GET("/newcomments", func(c *gin.Context) {
+			comments, err := types.ListUnvalidatedComments("fr", true, 0, 100)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
+			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
+				"title":    "Admin - comments (new)",
+				"lang":     ContextLang(c),
+				"comments": comments,
+				// "nbPages":     int(nbPages),
+				// "currentPage": 0,
+			})
+		})
+
+		adminGroup.GET("/newcomments/:page", func(c *gin.Context) {
+			page := c.Param("page")
+			pageInt, err := strconv.Atoi(page)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "/admin/newcomments/:page - can't parse page: "+page+"\n")
+				c.Redirect(http.StatusMovedPermanently, "/admin")
+				return
+			}
+			// page indexes start at zero, not one
+			pageInt--
+
+			comments, err := types.ListUnvalidatedComments("fr", true, pageInt, 100)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
+			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
+				"title":    "Admin - comments (new)",
+				"lang":     ContextLang(c),
+				"comments": comments,
+				// "nbPages":     int(nbPages),
+				// "currentPage": 0,
+			})
+		})
 	}
 
 	// POSTS
@@ -277,6 +362,37 @@ func main() {
 		posts(c, pageInt)
 	})
 
+	// receiving comment
+	router.POST("/comment", func(c *gin.Context) {
+		var comment types.Comment
+		err := c.BindJSON(&comment)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"success": false,
+				"err":     err.Error(),
+			})
+			return
+		}
+
+		robot, err := comment.Accept()
+		if err != nil {
+			if robot {
+				c.JSON(http.StatusOK, gin.H{
+					"success": true,
+				})
+				return
+			}
+
+			fmt.Println(err.Error())
+
+			c.JSON(http.StatusOK, gin.H{
+				"success": false,
+				"err":     err.Error(),
+			})
+			return
+		}
+	})
+
 	router.GET("/", func(c *gin.Context) {
 		posts(c, 0)
 	})
@@ -300,34 +416,6 @@ func main() {
 	// 		"post":  post,
 	// 	})
 	// })
-
-	// // receiving comment
-	// router.POST("/comment", func(c *gin.Context) {
-	// 	var comment types.Comment
-	// 	err := c.BindJSON(&comment)
-	// 	if err != nil {
-	// 		c.JSON(http.StatusOK, gin.H{
-	// 			"success": false,
-	// 			"err":     err.Error(),
-	// 		})
-	// 		return
-	// 	}
-
-	// 	robot, err := comment.Accept()
-	// 	if err != nil {
-	// 		if robot {
-	// 			c.JSON(http.StatusOK, gin.H{
-	// 				"success": true,
-	// 			})
-	// 			return
-	// 		}
-
-	// 		c.JSON(http.StatusOK, gin.H{
-	// 			"success": false,
-	// 			"err":     err.Error(),
-	// 		})
-	// 		return
-	// 	}
 
 	// 	c.JSON(http.StatusOK, gin.H{
 	// 		"success": true,
