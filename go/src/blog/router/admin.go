@@ -177,18 +177,32 @@ func adminPagesPage(c *gin.Context) {
 }
 
 func adminNewPost(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
 		"title":  "Admin - new post",
 		"lang":   ContextLang(c),
 		"isPage": false,
+		"config": config,
 	})
 }
 
 func adminNewPage(c *gin.Context) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
-		"title":  "Admin - new post",
+		"title":  "Admin - new page",
 		"lang":   ContextLang(c),
 		"isPage": true,
+		"config": config,
 	})
 }
 
