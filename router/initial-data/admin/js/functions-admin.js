@@ -38,6 +38,24 @@ function notDirty() {
 	savedFBPostID = $('#fbpostID').val()
 }
 
+function popupLoading() {
+	var popup = $('<div class="confirmation-popup-parent"><div id="confirmation-popup" class="confirmation-popup"><span class="fas fa-cog fa-spin"></span></div></div>')
+	$('body').prepend(popup);
+
+	popup.hide()
+	popup.fadeIn(100)
+
+    return popup
+}
+
+function popupDone(popup) {
+	$("#confirmation-popup").html('<span class="fa fa-check-circle" aria-hidden="true"></span>')
+
+	popup.delay(100).fadeOut(1000, function() {
+		popup.remove()
+	})
+}
+
 function nextBlock() {
 	var n = 0;
 	var id;
@@ -683,9 +701,10 @@ function saveGeneralSettings() {
 	config.acceptComments = $('#config-acceptComments').is(':checked')
 	config.approveComments = $('#config-approveComments').is(':checked')
 
+	var popup = popupLoading()
+
 	Post('/admin/settings',config,function(response) {
-
-
+		popupDone(popup)
 	}, function(errorResponse){
 		if (errorResponse.message) {
 			alert(errorResponse.message)
