@@ -38,6 +38,10 @@ a {
 	color: #777;
 }
 
+a.primary-action.accept {
+	color: #7DCB35;
+}
+
 a.primary-action.positive {
 	color: #3399ff;
 }
@@ -270,29 +274,41 @@ a:hover {
 	opacity: 1; /* Firefox */
 }
 
+#content #comments .comment .comment-content {
+	padding: 10px;
+	margin-top: 10px;
+	background-color: #fafafa;
+}
 
-
-#content #posts .post {
+#content #posts .post,
+#content #comments .comment {
 	width: 100%;
 	padding: 10px;
 	background-color: #f2f2f2;
 	margin-top: 10px;
 }
 
+#content #comments .comment.unvalidated {
+	background-color: #F2EFD4;
+}
+
 #content #posts .post a {
 	color: #3399ff;
 }
 
-#content #posts .post .date {
+#content #posts .post .date,
+#content #comments .comment .date {
 	color: #777;
 }
 
-#content #posts .post .title {
+#content #posts .post .title,
+#content #comments .comment .title {
 	display: inline-block;
 	float: left;
 }
 
-#content #posts .post .options {
+#content #posts .post .options,
+#content #comments .comment .options {
 	display: inline-block;
 	float: right;
 }
