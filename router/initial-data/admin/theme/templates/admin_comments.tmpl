@@ -26,27 +26,29 @@
 							{{ $pages := pagesAroundCurrent .currentPage 2 .nbPages}}
 							{{ $currentPlusOne := incr .currentPage }}
 							{{ $currentPlusTwo := incr $currentPlusOne }}
+							{{ $scope := .scope }}
 
 							{{ if gt .currentPage 0 }}
-								<a class="page-link" href="/admin/comments/{{ .currentPage }}">&lt;</a>
+								<a class="page-link" href="/admin/{{ $scope }}/{{ .currentPage }}">&lt;</a>
 							{{ end }}
 
 							{{ range $pages }}
 								{{ if eq . -1}}
 								<span class="page-gap">...</span>
 								{{ else }}
-								<a class="page-link{{if eq . $currentPlusOne}} current{{ end }}" href="/admin/comments/{{ . }}">{{ . }}</a>
+								<a class="page-link{{if eq . $currentPlusOne}} current{{ end }}" href="/admin/{{ $scope }}/{{ . }}">{{ . }}</a>
 								{{ end }}
 							{{ end }}
 
 
 							{{ if lt $currentPlusOne .nbPages }}
-								<a class="page-link" href="/admin/comments/{{ $currentPlusTwo }}">&gt;</a>
+								<a class="page-link" href="/admin/{{ $scope }}/{{ $currentPlusTwo }}">&gt;</a>
 							{{ end }}
 						</div>
 					{{ end }}
 				{{ end }}
 	 		</div>
 	 	</div>
+	 	{{ template "admin_footer" . }}
 	 </body>	
  </html>

@@ -201,6 +201,36 @@ func listComments(category string, langOrPostID string, paginated bool, page, pe
 	return comments, nil
 }
 
+// Number of pages for comments
+func CommentsNbPages(perPage int, unvalidatedOnly bool) (int64, error) {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	if perPage < 1 {
+		return 0, errors.New("page < 1")
+	}
+
+	res, err := scriptNbComments.Do(redisConn, perPage, unvalidatedOnly)
+	if err != nil {
+		return 0, err
+	}
+
+	nbComments, ok := res.(int64)
+
+	if !ok {
+		return 0, errors.New("can't cast response")
+	}
+
+	perPageInt64 := int64(perPage)
+
+	nbPages := nbComments / perPageInt64
+	if nbComments%perPageInt64 > 0 {
+		nbPages += 1
+	}
+
+	return nbPages, nil
+}
+
 // CommentsByDate extends Comment and can be ordered by date
 type CommentsByDate []*Comment
 
@@ -365,6 +395,25 @@ var (
 		end
 	`)
 
+	scriptNbComments = redis.NewScript(0, `
+		-- TODO: stop using harcoded lang
+		local lang = "fr"
+
+		local perPage = tonumber(ARGV[1])
+		local unvalidatedOnly = ARGV[2]
+
+		local count
+
+		local key = "comments_all_" .. lang
+		if unvalidatedOnly == "1" then
+			key = "comments_unvalidated_" .. lang
+		end
+
+		count = redis.call('zcount', key, '-inf', '+inf')
+		
+		return count
+	`)
+
 	scriptListComments = redis.NewScript(0, `
 		local toStruct = function (bulk)
 			local result = {}
@@ -381,7 +430,6 @@ var (
 
 		-- "all", "waiting", "post"
 		local what = ARGV[1]
-		local lang = ARGV[2]
 
 		local comment_set_id
 

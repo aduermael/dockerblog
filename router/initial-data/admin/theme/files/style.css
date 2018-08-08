@@ -83,6 +83,11 @@ a:hover {
 	background-color: #fff;
 }
 
+#footer {
+	width: 100%;
+	height: 20px;
+}
+
 #content input {
 	width: 100%;
 	font-size: 1.3rem;
@@ -313,7 +318,7 @@ a:hover {
 	float: right;
 }
 
-#content #posts #pages {
+#content #pages {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
@@ -322,14 +327,14 @@ a:hover {
 	padding-bottom: 0;
 }
 
-#content #posts #pages .page-link {
+#content #pages .page-link {
 	display: inline-block;
 	padding: 10px;
 	margin: 5px;
 	background-color: #ccc;
 }
 
-#content #posts #pages .page-link.current {
+#content #pages .page-link.current {
 	background-color: #3399ff;
 	color: #FFFFFF;
 }

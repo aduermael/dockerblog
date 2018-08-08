@@ -154,23 +154,42 @@ func main() {
 		adminGroup.GET("/localized", adminLocalizedSettings)
 
 		adminGroup.GET("/comments", func(c *gin.Context) {
-			comments, err := types.ListAllComments("fr", true, 0, 100)
+			config, err := ContextGetConfig(c)
 			if err != nil {
 				serverError(c, err.Error())
 				return
 			}
 
+			comments, err := types.ListAllComments("fr", true, 0, config.PostsPerPage)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
+			nbPages, err := types.CommentsNbPages(config.PostsPerPage, false)
+			if err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":    "Admin - comments",
-				"lang":     ContextLang(c),
-				"comments": comments,
-				// "nbPages":     int(nbPages),
-				// "currentPage": 0,
+				"title":       "Admin - comments",
+				"lang":        ContextLang(c),
+				"comments":    comments,
+				"nbPages":     int(nbPages),
+				"currentPage": 0,
+				"scope":       "comments",
 			})
 
 		})
 
 		adminGroup.GET("/comments/:page", func(c *gin.Context) {
+			config, err := ContextGetConfig(c)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
 			page := c.Param("page")
 			pageInt, err := strconv.Atoi(page)
 			if err != nil {
@@ -181,38 +200,64 @@ func main() {
 			// page indexes start at zero, not one
 			pageInt--
 
-			comments, err := types.ListAllComments("fr", true, pageInt, 100)
+			comments, err := types.ListAllComments("fr", true, pageInt, config.PostsPerPage)
 			if err != nil {
 				serverError(c, err.Error())
 				return
 			}
 
+			nbPages, err := types.CommentsNbPages(config.PostsPerPage, false)
+			if err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":    "Admin - comments",
-				"lang":     ContextLang(c),
-				"comments": comments,
-				// "nbPages":     int(nbPages),
-				// "currentPage": 0,
+				"title":       "Admin - comments",
+				"lang":        ContextLang(c),
+				"comments":    comments,
+				"nbPages":     int(nbPages),
+				"currentPage": pageInt,
+				"scope":       "comments",
 			})
 		})
 
 		adminGroup.GET("/newcomments", func(c *gin.Context) {
-			comments, err := types.ListUnvalidatedComments("fr", true, 0, 100)
+			config, err := ContextGetConfig(c)
 			if err != nil {
 				serverError(c, err.Error())
 				return
 			}
 
+			comments, err := types.ListUnvalidatedComments("fr", true, 0, config.PostsPerPage)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
+			nbPages, err := types.CommentsNbPages(config.PostsPerPage, true)
+			if err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":    "Admin - comments (new)",
-				"lang":     ContextLang(c),
-				"comments": comments,
-				// "nbPages":     int(nbPages),
-				// "currentPage": 0,
+				"title":       "Admin - comments (new)",
+				"lang":        ContextLang(c),
+				"comments":    comments,
+				"nbPages":     int(nbPages),
+				"currentPage": 0,
+				"scope":       "newcomments",
 			})
 		})
 
 		adminGroup.GET("/newcomments/:page", func(c *gin.Context) {
+			config, err := ContextGetConfig(c)
+			if err != nil {
+				serverError(c, err.Error())
+				return
+			}
+
 			page := c.Param("page")
 			pageInt, err := strconv.Atoi(page)
 			if err != nil {
@@ -223,18 +268,25 @@ func main() {
 			// page indexes start at zero, not one
 			pageInt--
 
-			comments, err := types.ListUnvalidatedComments("fr", true, pageInt, 100)
+			comments, err := types.ListUnvalidatedComments("fr", true, pageInt, config.PostsPerPage)
 			if err != nil {
 				serverError(c, err.Error())
 				return
 			}
 
+			nbPages, err := types.CommentsNbPages(config.PostsPerPage, true)
+			if err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":    "Admin - comments (new)",
-				"lang":     ContextLang(c),
-				"comments": comments,
-				// "nbPages":     int(nbPages),
-				// "currentPage": 0,
+				"title":       "Admin - comments (new)",
+				"lang":        ContextLang(c),
+				"comments":    comments,
+				"nbPages":     int(nbPages),
+				"currentPage": pageInt,
+				"scope":       "newcomments",
 			})
 		})
 	}
