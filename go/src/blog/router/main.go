@@ -151,6 +151,8 @@ func main() {
 		adminGroup.GET("/settings", adminSettings)
 		adminGroup.POST("/settings", adminSaveSettings)
 
+		adminGroup.POST("/settings/credentials", adminSaveCredentials)
+
 		adminGroup.GET("/localized", adminLocalizedSettings)
 
 		adminGroup.GET("/comments", func(c *gin.Context) {

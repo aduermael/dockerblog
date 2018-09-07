@@ -56,6 +56,14 @@ function popupDone(popup) {
 	})
 }
 
+function popupError(popup) {
+	$("#confirmation-popup").html('<span class="fa fa-times" aria-hidden="true"></span>')
+
+	popup.delay(100).fadeOut(1000, function() {
+		popup.remove()
+	})		
+}
+
 function nextBlock() {
 	var n = 0;
 	var id;
@@ -713,6 +721,37 @@ function saveGeneralSettings() {
 		}
 	})
 }
+
+function updateCredentials() {
+	var credentials = new Object()
+
+	credentials.username = $("#username").val()
+	credentials.currentPassword = $("#currentPassword").val()
+	credentials.newPassword = $("#newPassword").val()
+	credentials.newPasswordRepeat = $("#newPasswordRepeat").val()
+
+	if (credentials.newPassword != credentials.newPasswordRepeat) {
+		alert("New password does not match the confirm password.")
+		return
+	}
+
+	var popup = popupLoading()
+
+	Post('/admin/settings/credentials', credentials, function(response) {
+		$("#currentPassword").val("")
+		$("#newPassword").val("")
+		$("#newPasswordRepeat").val("")
+		popupDone(popup)
+	}, function(errorResponse){
+		popup.remove()
+		if (errorResponse.message) {
+			alert(errorResponse.message)
+		} else {
+			alert("error!")
+		}
+	})
+}
+
 
 /*
 

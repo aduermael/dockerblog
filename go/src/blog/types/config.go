@@ -1,9 +1,12 @@
 package types
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
@@ -22,7 +25,26 @@ type Config struct {
 	SendgridAPIKey          string                     `json:"sendgridAPIKey"`
 	Localized               map[string]LocalizedConfig `json:"localized,omitempty"`
 
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	Salt     string `json:"salt,omitempty"`
+
 	TimeLocation *time.Location `json:"-"`
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var randStringLen = 20
+
+func RandStringRunes(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
 
 // LocalizedConfig stores configuration fields that are localized
@@ -43,7 +65,7 @@ var (
 		local acceptComs = config.acceptComments and 1 or 0
 		local approveComs = config.approveComments and 1 or 0
 
-		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', config.timezone, 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey)
+		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', config.timezone, 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey, 'username', config.username, 'salt', config.salt, 'password', config.password)
 
 		redis.call('del', 'config_langs')
 		redis.call('sadd', 'config_langs', unpack(config.langs))
@@ -142,6 +164,35 @@ func (c *Config) Save(path string) error {
 	return nil
 }
 
+// path: config file path
+func (c *Config) UpdateCredentials(username, newPassword, currentPassword, path string) error {
+
+	if newPassword == "" {
+		return errors.New("new password can't be empty")
+	}
+
+	if username == "" {
+		return errors.New("new username can't be empty")
+	}
+
+	// make sure current password is ok
+	sum := sha256.Sum256([]byte(currentPassword + c.Salt))
+	currentPasswordSum := fmt.Sprintf("%x", sum)
+
+	if currentPasswordSum != c.Password {
+		return errors.New("current password is incorrect")
+	}
+
+	// update salt each time a new password is updated
+	c.Salt = RandStringRunes(randStringLen)
+	newSum := sha256.Sum256([]byte(newPassword + c.Salt))
+	c.Password = fmt.Sprintf("%x", newSum)
+
+	c.Username = username
+
+	return c.Save(path)
+}
+
 // LoadConfig loads configuration path
 func LoadConfig(path string) (*Config, error) {
 	redisConn := redisPool.Get()
@@ -162,6 +213,15 @@ func LoadConfig(path string) (*Config, error) {
 	config.TimeLocation, err = time.LoadLocation(config.Timezone)
 	if err != nil {
 		return nil, err
+	}
+
+	if config.Username == "" {
+		config.Username = "admin"
+		config.Salt = RandStringRunes(randStringLen)
+		password := "admin"
+		sum := sha256.Sum256([]byte(password + config.Salt))
+		fmt.Printf("PASSWORD: %x", sum)
+		config.Password = fmt.Sprintf("%x", sum)
 	}
 
 	jsonBytes, err := json.Marshal(config)

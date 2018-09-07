@@ -46,15 +46,17 @@
 
 				<div>
 					<h2>Admin credentials</h2>
-					<p style="color: #f00;">NOT WIRED</p>
+					
 					<p>Username and password to control this blog.</p>
 
-					<input type="text" name="" placeholder="Username" />
-					<input type="text" name="" placeholder="Current password" />
-					<input type="text" name="" placeholder="New password" />
-					<input type="text" name="" placeholder="Repeat new password" />
+					<input type="text" id="username" placeholder="Username" value="{{ .config.Username }}" />
+					<input type="password" id="currentPassword" placeholder="Current password" />
+					<input type="password" id="newPassword" placeholder="New password" />
+					<input type="password" id="newPasswordRepeat" placeholder="Repeat new password" />
 
-					<a href="#" class="primary-action positive">Update</a>
+					<div id="submit">
+						<a href="#" onclick="updateCredentials(this);return false;">Update</a>
+					</div>
 				</div>
 
 				<div>

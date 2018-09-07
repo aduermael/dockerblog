@@ -514,11 +514,13 @@ func adminSaveSettings(c *gin.Context) {
 	err := c.BindJSON(req)
 	if err != nil {
 		badRequest(c, err.Error())
+		return
 	}
 
 	config, err := ContextGetConfig(c)
 	if err != nil {
 		serverError(c, err.Error())
+		return
 	}
 
 	config.Langs = req.Langs
@@ -529,6 +531,36 @@ func adminSaveSettings(c *gin.Context) {
 	config.CommentsRequireApproval = req.CommentsRequireApproval
 
 	config.Save(configPath)
+
+	ok(c)
+}
+
+type saveCredentialsRequest struct {
+	Username          string `json:"username"`
+	CurrentPassword   string `json:"currentPassword"`
+	NewPassword       string `json:"newPassword"`
+	NewPasswordRepeat string `json:"newPasswordRepeat"`
+}
+
+func adminSaveCredentials(c *gin.Context) {
+	req := &saveCredentialsRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
+
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	err = config.UpdateCredentials(req.Username, req.NewPassword, req.CurrentPassword, configPath)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
 
 	ok(c)
 }
