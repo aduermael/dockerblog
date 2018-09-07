@@ -29,6 +29,8 @@ type Config struct {
 	Password string `json:"password,omitempty"`
 	Salt     string `json:"salt,omitempty"`
 
+	CookieStoreKey string `json:"cookieStoreKey,omitempty"`
+
 	TimeLocation *time.Location `json:"-"`
 }
 
@@ -37,7 +39,11 @@ func init() {
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-var randStringLen = 20
+
+const (
+	randStringLen         = 20
+	randCookieStoreKeyLen = 32 // AES-256
+)
 
 func RandStringRunes(n int) string {
 	b := make([]rune, n)
@@ -210,9 +216,8 @@ func LoadConfig(path string) (*Config, error) {
 		return nil, err
 	}
 
-	config.TimeLocation, err = time.LoadLocation(config.Timezone)
-	if err != nil {
-		return nil, err
+	if config.Timezone == "" {
+		config.Timezone = "Europe/Paris"
 	}
 
 	if config.Username == "" {
@@ -224,16 +229,14 @@ func LoadConfig(path string) (*Config, error) {
 		config.Password = fmt.Sprintf("%x", sum)
 	}
 
-	jsonBytes, err := json.Marshal(config)
-	if err != nil {
-		return nil, err
+	if config.CookieStoreKey == "" {
+		config.CookieStoreKey = RandStringRunes(randCookieStoreKeyLen)
+		fmt.Println("cookie store key:", config.CookieStoreKey)
 	}
 
-	// save config in database
-	_, err = scriptConfigSave.Do(redisConn, string(jsonBytes))
-	if err != nil {
-		return nil, err
-	}
+	// Always save config when loading it (DB + disk),
+	// as missing fields can be computed on load.
+	config.Save(path)
 
 	return config, nil
 }
