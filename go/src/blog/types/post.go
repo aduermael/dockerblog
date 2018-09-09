@@ -96,17 +96,22 @@ var (
 		local startDate = ARGV[3]
 		local endDate = ARGV[4]
 		local perPage = tonumber(ARGV[5])
+		local staticPages = ARGV[6]
 
 		local count
 
-		local key = "posts_" .. lang
-
-		if startDate ~= "-1" and endDate ~= "-1" then
-			count = redis.call('zcount', key, startDate, endDate)
-		elseif includeFuture == "1" then
-			count = redis.call('zcount', key, '-inf', '+inf')
+		if staticPages == "1" then
+			local key = "pages_" .. lang
+			count = redis.call('hlen', key)
 		else
-			count = redis.call('zcount', key, '-inf', now)
+			local key = "posts_" .. lang
+			if startDate ~= "-1" and endDate ~= "-1" then
+				count = redis.call('zcount', key, startDate, endDate)
+			elseif includeFuture == "1" then
+				count = redis.call('zcount', key, '-inf', '+inf')
+			else
+				count = redis.call('zcount', key, '-inf', now)
+			end
 		end
 		
 		return count
@@ -610,11 +615,6 @@ func PostGetWithSlug(slug string) (Post, error) {
 // Number of pages for posts with given parameters
 func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLocation *time.Location, staticPages bool) (int64, error) {
 
-	// force one page for static pages
-	if staticPages {
-		return 1, nil
-	}
-
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
@@ -644,7 +644,6 @@ func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLoca
 	}
 
 	nbPosts, ok := res.(int64)
-
 	if !ok {
 		return 0, errors.New("can't cast response")
 	}
@@ -655,6 +654,8 @@ func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLoca
 	if nbPosts%perPageInt64 > 0 {
 		nbPages += 1
 	}
+
+	fmt.Println("nbPages:", nbPages)
 
 	return nbPages, nil
 }
@@ -700,7 +701,6 @@ func PostsList(includeFuture bool, page int, perPage int, year int, month int, t
 	}
 
 	byteSlice, ok := res.([]byte)
-
 	if !ok {
 		return nil, errors.New("can't cast response")
 	}
@@ -712,10 +712,22 @@ func PostsList(includeFuture bool, page int, perPage int, year int, month int, t
 	}
 
 	var posts []*Post
-
 	err = json.Unmarshal(byteSlice, &posts)
 	if err != nil {
 		return nil, err
+	}
+
+	// All static pages are returned when calling scriptPostList,
+	// not considering perPage argument.
+	// It would be better to update the logic elsewhere, but
+	// let's filter posts here for now:
+	if staticPages {
+		from := page * perPage
+		to := (page + 1) * perPage
+		if to > len(posts) {
+			to = len(posts)
+		}
+		posts = posts[from:to]
 	}
 
 	return posts, nil
