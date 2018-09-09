@@ -42,8 +42,9 @@ func ok(c *gin.Context) {
 
 func adminLoginPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_login.tmpl", gin.H{
-		"title": "Admin - login",
-		"lang":  ContextLang(c),
+		"title":                 "Admin - login",
+		"lang":                  ContextLang(c),
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -118,11 +119,12 @@ func adminPosts(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
-		"title":       "Admin - posts",
-		"lang":        ContextLang(c),
-		"posts":       posts,
-		"nbPages":     int(nbPages),
-		"currentPage": 0,
+		"title":                 "Admin - posts",
+		"lang":                  ContextLang(c),
+		"posts":                 posts,
+		"nbPages":               int(nbPages),
+		"currentPage":           0,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -157,11 +159,12 @@ func adminPostsPage(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_posts.tmpl", gin.H{
-		"title":       "Admin - posts",
-		"lang":        ContextLang(c),
-		"posts":       posts,
-		"nbPages":     int(nbPages),
-		"currentPage": pageInt,
+		"title":                 "Admin - posts",
+		"lang":                  ContextLang(c),
+		"posts":                 posts,
+		"nbPages":               int(nbPages),
+		"currentPage":           pageInt,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -186,11 +189,12 @@ func adminPages(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_pages.tmpl", gin.H{
-		"title":       "Admin - pages",
-		"lang":        ContextLang(c),
-		"posts":       posts,
-		"nbPages":     int(nbPages),
-		"currentPage": 0,
+		"title":                 "Admin - pages",
+		"lang":                  ContextLang(c),
+		"posts":                 posts,
+		"nbPages":               int(nbPages),
+		"currentPage":           0,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -225,11 +229,12 @@ func adminPagesPage(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_pages.tmpl", gin.H{
-		"title":       "Admin - pages",
-		"lang":        ContextLang(c),
-		"posts":       posts,
-		"nbPages":     int(nbPages),
-		"currentPage": pageInt,
+		"title":                 "Admin - pages",
+		"lang":                  ContextLang(c),
+		"posts":                 posts,
+		"nbPages":               int(nbPages),
+		"currentPage":           pageInt,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -241,10 +246,11 @@ func adminNewPost(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
-		"title":  "Admin - new post",
-		"lang":   ContextLang(c),
-		"isPage": false,
-		"config": config,
+		"title":                 "Admin - new post",
+		"lang":                  ContextLang(c),
+		"isPage":                false,
+		"config":                config,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -256,10 +262,11 @@ func adminNewPage(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
-		"title":  "Admin - new page",
-		"lang":   ContextLang(c),
-		"isPage": true,
-		"config": config,
+		"title":                 "Admin - new page",
+		"lang":                  ContextLang(c),
+		"isPage":                true,
+		"config":                config,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -281,9 +288,10 @@ func adminEditPost(c *gin.Context) {
 	post.TimeString = t.In(config.TimeLocation).Format("3:04pm")
 
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
-		"title": "Admin - new post",
-		"lang":  ContextLang(c),
-		"post":  post,
+		"title":                 "Admin - new post",
+		"lang":                  ContextLang(c),
+		"post":                  post,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -313,9 +321,10 @@ func adminEditPage(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_post.tmpl", gin.H{
-		"title": "Admin - new post",
-		"lang":  ContextLang(c),
-		"post":  post,
+		"title":                 "Admin - new post",
+		"lang":                  ContextLang(c),
+		"post":                  post,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -551,9 +560,10 @@ func adminSettings(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "admin_settings.tmpl", gin.H{
-		"title":  "Admin - settings",
-		"lang":   ContextLang(c),
-		"config": config,
+		"title":                 "Admin - settings",
+		"lang":                  ContextLang(c),
+		"config":                config,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
 
@@ -624,7 +634,8 @@ func adminSaveCredentials(c *gin.Context) {
 
 func adminLocalizedSettings(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_localized_settings.tmpl", gin.H{
-		"title": "Admin - localized settings",
-		"lang":  ContextLang(c),
+		"title":                 "Admin - localized settings",
+		"lang":                  ContextLang(c),
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }

@@ -194,12 +194,13 @@ func main() {
 			}
 
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":       "Admin - comments",
-				"lang":        ContextLang(c),
-				"comments":    comments,
-				"nbPages":     int(nbPages),
-				"currentPage": 0,
-				"scope":       "comments",
+				"title":                 "Admin - comments",
+				"lang":                  ContextLang(c),
+				"comments":              comments,
+				"nbPages":               int(nbPages),
+				"currentPage":           0,
+				"scope":                 "comments",
+				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 			})
 
 		})
@@ -234,12 +235,13 @@ func main() {
 			}
 
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":       "Admin - comments",
-				"lang":        ContextLang(c),
-				"comments":    comments,
-				"nbPages":     int(nbPages),
-				"currentPage": pageInt,
-				"scope":       "comments",
+				"title":                 "Admin - comments",
+				"lang":                  ContextLang(c),
+				"comments":              comments,
+				"nbPages":               int(nbPages),
+				"currentPage":           pageInt,
+				"scope":                 "comments",
+				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 			})
 		})
 
@@ -263,12 +265,13 @@ func main() {
 			}
 
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":       "Admin - comments (new)",
-				"lang":        ContextLang(c),
-				"comments":    comments,
-				"nbPages":     int(nbPages),
-				"currentPage": 0,
-				"scope":       "newcomments",
+				"title":                 "Admin - comments (new)",
+				"lang":                  ContextLang(c),
+				"comments":              comments,
+				"nbPages":               int(nbPages),
+				"currentPage":           0,
+				"scope":                 "newcomments",
+				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 			})
 		})
 
@@ -302,12 +305,13 @@ func main() {
 			}
 
 			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":       "Admin - comments (new)",
-				"lang":        ContextLang(c),
-				"comments":    comments,
-				"nbPages":     int(nbPages),
-				"currentPage": pageInt,
-				"scope":       "newcomments",
+				"title":                 "Admin - comments (new)",
+				"lang":                  ContextLang(c),
+				"comments":              comments,
+				"nbPages":               int(nbPages),
+				"currentPage":           pageInt,
+				"scope":                 "newcomments",
+				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 			})
 		})
 	}

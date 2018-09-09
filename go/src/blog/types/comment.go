@@ -151,6 +151,31 @@ func (c *Comment) Save() error {
 	return nil
 }
 
+func NbUnvalidatedComments() int64 {
+	n, err := nbComments(true)
+	if err != nil {
+		return 0
+	}
+	return n
+}
+
+func nbComments(unvalidatedOnly bool) (int64, error) {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	res, err := scriptNbComments.Do(redisConn, unvalidatedOnly)
+	if err != nil {
+		return 0, err
+	}
+
+	nbComments, ok := res.(int64)
+	if !ok {
+		return 0, errors.New("can't cast response")
+	}
+
+	return nbComments, nil
+}
+
 // ListAllComments ...
 func ListAllComments(lang string, paginated bool, page, perPage int) ([]*Comment, error) {
 	return listComments("all", lang, paginated, page, perPage)
@@ -210,7 +235,7 @@ func CommentsNbPages(perPage int, unvalidatedOnly bool) (int64, error) {
 		return 0, errors.New("page < 1")
 	}
 
-	res, err := scriptNbComments.Do(redisConn, perPage, unvalidatedOnly)
+	res, err := scriptNbComments.Do(redisConn, unvalidatedOnly)
 	if err != nil {
 		return 0, err
 	}
@@ -399,8 +424,7 @@ var (
 		-- TODO: stop using harcoded lang
 		local lang = "fr"
 
-		local perPage = tonumber(ARGV[1])
-		local unvalidatedOnly = ARGV[2]
+		local unvalidatedOnly = ARGV[1]
 
 		local count
 

@@ -9,7 +9,7 @@
 		<li><a href="/admin/posts">Posts</a></li><!--
 		--><li><a href="/admin/pages">Pages</a></li><!--
 		--><li><a href="/admin/comments">Comments</a></li><!--
-		--><li><a href="/admin/newcomments">Needs Approval (3)</a></li><!--
+		-->{{with .nbUnvalidatedComments}}{{ if gt . 0 }}<li><a style="color:#3399ff;" href="/admin/newcomments">Needs Approval ({{.}})</a></li>{{end}}{{end}}<!--
 		--><!--<li><a href="/admin/keys">Keys</a></li>--><!--
 		--><li><a href="/admin/settings">Settings</a></li><!--
 		--><li><a href="/admin/localized">Localized</a></li><!--
