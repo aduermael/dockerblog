@@ -1,6 +1,5 @@
-//var SERVER = "http://192.241.237.140";
-var SERVER = "http://" + location.host;
 
+var SERVER = location.protocol + "//" + location.host;
 
 function Get(path,callback,errorCallback)
 {
