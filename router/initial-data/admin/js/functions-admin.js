@@ -109,6 +109,44 @@ function PostFiles(path,formData,callback,errorCallback)
 	);
 }
 
+// LOGIN
+
+function login() {
+	$("#login-error").hide()
+
+	var request = new Object()
+	request.username = $("#username").val()
+	request.password = $("#password").val()
+
+	Post('/admin-login',request,function(response) {
+		location.reload()
+	}, function(errorResponse){
+		if (errorResponse.message) {
+			$("#login-error").text(errorResponse.message)
+		} else {
+			$("#login-error").text("error")
+		}
+		$("#login-error").show()
+	})
+}
+
+function logout() {
+	var request = new Object()
+
+	var popup = popupLoading()
+
+	Post('/admin/logout',request,function(response) {
+		location.reload()
+	}, function(errorResponse){
+		popup.remove()
+		if (errorResponse.message) {
+			alert(errorResponse.message)
+		} else {
+			alert("error!")
+		}
+	})
+}
+
 // ADMIN
 
 var activeEditor = null
@@ -714,6 +752,7 @@ function saveGeneralSettings() {
 	Post('/admin/settings',config,function(response) {
 		popupDone(popup)
 	}, function(errorResponse){
+		popup.remove()
 		if (errorResponse.message) {
 			alert(errorResponse.message)
 		} else {

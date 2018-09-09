@@ -170,6 +170,22 @@ func (c *Config) Save(path string) error {
 	return nil
 }
 
+func (c *Config) CheckAdminCredentials(username, password string) bool {
+	if username != c.Username {
+		return false
+	}
+
+	// make sure current password is ok
+	sum := sha256.Sum256([]byte(password + c.Salt))
+	currentPasswordSum := fmt.Sprintf("%x", sum)
+
+	if currentPasswordSum != c.Password {
+		return false
+	}
+
+	return true
+}
+
 // path: config file path
 func (c *Config) UpdateCredentials(username, newPassword, currentPassword, path string) error {
 

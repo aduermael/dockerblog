@@ -17,7 +17,6 @@ body {
 	font-family: "Raleway", sans-serif;
 	height: 100%;
 	background-color: #ddd;
-	padding-top: 10px;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -75,6 +74,32 @@ a:hover {
 	background-color: #ccc;
 }
 
+#login-parent {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+  	justify-content: center;
+}
+
+#login {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	text-align: center;
+
+	width: 300px;
+	padding: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #fff;
+}
+
+#login-error {
+	display: none;
+	color: #cc3333;
+}
+
 #content {
 	max-width: 800px;
 	padding: 20px;
@@ -88,29 +113,32 @@ a:hover {
 	height: 20px;
 }
 
-#content input {
+#content input,
+#login input {
 	width: 100%;
 	font-size: 1.3rem;
 	border: none;
 	padding: 10px;
 	background-color: #f2f2f2;
-
 }
 
-#content input.title {
+#content input.title,
+#login input.title {
 	font-size: 2.0rem;
 }
 
-#content input:focus { 
+#content input:focus,
+#login input:focus { 
 	outline: none; 
 	/*background-color: #999;*/
 	/*color: #fff;*/
 }
 
-#content > div {
+#content > div,
+#login > div,
+#login > input {
 	margin-top: 10px;
 }
-
 
 #content .inlineInput {
 	display: block;
@@ -137,19 +165,22 @@ a:hover {
 	margin: 5px;
 }
 
-#content #submit {
+#content #submit,
+#login #submit {
 	margin-top: 20px;
 	text-align: center;
 }
 
-#content #submit a {
+#content #submit a,
+#login #submit a {
 	display: inline-block;
 	padding: 10px;
 	background-color: #7DCB35;
 	color: #fff;
 }
 
-#content #submit a:hover {
+#content #submit a:hover,
+#login #submit a:hover {
 	text-decoration: none;
 	background-color: #A3E65C
 }
@@ -350,14 +381,10 @@ a:hover {
 	width: 100%;
 }
 
-
 .confirmation-popup {
 	font-size: 200px;
 	display: table-cell;
     vertical-align: middle;
-
 	text-align: center;
-
 	padding: 10px;
-	
 }

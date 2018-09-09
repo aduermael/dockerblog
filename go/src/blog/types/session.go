@@ -9,7 +9,7 @@ import (
 
 var sessionStore *store.RediStore
 
-func initSessionStore(c *Config) error {
+func InitSessionStore(c *Config) error {
 	var err error
 	// pairs: authentication/encryption (encryption is optional)
 	// pairs can be added for key rotation (old keys at the end)
@@ -21,22 +21,62 @@ func initSessionStore(c *Config) error {
 	return nil
 }
 
-func setMaxAge(days int) {
+func SetMaxAge(days int) {
 	sessionStore.SetMaxAge(days * 24 * 3600)
 }
 
-func adminSession(r *http.Request) (*sessions.Session, error) {
+// ...
+type AdminSession struct {
+	session *sessions.Session
+	reader  *http.Request
+	writer  http.ResponseWriter
+}
+
+// ...
+func (as *AdminSession) IsAuthenticated() bool {
+	if auth, ok := as.session.Values["authenticated"].(bool); ok && auth {
+		return true
+	}
+	return false
+}
+
+func (as *AdminSession) Save() {
+	as.session.Save(as.reader, as.writer)
+}
+
+func (as *AdminSession) Login() {
+	as.session.Values["authenticated"] = true
+	as.Save()
+}
+
+func (as *AdminSession) Logout() {
+	as.session.Values["authenticated"] = false
+	as.Save()
+}
+
+// ...
+type UserSession struct {
+	session *sessions.Session
+}
+
+func GetAdminSession(r *http.Request, w http.ResponseWriter) (*AdminSession, error) {
 	session, err := sessionStore.Get(r, "session-admin")
 	if err != nil {
 		return nil, err
 	}
-	return session, nil
+
+	adminSession := &AdminSession{session: session, reader: r, writer: w}
+
+	return adminSession, nil
 }
 
-func userSession(r *http.Request) (*sessions.Session, error) {
+func GetUserSession(r *http.Request) (*UserSession, error) {
 	session, err := sessionStore.Get(r, "session-user")
 	if err != nil {
 		return nil, err
 	}
-	return session, nil
+
+	userSession := &UserSession{session: session}
+
+	return userSession, nil
 }

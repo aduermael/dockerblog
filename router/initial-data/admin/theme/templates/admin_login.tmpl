@@ -1,0 +1,37 @@
+<!DOCTYPE html>	
+ <html lang="{{ .lang }}">
+ 	{{ template "admin_head" . }}
+	 <body>
+	 	<script>
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId            : '322882887839773',
+					autoLogAppEvents : true,
+					xfbml            : true,
+					version          : 'v3.0'
+				});
+				facebook_checkLogin();
+			};
+
+			(function(d, s, id){
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) {return;}
+				js = d.createElement(s); js.id = id;
+				js.src = "https://connect.facebook.net/en_US/sdk.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		</script>
+
+		<div id="login-parent">
+			<div id="login">
+				<h1>Login</h1>
+			<input id="username" type="text" placeholder="username" />
+			<input id="password" type="password" placeholder="password" />
+			<div id="login-error">Test</div>
+			<div id="submit">
+				<a href="#" onclick="login(this);return false;">Login</a>
+			</div>
+			</div>
+	 	</div>
+	 </body>	
+ </html>

@@ -83,6 +83,8 @@ func main() {
 
 	redisPool = util.NewRedisPool("blog-db:6379")
 
+	types.InitSessionStore(config)
+
 	// paths
 	themePath = filepath.Join(blogDataRootDir, "themes", config.Theme)
 	jsPath = filepath.Join(blogDataRootDir, "js")
@@ -119,16 +121,33 @@ func main() {
 
 	// ADMIN
 
+	router.POST("admin-login", adminLogin)
+
 	adminGroup := router.Group("/admin")
 	{
-		// adminGroup.Use(func(c *gin.Context) {
-		// 	log.Println("TEST")
-		// 	c.Abort()
-		// 	c.JSON(200, gin.H{"foo": "bar"})
-		// })
-
 		adminGroup.Static("/theme", filepath.Join(adminThemePath, "files"))
 		adminGroup.Static("/js", adminJsPath)
+
+		adminGroup.Use(func(c *gin.Context) {
+			sess, err := types.GetAdminSession(c.Request, c.Writer)
+			if err != nil {
+				adminLoginPage(c)
+				c.Abort()
+				return
+			}
+
+			if sess.IsAuthenticated() == false {
+				adminLoginPage(c)
+				c.Abort()
+				return
+			}
+
+			// TO REMOVE (testing login page)
+			// adminLoginPage(c)
+			// c.Abort()
+		})
+
+		adminGroup.POST("/logout", adminLogout)
 
 		adminGroup.GET("/posts", adminPosts)
 		adminGroup.GET("/posts/page/:page", adminPostsPage)

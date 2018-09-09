@@ -40,6 +40,63 @@ func ok(c *gin.Context) {
 	})
 }
 
+func adminLoginPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "admin_login.tmpl", gin.H{
+		"title": "Admin - login",
+		"lang":  ContextLang(c),
+	})
+}
+
+type adminLoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func adminLogin(c *gin.Context) {
+	sess, err := types.GetAdminSession(c.Request, c.Writer)
+	if err != nil {
+		serverError(c, "server error")
+		return
+	}
+
+	sess.Logout()
+
+	req := &adminLoginRequest{}
+	err = c.BindJSON(req)
+	if err != nil {
+		badRequest(c, "bad request")
+		return
+	}
+
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, "server error")
+		return
+	}
+
+	fmt.Println("USERNAME:", req.Username)
+	fmt.Println("PASSWORD:", req.Password)
+
+	isAdmin := config.CheckAdminCredentials(req.Username, req.Password)
+
+	if isAdmin == false {
+		badRequest(c, "wrong username and/or password")
+		return
+	}
+
+	sess.Login()
+}
+
+func adminLogout(c *gin.Context) {
+	sess, err := types.GetAdminSession(c.Request, c.Writer)
+	if err != nil {
+		serverError(c, "server error")
+		return
+	}
+
+	sess.Logout()
+}
+
 func adminPosts(c *gin.Context) {
 	config, err := ContextGetConfig(c)
 	if err != nil {
