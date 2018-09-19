@@ -175,43 +175,10 @@ func main() {
 		adminGroup.GET("/localized", adminLocalizedSettings)
 
 		adminGroup.GET("/comments", func(c *gin.Context) {
-			config, err := ContextGetConfig(c)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
-			comments, err := types.ListAllComments("fr", true, 0, config.PostsPerPage)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
-			nbPages, err := types.CommentsNbPages(config.PostsPerPage, false)
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-
-			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":                 "Admin - comments",
-				"lang":                  ContextLang(c),
-				"comments":              comments,
-				"nbPages":               int(nbPages),
-				"currentPage":           0,
-				"scope":                 "comments",
-				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
-			})
-
+			adminComments(0, false, c)
 		})
 
 		adminGroup.GET("/comments/:page", func(c *gin.Context) {
-			config, err := ContextGetConfig(c)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
 			page := c.Param("page")
 			pageInt, err := strconv.Atoi(page)
 			if err != nil {
@@ -222,66 +189,14 @@ func main() {
 			// page indexes start at zero, not one
 			pageInt--
 
-			comments, err := types.ListAllComments("fr", true, pageInt, config.PostsPerPage)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
-			nbPages, err := types.CommentsNbPages(config.PostsPerPage, false)
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-
-			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":                 "Admin - comments",
-				"lang":                  ContextLang(c),
-				"comments":              comments,
-				"nbPages":               int(nbPages),
-				"currentPage":           pageInt,
-				"scope":                 "comments",
-				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
-			})
+			adminComments(pageInt, false, c)
 		})
 
 		adminGroup.GET("/newcomments", func(c *gin.Context) {
-			config, err := ContextGetConfig(c)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
-			comments, err := types.ListUnvalidatedComments("fr", true, 0, config.PostsPerPage)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
-			nbPages, err := types.CommentsNbPages(config.PostsPerPage, true)
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-
-			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":                 "Admin - comments (new)",
-				"lang":                  ContextLang(c),
-				"comments":              comments,
-				"nbPages":               int(nbPages),
-				"currentPage":           0,
-				"scope":                 "newcomments",
-				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
-			})
+			adminComments(0, true, c)
 		})
 
 		adminGroup.GET("/newcomments/:page", func(c *gin.Context) {
-			config, err := ContextGetConfig(c)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
 			page := c.Param("page")
 			pageInt, err := strconv.Atoi(page)
 			if err != nil {
@@ -292,28 +207,10 @@ func main() {
 			// page indexes start at zero, not one
 			pageInt--
 
-			comments, err := types.ListUnvalidatedComments("fr", true, pageInt, config.PostsPerPage)
-			if err != nil {
-				serverError(c, err.Error())
-				return
-			}
-
-			nbPages, err := types.CommentsNbPages(config.PostsPerPage, true)
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-
-			c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
-				"title":                 "Admin - comments (new)",
-				"lang":                  ContextLang(c),
-				"comments":              comments,
-				"nbPages":               int(nbPages),
-				"currentPage":           pageInt,
-				"scope":                 "newcomments",
-				"nbUnvalidatedComments": types.NbUnvalidatedComments(),
-			})
+			adminComments(pageInt, true, c)
 		})
+
+		adminGroup.POST("/comments/accept", adminAcceptComment)
 	}
 
 	// POSTS
@@ -444,30 +341,24 @@ func main() {
 		var comment types.Comment
 		err := c.BindJSON(&comment)
 		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"success": false,
-				"err":     err.Error(),
-			})
+			badRequest(c, err.Error())
 			return
 		}
 
 		robot, err := comment.Accept()
 		if err != nil {
 			if robot {
-				c.JSON(http.StatusOK, gin.H{
-					"success": true,
-				})
+				ok(c)
 				return
 			}
 
 			fmt.Println(err.Error())
 
-			c.JSON(http.StatusOK, gin.H{
-				"success": false,
-				"err":     err.Error(),
-			})
+			badRequest(c, err.Error())
 			return
 		}
+
+		ok(c)
 	})
 
 	router.GET("/", func(c *gin.Context) {

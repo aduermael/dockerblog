@@ -20,7 +20,7 @@ import (
 type Comment struct {
 	Valid         bool   `json:"valid,omitempty"`
 	PostID        int    `json:"postID"`
-	Date          int    `json:"date,omitempty"`
+	Date          int64  `json:"date,omitempty"`
 	Email         string `json:"email,omitempty"`
 	Name          string `json:"name"`
 	ID            int    `json:"ID,omitempty"`
@@ -136,14 +136,16 @@ func (c *Comment) Save() error {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
+	if c.Date == 0 {
+		c.Date = time.Now().Unix() * 1000
+	}
+
 	jsonBytes, err := json.Marshal(c)
 	if err != nil {
 		return err
 	}
 
-	timestamp := time.Now().Unix() * 1000
-
-	_, err = scriptSaveComment.Do(redisConn, string(jsonBytes), timestamp)
+	_, err = scriptSaveComment.Do(redisConn, string(jsonBytes))
 	if err != nil {
 		return err
 	}
@@ -174,6 +176,31 @@ func nbComments(unvalidatedOnly bool) (int64, error) {
 	}
 
 	return nbComments, nil
+}
+
+// GetComment ...
+func GetComment(ID string) (*Comment, error) {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	res, err := scriptGetComment.Do(redisConn, ID)
+	if err != nil {
+		return nil, err
+	}
+
+	byteSlice, ok := res.([]byte)
+	if !ok {
+		return nil, errors.New("can't cast response")
+	}
+
+	var comment *Comment
+
+	err = json.Unmarshal(byteSlice, &comment)
+	if err != nil {
+		return nil, err
+	}
+
+	return comment, nil
 }
 
 // ListAllComments ...
@@ -310,7 +337,6 @@ var (
 		end
 
 		local commentJson = ARGV[1]
-		local timestamp = ARGV[2]
 
 		local comment = cjson.decode(commentJson)
 			
@@ -376,7 +402,7 @@ var (
 			valid = 1
 		end
 
-		redis.call('hmset', commentIDKey, 'ID', comment.ID, 'name', comment.name, 'content', comment.content, 'email', comment.email, 'date', timestamp, 'valid', valid, 'postID', comment.postID)
+		redis.call('hmset', commentIDKey, 'ID', comment.ID, 'name', comment.name, 'content', comment.content, 'email', comment.email, 'date', comment.date, 'valid', valid, 'postID', comment.postID)
 
 		-- remove fields that can be spared if empty
 		-- also remove comment from indexes to re-insert at the right place
@@ -384,7 +410,7 @@ var (
 		if isNew == false then
 			redis.call('hdel', commentIDKey, 'emailOnAnswer', 'gravatar', 'twitter', 'website', 'answerComID')
 			redis.call('zrem', unvalidated_comments_key, commentIDKey)
-			-- note: no need to remove from all_comments_key (timestamp will be updated)
+			-- note: no need to remove from all_comments_key (date will be updated)
 		end
 
 		if comment.emailOnAnswer and notempty(comment.email) then
@@ -408,13 +434,13 @@ var (
 		end
 
 		-- set for all comments (to be listed in admin)
-		redis.call('zadd', all_comments_key, timestamp, commentIDKey)
+		redis.call('zadd', all_comments_key, comment.date, commentIDKey)
 
 		-- unvalidated comments (to list in admin)
 		if comment.valid == nil or comment.valid == false then
-			redis.call('zadd', unvalidated_comments_key, timestamp, commentIDKey)
+			redis.call('zadd', unvalidated_comments_key, comment.date, commentIDKey)
 		else 
-			redis.call('zadd', post_comments_key, timestamp, commentIDKey)
+			redis.call('zadd', post_comments_key, comment.date, commentIDKey)
 			local nbComs = redis.call('zcard', post_comments_key)
 			redis.call('hset', postID, 'nbComs', nbComs)
 		end
@@ -436,6 +462,48 @@ var (
 		count = redis.call('zcount', key, '-inf', '+inf')
 		
 		return count
+	`)
+
+	scriptGetComment = redis.NewScript(0, `
+		local toStruct = function (bulk)
+			local result = {}
+			local nextkey
+			for i, v in ipairs(bulk) do
+				if i % 2 == 1 then
+					nextkey = v
+				else
+					result[nextkey] = v
+				end
+			end
+			return result
+		end
+
+		local comment_id = "com_" .. ARGV[1]
+
+		local comment_data = toStruct(redis.call('hgetall', comment_id))
+
+		-- convert number strings to actual numbers
+		comment_data.ID = tonumber(comment_data.ID)
+		comment_data.postID = tonumber(comment_data.postID)
+		comment_data.date = tonumber(comment_data.date)
+
+		if comment_data.answerComID ~= nil then
+			comment_data.answerComID = tonumber(comment_data.answerComID)
+		end
+
+		if comment_data.valid ~= nil and comment_data.valid == "1" then 
+			comment_data.valid = true
+		else
+			comment_data.valid = false
+		end
+
+		if comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1" then 
+			comment_data.emailOnAnswer = true
+		else
+			comment_data.emailOnAnswer = false
+		end
+
+		return cjson.encode(comment_data)
 	`)
 
 	scriptListComments = redis.NewScript(0, `

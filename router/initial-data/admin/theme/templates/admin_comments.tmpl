@@ -10,7 +10,7 @@
 					<div id="comment-{{ .ID }}" class="comment{{ if eq .Valid false }} unvalidated{{ end }}">
 						<div class="title"><b>{{ .Name }}</b><span style="display:none" class="date">{{ .Date }}</span> - #{{ .ID }}</div>
 						<div class="options">
-							{{ if eq .Valid false }}<b>Approve?</b> <a class="primary-action accept" href="#" onclick="removePost('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
+							{{ if eq .Valid false }}<b>Approve?</b> <a class="primary-action accept" href="#" onclick="acceptComment('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
 							<a class="trash" href="#" onclick="removeComment('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
 						</div>
 						<div class="clear"></div>
