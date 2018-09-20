@@ -133,17 +133,33 @@ function postComment(nameIndication,emailIndication,websiteIndication,twitterInd
 	if (!error) {
 		$('#commentFields').hide()
 		$('#commentSending').show()
-		Post('/comment',comment,postCommentCallback,errorCallback)
+		Post('/comment',comment,function(response) {
+			$('#commentSending').hide()
+			if (response.success) { 
+				if (response.waitingForApproval) {
+					$('#commentWaitingForApproval').show()
+				} else {
+					$('#commentSent').show()	
+				}
+			}
+
+		}, function(errorResponse) {
+			if (errorResponse.message) {
+				alert(errorResponse.message)
+			} else {
+				alert("error!")
+			}
+		})
 	}
 }
 
-// postCommentCallback is used as callback when posting comment
-var postCommentCallback = function(data) {
-	var res = data
-	$('#commentSending').hide()
-	if(res.success) { $('#commentSent').show() }
-	else { $('#commentError').show() }
-}
+// // postCommentCallback is used as callback when posting comment
+// var postCommentCallback = function(data) {
+// 	var res = data
+// 	$('#commentSending').hide()
+// 	if(res.success) { $('#commentSent').show() }
+// 	else { $('#commentError').show() }
+// }
 
 // answerComment moves the form below the comment
 // the user wants to answer to. (resetting fields)
@@ -153,6 +169,7 @@ function answerComment(comID) {
 	$('#commentFields').show()
 	$('#commentSending').hide()
 	$('#commentSent').hide()
+	$('#commentWaitingForApproval').hide()
 	$('#commentError').hide()
 	$('#commentContent').val("")
 	$('#answerComID').val(comID)

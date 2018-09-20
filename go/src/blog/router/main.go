@@ -358,7 +358,12 @@ func main() {
 			return
 		}
 
-		ok(c)
+		fmt.Println("comment created, id:", comment.ID)
+
+		c.JSON(http.StatusOK, gin.H{
+			"success":            true,
+			"waitingForApproval": comment.Valid == false,
+		})
 	})
 
 	router.GET("/", func(c *gin.Context) {

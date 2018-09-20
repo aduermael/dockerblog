@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -41,6 +42,20 @@ type Comment struct {
 	// Since is a formatted duration that can be
 	// computed from Date
 	Since string `json:"-"`
+}
+
+// Update ...
+func (c *Comment) Update(newComment *Comment) {
+	c.Valid = newComment.Valid
+	c.PostID = newComment.PostID
+	c.Date = newComment.Date
+	c.Name = newComment.Name
+	c.ID = newComment.ID
+	c.GravatarHash = newComment.GravatarHash
+	c.EmailOnAnswer = newComment.EmailOnAnswer
+	c.Twitter = newComment.Twitter
+	c.Website = newComment.Website
+	c.AnswerComID = newComment.AnswerComID
 }
 
 // Accept makes sure the comment can be stored
@@ -145,10 +160,18 @@ func (c *Comment) Save() error {
 		return err
 	}
 
-	_, err = scriptSaveComment.Do(redisConn, string(jsonBytes))
+	res, err := scriptSaveComment.Do(redisConn, string(jsonBytes))
 	if err != nil {
 		return err
 	}
+
+	commentID, ok := res.(int64)
+	if !ok {
+		return errors.New("can't cast comment ID response")
+	}
+
+	savedComment, err := GetComment(strconv.FormatInt(commentID, 10))
+	c.Update(savedComment)
 
 	return nil
 }
@@ -444,6 +467,8 @@ var (
 			local nbComs = redis.call('zcard', post_comments_key)
 			redis.call('hset', postID, 'nbComs', nbComs)
 		end
+
+		return comment.ID
 	`)
 
 	scriptNbComments = redis.NewScript(0, `

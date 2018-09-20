@@ -1,15 +1,22 @@
 {
-	"langs": ["fr"],
-	"theme": "laurel",
-	"postsPerPage": 10,
-	"timezone": "Europe/Paris",
-	"facebook": {
-		"appid": ""
-	},
-	"localized": {
-		"fr": {
-			"title": "Laurel"
-		}
-	}
+    "langs": [
+        "fr"
+    ],
+    "postsPerPage": 12,
+    "theme": "laurel",
+    "timezone": "Europe/Paris",
+    "showComments": true,
+    "acceptComments": true,
+    "approveComments": true,
+    "facebookAppID": "",
+    "sendgridAPIKey": "",
+    "localized": {
+        "fr": {
+            "title": "Laurel"
+        }
+    },
+    "username": "laurel",
+    "password": "c3e34c01f14bae01dffba03bfbe283b0a1102120c426c3ed708aed61ec454ac3",
+    "salt": "ABZgvPlWIwDheExqCdwE",
+    "cookieStoreKey": "RVeBsNYGFeBWCBWLlZdxRjedWNkKVrio"
 }
-
