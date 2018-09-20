@@ -800,7 +800,7 @@ function acceptComment(comID)
 
 	var popup = popupLoading()
 
-	Post('/admin/comments/accept',obj,function(response) {
+	Post('/admin/comments/accept', obj, function(response) {
 		// popupDone(popup)
 		location.reload()
 	}, function(errorResponse) {
@@ -822,12 +822,20 @@ function deleteComment(comID)
 	
 	if (r == true) 
 	{
-		Post('/admin/deleteComment',obj,deleteCommentCallBack,errorCallback);
-	} 
-	else
-	{
-		// do nothing
+		var popup = popupLoading()
+
+		Post('/admin/comments/delete', obj, function(response){
+			location.reload()
+		}, function(errorResponse){
+			popup.remove()
+			if (errorResponse.message) {
+				alert(errorResponse.message)
+			} else {
+				alert("error!")
+			}
+		});
 	}
+	else { /* do nothing */ }
 }
 
 // function highlightComment(comID)

@@ -176,6 +176,23 @@ func (c *Comment) Save() error {
 	return nil
 }
 
+func (c *Comment) Delete() error {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	jsonBytes, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+
+	_, err = scriptDeleteComment.Do(redisConn, string(jsonBytes))
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
 func NbUnvalidatedComments() int64 {
 	n, err := nbComments(true)
 	if err != nil {
@@ -382,13 +399,15 @@ var (
 
 		res = redis.call('hget', postID, 'acceptComs')
 		local acceptComs = res ~= nil and res == "1"
-		if res == nil then
+		-- /!\ checking for res == nil is not reliable apparently...
+		if res == nil or (res ~= "0" and res ~= "1") then
 			acceptComs = acceptComsDefault
 		end
 		
 		res = redis.call('hget', postID, 'approveComs')
 		local approveComs = res ~= nil and res == "1"
-		if res == nil then
+		-- /!\ checking for res == nil is not reliable apparently...
+		if res == nil or (res ~= "0" and res ~= "1") then
 			approveComs = approveComsDefault
 		end
 
@@ -469,6 +488,48 @@ var (
 		end
 
 		return comment.ID
+	`)
+
+	scriptDeleteComment = redis.NewScript(0, `
+		local commentJson = ARGV[1]
+		local comment = cjson.decode(commentJson)
+
+		local postID = "post_" .. (comment.postID or "")
+
+		local comment_key = "com_" .. comment.ID
+
+		if redis.call('exists', postID) == 1 then
+
+			-- get post lang (we suppose comment lang == post lang)
+			local lang = redis.call('hget', postID, 'lang')
+
+			local all_comments_key = "comments_all_" .. (lang or "")
+			local unvalidated_comments_key = "comments_unvalidated_" .. (lang or "")
+			local post_comments_key = "comments_" .. comment.postID
+
+			redis.call('zrem', unvalidated_comments_key, comment_key)
+			redis.call('zrem', all_comments_key, comment_key)
+			redis.call('zrem', post_comments_key, comment_key)
+
+			local nbComs = redis.call('zcard', post_comments_key)
+			redis.call('hset', postID, 'nbComs', nbComs)
+
+		else -- post not found, but let's try to clean anyway
+
+			local all_comments_keys = redis.call('comments_all_*')
+
+			for _, all_comments_key in ipairs(all_comments_keys) do
+				redis.call('zrem', all_comments_key, comment_key)
+			end
+
+			local unvalidated_comments_keys = redis.call('comments_unvalidated_*')
+
+			for _, unvalidated_comments_key in ipairs(unvalidated_comments_keys) do
+				redis.call('zrem', unvalidated_comments_key, comment_key)
+			end
+		end
+
+		redis.call('del', comment_key)
 	`)
 
 	scriptNbComments = redis.NewScript(0, `

@@ -211,6 +211,7 @@ func main() {
 		})
 
 		adminGroup.POST("/comments/accept", adminAcceptComment)
+		adminGroup.POST("/comments/delete", adminDeleteComment)
 	}
 
 	// POSTS

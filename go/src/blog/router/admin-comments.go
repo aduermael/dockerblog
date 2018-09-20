@@ -2,7 +2,6 @@ package main
 
 import (
 	"blog/types"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -63,11 +62,31 @@ func adminAcceptComment(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(comment)
-	fmt.Println("ID:", comment.ID)
-
 	comment.Valid = true
 	err = comment.Save()
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	ok(c)
+}
+
+func adminDeleteComment(c *gin.Context) {
+	req := &commentActionRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
+
+	comment, err := types.GetComment(req.CommentID)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
+
+	err = comment.Delete()
 	if err != nil {
 		serverError(c, err.Error())
 		return
