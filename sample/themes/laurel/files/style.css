@@ -195,6 +195,12 @@ form input[type="button"]:hover {
 	padding: 10px;
 }
 
+#content #posts .post #commentForm .comment-post-info p {
+	text-align: center;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
 #content #posts .post #commentForm #url,
 #content #posts .post #commentForm #email {
 	max-width: 0 !important; max-height: 0 !important;
