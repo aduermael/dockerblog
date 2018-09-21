@@ -37,6 +37,10 @@ a {
 	color: #777;
 }
 
+a.starred {
+	color: #FFBB00;
+}
+
 a.primary-action.accept {
 	color: #7DCB35;
 }

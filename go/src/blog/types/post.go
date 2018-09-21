@@ -254,17 +254,10 @@ var (
 				comment_data.answerComID = tonumber(comment_data.answerComID)
 			end
 
-			if comment_data.valid ~= nil and comment_data.valid == "1" then 
-				comment_data.valid = true
-			else
-				comment_data.valid = false
-			end
-
-			if comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1" then 
-				comment_data.emailOnAnswer = true
-			else
-				comment_data.emailOnAnswer = false
-			end
+			-- convert numbers and missing values to booleans
+			comment_data.valid = comment_data.valid ~= nil and comment_data.valid == "1"
+			comment_data.emailOnAnswer = comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1"
+			comment_data.highlight = comment_data.highlight ~= nil and comment_data.highlight == "1"
 
 			comments[#comments+1] = comment_data
 		end
@@ -348,17 +341,10 @@ var (
 				comment_data.answerComID = tonumber(comment_data.answerComID)
 			end
 
-			if comment_data.valid ~= nil and comment_data.valid == "1" then 
-				comment_data.valid = true
-			else
-				comment_data.valid = false
-			end
-
-			if comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1" then 
-				comment_data.emailOnAnswer = true
-			else
-				comment_data.emailOnAnswer = false
-			end
+			-- convert numbers and missing values to booleans
+			comment_data.valid = comment_data.valid ~= nil and comment_data.valid == "1"
+			comment_data.emailOnAnswer = comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1"
+			comment_data.highlight = comment_data.highlight ~= nil and comment_data.highlight == "1"
 
 			comments[#comments+1] = comment_data
 		end

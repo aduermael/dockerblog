@@ -94,3 +94,35 @@ func adminDeleteComment(c *gin.Context) {
 
 	ok(c)
 }
+
+func adminHighlightComment(c *gin.Context) {
+	adminCommentHighlight(true, c)
+}
+
+func adminUnhighlightComment(c *gin.Context) {
+	adminCommentHighlight(false, c)
+}
+
+func adminCommentHighlight(b bool, c *gin.Context) {
+	req := &commentActionRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
+
+	comment, err := types.GetComment(req.CommentID)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
+
+	comment.Highlighted = b
+	err = comment.Save()
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	ok(c)
+}

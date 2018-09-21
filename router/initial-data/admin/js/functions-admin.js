@@ -795,8 +795,8 @@ function updateCredentials() {
 
 function acceptComment(comID)
 {
-	var obj = {};
-	obj["id"] = comID;
+	var obj = {}
+	obj["id"] = comID
 
 	var popup = popupLoading()
 
@@ -815,18 +815,21 @@ function acceptComment(comID)
 
 function deleteComment(comID)
 {
-	var obj = {};
-	obj.ID = comID;
+	var obj = {}
+	obj["id"] = comID
 
-	var r = confirm("Are you sure?");
+	var r = confirm("Are you sure?")
 	
 	if (r == true) 
 	{
 		var popup = popupLoading()
 
-		Post('/admin/comments/delete', obj, function(response){
+		Post('/admin/comments/delete', obj, function(response) {
+			
+			// $("#com" + comID).remove()
 			location.reload()
-		}, function(errorResponse){
+
+		}, function(errorResponse) {
 			popup.remove()
 			if (errorResponse.message) {
 				alert(errorResponse.message)
@@ -838,124 +841,29 @@ function deleteComment(comID)
 	else { /* do nothing */ }
 }
 
-// function highlightComment(comID)
-// {
-// 	var obj = {};
-// 	obj.ID = comID;
+function highlightComment(comID) {
+	var obj = {}
+	obj["id"] = comID
 
-// 	Post('/admin/highlightComment',obj,highlightCommentCallBack,errorCallback);
-// }
+	var el = $('#comment-highlight-btn-'+comID)
 
+	var action = 'highlight'
+	if (el.hasClass('starred')) {
+		action = 'unhighlight'	
+	}
 
-// function unhighlightComment(comID)
-// {
-// 	var obj = {};
-// 	obj.ID = comID;
+	el.toggleClass('starred')
 
-// 	Post('/admin/unhighlightComment',obj,unhighlightCommentCallBack,errorCallback);
-// }
-
-
-
-// var acceptCommentCallBack = function(data)
-// {
-// 	var res = data;
-
-// 	if(res.success)
-// 	{
-// 		if (res.comID)
-// 		{
-// 			$("#com" + res.comID).stop().css("background-color", "#a0d651").animate({ backgroundColor: "#F7F7F7"}, 500);
-// 			$("#accept" + res.comID).remove();
-// 		}
-// 		else
-// 		{
-// 			document.location = "/admin/comments";
-// 		}
-// 	}
-// 	else
-// 	{
-// 		alert("FAILED");
-// 	}
-// }
-
-
-
-// var deleteCommentCallBack = function(data)
-// {
-// 	var res = data;
-
-// 	if(res.success)
-// 	{
-// 		if (res.comID)
-// 		{
-// 			$("#com" + res.comID).remove();
-// 		}
-// 		else
-// 		{
-// 			document.location = "/admin/comments";
-// 		}
-// 	}
-// 	else
-// 	{
-// 		alert("FAILED");
-// 	}
-// }
-
-
-// var highlightCommentCallBack = function(data)
-// {
-// 	var res = data;
-
-// 	if(res.success)
-// 	{
-// 		if (res.comID)
-// 		{
-// 			$("#com" + res.comID).animate({ backgroundColor: "#ffe168"}, 500);
-
-// 			$("#highlight" + res.comID).empty();
-
-// 			$("#highlight" + res.comID).append(" - <a href=\"#\" onclick=\"unhighlightComment(" + res.comID + ");return false;\" style=\"color:#ef8700\">Unhighlight</a>")
-// 		}
-// 		else
-// 		{
-// 			document.location = "/admin/comments";
-// 		}
-// 	}
-// 	else
-// 	{
-// 		alert("FAILED");
-// 	}
-// }
-
-
-// var unhighlightCommentCallBack = function(data)
-// {
-// 	var res = data;
-
-// 	if(res.success)
-// 	{
-// 		if (res.comID)
-// 		{
-// 			$("#com" + res.comID).animate({ backgroundColor: "#F7F7F7"}, 500);
-
-// 			$("#highlight" + res.comID).empty();
-
-// 			$("#highlight" + res.comID).append(" - <a href=\"#\" onclick=\"highlightComment(" + res.comID + ");return false;\" style=\"color:#ef8700\">Highlight</a>")
-// 		}
-// 		else
-// 		{
-// 			document.location = "/admin/comments";
-// 		}
-// 	}
-// 	else
-// 	{
-// 		alert("FAILED");
-// 	}
-// }
-
-
-
+	Post('/admin/comments/'+action, obj, function(response) {
+		// don't do anything
+	}, function(errorResponse) {
+		if (errorResponse.message) {
+			alert(errorResponse.message)
+		} else {
+			alert("error!")
+		}
+	});
+}
 
 /*
 

@@ -31,6 +31,8 @@ type Comment struct {
 	Twitter       string `json:"twitter,omitempty"`
 	Website       string `json:"website,omitempty"`
 	AnswerComID   int    `json:"answerComID,omitempty"`
+	Highlighted   bool   `json:"highlight,omitempty"`
+
 	// Indent is used by OrderAndIndentComments
 	Indent int `json:"-"`
 	// NbAnswers is used by OrderAndIndentComments
@@ -56,6 +58,7 @@ func (c *Comment) Update(newComment *Comment) {
 	c.Twitter = newComment.Twitter
 	c.Website = newComment.Website
 	c.AnswerComID = newComment.AnswerComID
+	c.Highlighted = newComment.Highlighted
 }
 
 // Accept makes sure the comment can be stored
@@ -450,7 +453,7 @@ var (
 		-- also remove comment from indexes to re-insert at the right place
 		-- (only if comment already exists)
 		if isNew == false then
-			redis.call('hdel', commentIDKey, 'emailOnAnswer', 'gravatar', 'twitter', 'website', 'answerComID')
+			redis.call('hdel', commentIDKey, 'emailOnAnswer', 'gravatar', 'twitter', 'website', 'answerComID', 'highlight')
 			redis.call('zrem', unvalidated_comments_key, commentIDKey)
 			-- note: no need to remove from all_comments_key (date will be updated)
 		end
@@ -473,6 +476,10 @@ var (
 
 		if comment.answerComID ~= nil and comment.answerComID ~= 0 then
 			redis.call('hset', commentIDKey, 'answerComID', comment.answerComID)
+		end
+
+		if comment.highlight ~= nil and comment.highlight then
+			redis.call('hset', commentIDKey, 'highlight', 1)
 		end
 
 		-- set for all comments (to be listed in admin)
@@ -577,17 +584,10 @@ var (
 			comment_data.answerComID = tonumber(comment_data.answerComID)
 		end
 
-		if comment_data.valid ~= nil and comment_data.valid == "1" then 
-			comment_data.valid = true
-		else
-			comment_data.valid = false
-		end
-
-		if comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1" then 
-			comment_data.emailOnAnswer = true
-		else
-			comment_data.emailOnAnswer = false
-		end
+		-- convert numbers and missing values to booleans
+		comment_data.valid = comment_data.valid ~= nil and comment_data.valid == "1"
+		comment_data.emailOnAnswer = comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1"
+		comment_data.highlight = comment_data.highlight ~= nil and comment_data.highlight == "1"
 
 		return cjson.encode(comment_data)
 	`)
@@ -653,17 +653,10 @@ var (
 				comment_data.answerComID = tonumber(comment_data.answerComID)
 			end
 
-			if comment_data.valid ~= nil and comment_data.valid == "1" then 
-				comment_data.valid = true
-			else
-				comment_data.valid = false
-			end
-
-			if comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1" then 
-				comment_data.emailOnAnswer = true
-			else
-				comment_data.emailOnAnswer = false
-			end
+			-- convert numbers and missing values to booleans
+			comment_data.valid = comment_data.valid ~= nil and comment_data.valid == "1"
+			comment_data.emailOnAnswer = comment_data.emailOnAnswer ~= nil and comment_data.emailOnAnswer == "1"
+			comment_data.highlight = comment_data.highlight ~= nil and comment_data.highlight == "1"
 
 			comments[#comments+1] = comment_data
 		end
