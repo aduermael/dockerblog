@@ -102,7 +102,7 @@ form input[type="button"]:hover {
 	height: 60px;
 
 	border: 1px solid #999;
-	border-radius: 5px;
+	border-radius: 4px;
 	padding: 3px;
 	background-color: #fff;
 }
@@ -220,7 +220,7 @@ form input[type="button"]:hover {
 	margin-bottom: 8px;
 	width: 80px;
 	height: 80px; 
-	border-radius: 5px;
+	border-radius: 4px;
 }
 
 #content #posts .post #commentForm .header .nameAndEmail {
@@ -234,7 +234,7 @@ form input[type="button"]:hover {
 #content #posts .post #commentForm textarea,
 #content #posts .post #commentForm input[type="text"],
 #content #posts .post #commentForm input[type="email"] {
-	border-radius: 5px;
+	border-radius: 4px;
 }
 
 #content #posts .post #commentForm input[type="text"],
@@ -274,7 +274,7 @@ form input[type="button"]:hover {
 	background-color: #67CFEC;
 	text-align: center;
 	margin-bottom: 8px; 
-	border-radius: 5px;
+	border-radius: 4px;
 	box-shadow: 0px 2px 5px #aaa;
 }
 
@@ -303,7 +303,7 @@ form input[type="button"]:hover {
 	display: inline-block;
 	vertical-align: middle;
 	max-width: 100%;
-	border-radius: 5px;
+	border-radius: 4px;
 }
 
 /* COMMENTS */
@@ -314,7 +314,7 @@ form input[type="button"]:hover {
 
 #content #posts .post .comments .comment-block {
 	margin-bottom: 1rem;
-	border-radius: 5px;
+	border-radius: 4px;
 }
 
 #content #posts .post .comments .comment-block:last-child { margin-bottom: 0; }
@@ -348,9 +348,11 @@ form input[type="button"]:hover {
 
 #content #posts .post .comments .comment img.avatar {
 	float: left;
+	width: 80px;
+	height: 80px;
 	margin-right: 1rem;
 	margin-bottom: 1rem;
-	border-radius: 5px;
+	border-radius: 4px;
 }
 
 #content #archives-info {
@@ -420,7 +422,7 @@ form input[type="button"]:hover {
 	text-align: center;
 	/*border: 1px solid #999;*/
 	background-color: #eee;
-	border-radius: 5px;
+	border-radius: 4px;
 }
 
 #footer #sections .group .item ul { list-style: none; }
@@ -444,7 +446,7 @@ form input[type="button"]:hover {
 	max-width: 150px;
 	margin-bottom: 0.5rem;
 	padding: 0.5rem;
-	border-radius: 5px;
+	border-radius: 4px;
 	border: none;
 }
 
