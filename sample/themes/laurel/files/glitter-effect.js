@@ -7,11 +7,15 @@ function startGlitterEffect() {
 	var sparkle = 5
     
 	var size = 'small'
+	var halfSizes = Object()
+	halfSizes["small"] = 10;
+	halfSizes["medium"] = 15;
+	halfSizes["large"] = 25;
 
 	var createStar = function(target) {
 		template.clone().removeAttr('id').css({
-			top: (Math.random() * 100) + '%',
-			left: (Math.random() * 100) + '%',
+			top: Math.random() * target.outerHeight() - halfSizes[size],
+			left: Math.random() * target.outerWidth() - halfSizes[size],
 			webkitAnimationDelay: (Math.random() * sparkle) + 's',
 			mozAnimationDelay: (Math.random() * sparkle) + 's'
 		}).addClass(size).appendTo(target)

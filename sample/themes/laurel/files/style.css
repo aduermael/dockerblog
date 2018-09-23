@@ -326,7 +326,7 @@ form input[type="button"]:hover {
 }
 
 #content #posts .post .comments .comment.starred {
-	background-color: #FFBB00 !important;
+	background-color: #FFD94A !important;
 }
 #content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
 #content #posts .post .comments .comment.indent-1 { margin-left: 10%; background-color: rgba(0,0,0,0.07); }
@@ -338,6 +338,14 @@ form input[type="button"]:hover {
 	font-family: "Lobster", cursive;
 	color: #333;
 	padding-bottom: 1rem;
+}
+
+#content #posts .post .comments .comment img,
+#content #posts .post .comments .comment h3,
+#content #posts .post .comments .comment p,
+#content #posts .post .comments .comment a {
+	position: relative;
+	z-index: 3;
 }
 
 #content #posts .post .comments .comment h3 .date {
