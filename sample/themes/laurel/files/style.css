@@ -275,7 +275,6 @@ form input[type="button"]:hover {
 	text-align: center;
 	margin-bottom: 8px; 
 	border-radius: 4px;
-	box-shadow: 0px 2px 5px #aaa;
 }
 
 /* BLOCKS */
@@ -320,11 +319,15 @@ form input[type="button"]:hover {
 #content #posts .post .comments .comment-block:last-child { margin-bottom: 0; }
 
 #content #posts .post .comments .comment {
+	position: relative;
 	background-color: rgba(0,0,0,0.01);
 	padding: 1rem;
 	margin-left: 40%;
 }
 
+#content #posts .post .comments .comment.starred {
+	background-color: #FFBB00 !important;
+}
 #content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
 #content #posts .post .comments .comment.indent-1 { margin-left: 10%; background-color: rgba(0,0,0,0.07); }
 #content #posts .post .comments .comment.indent-2 { margin-left: 20%; background-color: rgba(0,0,0,0.05); }

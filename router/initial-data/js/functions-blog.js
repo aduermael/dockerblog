@@ -11,6 +11,7 @@
 $(document).ready(function()
 {
 	$('.comment').linkify()
+	startGlitterEffect()
 })
 
 // ---------------
