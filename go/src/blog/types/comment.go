@@ -335,7 +335,8 @@ func (a CommentsByDate) Less(i, j int) bool { return a[i].Date < a[j].Date }
 
 // OrderAndIndentComments orders given comments by date
 // then moves comments that are answers to other comments
-// setting indentation for them to be displayed correctly
+// setting indentation for them to be displayed correctly.
+// Top level highlighted comments are also placed at the very top.
 // NOTE(aduermael): it would be better to create an
 // index for that in DB, and update it when receiving new
 // comments instead of doing this dynamically for each request...
@@ -368,6 +369,40 @@ func OrderAndIndentComments(comments []*Comment) []*Comment {
 			}
 		}
 	}
+
+	// bubble up highlighted comments (when Indent == 0)
+	bubbledUp := 0
+
+	for i := l - 1; i >= bubbledUp; i-- {
+		if comments[i].Highlighted && comments[i].Indent == 0 {
+
+			nbChildren := 0
+
+			for j := i + 1; j < l; j++ {
+				if comments[j].Indent > comments[i].Indent {
+					nbChildren++
+				} else {
+					break
+				}
+			}
+
+			moved := make([]*Comment, nbChildren+1)
+
+			copy(moved, comments[i:i+1+nbChildren])
+
+			// cut
+			if i == last {
+				comments = comments[:i]
+			} else {
+				comments = append(comments[:i], comments[i+1+nbChildren:]...)
+			}
+
+			// paste
+			comments = append(moved, comments...)
+			bubbledUp += 1
+		}
+	}
+
 	return comments
 }
 
