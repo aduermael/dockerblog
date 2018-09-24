@@ -37,16 +37,19 @@
 						</div>
 						<div class="comments">
 							<div id="empty-div"></div>
-							{{ range .post.Comments }}
-								<div id="com_{{.ID}}" class="comment comment-block indent-{{.Indent}}{{ if .Highlighted }} starred{{ end }}">
-									<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
-									<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
-									<p>{{.Content}}</p>
-									<a href="#" onclick="answerComment({{.ID}});return false;">Answer</a>
-								</div>
-							{{ end }}
+							<div>
+								{{ range .post.Comments }}
+									<div id="com_{{.ID}}" class="comment comment-block indent-{{.Indent}}{{ if .Highlighted }} starred{{ end }}">
+										<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
+										<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
+										<p>{{.Content}}</p>
+										<a href="#" onclick="answerComment({{.ID}});return false;">Answer</a>
+									</div>
+								{{ end }}
+							</div>
 
 							{{ if .post.AcceptComments }}
+							<div id="initial-comment-form-container">
 								<form id="commentForm" class="comment-block">
 								 	<div id="commentSending" class="comment-post-info" style="display: none"><p>Envoi du commentaire...</p></div>
 							 		<div id="commentSent" class="comment-post-info" style="display: none"><p>Commentaire bien reçu, merci ! 🙂</p></div>
@@ -87,6 +90,7 @@
 										<label><input id="commentEmailOnAnswer" type="checkbox"{{ if .user.EmailOnAnswer }} checked{{end}}>Être tenu au courant des réponses par email.</label>
 									</div><!-- commentFields -->
 								</form><!-- commentForm -->
+							</div>
 							{{ end }}
 						</div><!-- comments -->
 					{{ end }}

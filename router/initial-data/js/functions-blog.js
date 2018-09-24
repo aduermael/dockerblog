@@ -195,6 +195,7 @@ function answerComment(comID) {
 	$('#commentForm').fadeTo(0, 0.0, function() {
 		$('#commentForm').insertAfter($('#com_' + comID))
 		$('#commentForm').fadeTo(300, 1.0)
+		$('#initial-comment-form-container').hide()
 	});
 }
 

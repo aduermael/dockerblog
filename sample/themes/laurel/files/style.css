@@ -307,21 +307,25 @@ form input[type="button"]:hover {
 
 /* COMMENTS */
 
+#initial-comment-form-container {
+	padding-top: 20px;
+}
+
 #content #posts .post .comments {
 	padding-top: 20px;
 }
 
 #content #posts .post .comments .comment-block {
-	margin-bottom: 1rem;
+	margin-bottom: 10px;
 	border-radius: 4px;
 }
 
-#content #posts .post .comments .comment-block:last-child { margin-bottom: 0; }
+#content #posts .post .comments .comment-block:last-child { margin-bottom: 0px !important; }
 
 #content #posts .post .comments .comment {
 	position: relative;
 	background-color: rgba(0,0,0,0.01);
-	padding: 1rem;
+	padding: 10px;
 	margin-left: 40%;
 }
 
