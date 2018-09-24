@@ -132,7 +132,7 @@ func (c *Comment) Accept(user *UserSession) (robot bool, err error) {
 	}
 
 	user.RememberInfo = c.RememberInfo
-	user.EmailOnAnswers = c.EmailOnAnswer
+	user.EmailOnAnswer = c.EmailOnAnswer
 	user.Name = c.Name
 	user.Email = c.Email
 	user.Website = c.Website

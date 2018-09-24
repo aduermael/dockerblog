@@ -1,6 +1,8 @@
 package types
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -37,12 +39,12 @@ func GetAdminSession(r *http.Request, w http.ResponseWriter) (*AdminSession, err
 }
 
 func GetUserSession(r *http.Request, w http.ResponseWriter) (*UserSession, error) {
-	session, err := sessionStore.Get(r, "session")
-	if err != nil {
-		return nil, err
-	}
+	// session, err := sessionStore.Get(r, "session")
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	userSession := &UserSession{session: session, reader: r, writer: w}
+	userSession := &UserSession{ /*session: session,*/ reader: r, writer: w}
 	userSession.load()
 
 	return userSession, nil
@@ -79,16 +81,16 @@ func (as *AdminSession) Logout() {
 
 // ...
 type UserSession struct {
-	session *sessions.Session
-	reader  *http.Request
-	writer  http.ResponseWriter
+	// session *sessions.Session
+	reader *http.Request
+	writer http.ResponseWriter
 
-	Name           string
-	Email          string
-	Website        string
-	Twitter        string
-	RememberInfo   bool
-	EmailOnAnswers bool
+	Name          string `json:"name,omitempty"`
+	Email         string `json:"email,omitempty"`
+	Website       string `json:"website,omitempty"`
+	Twitter       string `json:"twitter,omitempty"`
+	RememberInfo  bool   `json:"remember-info,omitempty"`
+	EmailOnAnswer bool   `json:"email-on-answer,omitempty"`
 }
 
 const (
@@ -100,62 +102,48 @@ const (
 	userEmailOnAnswerDefault = true
 )
 
-func (us *UserSession) load() {
-	var exists bool
-	var i interface{}
+func (us *UserSession) load() error {
 
-	if i, exists = us.session.Values["remember-info"]; exists {
-		us.RememberInfo = i.(bool)
-	} else {
-		us.RememberInfo = userRememberInfoDefault
+	cookie, err := us.reader.Cookie("preferences")
+	if err != nil {
+		return err
 	}
 
-	if i, exists = us.session.Values["email-on-answer"]; exists {
-		us.EmailOnAnswers = i.(bool)
-	} else {
-		us.EmailOnAnswers = userEmailOnAnswerDefault
+	jsonBytes, err := base64.StdEncoding.DecodeString(cookie.Value)
+	if err != nil {
+		return err
 	}
 
-	if i, exists = us.session.Values["name"]; exists {
-		us.Name = i.(string)
-	} else {
-		us.Name = userNameDefault
+	// note: not sure if that is necessary
+	// us.Name = userNameDefault
+	// us.Email = userEmailDefault
+	// us.Website = userWebsiteDefault
+	// us.Twitter = userTwitterDefault
+	// us.RememberInfo = userRememberInfoDefault
+	// us.EmailOnAnswer = userEmailOnAnswerDefault
+
+	err = json.Unmarshal(jsonBytes, us)
+	if err != nil {
+		return err
 	}
 
-	if i, exists = us.session.Values["email"]; exists {
-		us.Email = i.(string)
-	} else {
-		us.Email = userEmailDefault
-	}
-
-	if i, exists = us.session.Values["website"]; exists {
-		us.Website = i.(string)
-	} else {
-		us.Website = userWebsiteDefault
-	}
-
-	if i, exists = us.session.Values["twitter"]; exists {
-		us.Twitter = i.(string)
-	} else {
-		us.Twitter = userTwitterDefault
-	}
+	return nil
 }
 
-func (us *UserSession) Save() {
-	us.session.Values["remember-info"] = us.RememberInfo
-	// remember that, even if RememberInfo == false:
-	us.session.Values["email-on-answer"] = us.EmailOnAnswers
+func (us *UserSession) Save() error {
 
-	if us.RememberInfo == false { // erase everything in that case
-		us.session.Values["name"] = userNameDefault
-		us.session.Values["email"] = userEmailDefault
-		us.session.Values["website"] = userWebsiteDefault
-		us.session.Values["twitter"] = userTwitterDefault
-	} else {
-		us.session.Values["name"] = us.Name
-		us.session.Values["email"] = us.Email
-		us.session.Values["website"] = us.Website
-		us.session.Values["twitter"] = us.Twitter
+	jsonBytes, err := json.Marshal(us)
+	if err != nil {
+		return err
 	}
-	us.session.Save(us.reader, us.writer)
+
+	cookie := &http.Cookie{}
+	cookie.Name = "preferences"
+	cookie.Value = base64.StdEncoding.EncodeToString(jsonBytes)
+	cookie.MaxAge = 0 // never expires
+	// cookie.Secure = true
+
+	http.SetCookie(us.writer, cookie)
+
+	return nil
 }

@@ -84,7 +84,7 @@
 										<input type="button" value="ENVOYER" onclick="postComment('name','email','website','twitter')">
 
 										<label><input id="commentRemember" type="checkbox"{{ if .user.RememberInfo }} checked{{end}}>Se rappeler de mes informations.</label>
-										<label><input id="commentEmailOnAnswer" type="checkbox"{{ if .user.EmailOnAnswers }} checked{{end}}>Être tenu au courant des réponses par email.</label>
+										<label><input id="commentEmailOnAnswer" type="checkbox"{{ if .user.EmailOnAnswer }} checked{{end}}>Être tenu au courant des réponses par email.</label>
 									</div><!-- commentFields -->
 								</form><!-- commentForm -->
 							{{ end }}
