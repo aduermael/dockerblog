@@ -25,6 +25,29 @@ func SetMaxAge(days int) {
 	sessionStore.SetMaxAge(days * 24 * 3600)
 }
 
+func GetAdminSession(r *http.Request, w http.ResponseWriter) (*AdminSession, error) {
+	session, err := sessionStore.Get(r, "session-admin")
+	if err != nil {
+		return nil, err
+	}
+
+	adminSession := &AdminSession{session: session, reader: r, writer: w}
+
+	return adminSession, nil
+}
+
+func GetUserSession(r *http.Request, w http.ResponseWriter) (*UserSession, error) {
+	session, err := sessionStore.Get(r, "session")
+	if err != nil {
+		return nil, err
+	}
+
+	userSession := &UserSession{session: session, reader: r, writer: w}
+	userSession.load()
+
+	return userSession, nil
+}
+
 // ...
 type AdminSession struct {
 	session *sessions.Session
@@ -57,26 +80,82 @@ func (as *AdminSession) Logout() {
 // ...
 type UserSession struct {
 	session *sessions.Session
+	reader  *http.Request
+	writer  http.ResponseWriter
+
+	Name           string
+	Email          string
+	Website        string
+	Twitter        string
+	RememberInfo   bool
+	EmailOnAnswers bool
 }
 
-func GetAdminSession(r *http.Request, w http.ResponseWriter) (*AdminSession, error) {
-	session, err := sessionStore.Get(r, "session-admin")
-	if err != nil {
-		return nil, err
+const (
+	userNameDefault          = ""
+	userEmailDefault         = ""
+	userWebsiteDefault       = ""
+	userTwitterDefault       = ""
+	userRememberInfoDefault  = true
+	userEmailOnAnswerDefault = true
+)
+
+func (us *UserSession) load() {
+	var exists bool
+	var i interface{}
+
+	if i, exists = us.session.Values["remember-info"]; exists {
+		us.RememberInfo = i.(bool)
+	} else {
+		us.RememberInfo = userRememberInfoDefault
 	}
 
-	adminSession := &AdminSession{session: session, reader: r, writer: w}
+	if i, exists = us.session.Values["email-on-answer"]; exists {
+		us.EmailOnAnswers = i.(bool)
+	} else {
+		us.EmailOnAnswers = userEmailOnAnswerDefault
+	}
 
-	return adminSession, nil
+	if i, exists = us.session.Values["name"]; exists {
+		us.Name = i.(string)
+	} else {
+		us.Name = userNameDefault
+	}
+
+	if i, exists = us.session.Values["email"]; exists {
+		us.Email = i.(string)
+	} else {
+		us.Email = userEmailDefault
+	}
+
+	if i, exists = us.session.Values["website"]; exists {
+		us.Website = i.(string)
+	} else {
+		us.Website = userWebsiteDefault
+	}
+
+	if i, exists = us.session.Values["twitter"]; exists {
+		us.Twitter = i.(string)
+	} else {
+		us.Twitter = userTwitterDefault
+	}
 }
 
-func GetUserSession(r *http.Request) (*UserSession, error) {
-	session, err := sessionStore.Get(r, "session-user")
-	if err != nil {
-		return nil, err
+func (us *UserSession) Save() {
+	us.session.Values["remember-info"] = us.RememberInfo
+	// remember that, even if RememberInfo == false:
+	us.session.Values["email-on-answer"] = us.EmailOnAnswers
+
+	if us.RememberInfo == false { // erase everything in that case
+		us.session.Values["name"] = userNameDefault
+		us.session.Values["email"] = userEmailDefault
+		us.session.Values["website"] = userWebsiteDefault
+		us.session.Values["twitter"] = userTwitterDefault
+	} else {
+		us.session.Values["name"] = us.Name
+		us.session.Values["email"] = us.Email
+		us.session.Values["website"] = us.Website
+		us.session.Values["twitter"] = us.Twitter
 	}
-
-	userSession := &UserSession{session: session}
-
-	return userSession, nil
+	us.session.Save(us.reader, us.writer)
 }

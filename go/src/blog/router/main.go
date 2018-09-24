@@ -304,15 +304,15 @@ func main() {
 					return
 				}
 
-				// TODO: it should be possible to set that in admin
-				// but currently for all posts, both ShowComments
-				// and AcceptComments are true
-				post.ShowComments = true
-				post.AcceptComments = true
-
 				post.ComputeSince()
 
 				archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
+				if err != nil {
+					c.AbortWithError(http.StatusInternalServerError, err)
+					return
+				}
+
+				user, err := types.GetUserSession(c.Request, c.Writer)
 				if err != nil {
 					c.AbortWithError(http.StatusInternalServerError, err)
 					return
@@ -322,6 +322,7 @@ func main() {
 					"title":    ContextTitle(c),
 					"post":     post,
 					"archives": archives,
+					"user":     user,
 				})
 				return
 			}
@@ -350,7 +351,13 @@ func main() {
 			return
 		}
 
-		robot, err := comment.Accept()
+		user, err := types.GetUserSession(c.Request, c.Writer)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		robot, err := comment.Accept(user)
 		if err != nil {
 			if robot {
 				ok(c)

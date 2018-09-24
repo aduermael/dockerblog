@@ -33,6 +33,9 @@ type Comment struct {
 	AnswerComID   int    `json:"answerComID,omitempty"`
 	Highlighted   bool   `json:"highlight,omitempty"`
 
+	// only use for user session, not stored with comment in DB
+	RememberInfo bool `json:"rememberInfo,omitempty"`
+
 	// Indent is used by OrderAndIndentComments
 	Indent int `json:"-"`
 	// NbAnswers is used by OrderAndIndentComments
@@ -64,7 +67,7 @@ func (c *Comment) Update(newComment *Comment) {
 // Accept makes sure the comment can be stored
 // in DB and stores it if everything is ok.
 // It returns an error otherwise.
-func (c *Comment) Accept() (robot bool, err error) {
+func (c *Comment) Accept(user *UserSession) (robot bool, err error) {
 	// Simple trap for robots:
 	// email and url fields are hidden to the users,
 	// so if one of them is not empty, it means
@@ -128,7 +131,14 @@ func (c *Comment) Accept() (robot bool, err error) {
 		return false, err
 	}
 
-	// TODO: cookies
+	user.RememberInfo = c.RememberInfo
+	user.EmailOnAnswers = c.EmailOnAnswer
+	user.Name = c.Name
+	user.Email = c.Email
+	user.Website = c.Website
+	user.Twitter = c.Twitter
+
+	user.Save()
 
 	return false, nil
 }
@@ -482,7 +492,7 @@ var (
 			valid = 1
 		end
 
-		redis.call('hmset', commentIDKey, 'ID', comment.ID, 'name', comment.name, 'content', comment.content, 'email', comment.email, 'date', comment.date, 'valid', valid, 'postID', comment.postID)
+		redis.call('hmset', commentIDKey, 'ID', comment.ID, 'name', comment.name, 'content', comment.content, 'date', comment.date, 'valid', valid, 'postID', comment.postID)
 
 		-- remove fields that can be spared if empty
 		-- also remove comment from indexes to re-insert at the right place
@@ -495,6 +505,10 @@ var (
 
 		if comment.emailOnAnswer and notempty(comment.email) then
 			redis.call('hset', commentIDKey, 'emailOnAnswer', 1)
+		end
+
+		if notempty(comment.email) then
+			redis.call('hset', commentIDKey, 'email', comment.email)
 		end
 
 		if notempty(comment.gravatar) then

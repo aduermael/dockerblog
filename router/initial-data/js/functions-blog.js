@@ -114,7 +114,7 @@ function postComment(nameIndication,emailIndication,websiteIndication,twitterInd
 	comment.website = $('#commentWebsite').val()
 	comment.twitter = $('#commentTwitter').val()
 	comment.emailOnAnswer = $('#commentEmailOnAnswer').is(":checked")
-	comment.remember = $('#commentRemember').is(":checked")
+	comment.rememberInfo = $('#commentRemember').is(":checked")
 	
 	var error = false;
 
