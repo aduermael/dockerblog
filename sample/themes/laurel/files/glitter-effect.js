@@ -1,10 +1,9 @@
 
 // applies glitter effect on highlighted comments
 function startGlitterEffect() {
-
-  	var template = $('.template.shine')
-	var stars =  10
-	var sparkle = 5
+  	var template = $('#empty-div')
+	var stars =  15
+	var sparkle = 10
     
 	var size = 'small'
 	var halfSizes = Object()
@@ -13,7 +12,7 @@ function startGlitterEffect() {
 	halfSizes["large"] = 25;
 
 	var createStar = function(target) {
-		template.clone().removeAttr('id').css({
+		template.clone().removeAttr('id').addClass('shine').css({
 			top: Math.random() * target.outerHeight() - halfSizes[size],
 			left: Math.random() * target.outerWidth() - halfSizes[size],
 			webkitAnimationDelay: (Math.random() * sparkle) + 's',
@@ -33,4 +32,9 @@ function startGlitterEffect() {
 			createStar($(this))
 		}
 	})
+}
+
+
+function stopGlitterEffect() {
+	$('.shine').remove();
 }

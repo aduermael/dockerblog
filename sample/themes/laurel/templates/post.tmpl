@@ -36,7 +36,7 @@
 							</a>
 						</div>
 						<div class="comments">
-							<div class="template shine"></div>
+							<div id="empty-div"></div>
 							{{ range .post.Comments }}
 								<div id="com_{{.ID}}" class="comment comment-block indent-{{.Indent}}{{ if .Highlighted }} starred{{ end }}">
 									<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
