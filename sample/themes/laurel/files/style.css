@@ -329,6 +329,38 @@ form input[type="button"]:hover {
 	margin-left: 40%;
 }
 
+#content #posts .post .comments .comment .options {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 3;
+}
+
+#content #posts .post .comments .comment .options a.starred-on {
+	color: #FFFFFF;
+}
+
+#content #posts .post .comments .comment .options a.starred-on:hover {
+	color: #666;
+}
+
+#content #posts .post .comments .comment .options a.starred-off {
+	color: #666;
+}
+
+#content #posts .post .comments .comment .options a.starred-off:hover {
+	color: #FFD94A;
+}
+
+#content #posts .post .comments .comment .options a.trash {
+	color: #666;
+}
+
+#content #posts .post .comments .comment .options a.trash:hover {
+	color: #CC3333;
+}
+
+
 #content #posts .post .comments .comment.starred {
 	background-color: #FFD94A !important;
 }
