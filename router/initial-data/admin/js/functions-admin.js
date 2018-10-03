@@ -791,6 +791,24 @@ function updateCredentials() {
 	})
 }
 
+function updateSendgridApiKey() {
+	var req = new Object()
+	req.apiKey = $("#sendgridApiKey").val()
+
+	var popup = popupLoading()
+
+	Post('/admin/settings/sendgrid', req, function(response) {
+		popupDone(popup)
+	}, function(errorResponse){
+		popup.remove()
+		if (errorResponse.message) {
+			alert(errorResponse.message)
+		} else {
+			alert("error!")
+		}
+	})
+}
+
 // COMMENTS
 
 function acceptComment(comID)

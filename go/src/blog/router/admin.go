@@ -632,6 +632,35 @@ func adminSaveCredentials(c *gin.Context) {
 	ok(c)
 }
 
+type saveSendgridRequest struct {
+	APIKey string `json:"apiKey"`
+}
+
+func adminSaveSendgrid(c *gin.Context) {
+	req := &saveSendgridRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
+
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	config.SendgridAPIKey = req.APIKey
+
+	err = config.Save(configPath)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	ok(c)
+}
+
 func adminLocalizedSettings(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_localized_settings.tmpl", gin.H{
 		"title":                 "Admin - localized settings",

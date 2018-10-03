@@ -169,6 +169,7 @@ func main() {
 		adminGroup.POST("/settings", adminSaveSettings)
 
 		adminGroup.POST("/settings/credentials", adminSaveCredentials)
+		adminGroup.POST("/settings/sendgrid", adminSaveSendgrid)
 
 		adminGroup.GET("/localized", adminLocalizedSettings)
 
