@@ -8,8 +8,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -382,37 +380,6 @@ func main() {
 		posts(c, 0)
 	})
 
-	// // ---------------
-	// // PUBLIC
-	// // ---------------
-
-	// router.GET("/:page", func(c *gin.Context) {
-	// 	page := c.Param("page")
-	// 	log.Println("GET PAGE:", page)
-
-	// 	post, err := types.PostGetWithSlug(page)
-	// 	if err != nil {
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 		return
-	// 	}
-
-	// 	c.HTML(http.StatusOK, "post.tmpl", gin.H{
-	// 		"title": ContextTitle(c),
-	// 		"post":  post,
-	// 	})
-	// })
-
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"success": true,
-	// 	})
-	// 	return
-	// })
-
-	// router.Use(func(c *gin.Context) {
-	// 	legacyProxy.ServeHTTP(c.Writer, c.Request)
-	// 	c.Done()
-	// })
-
 	router.NoRoute(func(c *gin.Context) {
 
 		log.Println("no route:", c.Request.URL.Path)
@@ -521,14 +488,4 @@ func makeArray(args ...interface{}) []interface{} {
 
 func join(arr []string) string {
 	return strings.Join(arr, ",")
-}
-
-// createLegacyProxy returns an http proxy to send
-// requests to the legacy Node.js server
-func createLegacyProxy() *httputil.ReverseProxy {
-	u, err := url.Parse("http://blog-legacy")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return httputil.NewSingleHostReverseProxy(u)
 }

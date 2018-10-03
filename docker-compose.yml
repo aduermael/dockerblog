@@ -7,17 +7,10 @@ services:
     container_name: blog-db
     stdin_open: true
     tty: true
+    restart: always
     volumes:
       # - blog-data:/blog-data # PROD
       - ./sample/db:/blog-data/db # DEV
-
-  redis-cli:
-    image: redis:3.2.9-alpine
-    container_name: blog-redis-cli
-    stdin_open: true
-    tty: true
-    # attach then `redis-cli -h blog-db`
-    command: ash
 
   blog-router:
     build:
@@ -28,6 +21,7 @@ services:
       - "80:80"
     stdin_open: true
     tty: true
+    restart: always
     # environment: # PROD
     #   - GIN_MODE=release # PROD
     volumes:
@@ -47,15 +41,7 @@ services:
     container_name: blog-fbcomments
     stdin_open: true
     tty: true
-
-  blog-legacy:
-    build:
-      context: ./legacy
-    container_name: blog-legacy
-    stdin_open: true
-    tty: true
-    volumes:
-      - blog-data:/blog-data
+    restart: always
 
 volumes:
   blog-data:
