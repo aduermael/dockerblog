@@ -641,8 +641,6 @@ func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLoca
 		nbPages += 1
 	}
 
-	fmt.Println("nbPages:", nbPages)
-
 	return nbPages, nil
 }
 

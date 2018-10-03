@@ -18,6 +18,8 @@ import (
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
 const (
@@ -367,6 +369,34 @@ func main() {
 
 			badRequest(c, err.Error())
 			return
+		}
+
+		config, err := ContextGetConfig(c)
+		if err != nil {
+			serverError(c, err.Error())
+			return
+		}
+
+		// email author of answered comment
+		if comment.AnswerComID != 0 {
+			original, err := types.GetComment(strconv.Itoa(comment.AnswerComID))
+			if err != nil {
+				log.Println("COMMENT EMAIL ERROR:", err)
+			} else {
+				if original.EmailOnAnswer {
+					from := mail.NewEmail("Laurel", "noreply@bloglaurel.com")
+					subject := "En réponse à votre commentaire."
+					to := mail.NewEmail(original.Name, original.Email)
+					plainTextContent := "Réponse à votre commentaire:"
+					htmlContent := "<strong>Réponse à votre commentaire:</strong>"
+					message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+					client := sendgrid.NewSendClient(config.SendgridAPIKey)
+					response, err := client.Send(message)
+					if err != nil {
+						log.Println("SENDGRID ERROR:", err)
+					}
+				}
+			}
 		}
 
 		fmt.Println("comment created, id:", comment.ID)
