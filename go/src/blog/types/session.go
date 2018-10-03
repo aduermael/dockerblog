@@ -114,14 +114,6 @@ func (us *UserSession) load() error {
 		return err
 	}
 
-	// note: not sure if that is necessary
-	// us.Name = userNameDefault
-	// us.Email = userEmailDefault
-	// us.Website = userWebsiteDefault
-	// us.Twitter = userTwitterDefault
-	// us.RememberInfo = userRememberInfoDefault
-	// us.EmailOnAnswer = userEmailOnAnswerDefault
-
 	err = json.Unmarshal(jsonBytes, us)
 	if err != nil {
 		return err
@@ -132,16 +124,33 @@ func (us *UserSession) load() error {
 
 func (us *UserSession) Save() error {
 
-	jsonBytes, err := json.Marshal(us)
-	if err != nil {
-		return err
-	}
+	var jsonBytes []byte
+	var err error
 
 	cookie := &http.Cookie{}
 	cookie.Name = "preferences"
-	cookie.Value = base64.StdEncoding.EncodeToString(jsonBytes)
 	cookie.MaxAge = 0 // never expires
 	// cookie.Secure = true
+
+	// only save that info shouldn't be remembered
+	// + EmailOnAnswer
+	if us.RememberInfo == true {
+		jsonBytes, err = json.Marshal(us)
+		if err != nil {
+			return err
+		}
+	} else {
+		emptyUserSession := &UserSession{}
+		emptyUserSession.RememberInfo = false
+		emptyUserSession.EmailOnAnswer = us.EmailOnAnswer
+
+		jsonBytes, err = json.Marshal(emptyUserSession)
+		if err != nil {
+			return err
+		}
+	}
+
+	cookie.Value = base64.StdEncoding.EncodeToString(jsonBytes)
 
 	http.SetCookie(us.writer, cookie)
 
