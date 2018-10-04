@@ -366,8 +366,8 @@ func main() {
 
 	// receiving comment
 	router.POST("/comment", func(c *gin.Context) {
-		var comment *types.Comment
-		err := c.BindJSON(comment)
+		var comment types.Comment
+		err := c.BindJSON(&comment)
 		if err != nil {
 			badRequest(c, err.Error())
 			return
@@ -407,7 +407,7 @@ func main() {
 				log.Println("COMMENT EMAIL ERROR:", err)
 			} else {
 				if original.EmailOnAnswer {
-					caa := &types.CommentAndAnswer{Original: original, Answer: comment}
+					caa := &types.CommentAndAnswer{Original: original, Answer: &comment}
 
 					html := ""
 					buf := &bytes.Buffer{}
@@ -420,11 +420,11 @@ func main() {
 					buf = &bytes.Buffer{}
 					err = answerEmailTemplateTxt.Execute(buf, caa)
 					if err == nil {
-						html = buf.String()
+						txt = buf.String()
 					}
 
-					from := mail.NewEmail("Laurel", "noreply@bloglaurel.com")
-					subject := comment.Name + " a répondu à votre commentaire. "
+					from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
+					subject := "✨✉️✨ " + comment.Name + " a répondu à votre commentaire sur bloglaurel.com"
 					to := mail.NewEmail(original.Name, original.Email)
 					plainTextContent := txt
 					htmlContent := html
@@ -433,6 +433,8 @@ func main() {
 					_, err := client.Send(message)
 					if err != nil {
 						log.Println("SENDGRID ERROR:", err)
+					} else {
+						// fmt.Printf("SENT TO %s: \n%s\n\n%s\n", original.Email, html, txt)
 					}
 				}
 			}
