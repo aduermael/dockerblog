@@ -49,6 +49,13 @@ type Comment struct {
 	Since string `json:"-"`
 }
 
+// CommentAndAnswer is used to store a comment and its answer
+// (processed by comment answer email templates)
+type CommentAndAnswer struct {
+	Original *Comment
+	Answer   *Comment
+}
+
 // Update ...
 func (c *Comment) Update(newComment *Comment) {
 	c.Valid = newComment.Valid

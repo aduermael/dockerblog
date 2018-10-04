@@ -3,9 +3,11 @@ package main
 import (
 	"blog/types"
 	"blog/util"
+	"bytes"
 	"errors"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -23,12 +25,14 @@ import (
 )
 
 const (
-	serverPort       = ":80"
-	configPath       = "/blog-data/config.json"
-	blogDataRootDir  = "/blog-data"
-	initialDataDir   = "/initial-data"
-	blogFilesRootDir = blogDataRootDir + "/files"
-	hardcodedLang    = "fr"
+	serverPort                  = ":80"
+	configPath                  = "/blog-data/config.json"
+	blogDataRootDir             = "/blog-data"
+	initialDataDir              = "/initial-data"
+	blogFilesRootDir            = blogDataRootDir + "/files"
+	hardcodedLang               = "fr"
+	answerEmailTemplateTxtPath  = "/blog-data/comment-answer-email.txt"
+	answerEmailTemplateHTMLPath = "/blog-data/comment-answer-email.html"
 )
 
 var (
@@ -39,8 +43,8 @@ var (
 	adminThemePath string
 	adminJsPath    string
 
-	answerEmailTemplateTxt  string
-	answerEmailTemplateHtml string
+	answerEmailTemplateTxt  *template.Template
+	answerEmailTemplateHTML *template.Template
 )
 
 func loadTemplates() {
@@ -65,6 +69,20 @@ func loadTemplates() {
 		})
 
 	router.LoadHTMLFiles(templates...)
+
+	// load email templates
+
+	b, err := ioutil.ReadFile(answerEmailTemplateTxtPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	answerEmailTemplateTxt, err = template.New("comment-answer-email-txt").Parse(string(b))
+
+	b, err = ioutil.ReadFile(answerEmailTemplateHTMLPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	answerEmailTemplateHTML, err = template.New("comment-answer-email-html").Parse(string(b))
 }
 
 func main() {
@@ -348,8 +366,8 @@ func main() {
 
 	// receiving comment
 	router.POST("/comment", func(c *gin.Context) {
-		var comment types.Comment
-		err := c.BindJSON(&comment)
+		var comment *types.Comment
+		err := c.BindJSON(comment)
 		if err != nil {
 			badRequest(c, err.Error())
 			return
@@ -389,14 +407,30 @@ func main() {
 				log.Println("COMMENT EMAIL ERROR:", err)
 			} else {
 				if original.EmailOnAnswer {
+					caa := &types.CommentAndAnswer{Original: original, Answer: comment}
+
+					html := ""
+					buf := &bytes.Buffer{}
+					err = answerEmailTemplateHTML.Execute(buf, caa)
+					if err == nil {
+						html = buf.String()
+					}
+
+					txt := ""
+					buf = &bytes.Buffer{}
+					err = answerEmailTemplateTxt.Execute(buf, caa)
+					if err == nil {
+						html = buf.String()
+					}
+
 					from := mail.NewEmail("Laurel", "noreply@bloglaurel.com")
-					subject := "En réponse à votre commentaire."
+					subject := comment.Name + " a répondu à votre commentaire. "
 					to := mail.NewEmail(original.Name, original.Email)
-					plainTextContent := "Réponse à votre commentaire:"
-					htmlContent := "<strong>Réponse à votre commentaire:</strong>"
+					plainTextContent := txt
+					htmlContent := html
 					message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 					client := sendgrid.NewSendClient(config.SendgridAPIKey)
-					response, err := client.Send(message)
+					_, err := client.Send(message)
 					if err != nil {
 						log.Println("SENDGRID ERROR:", err)
 					}
