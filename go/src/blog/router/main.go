@@ -38,6 +38,9 @@ var (
 	jsPath         string
 	adminThemePath string
 	adminJsPath    string
+
+	answerEmailTemplateTxt  string
+	answerEmailTemplateHtml string
 )
 
 func loadTemplates() {
@@ -376,6 +379,8 @@ func main() {
 			serverError(c, err.Error())
 			return
 		}
+
+		// ⚠️ SHOULD BE DONE WITHIN "ACCEPT"
 
 		// email author of answered comment
 		if comment.AnswerComID != 0 {

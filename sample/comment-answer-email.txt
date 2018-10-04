@@ -1,0 +1,7 @@
+{{ .Original.Name }}
+{{ .Original.Content }}
+
+{{ .Answer.Name }}
+{{ .Original.Content }}
+
+Répondre: http://bloglaurel.com/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}

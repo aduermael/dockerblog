@@ -1,0 +1,19 @@
+<!-- original comment -->
+<div style="margin:0 0 10px 0; background-color: #F7F7F7;border-radius: 4px; border: none;padding: 10px;">
+    <div style="padding: 4px; margin: 0">
+        <strong>{{ .Original.Name }}</strong>
+    </div>
+    <div style="padding: 4px; margin: 0;">{{ .Original.Content }}</div>
+</div>
+
+<!-- answer -->
+<div style="margin:0 0 10px 0; background-color: #F7F7F7; border-radius: 4px; border: none; padding:10px;">
+    <div style="padding: 4px; margin:0;">
+        <strong>{{ .Answer.Name }}</strong>
+    </div>
+    <div style="padding: 4px; margin:0">{{ .Answer.Content }}</div>
+</div>
+
+<div style="padding: 4px; margin:0;">
+    <a href="http://bloglaurel.com/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}">Répondre</a>
+</div>
