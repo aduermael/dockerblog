@@ -27,13 +27,22 @@
 					{{ if .post.ShowComments }}
 						<a id="comments" name="comments" class="anchor"></a>
 						<div class="number-of-comments">
-							<a href="/{{.post.Slug}}/{{.post.ID}}#comments">
-								{{ if eq .post.NbComments 1 }}
-									<strong>1</strong> commentaire{{ else if gt .post.NbComments 1 }}<strong>{{ .post.NbComments }}</strong> commentaires
-								{{ else }}
-									Commentaires
-								{{ end }}
-							</a>
+							<div style="width: 33%; float: left;">
+								<a href="#"><span class="far fa-hand-point-left"></span> Avant</a>
+							</div>
+							<div style="width: 33%; float: left;">
+								<a href="/{{.post.Slug}}/{{.post.ID}}#comments">
+									{{ if eq .post.NbComments 1 }}
+										<strong>1</strong> commentaire{{ else if gt .post.NbComments 1 }}<strong>{{ .post.NbComments }}</strong> commentaires
+									{{ else }}
+										Commentaires
+									{{ end }}
+								</a>
+							</div>
+							<div style="width: 33%; float: left;">
+								<a href="#">Après <span class="far fa-hand-point-right"></span></a>
+							</div>
+							<div class="clear"></div>
 						</div>
 						<div class="comments">
 							<div id="empty-div"></div>
@@ -46,11 +55,14 @@
 										<p>{{.Content}}</p>
 										<a href="#" onclick="answerComment({{.ID}});return false;">Answer</a>
 
+										{{ if false }}
+										<!-- TODO: edit in place for admins-->
 										<div class="options">
 											{{ if eq .Valid false }}<a class="primary-action accept" href="#" onclick="acceptComment('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
 											<a id="comment-highlight-btn-{{ .ID }}" class="starred-{{ if .Highlighted }}on{{ else }}off{{ end }}" href="#" onclick="highlightComment('{{ .ID }}'); return false;"><span class="fas fa-star"></span></a>
 											<a class="trash" href="#" onclick="deleteComment('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
 										</div>
+										{{ end }}
 
 									</div>
 								{{ end }}
