@@ -55,6 +55,14 @@ form input {
 	color: #000;
 }
 
+form input:focus {
+	outline: none;
+}
+
+form textarea:focus {
+	outline: none;
+}
+
 form input[type="button"] {
 	border-color: #888;
 	background-color: #aaa;
