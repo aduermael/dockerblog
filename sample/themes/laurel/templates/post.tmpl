@@ -24,11 +24,27 @@
 						{{ end }}
 					{{ end }}
 					 	
-					{{ if .post.ShowComments }}
+					{{ if eq .post.ShowComments false }}
+						<div class="navigation">
+							<div style="width: 33%; float: left;">
+								{{ if ne .post.PreviousPostID -1 }}
+									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> Avant</a>
+								{{ end }}
+							</div>
+							<div style="width: 33%; float: right;">
+								{{ if ne .post.NextPostID -1 }}
+									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">Après <span class="far fa-hand-point-right"></span></a>
+								{{ end }}
+							</div>
+							<div class="clear"></div>
+						</div>
+					{{ else }}
 						<a id="comments" name="comments" class="anchor"></a>
 						<div class="number-of-comments">
 							<div style="width: 33%; float: left;">
-								<a href="#"><span class="far fa-hand-point-left"></span> Avant</a>
+								{{ if ne .post.PreviousPostID -1 }}
+									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> Avant</a>
+								{{ end }}
 							</div>
 							<div style="width: 33%; float: left;">
 								<a href="/{{.post.Slug}}/{{.post.ID}}#comments">
@@ -40,7 +56,9 @@
 								</a>
 							</div>
 							<div style="width: 33%; float: left;">
-								<a href="#">Après <span class="far fa-hand-point-right"></span></a>
+								{{ if ne .post.NextPostID -1 }}
+									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">Après <span class="far fa-hand-point-right"></span></a>
+								{{ end }}
 							</div>
 							<div class="clear"></div>
 						</div>

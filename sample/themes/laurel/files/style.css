@@ -279,6 +279,11 @@ form input[type="button"]:hover {
 
 /* BLOCKS */
 
+#content #posts .post .navigation {
+	font-size: 1.1em;
+	text-align: center;
+}
+
 #content #posts .post .number-of-comments {
 	font-size: 1.1em;
 	text-align: center;

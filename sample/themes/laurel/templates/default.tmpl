@@ -29,12 +29,14 @@
 									{{ if ne .url "" }}</a>{{end}}	
 								</div>	
 							{{ end }}	
-						{{ end }}	
+						{{ end }}
+						{{ if .ShowComments }}
 						<div class="number-of-comments">
 							<a href="/{{.Slug}}/{{.ID}}#comments">
 								{{ if eq .NbComments 1 }}<strong>1</strong> commentaire{{ else if gt .NbComments 1 }}<strong>{{ .NbComments }}</strong> commentaires{{ else }}Commentaires{{ end }}
 							</a>
 						</div>
+						{{ end }}
 					</div>	
 				{{ end }}	
 			</div>

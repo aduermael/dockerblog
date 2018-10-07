@@ -68,6 +68,15 @@ type Post struct {
 	AcceptComments          bool        `json:"acceptComs,omitempty"`
 	CommentsRequireApproval bool        `json:"approveComs,omitempty"`
 
+	// previous/next post information
+	// can be empty, used to display previous/next links in UI
+	PreviousPostID    int    `json:"previousID,omitempty"`
+	PreviousPostSlug  string `json:"previousSlug,omitempty"`
+	PreviousPostTitle string `json:"previousTitle,omitempty"`
+	NextPostID        int    `json:"nextID,omitempty"`
+	NextPostSlug      string `json:"nextSlug,omitempty"`
+	NextPostTitle     string `json:"nextTitle,omitempty"`
+
 	FBPostID string `json:"fbPostID,omitempty"` // to sync with FB posts
 	IsPage   bool   `json:"isPage,omitempty"`   // true if post is a page (not in blog feed, not in RSS)
 	// Since is a formatted duration that can be
@@ -131,6 +140,12 @@ var (
 			return result
 		end
 
+		-- get default values
+		-- use default values for comments if can't be found
+		local showComsDefault = redis.call('hget', 'config', 'showComs')
+		local acceptComsDefault = redis.call('hget', 'config', 'acceptComs')
+		local approveComsDefault = redis.call('hget', 'config', 'approveComs')
+
 		-- TODO: stop using harcoded lang
 		local lang = "fr"
 
@@ -171,6 +186,17 @@ var (
 			-- remove if empty to avoid table to be serialized as '{}'
 			if next(post_data.blocks) == nil then
 				post_data.blocks = nil
+			end
+
+			-- use default values for comments if can't be found
+			if post_data.showComs == nil then
+				post_data.showComs = showComsDefault
+			end
+			if post_data.acceptComs == nil then
+				post_data.acceptComs = acceptComsDefault
+			end
+			if post_data.approveComs == nil then
+				post_data.approveComs = approveComsDefault
 			end
 
 			-- convert number strings to actual numbers
@@ -222,6 +248,17 @@ var (
 			post_data.blocks = nil
 		end
 
+		-- use default values for comments if can't be found
+		if post_data.showComs == nil then
+			post_data.showComs = redis.call('hget', 'config', 'showComs')
+		end
+		if post_data.acceptComs == nil then
+			post_data.acceptComs = redis.call('hget', 'config', 'acceptComs')
+		end
+		if post_data.approveComs == nil then
+			post_data.approveComs = redis.call('hget', 'config', 'approveComs')
+		end
+
 		-- convert number strings to actual numbers
 		post_data.ID = tonumber(post_data.ID)
 		post_data.date = tonumber(post_data.date)
@@ -263,6 +300,55 @@ var (
 		end
 
 		post_data.comments = comments
+
+		-- get previous and next posts
+
+		if post_data.lang ~= nil then
+
+			local posts_key = "posts_" .. post_data.lang
+			local rank = redis.call('zrank', posts_key, post_id)
+			-- zrange could return less than 3 results
+			-- if there's no post before or after requested post
+			local neighbor_ids = redis.call('zrange', posts_key, rank - 1, rank + 1)
+			
+			-- lookingForPrevious == false means looking for next one
+			local lookingForPrevious = true
+
+			local previousPostID = nil
+			local nextPostID = nil
+
+			for _, neighbor_id in ipairs(neighbor_ids) do
+				if neighbor_id == post_id then
+					lookingForPrevious = false
+				elseif lookingForPrevious then 
+					previousPostID = neighbor_id
+				else 
+					nextPostID = neighbor_id
+				end
+			end
+
+			if previousPostID ~= nil then
+				res = redis.call('hmget', previousPostID, 'ID', 'slug', 'title')
+				post_data.previousID = tonumber(res[1])
+				post_data.previousSlug = res[2]
+				post_data.previousTitle = res[3]
+			else 
+				post_data.previousID = -1
+			end
+
+			if nextPostID ~= nil then
+				res = redis.call('hmget', nextPostID, 'ID', 'slug', 'title')
+				post_data.nextID = tonumber(res[1])
+				post_data.nextsSlug = res[2]
+				post_data.nextTitle = res[3]
+			else 
+				post_data.nextID = -1
+			end
+
+		else 
+			post_data.previousID = -1
+			post_data.nextID = -1
+		end -- post_data.lang != nil
 
 		local jsonResponse = cjson.encode(post_data)
 		-- make sure empty comments table is encoded into json array
@@ -313,6 +399,17 @@ var (
 		-- remove if empty to avoid table to be serialized as '{}'
 		if next(post_data.blocks) == nil then
 			post_data.blocks = nil
+		end
+
+		-- use default values for comments if can't be found
+		if post_data.showComs == nil then
+			post_data.showComs = redis.call('hget', 'config', 'showComs')
+		end
+		if post_data.acceptComs == nil then
+			post_data.acceptComs = redis.call('hget', 'config', 'acceptComs')
+		end
+		if post_data.approveComs == nil then
+			post_data.approveComs = redis.call('hget', 'config', 'approveComs')
 		end
 
 		-- convert number strings to actual numbers
