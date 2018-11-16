@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/contrib/static"
@@ -33,6 +34,7 @@ const (
 	hardcodedLang               = "fr"
 	answerEmailTemplateTxtPath  = "/blog-data/comment-answer-email.txt"
 	answerEmailTemplateHTMLPath = "/blog-data/comment-answer-email.html"
+	rssTemplatePath             = "/blog-data/rss.tmpl"
 )
 
 var (
@@ -45,6 +47,7 @@ var (
 
 	answerEmailTemplateTxt  *template.Template
 	answerEmailTemplateHTML *template.Template
+	rssTemplate             *template.Template
 )
 
 func loadTemplates() {
@@ -70,9 +73,17 @@ func loadTemplates() {
 
 	router.LoadHTMLFiles(templates...)
 
+	// load rss template
+
+	b, err := ioutil.ReadFile(rssTemplatePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	rssTemplate, err = template.New("rss").Parse(string(b))
+
 	// load email templates
 
-	b, err := ioutil.ReadFile(answerEmailTemplateTxtPath)
+	b, err = ioutil.ReadFile(answerEmailTemplateTxtPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -121,6 +132,7 @@ func main() {
 		"sameDate":           sameDate,
 		"pagesAroundCurrent": pagesAroundCurrent,
 		"join":               join,
+		"rfc1123":            rfc1123,
 	})
 
 	loadTemplates()
@@ -143,6 +155,18 @@ func main() {
 	// ADMIN
 
 	router.POST("admin-login", adminLogin)
+
+	rssGroup := router.Group("/rss")
+	{
+		// TODO: support different languages
+		rssGroup.GET("/", func(c *gin.Context) {
+			rss(c)
+		})
+
+		rssGroup.GET("/:lang", func(c *gin.Context) {
+			rss(c)
+		})
+	}
 
 	adminGroup := router.Group("/admin")
 	{
@@ -560,4 +584,8 @@ func makeArray(args ...interface{}) []interface{} {
 
 func join(arr []string) string {
 	return strings.Join(arr, ",")
+}
+
+func rfc1123(utcSec int) string {
+	return time.Unix(int64(utcSec/1000), 0).Format(time.RFC1123)
 }

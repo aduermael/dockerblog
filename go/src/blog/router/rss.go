@@ -1,0 +1,55 @@
+package main
+
+import (
+	"bytes"
+	"fmt"
+	"net/http"
+	"time"
+
+	"blog/types"
+
+	"github.com/gin-gonic/gin"
+)
+
+func rss(c *gin.Context) {
+	fmt.Println("TEST")
+
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	posts, err := types.PostsList(false, 0, config.PostsPerPage, -1, -1, config.TimeLocation, false)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	types.PostComputeSince(posts)
+
+	now := time.Now()
+
+	// application/rss+xml
+
+	buf := &bytes.Buffer{}
+	err = rssTemplate.Execute(buf, gin.H{
+		"title":       ContextTitle(c),
+		"description": "Description",
+		"buildDate":   int(now.Unix() * 1000),
+		"posts":       posts,
+	})
+
+	fmt.Println(buf.String())
+	c.Abort()
+	// if err == nil {
+	// 	txt = buf.String()
+	// }
+
+	// c.HTML(http.StatusOK, "rss.tmpl", gin.H{
+	// 	"title":       ContextTitle(c),
+	// 	"description": "Description",
+	// 	"buildDate":   int(now.Unix() * 1000),
+	// 	"posts":       posts,
+	// })
+}
