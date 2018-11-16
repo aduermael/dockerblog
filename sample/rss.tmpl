@@ -17,7 +17,7 @@
 						<p>{{ .text }}</p>
 					{{ else if eq .type "image" }}	
 						{{ if ne .url "" }}<a href="{{.url}}">{{end}}	
-						<img src="{{ .path }}" alt="{{.description}}">	
+						<img src="https://bloglaurel.com{{ .path }}" alt="{{.description}}">	
 						{{ if ne .url "" }}</a>{{end}}	
 						</div>	
 					{{ end }}

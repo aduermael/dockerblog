@@ -30,6 +30,7 @@ services:
       - ./sample/config.json:/blog-data/config.json # DEV
       - ./sample/comment-answer-email.html:/blog-data/comment-answer-email.html # DEV
       - ./sample/comment-answer-email.txt:/blog-data/comment-answer-email.txt # DEV
+      - ./sample/rss.tmpl:/blog-data/rss.tmpl # DEV
       - ./sample/files:/blog-data/files # DEV
       - ./router/initial-data/admin:/blog-data/admin # DEV
       - ./router/initial-data/js:/blog-data/js # DEV

@@ -30,9 +30,8 @@ func rss(c *gin.Context) {
 
 	now := time.Now()
 
-	// application/rss+xml
-
 	buf := &bytes.Buffer{}
+
 	err = rssTemplate.Execute(buf, gin.H{
 		"title":       ContextTitle(c),
 		"description": "Description",
@@ -40,16 +39,10 @@ func rss(c *gin.Context) {
 		"posts":       posts,
 	})
 
-	fmt.Println(buf.String())
-	c.Abort()
-	// if err == nil {
-	// 	txt = buf.String()
-	// }
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
-	// c.HTML(http.StatusOK, "rss.tmpl", gin.H{
-	// 	"title":       ContextTitle(c),
-	// 	"description": "Description",
-	// 	"buildDate":   int(now.Unix() * 1000),
-	// 	"posts":       posts,
-	// })
+	c.Data(http.StatusOK, "application/rss+xml", buf.Bytes())
 }

@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	textTemplate "text/template"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
@@ -47,7 +48,7 @@ var (
 
 	answerEmailTemplateTxt  *template.Template
 	answerEmailTemplateHTML *template.Template
-	rssTemplate             *template.Template
+	rssTemplate             *textTemplate.Template
 )
 
 func loadTemplates() {
@@ -79,7 +80,22 @@ func loadTemplates() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	rssTemplate, err = template.New("rss").Parse(string(b))
+	rssTemplate = textTemplate.New("rss")
+
+	rssTemplate.Funcs(textTemplate.FuncMap{
+		"array":              makeArray,
+		"incr":               incr,
+		"decr":               decr,
+		"sameDate":           sameDate,
+		"pagesAroundCurrent": pagesAroundCurrent,
+		"join":               join,
+		"rfc1123":            rfc1123,
+	})
+
+	rssTemplate, err = rssTemplate.Parse(string(b))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// load email templates
 

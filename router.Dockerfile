@@ -26,6 +26,7 @@ COPY router/initial-data /initial-data
 COPY sample/config.json /initial-data/config.json
 COPY sample/comment-answer-email.html /initial-data/comment-answer-email.html
 COPY sample/comment-answer-email.txt /initial-data/comment-answer-email.txt
+COPY sample/rss.tmpl /initial-data/rss.tmpl
 COPY sample/themes/default /initial-data/themes/default
 
 # -----------------------
