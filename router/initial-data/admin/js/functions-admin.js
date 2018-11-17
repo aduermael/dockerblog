@@ -193,6 +193,9 @@ function showToolBar(sender) {
 	} else if ($(sender).hasClass("block_html")) {
 		$("#blockToolBar").insertBefore(sender)
 		$("#blockToolBar").show()
+	} else if ($(sender).hasClass("block_gallery")) {
+		$("#blockToolBar").insertBefore(sender)
+		$("#blockToolBar").show()
 	} else {
 		return
 	}
@@ -423,8 +426,8 @@ var uploadImageCallback = function(data) {
 	if(res.success) {
 		var blockName = "block" + nextBlock()
 	  	var block = $("<div onclick=\"showToolBar(this)\" id=\"" + blockName +"\" class=\"block block_image\"><img src=\"" + res.filepaths[0] + "\"/>" +
-	  		"<input placeholder=\"URL\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'URL'\"/>" +
-	  		"<input placeholder=\"Description\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'Description'\"/>" +
+	  		"<input placeholder=\"URL\" id=\"" + blockName + "-url\" name=\"" + blockName + "-url\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'URL'\" autocomplete=\"off\"/>" +
+	  		"<input placeholder=\"Description\" id=\"" + blockName + "-desc\" name=\"" + blockName + "-desc\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'Description'\" autocomplete=\"off\"/>" +
 	  		"</div>")
 		block.appendTo($("#blocks"))
 		block.click()
@@ -459,6 +462,13 @@ var sendImage = function(sender) {
 function addHtmlBlock(sender) {
   	var blockName = "block" + nextBlock();
   	var block = $("<textarea onfocus=\"showToolBar(this)\" id=\"" + blockName +"\" class=\"block block_html\"></textarea>")
+	block.appendTo($("#blocks"))
+	block.focus()
+}
+
+function addGalleryBlock(sender) {
+  	var blockName = "block" + nextBlock();
+  	var block = $("<div onclick=\"showToolBar(this)\" id=\"" + blockName +"\" class=\"block block_gallery\">Gallery</div>");
 	block.appendTo($("#blocks"))
 	block.focus()
 }
