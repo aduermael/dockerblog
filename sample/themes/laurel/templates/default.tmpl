@@ -22,6 +22,8 @@
 						{{ range .Blocks }}	
 							{{ if eq .type "text" }}	
 								<div class="block text"><p>{{ .text }}</p></div>	
+							{{ else if eq .type "html" }}
+								<div class="block html">{{ .data }}</div>
 							{{ else if eq .type "image" }}	
 								<div class="block image">	
 									{{ if ne .url "" }}<a href="{{.url}}">{{end}}	

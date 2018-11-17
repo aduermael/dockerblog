@@ -34,6 +34,8 @@
 					{{ range $id, $block := .Blocks }}
 						{{ if ($block.IsOfType "text") }}
 							<div id="block{{ $id }}" class="block block_text">{{ .ValueForKey "text" }}</div>
+						{{ else if ($block.IsOfType "html") }}
+							<textarea onfocus="showToolBar(this)" id="block{{ $id }}" class="block block_html">{{ .ValueForKey "data" }}</textarea>
 						{{ else if ($block.IsOfType "image") }}
 							<div onclick="showToolBar(this)" id="block{{ $id }}" class="block block_image">
 								<img src="{{ .ValueForKey "path" }}">
@@ -68,7 +70,7 @@
 				<span class="fas fa-plus"></span>
 				<a href="#" onclick="addTextBlock(this);return false;">Text</a>
 				<a href="#" onclick="addImageBlock(this);return false;">Image</a>
-				<a href="#">HTML</a>
+				<a href="#" onclick="addHtmlBlock(this);return false;">HTML</a>
 				<a href="#">File</a>
 				<a href="#">Gallery</a>
 			</div>

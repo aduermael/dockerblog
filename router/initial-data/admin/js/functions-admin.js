@@ -176,10 +176,21 @@ function showToobarForTextEditor(editor) {
 	$("#textTools").show()
 }
 
+function showToobarForHtmlEditor(editor) {
+	activeEditor = editor
+	toolBarRetainer = editor
+	$("#blockToolBar").insertBefore(editor.container)
+	$("#blockToolBar").show()
+	$("#textTools").hide()
+}
+
 function showToolBar(sender) {
 	$("#textTools").hide()
 	// image
 	if ($(sender).hasClass("block_image")) {
+		$("#blockToolBar").insertBefore(sender)
+		$("#blockToolBar").show()
+	} else if ($(sender).hasClass("block_html")) {
 		$("#blockToolBar").insertBefore(sender)
 		$("#blockToolBar").show()
 	} else {
@@ -340,21 +351,15 @@ function initTextBlock(block) {
 	return editor
 }
 
-function addTextBlock(sender)
-{
+function addTextBlock(sender) {
   	var blockName = "block" + nextBlock();
-
   	var block = $("<div id=\"" + blockName +"\" class=\"block block_text\"><p><br></p></div>");
-
 	block.appendTo($("#blocks"))
-
 	var editor = initTextBlock(block)
-
 	editor.focus()
 }
 
-function addImageBlock(sender)
-{
+function addImageBlock(sender) {
   	$('#imageFile').click();
 }
 
@@ -362,10 +367,7 @@ function addImageBlock(sender)
 function initExistingBlocks() {
 	$('#blocks').children().each(function ()
 	{
-		if ($(this).hasClass("block_text"))
-		{
-			initTextBlock($(this))
-		}
+		if ($(this).hasClass("block_text")) { initTextBlock($(this)) } 
 	})
 }
 
@@ -454,17 +456,14 @@ var sendImage = function(sender) {
 	$(sender).val("")
 }
 
-
-
-
-/*
-function addHtmlBlock(sender)
-{
-  nextBlock++;
-  var blockName = "block" + nextBlock;
-  $("#content_blocks").append("<div id=\"" + blockName +"\" class=\"block_html sortable\" style=\"margin-bottom: 10px; border-radius: 5px;outline: none;\"><textarea>Text</textarea></div>");
+function addHtmlBlock(sender) {
+  	var blockName = "block" + nextBlock();
+  	var block = $("<textarea onfocus=\"showToolBar(this)\" id=\"" + blockName +"\" class=\"block block_html\"></textarea>")
+	block.appendTo($("#blocks"))
+	block.focus()
 }
 
+/*
 function addGalleryBlock(sender)
 {
 	nextBlock++;
@@ -684,7 +683,7 @@ function sendPost(sender)
 		else if ($(this).hasClass("block_html"))
 		{
 			block.type = "html"
-			block.data = $(this).children('textarea')[0].value
+			block.data = $(this).val()
 		}
 		else if ($(this).hasClass("block_gallery"))
 		{
