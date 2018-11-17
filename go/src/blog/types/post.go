@@ -303,7 +303,7 @@ var (
 
 		-- get previous and next posts
 
-		if post_data.lang ~= nil then
+		if post_data.lang ~= nil and post_data.isPage == false then
 
 			local posts_key = "posts_" .. post_data.lang
 			local rank = redis.call('zrank', posts_key, post_id)

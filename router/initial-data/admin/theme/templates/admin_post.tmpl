@@ -33,9 +33,9 @@
 				{{ with .post }}
 					{{ range $id, $block := .Blocks }}
 						{{ if ($block.IsOfType "text") }}
-							<div id="block{{ $id }}" class="block block_text">{{ .ValueForKey "text" }}</div>
+							<div id="block{{ $id }}" class="block block_text">{{ $block.text }}</div>
 						{{ else if ($block.IsOfType "html") }}
-							<textarea onfocus="showToolBar(this)" id="block{{ $id }}" class="block block_html">{{ .ValueForKey "data" }}</textarea>
+							<textarea onfocus="showToolBar(this)" id="block{{ $id }}" class="block block_html">{{ $block.data }}</textarea>
 						{{ else if ($block.IsOfType "image") }}
 							<div onclick="showToolBar(this)" id="block{{ $id }}" class="block block_image">
 								<img src="{{ .ValueForKey "path" }}">
