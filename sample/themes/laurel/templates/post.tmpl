@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ .lang }}">
  	{{ template "head" . }}
+
 	<body>
 	 	{{ template "header" . }}
 		{{ template "menu" . }}
+
 		<div id="content">
 		 	<div id="posts">
 			 	<div class="post">
@@ -43,12 +45,12 @@
 					{{ else }}
 						<a id="comments" name="comments" class="anchor"></a>
 						<div class="number-of-comments">
-							<div style="width: 33%; float: left;">
+							<div style="width: 33%; min-height: 10px; float: left;">
 								{{ if ne .post.PreviousPostID -1 }}
 									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> Avant</a>
 								{{ end }}
 							</div>
-							<div style="width: 33%; float: left;">
+							<div style="width: 33%; min-height: 10px; float: left;">
 								<a href="/{{.post.Slug}}/{{.post.ID}}#comments">
 									{{ if eq .post.NbComments 1 }}
 										<strong>1</strong> commentaire{{ else if gt .post.NbComments 1 }}<strong>{{ .post.NbComments }}</strong> commentaires
@@ -138,5 +140,7 @@
 			</div>
 		</div><!-- content -->
 		{{ template "footer" . }}
+
+		{{ template "reader" . }}
 	</body>
 </html>

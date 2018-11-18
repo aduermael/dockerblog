@@ -5,6 +5,7 @@
 		{{ $months := array "Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet" "Aout" "Septembre" "Octobre" "Novembre" "Décembre" }}
 		{{ template "header" . }}
 		{{ template "menu" . }}
+
 		<div id="content">
 			{{ if and .month .year }}
 				<div id="archives-info">
@@ -68,7 +69,10 @@
 					</div>
 				{{ end }}
 			{{ end }}
-		</div>	
-		{{ template "footer" . }}	
+		</div><!-- end of content -->
+
+		{{ template "footer" . }}
+
+		{{ template "reader" . }}
 	</body>	
  </html>
