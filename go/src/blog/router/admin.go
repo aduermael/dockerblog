@@ -277,7 +277,7 @@ func adminEditPost(c *gin.Context) {
 		return
 	}
 
-	post, err := types.PostGet(c.Param("id"))
+	post, _, err := types.PostGet(c.Param("id"))
 	if err != nil {
 		serverError(c, err.Error())
 		return
@@ -302,7 +302,7 @@ func adminEditPage(c *gin.Context) {
 		return
 	}
 
-	post, err := types.PostGet(c.Param("id"))
+	post, _, err := types.PostGet(c.Param("id"))
 	if err != nil {
 		serverError(c, err.Error())
 		return
@@ -329,15 +329,15 @@ func adminEditPage(c *gin.Context) {
 }
 
 func adminDeletePost(c *gin.Context) {
-	post := types.Post{}
-	err := c.BindJSON(&post)
+	post := &types.Post{}
+	err := c.BindJSON(post)
 	if err != nil {
 		badRequest(c, "incorrect data")
 		return
 	}
 
 	// post is incomplete at this stage, get it from database
-	post, err = types.PostGet(strconv.Itoa(post.ID))
+	post, _, err = types.PostGet(strconv.Itoa(post.ID))
 	if err != nil {
 		serverError(c, err.Error())
 		return

@@ -93,6 +93,8 @@ type Post struct {
 	// "name" field won't be used anymore when saving. Keeping
 	// it to generate correct slugs for existing pages.
 	Name string `json:"name,omitempty"`
+	//
+	Error string `json:"error,omitempty"`
 }
 
 var (
@@ -236,7 +238,9 @@ var (
 		local res = redis.call('hgetall', post_id)
 		-- check if not found
 		if res[1] == nil then
-			error("can't find post for id")
+			local res = {}
+			res.error = "not found"
+			return cjson.encode(res)
 		end
 
 		local post_data = toStruct(res)
@@ -388,7 +392,9 @@ var (
 			-- legacy
 			post_id = redis.call('hget', 'pages_fr', post_slug)
 			if post_id == nil then
-				error("can't find post for slug")
+				local res = {}
+				res.error = "not found"
+				return cjson.encode(res)
 			end
 		end
 
@@ -417,6 +423,12 @@ var (
 		post_data.date = tonumber(post_data.date)
 		post_data.update = tonumber(post_data.update)
 		post_data.nbComs = tonumber(post_data.nbComs)
+
+		-- convert boolean strings to actual booleans
+		post_data.showComs = post_data.showComs ~= nil and post_data.showComs == "1"
+		post_data.acceptComs = post_data.acceptComs ~= nil and post_data.acceptComs == "1"
+		post_data.approveComs = post_data.approveComs ~= nil and post_data.approveComs == "1"
+		post_data.isPage = post_data.isPage ~= nil and post_data.isPage == "1"
 
 		-- get comments
 
@@ -447,6 +459,57 @@ var (
 		end
 
 		post_data.comments = comments
+
+		-- get previous and next posts
+
+		local res
+
+		if post_data.lang ~= nil and post_data.isPage == false then
+
+			local posts_key = "posts_" .. post_data.lang
+			local rank = redis.call('zrank', posts_key, post_id)
+			-- zrange could return less than 3 results
+			-- if there's no post before or after requested post
+			local neighbor_ids = redis.call('zrange', posts_key, rank - 1, rank + 1)
+			
+			-- lookingForPrevious == false means looking for next one
+			local lookingForPrevious = true
+
+			local previousPostID = nil
+			local nextPostID = nil
+
+			for _, neighbor_id in ipairs(neighbor_ids) do
+				if neighbor_id == post_id then
+					lookingForPrevious = false
+				elseif lookingForPrevious then 
+					previousPostID = neighbor_id
+				else 
+					nextPostID = neighbor_id
+				end
+			end
+
+			if previousPostID ~= nil then
+				res = redis.call('hmget', previousPostID, 'ID', 'slug', 'title')
+				post_data.previousID = tonumber(res[1])
+				post_data.previousSlug = res[2]
+				post_data.previousTitle = res[3]
+			else 
+				post_data.previousID = -1
+			end
+
+			if nextPostID ~= nil then
+				res = redis.call('hmget', nextPostID, 'ID', 'slug', 'title')
+				post_data.nextID = tonumber(res[1])
+				post_data.nextsSlug = res[2]
+				post_data.nextTitle = res[3]
+			else 
+				post_data.nextID = -1
+			end
+
+		else 
+			post_data.previousID = -1
+			post_data.nextID = -1
+		end -- post_data.lang != nil
 
 		local jsonResponse = cjson.encode(post_data)
 		-- make sure empty comments table is encoded into json array
@@ -632,31 +695,37 @@ func (p *Post) Delete() error {
 }
 
 // PostGet returns a post for given ID
-func PostGet(ID string) (Post, error) {
+// returns Post, found, error
+func PostGet(ID string) (*Post, bool, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
+	post := &Post{}
+
 	res, err := scriptPostGet.Do(redisConn, ID)
 	if err != nil {
-		return Post{}, err
+		return post, true, err
 	}
 
 	byteSlice, ok := res.([]byte)
 
 	if !ok {
-		return Post{}, errors.New("can't cast response")
+		return post, true, errors.New("can't cast response")
 	}
 
-	var post Post
+	err = json.Unmarshal(byteSlice, post)
 
-	err = json.Unmarshal(byteSlice, &post)
 	if err != nil {
-		return Post{}, err
+		return post, true, err
+	}
+
+	if post.Error == "not found" {
+		return post, false, errors.New("not found")
 	}
 
 	post.Comments = OrderAndIndentComments(post.Comments)
 
-	return post, nil
+	return post, true, nil
 }
 
 // PostGetWithSlug returns the post indexed
@@ -666,33 +735,37 @@ func PostGet(ID string) (Post, error) {
 // currently a "post" is a post in the blog feed (posts sorted by creation date)
 // a "page" is not part of this feed, and indexed by title slug (while "posts" are not)
 // we should be able to look for any kind of post by ID or by title slug
-func PostGetWithSlug(slug string) (Post, error) {
+func PostGetWithSlug(slug string) (*Post, bool, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
+	post := &Post{}
+
 	res, err := scriptPostGetWithSlug.Do(redisConn, slug)
 	if err != nil {
-		return Post{}, err
+		return post, true, err
 	}
 
 	byteSlice, ok := res.([]byte)
 
 	if !ok {
-		return Post{}, errors.New("can't cast response")
+		return post, true, errors.New("can't cast response")
 	}
 
-	var post Post
-
-	err = json.Unmarshal(byteSlice, &post)
+	err = json.Unmarshal(byteSlice, post)
 	if err != nil {
 		if err != nil {
-			return Post{}, err
+			return post, true, err
 		}
+	}
+
+	if post.Error == "not found" {
+		return post, false, errors.New("not found")
 	}
 
 	post.Comments = OrderAndIndentComments(post.Comments)
 
-	return post, nil
+	return post, true, nil
 }
 
 // Number of pages for posts with given parameters

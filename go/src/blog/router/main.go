@@ -352,6 +352,7 @@ func main() {
 	{
 		postGroup.GET("/:slug/:id", func(c *gin.Context) {
 
+			slug := c.Param("slug")
 			ID := c.Param("id")
 			validID, err := regexp.MatchString("[0-9]+", ID)
 			if err != nil {
@@ -360,9 +361,25 @@ func main() {
 			}
 
 			if validID {
-				post, err := types.PostGet(ID)
+				post, found, err := types.PostGet(ID)
 				if err != nil {
-					c.AbortWithError(http.StatusInternalServerError, err)
+					if found == false {
+						// try with slug
+						if slug != "" {
+							post, _, err := types.PostGetWithSlug(slug)
+							if err == nil {
+								movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
+								c.Redirect(http.StatusMovedPermanently, movedTo)
+								return
+							}
+						}
+
+						// couldn't find post, redirect to "/"
+						c.Redirect(http.StatusMovedPermanently, "/")
+
+					} else {
+						c.AbortWithError(http.StatusInternalServerError, err)
+					}
 					return
 				}
 
@@ -525,7 +542,7 @@ func main() {
 		if postIDStr != "" {
 			_, err := strconv.Atoi(postIDStr)
 			if err == nil {
-				post, err := types.PostGet(postIDStr)
+				post, _, err := types.PostGet(postIDStr)
 				if err == nil {
 					movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
 					c.Redirect(http.StatusMovedPermanently, movedTo)
@@ -533,9 +550,10 @@ func main() {
 				}
 			}
 		}
+
 		// then try with slug
 		if postSlug != "" {
-			post, err := types.PostGetWithSlug(postSlug)
+			post, _, err := types.PostGetWithSlug(postSlug)
 			if err == nil {
 				movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
 				c.Redirect(http.StatusMovedPermanently, movedTo)
