@@ -436,7 +436,7 @@ var uploadImageCallback = function(data) {
 	
 	if(res.success) {
 		var blockName = "block" + nextBlock()
-	  	var block = $("<div onclick=\"showToolBar(this)\" id=\"" + blockName +"\" class=\"block block_image\"><img src=\"" + res.filepaths[0] + "\"/>" +
+	  	var block = $("<div onclick=\"showToolBar(this)\" id=\"" + blockName +"\" class=\"block block_image\"><img src=\"" + res.filepaths[0] + "\" " + (res.retinapaths.length > 0 ? "srcset=\"" + res.retinapaths[0] + " 2x\"" : "") + "/>" +
 	  		"<input placeholder=\"URL\" id=\"" + blockName + "-url\" name=\"" + blockName + "-url\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'URL'\" autocomplete=\"off\"/>" +
 	  		"<input placeholder=\"Description\" id=\"" + blockName + "-desc\" name=\"" + blockName + "-desc\" type=\"text\" onfocus=\"this.placeholder = ''\" onblur=\"this.placeholder = 'Description'\" autocomplete=\"off\"/>" +
 	  		"</div>")

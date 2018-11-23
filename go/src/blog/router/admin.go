@@ -2,7 +2,11 @@ package main
 
 import (
 	"blog/types"
+	"errors"
 	"fmt"
+	"image"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"io/ioutil"
 	"mime"
@@ -13,6 +17,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/nfnt/resize"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
@@ -442,6 +448,8 @@ func adminUpload(c *gin.Context) {
 	}
 
 	filePaths := make([]string, 0)
+	// in case there are retina images to save
+	retinaPaths := make([]string, 0)
 
 	for {
 		mimePart, err := multipart.NextPart()
@@ -531,26 +539,98 @@ func adminUpload(c *gin.Context) {
 			serverError(c, "can't store file (6) ("+destination+") - "+err.Error())
 			return
 		}
-
 		defer out.Close()
 
-		// write the content from POST to the file
-		_, err = io.Copy(out, mimePart)
-		if err != nil {
-			serverError(c, "can't store file (7)")
-			return
+		// RETINA
+		if config.ImageImportRetina && (ext == ".jpg" || ext == ".jpeg" || ext == ".png") {
+			imageRetina, _, err := image.Decode(mimePart)
+			if err != nil {
+				serverError(c, "can't store file (5.2)")
+				return
+			}
+
+			width := uint(imageRetina.Bounds().Dx() / 2)
+			height := uint(imageRetina.Bounds().Dy() / 2)
+
+			imageNormal := resize.Resize(width, height, imageRetina, resize.Lanczos3)
+
+			switch ext {
+			case ".jpg":
+				err = jpeg.Encode(out, imageNormal, &jpeg.Options{Quality: 100})
+			case ".jpeg":
+				err = jpeg.Encode(out, imageNormal, &jpeg.Options{Quality: 100})
+			case ".png":
+				err = png.Encode(out, imageNormal)
+			default:
+				err = errors.New("unknown extension")
+			}
+
+			if err != nil {
+				serverError(c, "can't store normal image")
+				return
+			}
+
+			fmt.Println("file uploaded successfully:", newName)
+			filePaths = append(filePaths, filepath.Join("/files", year, month, newName))
+
+			// retina file
+
+			retinaName := ""
+			if suffixCount > 0 {
+				retinaName = fname + "-" + strconv.Itoa(suffixCount) + "@2x" + ext
+			} else {
+				retinaName = fname + "@2x" + ext
+			}
+
+			destinationRetina := filepath.Join(dirPath, retinaName)
+			outRetina, err := os.Create(destinationRetina)
+			if err != nil {
+				serverError(c, "can't store retina image ("+destinationRetina+") - "+err.Error())
+				return
+			}
+			defer out.Close()
+
+			switch ext {
+			case ".jpg":
+				err = jpeg.Encode(outRetina, imageRetina, &jpeg.Options{Quality: 100})
+			case ".jpeg":
+				err = jpeg.Encode(outRetina, imageRetina, &jpeg.Options{Quality: 100})
+			case ".png":
+				err = png.Encode(outRetina, imageRetina)
+			default:
+				err = errors.New("unknown extension")
+			}
+
+			if err != nil {
+				serverError(c, "can't write retina image")
+				return
+			}
+
+			fmt.Println("file uploaded successfully:", retinaName)
+			retinaPaths = append(retinaPaths, filepath.Join("/files", year, month, retinaName))
+
+		} else {
+
+			// write the content from POST to the file
+			_, err = io.Copy(out, mimePart)
+			if err != nil {
+				serverError(c, "can't store file (7)")
+				return
+			}
+
+			fmt.Println("file uploaded successfully:", newName)
+			filePaths = append(filePaths, filepath.Join("/files", year, month, newName))
 		}
 
-		fmt.Println("File uploaded successfully: ")
-		fmt.Println(newName)
-
-		filePaths = append(filePaths, filepath.Join("/files", year, month, newName))
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success":   true,
-		"filepaths": filePaths,
-	})
+	response := gin.H{
+		"success":     true,
+		"filepaths":   filePaths,
+		"retinapaths": retinaPaths,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func adminSettings(c *gin.Context) {
