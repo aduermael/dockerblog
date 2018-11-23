@@ -388,14 +388,20 @@ var (
 
 		local post_id = redis.call('hget', kSlugs, post_slug)
 
-		if post_id == nil then
+		local force_page = false
+
+		if post_id == false then
 			-- legacy
 			post_id = redis.call('hget', 'pages_fr', post_slug)
-			if post_id == nil then
+			
+			if post_id == false then
 				local res = {}
 				res.error = "not found"
 				return cjson.encode(res)
 			end
+
+			-- all posts that used to be 'pages_fr' are posts
+			force_page = true
 		end
 
 		local post_data = toStruct(redis.call('hgetall', post_id))
@@ -429,6 +435,10 @@ var (
 		post_data.acceptComs = post_data.acceptComs ~= nil and post_data.acceptComs == "1"
 		post_data.approveComs = post_data.approveComs ~= nil and post_data.approveComs == "1"
 		post_data.isPage = post_data.isPage ~= nil and post_data.isPage == "1"
+
+		if force_page then 
+			post_data.isPage = true
+		end
 
 		-- get comments
 
@@ -697,6 +707,9 @@ func (p *Post) Delete() error {
 // PostGet returns a post for given ID
 // returns Post, found, error
 func PostGet(ID string) (*Post, bool, error) {
+
+	fmt.Println("POST GET WITH ID:", ID)
+
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
@@ -736,6 +749,9 @@ func PostGet(ID string) (*Post, bool, error) {
 // a "page" is not part of this feed, and indexed by title slug (while "posts" are not)
 // we should be able to look for any kind of post by ID or by title slug
 func PostGetWithSlug(slug string) (*Post, bool, error) {
+
+	fmt.Println("POST GET WITH SLUG:", slug)
+
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
@@ -743,23 +759,25 @@ func PostGetWithSlug(slug string) (*Post, bool, error) {
 
 	res, err := scriptPostGetWithSlug.Do(redisConn, slug)
 	if err != nil {
+		fmt.Println("LUA ERROR:", err)
 		return post, true, err
 	}
 
 	byteSlice, ok := res.([]byte)
 
 	if !ok {
+		fmt.Println("CAN'T CAST")
 		return post, true, errors.New("can't cast response")
 	}
 
 	err = json.Unmarshal(byteSlice, post)
 	if err != nil {
-		if err != nil {
-			return post, true, err
-		}
+		fmt.Println("UNMARSHALL ERR")
+		return post, true, err
 	}
 
 	if post.Error == "not found" {
+		fmt.Println("NOT FOUND")
 		return post, false, errors.New("not found")
 	}
 

@@ -8,6 +8,7 @@ $( document ).ready(function() {
     	$(this).show()
     	$(this).html(moment($(this).html(), "x").format('- MM-DD-YYYY h:mm a (dddd)'))
     })
+    initExistingBlocks()
 });
 
 var errCallback = function(data) {
@@ -298,6 +299,16 @@ function initTextBlock(block) {
 	// for some reason, when creating the editor, a new line is added.
 	// saving block's html content now to re-assign it after initialization.
 	var htmlContent = block.html()
+
+	console.log("initTextBlock")
+	console.log(htmlContent)
+
+	// htmlContent = htmlContent.replace(/<[\/]*(div|span)[^>]*>/g, '')
+	htmlContent = htmlContent.replace(/<div>/g, '<p>')
+	htmlContent = htmlContent.replace(/<\/div>/g, '<\/p>')
+
+	htmlContent = htmlContent.replace(/<span>/g, '<p>')
+	htmlContent = htmlContent.replace(/<\/span>/g, '<\/p>')
 
 	var editor = new Quill(block.get(0), {
 		theme: 'snow',

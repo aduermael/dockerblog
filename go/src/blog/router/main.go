@@ -383,6 +383,12 @@ func main() {
 					return
 				}
 
+				// pages are displayed at /post-slug
+				if post.IsPage {
+					c.Redirect(http.StatusMovedPermanently, filepath.Join("/", post.Slug))
+					return
+				}
+
 				post.ComputeSince()
 
 				archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
@@ -406,6 +412,30 @@ func main() {
 				return
 			}
 		})
+
+		// postGroup.GET("/:slugOrID", func(c *gin.Context) {
+
+		// 	ID := c.Param("slugOrID")
+		// 	validID, err := regexp.MatchString("[0-9]+", ID)
+		// 	if err != nil {
+		// 		// if found == false {
+		// 		// 	fmt.Println("NOT FOUND")
+		// 		// 	// TODO: use slug instead
+		// 		// 	c.Redirect(http.StatusMovedPermanently, "/")
+		// 		// } else {
+		// 		c.AbortWithError(http.StatusInternalServerError, err)
+		// 		// }
+		// 	}
+
+		// 	if validID {
+		// 		post, found, err := types.PostGet(ID)
+		// 		if err != nil {
+		// 			c.AbortWithError(http.StatusInternalServerError, err)
+		// 			return
+		// 		}
+		// 	}
+
+		// })
 	}
 
 	router.GET("/posts/page/:page", func(c *gin.Context) {
@@ -554,9 +584,36 @@ func main() {
 		// then try with slug
 		if postSlug != "" {
 			post, _, err := types.PostGetWithSlug(postSlug)
+
 			if err == nil {
-				movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
-				c.Redirect(http.StatusMovedPermanently, movedTo)
+
+				if post.IsPage {
+
+					post.ComputeSince()
+
+					archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
+					if err != nil {
+						c.AbortWithError(http.StatusInternalServerError, err)
+						return
+					}
+
+					user, err := types.GetUserSession(c.Request, c.Writer)
+					if err != nil {
+						c.AbortWithError(http.StatusInternalServerError, err)
+						return
+					}
+
+					c.HTML(http.StatusOK, "post.tmpl", gin.H{
+						"title":    ContextTitle(c),
+						"post":     post,
+						"archives": archives,
+						"user":     user,
+					})
+
+				} else {
+					movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
+					c.Redirect(http.StatusMovedPermanently, movedTo)
+				}
 				return
 			}
 		}

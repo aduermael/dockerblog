@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -12,8 +11,6 @@ import (
 )
 
 func rss(c *gin.Context) {
-	fmt.Println("TEST")
-
 	config, err := ContextGetConfig(c)
 	if err != nil {
 		serverError(c, err.Error())
