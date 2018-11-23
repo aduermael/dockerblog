@@ -574,6 +574,8 @@ type saveGeneralSettingsRequest struct {
 	ShowComments            bool     `json:"showComments"`
 	AcceptComments          bool     `json:"acceptComments"`
 	CommentsRequireApproval bool     `json:"approveComments"`
+	ImageImportRetina       bool     `json:"imageImportRetina"`
+	Host                    string   `json:"host"`
 }
 
 func adminSaveSettings(c *gin.Context) {
@@ -596,6 +598,8 @@ func adminSaveSettings(c *gin.Context) {
 	config.ShowComments = req.ShowComments
 	config.AcceptComments = req.AcceptComments
 	config.CommentsRequireApproval = req.CommentsRequireApproval
+	config.Host = req.Host
+	config.ImageImportRetina = req.ImageImportRetina
 
 	config.Save(configPath)
 

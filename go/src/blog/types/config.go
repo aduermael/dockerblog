@@ -25,6 +25,9 @@ type Config struct {
 	SendgridAPIKey          string                     `json:"sendgridAPIKey"`
 	Localized               map[string]LocalizedConfig `json:"localized,omitempty"`
 
+	ImageImportRetina bool   `json:"imageImportRetina"` // when true, all imported images are considered to be Retina
+	Host              string `json:"host"`
+
 	Username string `json:"username,omitempty"`
 	Password string `json:"password,omitempty"`
 	Salt     string `json:"salt,omitempty"`

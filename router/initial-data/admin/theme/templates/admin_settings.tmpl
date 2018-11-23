@@ -28,15 +28,26 @@
 	 		<div id="settings">
 	 			<div>
 					<h2>General</h2>
+					
+					<p><strong>Blog address</strong> - Root address (e.g. https://myblog.com)</p>
+					<input id="config-host" type="text" value="{{ .config.Host }}"/>
+
 					<p><strong>Supported languages</strong> - Comma-separated supported languages.</p>
 					<input id="config-langs" type="text" value="{{ join .config.Langs }}"/>
+					
 					<p><strong>Posts per page</strong> - The amount of posts displayed on one page.</p>
 					<input id="config-postsPerPage" type="text" value="{{ .config.PostsPerPage }}" />
+					
 					<p><strong>Timezone</strong> - The timezone that's being used when scheduling posts.</p>
 					<input id="config-timezone" type="text" placeholder="Europe/Paris" value="{{ .config.Timezone }}" />
+
+					<p><strong>Comments</strong></p>
 					<div class="inlineInput"><input id="config-showComments" type="checkbox" {{ if .config.ShowComments }}checked{{ end }}> Show comments by default</div>
 					<div class="inlineInput"><input id="config-acceptComments" type="checkbox" {{ if .config.AcceptComments }}checked{{ end }}> Accept comments by default</div>
-					<div class="inlineInput"><input id="config-approveComments" type="checkbox" {{ if .config.CommentsRequireApproval }}checked{{ end }}> Comments require approval by default</div>
+					<div style="margin-bottom: 14px;" class="inlineInput"><input id="config-approveComments" type="checkbox" {{ if .config.CommentsRequireApproval }}checked{{ end }}> Comments require approval by default</div>
+
+					<p><strong>Images</strong></p>
+					<div class="inlineInput"><input id="config-imageImportRetina" type="checkbox" {{ if .config.ImageImportRetina }}checked{{ end }}> Upload images in Retina (srcset 2x)</div>
 
 					<div id="submit">
 						<a href="#" onclick="saveGeneralSettings(this);return false;">Save</a>

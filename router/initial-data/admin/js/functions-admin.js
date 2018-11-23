@@ -767,6 +767,10 @@ function saveGeneralSettings() {
 	config.acceptComments = $('#config-acceptComments').is(':checked')
 	config.approveComments = $('#config-approveComments').is(':checked')
 
+	config.host = $('#config-host').val()
+
+	config.imageImportRetina = $('#config-imageImportRetina').is(':checked')
+
 	var popup = popupLoading()
 
 	Post('/admin/settings',config,function(response) {
