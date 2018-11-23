@@ -521,6 +521,13 @@ var (
 			post_data.nextID = -1
 		end -- post_data.lang != nil
 
+
+		-- enforce slug if missing
+		if post_data.slug == nil then
+			post_data.slug = post_slug
+		end
+		
+
 		local jsonResponse = cjson.encode(post_data)
 		-- make sure empty comments table is encoded into json array
 		if #comments == 0 then

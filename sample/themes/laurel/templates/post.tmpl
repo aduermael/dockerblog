@@ -51,7 +51,13 @@
 								{{ end }}
 							</div>
 							<div style="width: 33%; min-height: 10px; float: left;">
-								<a href="/{{.post.Slug}}/{{.post.ID}}#comments">
+
+								{{ if .post.IsPage }}
+								<a href="/{{.post.Slug}}#comments">
+								{{ else }}
+								<a href="/post/{{.post.Slug}}/{{.post.ID}}#comments">
+								{{ end }}
+
 									{{ if eq .post.NbComments 1 }}
 										<strong>1</strong> commentaire{{ else if gt .post.NbComments 1 }}<strong>{{ .post.NbComments }}</strong> commentaires
 									{{ else }}
