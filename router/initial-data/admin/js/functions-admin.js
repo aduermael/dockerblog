@@ -715,6 +715,15 @@ function sendPost(sender)
 		{
 			block.type = "image"
 			block.path = $($(this).children('img')[0]).attr( 'src' )
+			
+			var srcset = $($(this).children('img')[0]).attr( 'srcset' )
+			if (srcset) {
+				var parts = srcset.split(" ");
+				if (parts.length == 2 && parts[1] == "2x") {
+					block.retina = parts[0]
+				}
+			}
+
 			block.url = $($(this).children('input')[0]).val()
 			block.description = $($(this).children('input')[1]).val()
 		}

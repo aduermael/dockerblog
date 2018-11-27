@@ -38,7 +38,7 @@
 							<textarea onfocus="showToolBar(this)" id="block{{ $id }}" class="block block_html">{{ $block.data }}</textarea>
 						{{ else if ($block.IsOfType "image") }}
 							<div onclick="showToolBar(this)" id="block{{ $id }}" class="block block_image">
-								<img src="{{ .ValueForKey "path" }}">
+								<img src="{{ $block.path }}"{{ if $block.retina }} srcset="{{ $block.retina }} 2x"{{ end }}>
 								<input value="{{ .ValueForKey "url" }}" placeholder="URL" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'URL'"/>
 								<input value="{{ .ValueForKey "description" }}" placeholder="Description" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Description'"/>
 							</div>

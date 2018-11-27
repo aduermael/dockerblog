@@ -23,7 +23,7 @@
 							<div class="block html">{{ .data }}</div>
 						{{ else if eq .type "image" }}
 							<div class="block image">
-								{{ if ne .url "" }}<a href="{{.url}}">{{end}}<img src="{{ .path }}" alt="{{.description}}">{{ if ne .url "" }}</a>{{end}}
+								{{ if ne .url "" }}<a href="{{.url}}">{{end}}<img src="{{ .path }}" alt="{{.description}}"{{ if .retina }} srcset="{{ .retina }} 2x"{{ end }}>{{ if ne .url "" }}</a>{{end}}
 							</div>
 						{{ end }}
 					{{ end }}
