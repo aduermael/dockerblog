@@ -234,3 +234,39 @@ function showArchives(sender) {
 		window.location.href = "/archives/" + optionSelected.val()
 	}
 }
+
+function newsletterFormCheck(sender) {
+	var emailIsValid = validateEmail($("#newsletterEmail").val())
+	var oneCheckedAtLeast = $("#newsletterNewsCheckbox").is(":checked") || $("#newsletterPostsCheckbox").is(":checked")
+
+	if (emailIsValid && oneCheckedAtLeast) {
+		$("#newsletterButton").show()
+		return true
+	} else {
+		$("#newsletterButton").hide()
+		return false
+	}
+}
+
+function newsletterRegister(sender) {
+	if (newsletterFormCheck(sender) == true) {
+		var request = new Object()
+		request.email = $("#newsletterEmail").val()
+		request.news = $("#newsletterNewsCheckbox").is(":checked")
+		request.posts = $("#newsletterPostsCheckbox").is(":checked")
+		Post('/newsletter-register',request,newsletterRegisterCallback,newsletterRegisterErrorCallback)
+	}
+}
+
+function newsletterRegisterCallback(data) {
+	console.log(data)
+	alert("DONE")
+}
+
+function newsletterRegisterErrorCallback(data) {
+	console.log(data)
+	alert("ERROR")
+}
+
+
+

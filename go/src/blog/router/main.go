@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"path"
@@ -114,6 +115,8 @@ func loadTemplates() {
 
 func main() {
 	var err error
+
+	rand.Seed(time.Now().UnixNano())
 
 	// do not override everything when debugging
 	// because if origin is mounted at destination,
@@ -533,6 +536,36 @@ func main() {
 			"success":            true,
 			"waitingForApproval": comment.Valid == false,
 		})
+	})
+
+	type newsletterRegisterRequest struct {
+		Email string `json:"email"`
+		News  bool   `json:"news"`
+		Posts bool   `json:"posts"`
+	}
+
+	router.POST("/newsletter-register", func(c *gin.Context) {
+
+		req := &newsletterRegisterRequest{}
+		err = c.BindJSON(req)
+		if err != nil {
+			badRequest(c, "bad request")
+			return
+		}
+
+		re := types.NewRegisteredEmail(req.Email, req.Posts, req.News)
+
+		fmt.Printf("RegisteredEmail: %#v\n", re)
+
+		err = re.Save()
+		if err != nil {
+			serverError(c, "email could not be saved")
+			return
+		}
+
+		fmt.Println("email saved")
+
+		ok(c)
 	})
 
 	router.GET("/", func(c *gin.Context) {

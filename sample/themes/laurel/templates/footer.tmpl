@@ -35,18 +35,17 @@
 				<div class="item">
 					<h2>Newsletter</h2>
 					<form>
-						<input style="background-color: rgb(102, 102, 102); color: #FFF; margin-bottom: 10px;" onfocus="this.placeholder=''" onblur="if (this.value==''){this.placeholder = 'mon email'}" type="email" placeholder="mon email">
+						<input id="newsletterEmail" style="background-color: rgb(102, 102, 102); color: #FFF; margin-bottom: 10px;" onfocus="this.placeholder=''" onblur="if (this.value==''){this.placeholder = 'mon email'}" type="email" placeholder="mon email" onkeydown="newsletterFormCheck();" onpaste="newsletterFormCheck();" oninput="newsletterFormCheck();">
 						
 						<div style="margin-bottom: 10px; margin-left: auto; margin-right: auto; max-width: 150px; width: 100%;">
-							<input style="width: auto;" id="email-checkbox-1" name="email-checkbox-1" type="checkbox"> <label for="email-checkbox-1">Informations générales (une fois par mois maximum).</label>
+							<input id="newsletterNewsCheckbox" style="width: auto;" id="email-checkbox-1" name="email-checkbox-1" type="checkbox" onchange="newsletterFormCheck();"> <label for="email-checkbox-1">Informations générales (une fois par mois maximum).</label>
 						</div>
 
 						<div style="margin-bottom: 10px; margin-left: auto; margin-right: auto; max-width: 150px; width: 100%;">
-							<input style="width: auto;" id="email-checkbox-2" name="email-checkbox-2" type="checkbox"> <label style="margin-bottom: 10px;" for="email-checkbox-2">Pour chaque nouvelle note.</label>
+							<input id="newsletterPostsCheckbox" style="width: auto;" id="email-checkbox-2" name="email-checkbox-2" type="checkbox" onchange="newsletterFormCheck();"> <label style="margin-bottom: 10px;" for="email-checkbox-2">Pour chaque nouvelle note.</label>
 						</div>
 						
-
-						<input type="button" value="Enregistrer">
+						<input onclick="newsletterRegister();" id="newsletterButton" type="button" value="Enregistrer" style="display: none;">
 					</form>
 				</div>
 			</div>
