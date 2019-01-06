@@ -81,9 +81,6 @@ func adminLogin(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("USERNAME:", req.Username)
-	fmt.Println("PASSWORD:", req.Password)
-
 	isAdmin := config.CheckAdminCredentials(req.Username, req.Password)
 
 	if isAdmin == false {

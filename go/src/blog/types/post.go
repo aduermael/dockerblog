@@ -694,8 +694,6 @@ func (p *Post) Delete() error {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
-	fmt.Println("DELETE POST #", p.ID)
-
 	b, err := json.Marshal(p)
 	if err != nil {
 		fmt.Println("ERROR (1):", err)
@@ -714,8 +712,6 @@ func (p *Post) Delete() error {
 // PostGet returns a post for given ID
 // returns Post, found, error
 func PostGet(ID string) (*Post, bool, error) {
-
-	fmt.Println("POST GET WITH ID:", ID)
 
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
@@ -756,8 +752,6 @@ func PostGet(ID string) (*Post, bool, error) {
 // a "page" is not part of this feed, and indexed by title slug (while "posts" are not)
 // we should be able to look for any kind of post by ID or by title slug
 func PostGetWithSlug(slug string) (*Post, bool, error) {
-
-	fmt.Println("POST GET WITH SLUG:", slug)
 
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
