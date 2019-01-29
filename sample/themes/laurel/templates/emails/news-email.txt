@@ -1,0 +1,13 @@
+{{ .Content.Title }}
+
+{{ .Content.Message1 }}
+{{ range $i, $line := .AddrLines }}
+  {{ $line }}{{ end }}
+
+{{ .Content.Message2 }}
+
+https://www.laposte.fr/particulier/outils/suivre-vos-envois?code={{ .Order.TrackingNumber }}
+
+{{ .Content.Message3 }}
+
+{{ .Content.Signature }}

@@ -1,0 +1,28 @@
+
+<div style="font-size: 16px; font-family: Helvetica; width: 400px; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto;">
+
+	<h1>{{ .Content.Title }}</h1>
+
+	<img style="width: 400px;" src="http://bloglaurel.com/uploads/emails/shipping-1.jpg"/>
+
+	<p>{{ .Content.Message1 }}</p>
+
+	<div style="border-radius: 10px; background-color: #BAE1FC; width: 100%; padding-top: 20px; padding-bottom: 20px;">
+		<p style="margin: 0; margin-left: 20px; margin-right: 20px;">
+			{{ range $i, $line := .AddrLines }}
+				{{ $line }}<br />
+			{{ end }}
+		</p>
+	</div>
+
+	<p>{{ .Content.Message2 }}</p>
+
+	<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 40px; background-color: #009CC2; display: block; width: 100%; height: 40px; text-align: center;" href="https://www.laposte.fr/particulier/outils/suivre-vos-envois?code={{ .Order.TrackingNumber }}">{{ .Order.TrackingNumber }}</a>
+
+	<img style="width: 300px; margin-left: 50px; margin-right: 50px; margin-top: 20px;" src="http://bloglaurel.com/uploads/emails/shipping-2.jpg"/>
+
+	<p>{{ .Content.Message3 }}</p>
+
+	<p>{{ .Content.Signature }}</p>
+	    
+</div>
