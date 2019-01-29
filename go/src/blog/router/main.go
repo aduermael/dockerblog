@@ -28,15 +28,23 @@ import (
 )
 
 const (
-	serverPort                  = ":80"
-	configPath                  = "/blog-data/config.json"
-	blogDataRootDir             = "/blog-data"
-	initialDataDir              = "/initial-data"
-	blogFilesRootDir            = blogDataRootDir + "/files"
-	hardcodedLang               = "fr"
-	answerEmailTemplateTxtPath  = "/blog-data/comment-answer-email.txt"
-	answerEmailTemplateHTMLPath = "/blog-data/comment-answer-email.html"
-	rssTemplatePath             = "/blog-data/rss.tmpl"
+	serverPort       = ":80"
+	configPath       = "/blog-data/config.json"
+	blogDataRootDir  = "/blog-data"
+	initialDataDir   = "/initial-data"
+	blogFilesRootDir = blogDataRootDir + "/files"
+	hardcodedLang    = "fr"
+	// email templates can be found in each theme
+	answerEmailTemplateTxtPath   = "/templates/emails/comment-answer.txt"
+	answerEmailTemplateHTMLPath  = "/templates/emails/comment-answer.html"
+	confirmationTemplateTxtPath  = "/templates/emails/confirmation.txt"
+	confirmationTemplateHTMLPath = "/templates/emails/confirmation.html"
+	newsTemplateTxtPath          = "/templates/emails/news.txt"
+	newsTemplateHTMLPath         = "/templates/emails/news.html"
+	postTemplateTxtPath          = "/templates/emails/post.txt"
+	postTemplateHTMLPath         = "/templates/emails/post.html"
+	// rss template can be found in each theme
+	rssTemplatePath = "/templates/rss.tmpl"
 )
 
 var (
@@ -47,9 +55,16 @@ var (
 	adminThemePath string
 	adminJsPath    string
 
-	answerEmailTemplateTxt  *template.Template
-	answerEmailTemplateHTML *template.Template
-	rssTemplate             *textTemplate.Template
+	answerEmailTemplateTxt        *template.Template
+	answerEmailTemplateHTML       *template.Template
+	confirmationEmailTemplateTxt  *template.Template
+	confirmationEmailTemplateHTML *template.Template
+	newsEmailTemplateTxt          *template.Template
+	newsEmailTemplateHTML         *template.Template
+	postEmailTemplateTxt          *template.Template
+	postEmailTemplateHTML         *template.Template
+
+	rssTemplate *textTemplate.Template
 )
 
 func loadTemplates() {
@@ -77,7 +92,7 @@ func loadTemplates() {
 
 	// load rss template
 
-	b, err := ioutil.ReadFile(rssTemplatePath)
+	b, err := ioutil.ReadFile(filepath.Join(themePath, rssTemplatePath))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -100,17 +115,61 @@ func loadTemplates() {
 
 	// load email templates
 
-	b, err = ioutil.ReadFile(answerEmailTemplateTxtPath)
+	// comments
+
+	b, err = ioutil.ReadFile(filepath.Join(themePath, answerEmailTemplateTxtPath))
 	if err != nil {
 		log.Fatal(err)
 	}
 	answerEmailTemplateTxt, err = template.New("comment-answer-email-txt").Parse(string(b))
 
-	b, err = ioutil.ReadFile(answerEmailTemplateHTMLPath)
+	b, err = ioutil.ReadFile(filepath.Join(themePath, answerEmailTemplateHTMLPath))
 	if err != nil {
 		log.Fatal(err)
 	}
 	answerEmailTemplateHTML, err = template.New("comment-answer-email-html").Parse(string(b))
+
+	// confirmation
+
+	b, err = ioutil.ReadFile(filepath.Join(themePath, confirmationTemplateTxtPath))
+	if err != nil {
+		log.Fatal(err)
+	}
+	confirmationEmailTemplateTxt, err = template.New("confirmation-email-txt").Parse(string(b))
+
+	b, err = ioutil.ReadFile(filepath.Join(themePath, confirmationTemplateHTMLPath))
+	if err != nil {
+		log.Fatal(err)
+	}
+	confirmationEmailTemplateHTML, err = template.New("confirmation-email-html").Parse(string(b))
+
+	// news
+
+	b, err = ioutil.ReadFile(filepath.Join(themePath, newsTemplateTxtPath))
+	if err != nil {
+		log.Fatal(err)
+	}
+	newsEmailTemplateTxt, err = template.New("news-email-txt").Parse(string(b))
+
+	b, err = ioutil.ReadFile(filepath.Join(themePath, newsTemplateHTMLPath))
+	if err != nil {
+		log.Fatal(err)
+	}
+	newsEmailTemplateHTML, err = template.New("news-email-html").Parse(string(b))
+
+	// post
+
+	b, err = ioutil.ReadFile(filepath.Join(themePath, postTemplateTxtPath))
+	if err != nil {
+		log.Fatal(err)
+	}
+	postEmailTemplateTxt, err = template.New("post-email-txt").Parse(string(b))
+
+	b, err = ioutil.ReadFile(filepath.Join(themePath, postTemplateHTMLPath))
+	if err != nil {
+		log.Fatal(err)
+	}
+	postEmailTemplateHTML, err = template.New("post-email-html").Parse(string(b))
 }
 
 func main() {
@@ -165,11 +224,6 @@ func main() {
 
 	router.Use(ContextSetConfig)
 	router.Use(ContextSetLang)
-
-	// router.Use(func(c *gin.Context) {
-	// 	fmt.Println("REQUEST:", c.Request.RequestURI)
-	// 	c.Next()
-	// })
 
 	// ADMIN
 
