@@ -24,7 +24,6 @@ EXPOSE 80
 # (only if they can't be found)
 COPY router/initial-data /initial-data
 COPY sample/config.json /initial-data/config.json
-COPY sample/email-templates /initial-data/email-templates
 COPY sample/themes /initial-data/themes
 
 # -----------------------
