@@ -24,10 +24,8 @@ EXPOSE 80
 # (only if they can't be found)
 COPY router/initial-data /initial-data
 COPY sample/config.json /initial-data/config.json
-COPY sample/comment-answer-email.html /initial-data/comment-answer-email.html
-COPY sample/comment-answer-email.txt /initial-data/comment-answer-email.txt
-COPY sample/rss.tmpl /initial-data/rss.tmpl
-COPY sample/themes/default /initial-data/themes/default
+COPY sample/email-templates /initial-data/email-templates
+COPY sample/themes /initial-data/themes
 
 # -----------------------
 # Start router

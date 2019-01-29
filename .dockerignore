@@ -1,1 +1,8 @@
 **/.DS_Store
+./sample/files
+./sample/db
+./plugins
+./README.md
+./test-build.sh
+./test-run.sh
+./sample/--
