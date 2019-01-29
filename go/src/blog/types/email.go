@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -32,6 +33,8 @@ type RegisteredEmail struct {
 	// Since is a formatted duration that can be
 	// computed from Date
 	CreatedSince string `json:"-"`
+	//
+	Error string `json:"error,omitempty"`
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -56,6 +59,7 @@ func NewRegisteredEmail(Email string, Posts bool, News bool) *RegisteredEmail {
 	r.CreatedAt = int(time.Now().Unix())
 	r.ModifiedAt = r.CreatedAt
 	r.Key = randString(16)
+	// expires after 7 days
 	r.ExpiresAt = int(time.Now().Add(time.Hour * 24 * 7).Unix())
 	r.Valid = false
 
@@ -79,6 +83,44 @@ func (r *RegisteredEmail) Save() error {
 	}
 
 	return nil
+}
+
+// RegisteredEmailGet returns a registered email for given ID & key
+// If the key is not correct, the email is not returned
+// returns RegisteredEmail, found, error
+func RegisteredEmailGet(email, key string) (*RegisteredEmail, bool, error) {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	ID := md5Hash(email)
+
+	res, err := scriptRegisteredEmailGet.Do(redisConn, ID)
+	if err != nil {
+		return nil, true, err
+	}
+
+	byteSlice, ok := res.([]byte)
+
+	if !ok {
+		return nil, true, errors.New("can't cast response")
+	}
+
+	r := &RegisteredEmail{}
+	err = json.Unmarshal(byteSlice, r)
+
+	if err != nil {
+		return nil, true, err
+	}
+
+	if r.Error == "not found" {
+		return nil, false, errors.New("not found")
+	}
+
+	if r.Key != key {
+		return nil, false, errors.New("not found")
+	}
+
+	return r, true, nil
 }
 
 func (r *RegisteredEmail) CreatedDate() time.Time {
@@ -113,35 +155,79 @@ func (r *RegisteredEmail) Delete() error {
 	return nil
 }
 
-// RegisteredEmailGet returns a registered email for given ID & key
-// returns RegisteredEmailGet, found, error
-func RegisteredEmailGet(ID, key string) (*RegisteredEmail, bool, error) {
-	redisConn := redisPool.Get()
-	defer redisConn.Close()
-	// TODO
-	return nil, false, nil
-}
-
 var (
 	scriptRegisteredEmailSave = redis.NewScript(0, `
 		local email = cjson.decode(ARGV[1])
 		
 		-- save email hash
 		local kID = 'email_' .. email.id
+		local unverifiedID = 'unverified_email_' .. email.id
 
 		local news = email.news and 1 or 0
 		local posts = email.posts and 1 or 0
 		local valid = email.valid and 1 or 0
 
-		redis.call('hmset', kID, 'id', email.id, 'createdAt', email.createdAt, 'modifiedAt', email.modifiedAt, 'expiresAt', email.expiresAt, 'key', email.key, 'posts', posts, 'news', news, 'valid', valid)
+		redis.call('hmset', kID, 'id', email.id, 'email', email.email, 'createdAt', email.createdAt, 'modifiedAt', email.modifiedAt, 'expiresAt', email.expiresAt, 'key', email.key, 'posts', posts, 'news', news, 'valid', valid)
 
 		redis.call('srem', 'emails', kID)
-		redis.call('srem', 'unverified_emails', kID)
+		redis.call('del', unverifiedID)
 
 		if email.valid == true then
+			redis.call('persist', kID)
 			redis.call('sadd', 'emails', kID)
 		else
-			redis.call('sadd', 'unverified_emails', kID)
+			-- not using a set here for the key to expire 
+			redis.call('set', unverifiedID, kID)
+			local ttl = email.expiresAt - email.modifiedAt
+			redis.call('expire', kID, ttl)
+			redis.call('expire', unverifiedID, ttl)
 		end
+	`)
+
+	scriptRegisteredEmailGet = redis.NewScript(0, `
+		local toStruct = function (bulk)
+			local result = {}
+			local nextkey
+			for i, v in ipairs(bulk) do
+				if i % 2 == 1 then
+					nextkey = v
+				else
+					result[nextkey] = v
+				end
+			end
+			return result
+		end
+
+		local id = ARGV[1]
+		
+		local email_id = 'email_' .. id
+		local unverified_email_id = 'unverified_email_' .. id
+
+		local res = redis.call('hgetall', email_id)
+		-- check if not found
+		if res[1] == nil then
+			local res = {}
+			res.error = "not found"
+			return cjson.encode(res)
+		end
+
+		local email_data = toStruct(res)
+
+		-- convert boolean strings to actual booleans
+		email_data.news = email_data.news ~= nil and email_data.news == "1"
+		email_data.posts = email_data.posts ~= nil and email_data.posts == "1"
+		email_data.valid = email_data.valid ~= nil and email_data.valid == "1
+
+		return cjson.encode(email_data)
+	`)
+
+	scriptRegisteredEmailDelete = redis.NewScript(0, `
+		local id = ARGV[1]
+		local key = ARGV[2]
+		
+		local email_id = 'email_' .. id
+		local unverified_email_id = 'unverified_email_' .. id
+
+		// TODO
 	`)
 )

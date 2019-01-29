@@ -565,6 +565,26 @@ func main() {
 
 		fmt.Println("email saved")
 
+		config, err := ContextGetConfig(c)
+		if err != nil {
+			serverError(c, err.Error())
+			return
+		}
+
+		from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
+		subject := "✉️ Merci de confirmer votre email."
+		to := mail.NewEmail("", re.Email)
+		plainTextContent := "test"
+		htmlContent := "<p>test</p>"
+		message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+		client := sendgrid.NewSendClient(config.SendgridAPIKey)
+		_, err = client.Send(message)
+		if err != nil {
+			log.Println("SENDGRID ERROR:", err)
+		} else {
+			// fmt.Printf("SENT TO %s: \n%s\n\n%s\n", original.Email, html, txt)
+		}
+
 		ok(c)
 	})
 

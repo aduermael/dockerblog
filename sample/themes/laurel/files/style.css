@@ -64,14 +64,24 @@ form textarea:focus {
 }
 
 form input[type="button"] {
-	border-color: #888;
-	background-color: #aaa;
+	color: #111;
+	background-color: #4EF9BE;
 	cursor: pointer;
 	-webkit-appearance: none;
 }
 
-form input[type="button"]:hover {
-	background-color: #bbb;
+form input[type="button"]:hover:enabled {
+    background-color: #4EF9D2;
+}
+
+form input[type="button"]:active:enabled {
+    background-color: #4EF9FF;
+}
+
+form input[type="button"]:disabled {
+	color: #999;
+	background-color: #ddd;
+	cursor: default;
 }
 
 /* HEADER */

@@ -240,16 +240,25 @@ function newsletterFormCheck(sender) {
 	var oneCheckedAtLeast = $("#newsletterNewsCheckbox").is(":checked") || $("#newsletterPostsCheckbox").is(":checked")
 
 	if (emailIsValid && oneCheckedAtLeast) {
-		$("#newsletterButton").show()
+		$("#newsletterButton").prop('disabled', false)
+		$("#newsletterButton").val("Enregistrer")
 		return true
 	} else {
-		$("#newsletterButton").hide()
+		$("#newsletterButton").prop('disabled', true)
 		return false
 	}
 }
 
 function newsletterRegister(sender) {
 	if (newsletterFormCheck(sender) == true) {
+
+		$("#newsletterEmail").prop('disabled', true)
+		$("#newsletterNewsCheckbox").prop('disabled', true)
+		$("#newsletterPostsCheckbox").prop('disabled', true)
+
+		$("#newsletterButton").prop('disabled', true)
+		$("#newsletterButton").val("⏳")
+
 		var request = new Object()
 		request.email = $("#newsletterEmail").val()
 		request.news = $("#newsletterNewsCheckbox").is(":checked")
@@ -259,13 +268,22 @@ function newsletterRegister(sender) {
 }
 
 function newsletterRegisterCallback(data) {
-	console.log(data)
-	alert("DONE")
+
+	$("#newsletterEmail").prop('disabled', false)
+	$("#newsletterNewsCheckbox").prop('disabled', false)
+	$("#newsletterPostsCheckbox").prop('disabled', false)
+
+	$("#newsletterButton").val("✅")
 }
 
 function newsletterRegisterErrorCallback(data) {
-	console.log(data)
-	alert("ERROR")
+
+	$("#newsletterEmail").prop('disabled', false)
+	$("#newsletterNewsCheckbox").prop('disabled', false)
+	$("#newsletterPostsCheckbox").prop('disabled', false)
+
+	$("#newsletterButton").val("❌")
+	alert("Erreur, l'email n'a pas pu être enregistré. 😕")
 }
 
 
