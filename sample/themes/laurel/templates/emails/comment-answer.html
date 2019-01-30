@@ -1,19 +1,25 @@
 <!-- original comment -->
-<div style="margin:0 0 10px 0; background-color: #F7F7F7;border-radius: 4px; border: none;padding: 10px;">
-    <div style="padding: 4px; margin: 0">
-        <strong>{{ .Original.Name }}</strong>
-    </div>
-    <div style="padding: 4px; margin: 0;">{{ .Original.Content }}</div>
-</div>
 
-<!-- answer -->
-<div style="margin:0 0 10px 0; background-color: #F7F7F7; border-radius: 4px; border: none; padding:10px;">
-    <div style="padding: 4px; margin:0;">
-        <strong>{{ .Answer.Name }}</strong>
-    </div>
-    <div style="padding: 4px; margin:0">{{ .Answer.Content }}</div>
-</div>
+<div style="font-size: 16px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; padding: 0;">
 
-<div style="padding: 4px; margin:0;">
-    <a href="http://bloglaurel.com/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}">Répondre</a>
+	<p style="margin: 0; padding: 0; margin-bottom: 20px;">{{ .Message }}</p>
+
+	<!-- original -->
+	<div style=" background-color: #F7F7F7; border-radius: 4px; border: none; margin: 0; margin-bottom: 20px; padding: 10px;">
+	    <div style="padding: 4px; margin: 0">
+	        <strong>{{ .Original.Name }}</strong>
+	    </div>
+	    <div style="padding: 4px; margin: 0;">{{ .Original.Content }}</div>
+	</div>
+
+	<!-- answer -->
+	<div style="background-color: #F7F7F7; border-radius: 4px; border: none; margin: 0; margin-bottom: 20px; padding:10px;">
+	    <div style="padding: 4px; margin:0;">
+	        <strong>{{ .Answer.Name }}</strong>
+	    </div>
+	    <div style="padding: 4px; margin:0">{{ .Answer.Content }}</div>
+	</div>
+
+	<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 50px; background-color: #009CC2; display: block; max-width: 400px; margin: 0; margin-bottom: 20px; height: 50px; text-align: center;" href="{{ .Host }}/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}">{{ .Button }}</a>
+
 </div>

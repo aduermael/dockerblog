@@ -1,13 +1,9 @@
-{{ .Content.Title }}
+{{ .Title }}
 
-{{ .Content.Message1 }}
-{{ range $i, $line := .AddrLines }}
-  {{ $line }}{{ end }}
+{{ .Message1 }}
 
-{{ .Content.Message2 }}
+{{ .Host }}/email-confirm/{{ .EmailHash }}/{{ .EmailKey }}
 
-https://www.laposte.fr/particulier/outils/suivre-vos-envois?code={{ .Order.TrackingNumber }}
+{{ .Message2 }}
 
-{{ .Content.Message3 }}
-
-{{ .Content.Signature }}
+{{ .Signature }}

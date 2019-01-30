@@ -1,28 +1,24 @@
 
-<div style="font-size: 16px; font-family: Helvetica; width: 400px; margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto;">
+<div style="font-size: 16px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; margin-left: auto; margin-right: auto;">
 
-	<h1>{{ .Content.Title }}</h1>
-
-	<img style="width: 400px;" src="http://bloglaurel.com/uploads/emails/shipping-1.jpg"/>
-
-	<p>{{ .Content.Message1 }}</p>
-
-	<div style="border-radius: 10px; background-color: #BAE1FC; width: 100%; padding-top: 20px; padding-bottom: 20px;">
-		<p style="margin: 0; margin-left: 20px; margin-right: 20px;">
-			{{ range $i, $line := .AddrLines }}
-				{{ $line }}<br />
-			{{ end }}
-		</p>
+	<div style="text-align: center; padding: 0; margin: 0; margin-top: 10px;">
+		<div style="display: inline-block; padding: 0; margin: 0;">
+			<img style="float: left; width: 80px; height: 80px;" src="http://graph.facebook.com/100005287202424/picture?type=large"/>
+			<h1 style="float: left; margin: 0; margin-left: 20px; line-height: 80px;">{{ .Title }}</h1>
+			<div style="clear: both;"></div>
+		</div>
 	</div>
 
-	<p>{{ .Content.Message2 }}</p>
+	<div style="margin: 0; padding: 20px;">
 
-	<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 40px; background-color: #009CC2; display: block; width: 100%; height: 40px; text-align: center;" href="https://www.laposte.fr/particulier/outils/suivre-vos-envois?code={{ .Order.TrackingNumber }}">{{ .Order.TrackingNumber }}</a>
+		<img style="display: block; width: 400px; height: 150px; margin: 0; padding: 0; margin-right: auto; margin-left: auto; margin-bottom: 20px;" src="{{ .Host }}/uploads/emails/confirmation.jpg"/>
 
-	<img style="width: 300px; margin-left: 50px; margin-right: 50px; margin-top: 20px;" src="http://bloglaurel.com/uploads/emails/shipping-2.jpg"/>
+		<p style="margin: 0; padding: 0; margin-bottom: 20px; text-align: center;">{{ .Message1 }}</p>
 
-	<p>{{ .Content.Message3 }}</p>
+		<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 50px; background-color: #009CC2; display: block; max-width: 400px; margin: 0; margin-right: auto; margin-left: auto; margin-bottom: 20px; height: 50px; text-align: center;" href="{{ .Host }}/email-confirm/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Confirm }}</a>
 
-	<p>{{ .Content.Signature }}</p>
-	    
+		<p style="margin: 0; padding: 0; margin-bottom: 20px; text-align: center;">{{ .Message2 }}</p>
+
+		<p style="margin: 0; padding: 0; margin-bottom: 20px; text-align: center;">{{ .Signature }}</p>
+	</div>
 </div>
