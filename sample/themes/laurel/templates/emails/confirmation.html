@@ -15,7 +15,7 @@
 
 		<p style="margin: 0; padding: 0; margin-bottom: 20px; text-align: center;">{{ .Message1 }}</p>
 
-		<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 50px; background-color: #009CC2; display: block; max-width: 400px; margin: 0; margin-right: auto; margin-left: auto; margin-bottom: 20px; height: 50px; text-align: center;" href="{{ .Host }}/email-confirm/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Confirm }}</a>
+		<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 50px; background-color: #009CC2; display: block; max-width: 400px; margin: 0; margin-right: auto; margin-left: auto; margin-bottom: 20px; height: 50px; text-align: center;" clicktracking=off href="{{ .Host }}/email-confirm/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Confirm }}</a>
 
 		<p style="margin: 0; padding: 0; margin-bottom: 20px; text-align: center;">{{ .Message2 }}</p>
 

@@ -23,7 +23,7 @@ type RegisteredEmail struct {
 	// it allows to access the email settings page.
 	Key string `json:"key"`
 	// If not valid, the email will be removed from DB at this date
-	ExpiresAt int  `json:"expiresAt,omitempty"`
+	ExpiresAt int  `json:"expiresAt"`
 	Posts     bool `json:"posts,omitempty"`
 	News      bool `json:"news,omitempty"`
 	// If not valid, attempt to register email again fails
@@ -35,6 +35,18 @@ type RegisteredEmail struct {
 	CreatedSince string `json:"-"`
 	//
 	Error string `json:"error,omitempty"`
+}
+
+// EmailConfirmation is used to build confirmation emails
+type EmailConfirmation struct {
+	Title     string
+	Message1  string
+	Message2  string
+	Host      string
+	EmailHash string // ID
+	EmailKey  string
+	Confirm   string
+	Signature string
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -53,22 +65,29 @@ func randString(n int) string {
 	return string(b)
 }
 
+// NewRegisteredEmail ...
 func NewRegisteredEmail(Email string, Posts bool, News bool) *RegisteredEmail {
 
 	r := &RegisteredEmail{ID: md5Hash(Email), Email: Email, Posts: Posts, News: News}
 	r.CreatedAt = int(time.Now().Unix())
-	r.ModifiedAt = r.CreatedAt
 	r.Key = randString(16)
-	// expires after 7 days
-	r.ExpiresAt = int(time.Now().Add(time.Hour * 24 * 7).Unix())
 	r.Valid = false
 
 	return r
 }
 
+// Save ...
 func (r *RegisteredEmail) Save() error {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
+
+	r.ModifiedAt = int(time.Now().Unix())
+	if r.Valid == false {
+		// expires after 7 days
+		r.ExpiresAt = int(time.Now().Add(time.Hour * 24 * 7).Unix())
+	} else {
+		r.ExpiresAt = 0
+	}
 
 	b, err := json.Marshal(r)
 	if err != nil {
@@ -88,11 +107,9 @@ func (r *RegisteredEmail) Save() error {
 // RegisteredEmailGet returns a registered email for given ID & key
 // If the key is not correct, the email is not returned
 // returns RegisteredEmail, found, error
-func RegisteredEmailGet(email, key string) (*RegisteredEmail, bool, error) {
+func RegisteredEmailGet(ID, key string) (*RegisteredEmail, bool, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
-
-	ID := md5Hash(email)
 
 	res, err := scriptRegisteredEmailGet.Do(redisConn, ID)
 	if err != nil {
@@ -216,7 +233,12 @@ var (
 		-- convert boolean strings to actual booleans
 		email_data.news = email_data.news ~= nil and email_data.news == "1"
 		email_data.posts = email_data.posts ~= nil and email_data.posts == "1"
-		email_data.valid = email_data.valid ~= nil and email_data.valid == "1
+		email_data.valid = email_data.valid ~= nil and email_data.valid == "1"
+
+		-- convert number strings to actual numbers
+		email_data.createdAt = tonumber(email_data.createdAt)
+		email_data.modifiedAt = tonumber(email_data.modifiedAt)
+		email_data.expiresAt = tonumber(email_data.expiresAt)
 
 		return cjson.encode(email_data)
 	`)

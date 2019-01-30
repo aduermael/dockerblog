@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ .lang }}">
+ 	{{ template "head" . }}
+	<body>
+	 	{{ template "header" . }}
+		{{ template "menu" . }}
+
+		<div id="content">
+			 	<div id="newsletterSettings">
+					<p>{{ .Message1 }}</p>
+					<p>{{ .Message2 }}</p>
+				</div>
+		</div><!-- content -->
+		{{ template "footer" . }}
+	</body>
+</html>

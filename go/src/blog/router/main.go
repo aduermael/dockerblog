@@ -592,6 +592,43 @@ func main() {
 		})
 	})
 
+	router.GET("/email-confirm/:hash/:key", func(c *gin.Context) {
+		ID := c.Param("hash")
+		key := c.Param("key")
+		re, found, err := types.RegisteredEmailGet(ID, key)
+
+		if err != nil {
+			c.Redirect(http.StatusSeeOther, "/")
+			return
+		}
+
+		if found == false {
+			c.Redirect(http.StatusSeeOther, "/")
+			return
+		}
+
+		re.Valid = true
+		err = re.Save()
+
+		if err != nil {
+			c.Redirect(http.StatusSeeOther, "/")
+			return
+		}
+
+		archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		c.HTML(http.StatusOK, "email-confirm.tmpl", gin.H{
+			"title":    ContextTitle(c),
+			"Message1": "Email bien enregistré pour la newsletter, merci ! ☺️",
+			"Message2": "Pour changer les préférences de réception, entrez à nouveau l'email dans le formulaire d'inscription. Pour se désinscrire, cliquez sur le lien en bas de l'un des emails reçus.",
+			"archives": archives,
+		})
+	})
+
 	type newsletterRegisterRequest struct {
 		Email string `json:"email"`
 		News  bool   `json:"news"`
@@ -625,11 +662,36 @@ func main() {
 			return
 		}
 
+		ec := &types.EmailConfirmation{
+			Title:     "Newsletter",
+			Message1:  "Demande d'abonnement à la Newsletter bien reçue ! Merci de bien vouloir confirmer cet adresse email. 🙂",
+			Message2:  "Après quelques jours, si l'email n'est pas validé, il sera effacé de la base de données.",
+			Confirm:   "Confirmer",
+			EmailHash: re.ID,
+			EmailKey:  re.Key,
+			Host:      "http://localhost",
+			Signature: "🌿 Laurel 🌿",
+		}
+
+		html := ""
+		buf := &bytes.Buffer{}
+		err = confirmationEmailTemplateHTML.Execute(buf, ec)
+		if err == nil {
+			html = buf.String()
+		}
+
+		txt := ""
+		buf = &bytes.Buffer{}
+		err = confirmationEmailTemplateTxt.Execute(buf, ec)
+		if err == nil {
+			txt = buf.String()
+		}
+
 		from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
 		subject := "✉️ Merci de confirmer votre email."
 		to := mail.NewEmail("", re.Email)
-		plainTextContent := "test"
-		htmlContent := "<p>test</p>"
+		plainTextContent := txt
+		htmlContent := html
 		message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 		client := sendgrid.NewSendClient(config.SendgridAPIKey)
 		_, err = client.Send(message)

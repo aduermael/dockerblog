@@ -454,6 +454,17 @@ form input[type="button"]:disabled {
 	background-color: #4EF9BE;
 }
 
+#content #newsletterSettings {
+	max-width: 500px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+#content #newsletterSettings p {
+	text-align: center;
+}
 
 /* FOOTER */
 
