@@ -1,0 +1,16 @@
+<!DOCTYPE html>	
+ <html lang="{{ .lang }}">
+ 	{{ template "admin_head" . }}
+	 <body>
+	 	{{ template "admin_menu" . }}
+	 	<div id="content">
+	 		<h1>Registered Emails</h1>
+	 		<div>
+	 		<p>Emails validés: <strong>{{ .stats.NbValid }}</strong></p>
+	 		<p>Pour chaque post: <strong>{{ .stats.NbPosts }}</strong></p>
+	 		<p>Pour les newsletters: <strong>{{ .stats.NbNews }}</strong></p>
+	 		</div>
+	 	</div>
+	 	{{ template "admin_footer" . }}
+	 </body>	
+ </html>

@@ -274,6 +274,9 @@ func main() {
 		adminGroup.GET("/pages", adminPages)
 		adminGroup.GET("/pages/page/:page", adminPagesPage)
 
+		adminGroup.GET("/emails", adminEmails)
+		adminGroup.GET("/registered-emails", adminRegisteredEmails)
+
 		adminGroup.GET("/post/new", adminNewPost)
 		adminGroup.GET("/page/new", adminNewPage)
 

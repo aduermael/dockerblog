@@ -201,6 +201,57 @@ func adminPages(c *gin.Context) {
 	})
 }
 
+func adminRegisteredEmails(c *gin.Context) {
+
+	stats, err := types.GetRegisteredEmailStats()
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		serverError(c, err.Error())
+		return
+	}
+
+	c.HTML(http.StatusOK, "admin_registered_emails.tmpl", gin.H{
+		"title":                 "Admin - registered emails",
+		"lang":                  ContextLang(c),
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
+		"stats":                 stats,
+	})
+}
+
+func adminEmails(c *gin.Context) {
+	// config, err := ContextGetConfig(c)
+	// if err != nil {
+	// 	serverError(c, err.Error())
+	// 	return
+	// }
+
+	// TODO: list new type of posts: EMAILS
+	// posts, err := types.PostsList(true, 0, config.PostsPerPage, -1, -1, config.TimeLocation, true)
+	// if err != nil {
+	// 	fmt.Println("ERROR:", err)
+	// 	serverError(c, err.Error())
+	// 	return
+	// }
+
+	// nbPages, err := types.PostsNbPages(true, config.PostsPerPage, -1, -1, config.TimeLocation, true)
+	// if err != nil {
+	// 	c.AbortWithError(http.StatusInternalServerError, err)
+	// 	return
+	// }
+
+	posts := make([]*types.Post, 0)
+	nbPages := 1
+
+	c.HTML(http.StatusOK, "admin_emails.tmpl", gin.H{
+		"title":                 "Admin - emails",
+		"lang":                  ContextLang(c),
+		"posts":                 posts,
+		"nbPages":               int(nbPages),
+		"currentPage":           0,
+		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
+	})
+}
+
 func adminPagesPage(c *gin.Context) {
 	config, err := ContextGetConfig(c)
 	if err != nil {

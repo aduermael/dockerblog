@@ -37,6 +37,13 @@ type RegisteredEmail struct {
 	Error string `json:"error,omitempty"`
 }
 
+// RegisteredEmailStats stores stats about registered emails
+type RegisteredEmailStats struct {
+	NbValid int `json:"nbvalid"`
+	NbPosts int `json:"nbposts"`
+	NbNews  int `json:"nbnews"`
+}
+
 // EmailConfirmation is used to build confirmation emails
 type EmailConfirmation struct {
 	Title     string
@@ -140,6 +147,30 @@ func RegisteredEmailGet(ID, key string) (*RegisteredEmail, bool, error) {
 	return r, true, nil
 }
 
+func GetRegisteredEmailStats() (*RegisteredEmailStats, error) {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	res, err := scriptsRegisteredEmailStats.Do(redisConn)
+	if err != nil {
+		return nil, err
+	}
+
+	byteSlice, ok := res.([]byte)
+	if !ok {
+		return nil, errors.New("can't cast response")
+	}
+
+	stats := &RegisteredEmailStats{}
+	err = json.Unmarshal(byteSlice, stats)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return stats, nil
+}
+
 func (r *RegisteredEmail) CreatedDate() time.Time {
 	return time.Unix(int64(r.CreatedAt), 0)
 }
@@ -173,6 +204,14 @@ func (r *RegisteredEmail) Delete() error {
 }
 
 var (
+	scriptsRegisteredEmailStats = redis.NewScript(0, `
+		local result = {}
+		result.nbvalid = redis.call('scard', 'emails')
+		result.nbposts = redis.call('scard', 'emails_posts')
+		result.nbnews = redis.call('scard', 'emails_news')
+		return cjson.encode(result)
+	`)
+
 	scriptRegisteredEmailSave = redis.NewScript(0, `
 		local email = cjson.decode(ARGV[1])
 		
@@ -187,11 +226,22 @@ var (
 		redis.call('hmset', kID, 'id', email.id, 'email', email.email, 'createdAt', email.createdAt, 'modifiedAt', email.modifiedAt, 'expiresAt', email.expiresAt, 'key', email.key, 'posts', posts, 'news', news, 'valid', valid)
 
 		redis.call('srem', 'emails', kID)
+		redis.call('srem', 'emails_posts', kID)
+		redis.call('srem', 'emails_news', kID)
+
 		redis.call('del', unverifiedID)
 
 		if email.valid == true then
 			redis.call('persist', kID)
 			redis.call('sadd', 'emails', kID)
+
+			if email.posts == true then
+				redis.call('sadd', 'emails_posts', kID)
+			end
+
+			if email.news == true then
+				redis.call('sadd', 'emails_news', kID)
+			end
 		else
 			-- not using a set here for the key to expire 
 			redis.call('set', unverifiedID, kID)
@@ -250,6 +300,6 @@ var (
 		local email_id = 'email_' .. id
 		local unverified_email_id = 'unverified_email_' .. id
 
-		// TODO
+		-- TODO
 	`)
 )
