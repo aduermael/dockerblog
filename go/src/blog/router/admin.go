@@ -2,6 +2,7 @@ package main
 
 import (
 	"blog/types"
+	"bytes"
 	"errors"
 	"fmt"
 	"image"
@@ -9,6 +10,7 @@ import (
 	"image/png"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime"
 	"net/http"
 	"os"
@@ -19,6 +21,8 @@ import (
 	"time"
 
 	"github.com/nfnt/resize"
+	sendgrid "github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
@@ -406,6 +410,12 @@ func adminDeletePost(c *gin.Context) {
 	ok(c)
 }
 
+// PostEmail ...
+type PostEmail struct {
+	Post *types.Post
+	Host string
+}
+
 func adminSavePost(c *gin.Context) {
 	config, err := ContextGetConfig(c)
 	if err != nil {
@@ -473,10 +483,59 @@ func adminSavePost(c *gin.Context) {
 
 	post.NbComments = 0
 
+	wasNew := post.IsNew()
+
 	err = post.Save()
 	if err != nil {
 		serverError(c, err.Error())
 		return
+	}
+
+	// New Post has been saved successfully
+	// send email to subscribers
+	if wasNew {
+		postEmail := &PostEmail{
+			Post: post,
+			Host: "http://localhost",
+		}
+
+		emails, err := types.RegisteredEmailPostSubscribers()
+
+		if err == nil {
+
+			html := ""
+			buf := &bytes.Buffer{}
+			err = postEmailTemplateHTML.Execute(buf, postEmail)
+			if err == nil {
+				html = buf.String()
+			}
+
+			txt := ""
+			buf = &bytes.Buffer{}
+			err = postEmailTemplateTxt.Execute(buf, postEmail)
+			if err == nil {
+				txt = buf.String()
+			}
+
+			from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
+			subject := "✨📝✨ " + post.Title
+			// to := mail.NewEmail("", "adrien@duermael.com")
+			plainTextContent := txt
+			htmlContent := html
+			client := sendgrid.NewSendClient(config.SendgridAPIKey)
+
+			go func() {
+				for _, email := range emails {
+					to := mail.NewEmail("", email)
+					message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+					_, err = client.Send(message)
+					if err != nil {
+						log.Println("SENDGRID ERROR:", err)
+					}
+				}
+			}()
+
+		}
 	}
 
 	ok(c)
@@ -590,7 +649,8 @@ func adminUpload(c *gin.Context) {
 		defer out.Close()
 
 		// RETINA
-		if config.ImageImportRetina && (ext == ".jpg" || ext == ".jpeg" || ext == ".png") {
+		extLow := strings.ToLower(ext)
+		if config.ImageImportRetina && (extLow == ".jpg" || extLow == ".jpeg" || extLow == ".png") {
 			imageRetina, _, err := image.Decode(mimePart)
 			if err != nil {
 				serverError(c, "can't store file (5.2)")
@@ -602,7 +662,7 @@ func adminUpload(c *gin.Context) {
 
 			imageNormal := resize.Resize(width, height, imageRetina, resize.Lanczos3)
 
-			switch ext {
+			switch extLow {
 			case ".jpg":
 				err = jpeg.Encode(out, imageNormal, &jpeg.Options{Quality: 100})
 			case ".jpeg":
@@ -638,7 +698,7 @@ func adminUpload(c *gin.Context) {
 			}
 			defer out.Close()
 
-			switch ext {
+			switch extLow {
 			case ".jpg":
 				err = jpeg.Encode(outRetina, imageRetina, &jpeg.Options{Quality: 100})
 			case ".jpeg":

@@ -171,6 +171,34 @@ func GetRegisteredEmailStats() (*RegisteredEmailStats, error) {
 	return stats, nil
 }
 
+func RegisteredEmailPostSubscribers() ([]string, error) {
+
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	res, err := scriptGetPostSubscribers.Do(redisConn)
+	if err != nil {
+		fmt.Println("SendPostToSubscribers error:", err)
+		return nil, err
+	}
+
+	byteSlice, ok := res.([]byte)
+	if !ok {
+		fmt.Println("SendPostToSubscribers error:", "can't cast response")
+		return nil, errors.New("can't cast response")
+	}
+
+	arr := make([]string, 0)
+	err = json.Unmarshal(byteSlice, &arr)
+
+	if err != nil {
+		fmt.Println("SendPostToSubscribers error:", err)
+		return nil, err
+	}
+
+	return arr, nil
+}
+
 func (r *RegisteredEmail) CreatedDate() time.Time {
 	return time.Unix(int64(r.CreatedAt), 0)
 }
@@ -226,8 +254,8 @@ var (
 		redis.call('hmset', kID, 'id', email.id, 'email', email.email, 'createdAt', email.createdAt, 'modifiedAt', email.modifiedAt, 'expiresAt', email.expiresAt, 'key', email.key, 'posts', posts, 'news', news, 'valid', valid)
 
 		redis.call('srem', 'emails', kID)
-		redis.call('srem', 'emails_posts', kID)
-		redis.call('srem', 'emails_news', kID)
+		redis.call('srem', 'emails_posts', email.email)
+		redis.call('srem', 'emails_news', email.email)
 
 		redis.call('del', unverifiedID)
 
@@ -236,11 +264,11 @@ var (
 			redis.call('sadd', 'emails', kID)
 
 			if email.posts == true then
-				redis.call('sadd', 'emails_posts', kID)
+				redis.call('sadd', 'emails_posts', email.email)
 			end
 
 			if email.news == true then
-				redis.call('sadd', 'emails_news', kID)
+				redis.call('sadd', 'emails_news', email.email)
 			end
 		else
 			-- not using a set here for the key to expire 
@@ -291,6 +319,12 @@ var (
 		email_data.expiresAt = tonumber(email_data.expiresAt)
 
 		return cjson.encode(email_data)
+	`)
+
+	// returns post subscriber emails
+	scriptGetPostSubscribers = redis.NewScript(0, `
+		local emails = redis.call('smembers', 'emails_posts')
+		return cjson.encode(emails)
 	`)
 
 	scriptRegisteredEmailDelete = redis.NewScript(0, `

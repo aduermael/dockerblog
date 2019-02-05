@@ -648,6 +648,11 @@ func PostComputeSince(posts []*Post) {
 	}
 }
 
+// IsNew returns true if the post is new (ID == 0)
+func (p *Post) IsNew() bool {
+	return p.ID == 0
+}
+
 // Save saves post in DB
 // An new ID is assigned to the post if post.ID == -1
 func (p *Post) Save() error {
