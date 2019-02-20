@@ -341,7 +341,7 @@ func adminEditPost(c *gin.Context) {
 		return
 	}
 
-	t := time.Unix(int64(post.Date/1000), 0) // ÷1000 because of legacy (we used to store milliseconds)
+	t := time.Unix(int64(post.Date), 0)
 	post.DateString = t.In(config.TimeLocation).Format("01/02/2006")
 	post.TimeString = t.In(config.TimeLocation).Format("3:04pm")
 
@@ -366,7 +366,7 @@ func adminEditPage(c *gin.Context) {
 		return
 	}
 
-	t := time.Unix(int64(post.Date/1000), 0) // ÷1000 because of legacy (we used to store milliseconds)
+	t := time.Unix(int64(post.Date), 0)
 	post.DateString = t.In(config.TimeLocation).Format("01/02/2006")
 	post.TimeString = t.In(config.TimeLocation).Format("3:04pm")
 
@@ -466,15 +466,15 @@ func adminSavePost(c *gin.Context) {
 		}
 		fmt.Println("DATE:", t)
 
-		post.Date = int(t.Unix() * 1000) // x1000 for legacy (we used to store milliseconds)
+		post.Date = int(t.Unix())
 	} else {
 		// DATE : NOW
-		post.Date = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
+		post.Date = int(time.Now().Unix())
 	}
 
 	// NOTE: if post.ID == 0, a new post is created in database
 
-	post.Update = int(time.Now().Unix()) * 1000 // x1000 for legacy (we used to store milliseconds)
+	post.Update = int(time.Now().Unix())
 
 	// slug
 	// - make from title if empty

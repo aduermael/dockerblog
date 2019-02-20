@@ -151,7 +151,7 @@ func (c *Comment) Accept(user *UserSession) (robot bool, err error) {
 }
 
 func (c *Comment) DateTime() time.Time {
-	return time.Unix(int64(c.Date/1000), 0)
+	return time.Unix(int64(c.Date), 0)
 }
 
 // Note: this could be done client side with javascript
@@ -172,7 +172,7 @@ func (c *Comment) Save() error {
 	defer redisConn.Close()
 
 	if c.Date == 0 {
-		c.Date = time.Now().Unix() * 1000
+		c.Date = time.Now().Unix()
 	}
 
 	jsonBytes, err := json.Marshal(c)

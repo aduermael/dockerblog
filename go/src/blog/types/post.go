@@ -631,7 +631,7 @@ var (
 )
 
 func (p *Post) DateTime() time.Time {
-	return time.Unix(int64(p.Date/1000), 0)
+	return time.Unix(int64(p.Date), 0)
 }
 
 // Note: this could be done client side with javascript
@@ -802,20 +802,20 @@ func PostsNbPages(includeFuture bool, perPage int, year int, month int, timeLoca
 		return 0, errors.New("page < 1")
 	}
 
-	now := int(time.Now().Unix()) * 1000
+	now := int(time.Now().Unix())
 
 	start := int64(-1)
 	end := int64(-1)
 
 	if year != -1 && month != -1 {
-		start = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
+		start = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, timeLocation).Unix()
 		nextMonth := month + 1
 		nextYear := year
 		if nextMonth > 12 {
 			nextMonth = 1
 			nextYear++
 		}
-		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
+		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix()
 	}
 
 	res, err := scriptNbPosts.Do(redisConn, now, includeFuture, start, end, perPage, staticPages)
@@ -857,20 +857,20 @@ func PostsList(includeFuture bool, page int, perPage int, year int, month int, t
 		return nil, errors.New("perPage < 1")
 	}
 
-	now := int(time.Now().Unix()) * 1000
+	now := int(time.Now().Unix())
 
 	start := int64(-1)
 	end := int64(-1)
 
 	if year != -1 && month != -1 {
-		start = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
+		start = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, timeLocation).Unix()
 		nextMonth := month + 1
 		nextYear := year
 		if nextMonth > 12 {
 			nextMonth = 1
 			nextYear++
 		}
-		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix() * 1000
+		end = time.Date(nextYear, time.Month(nextMonth), 1, 0, 0, 0, 0, timeLocation).Unix()
 	}
 
 	res, err := scriptPostList.Do(redisConn, now, includeFuture, start, end, page, perPage, staticPages)
@@ -956,8 +956,8 @@ func PostGetArchiveMonths(lang string, timeLocation *time.Location, months []str
 		return nil, err
 	}
 
-	oldest := time.Unix(limits.Oldest/1000, 0) // ÷1000 because of legacy (we used to store milliseconds)
-	newest := time.Unix(limits.Newest/1000, 0) // ÷1000 because of legacy (we used to store milliseconds)
+	oldest := time.Unix(limits.Oldest, 0)
+	newest := time.Unix(limits.Newest, 0)
 
 	oldest = oldest.In(timeLocation)
 	newest = newest.In(timeLocation)

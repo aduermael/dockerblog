@@ -32,7 +32,7 @@ func rss(c *gin.Context) {
 	err = rssTemplate.Execute(buf, gin.H{
 		"title":       ContextTitle(c),
 		"description": "Description",
-		"buildDate":   int(now.Unix() * 1000),
+		"buildDate":   int(now.Unix()),
 		"posts":       posts,
 	})
 
