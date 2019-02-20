@@ -111,10 +111,9 @@ func (r *RegisteredEmail) Save() error {
 	return nil
 }
 
-// RegisteredEmailGet returns a registered email for given ID & key
-// If the key is not correct, the email is not returned
+// RegisteredEmailGet returns a registered email for given ID.
 // returns RegisteredEmail, found, error
-func RegisteredEmailGet(ID, key string) (*RegisteredEmail, bool, error) {
+func RegisteredEmailGet(ID string) (*RegisteredEmail, bool, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
@@ -140,6 +139,20 @@ func RegisteredEmailGet(ID, key string) (*RegisteredEmail, bool, error) {
 		return nil, false, errors.New("not found")
 	}
 
+	return r, true, nil
+}
+
+// RegisteredEmailGet returns a registered email for given ID & key
+// If the key is not correct, the email is not returned
+// returns RegisteredEmail, found, error
+func RegisteredEmailGetWithKey(ID, key string) (*RegisteredEmail, bool, error) {
+
+	r, found, err := RegisteredEmailGet(ID)
+
+	if err != nil || found == false {
+		return nil, found, err
+	}
+
 	if r.Key != key {
 		return nil, false, errors.New("not found")
 	}
@@ -147,6 +160,7 @@ func RegisteredEmailGet(ID, key string) (*RegisteredEmail, bool, error) {
 	return r, true, nil
 }
 
+// GetRegisteredEmailStats ...
 func GetRegisteredEmailStats() (*RegisteredEmailStats, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
@@ -171,12 +185,12 @@ func GetRegisteredEmailStats() (*RegisteredEmailStats, error) {
 	return stats, nil
 }
 
-func RegisteredEmailPostSubscribers() ([]string, error) {
+func RegisteredEmailPostSubscriberIDs() ([]string, error) {
 
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
-	res, err := scriptGetPostSubscribers.Do(redisConn)
+	res, err := scriptGetPostSubscriberIDs.Do(redisConn)
 	if err != nil {
 		fmt.Println("SendPostToSubscribers error:", err)
 		return nil, err
@@ -213,22 +227,15 @@ func (r *RegisteredEmail) ComputeCreatedSince() {
 	r.CreatedSince = humanize.DisplayDuration(time.Since(r.CreatedDate()), nil)
 }
 
-// Save saves post in DB
-// An new ID is assigned to the post if post.ID == -1
-func (r *RegisteredEmail) RegisteredEmail() error {
-	redisConn := redisPool.Get()
-	defer redisConn.Close()
-	// TODO
-	return nil
-}
-
 // Delete removes post from database.
 // The Post instance is still valid after the operation.
 func (r *RegisteredEmail) Delete() error {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
-	// TODO
-	return nil
+
+	_, err := scriptRegisteredEmailDelete.Do(redisConn, r.ID)
+
+	return err
 }
 
 var (
@@ -253,22 +260,22 @@ var (
 
 		redis.call('hmset', kID, 'id', email.id, 'email', email.email, 'createdAt', email.createdAt, 'modifiedAt', email.modifiedAt, 'expiresAt', email.expiresAt, 'key', email.key, 'posts', posts, 'news', news, 'valid', valid)
 
-		redis.call('srem', 'emails', kID)
-		redis.call('srem', 'emails_posts', email.email)
-		redis.call('srem', 'emails_news', email.email)
+		redis.call('srem', 'emails', email.id)
+		redis.call('srem', 'emails_posts', email.id)
+		redis.call('srem', 'emails_news', email.id)
 
 		redis.call('del', unverifiedID)
 
 		if email.valid == true then
 			redis.call('persist', kID)
-			redis.call('sadd', 'emails', kID)
+			redis.call('sadd', 'emails', email.id)
 
 			if email.posts == true then
-				redis.call('sadd', 'emails_posts', email.email)
+				redis.call('sadd', 'emails_posts', email.id)
 			end
 
 			if email.news == true then
-				redis.call('sadd', 'emails_news', email.email)
+				redis.call('sadd', 'emails_news', email.id)
 			end
 		else
 			-- not using a set here for the key to expire 
@@ -322,18 +329,23 @@ var (
 	`)
 
 	// returns post subscriber emails
-	scriptGetPostSubscribers = redis.NewScript(0, `
+	scriptGetPostSubscriberIDs = redis.NewScript(0, `
 		local emails = redis.call('smembers', 'emails_posts')
 		return cjson.encode(emails)
 	`)
 
 	scriptRegisteredEmailDelete = redis.NewScript(0, `
 		local id = ARGV[1]
-		local key = ARGV[2]
 		
 		local email_id = 'email_' .. id
 		local unverified_email_id = 'unverified_email_' .. id
 
-		-- TODO
+		redis.call('srem', 'emails', id)
+		redis.call('srem', 'emails_posts', id)
+		redis.call('srem', 'emails_news', id)
+
+		redis.call('del', unverified_email_id)
+
+		redis.call('del', email_id)
 	`)
 )

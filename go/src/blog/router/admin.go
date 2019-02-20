@@ -412,8 +412,19 @@ func adminDeletePost(c *gin.Context) {
 
 // PostEmail ...
 type PostEmail struct {
-	Post *types.Post
-	Host string
+	Post      *types.Post
+	Host      string
+	Text      PostEmailText
+	EmailHash string
+	EmailKey  string
+}
+
+// PostEmailText ...
+type PostEmailText struct {
+	DisplayComments string
+	Unsubscribe     string
+	Settings        string
+	Why             string
 }
 
 func adminSavePost(c *gin.Context) {
@@ -491,54 +502,74 @@ func adminSavePost(c *gin.Context) {
 		return
 	}
 
+	// From there, it's ok to consider success
+	// even if emails can't be sent.
+	defer ok(c)
+
 	// New Post has been saved successfully
 	// send email to subscribers
 	if wasNew {
 		postEmail := &PostEmail{
 			Post: post,
 			Host: "http://localhost",
+			Text: PostEmailText{
+				DisplayComments: "Afficher les commentaires",
+				Unsubscribe:     "Je souhaite me désabonner.",
+				Settings:        "⚙️ Afficher les préférences d'abonnement",
+				Why:             "Vous recevez ce message suite à l'inscription et validation de cet email sur bloglaurel.com.",
+			},
 		}
 
-		emails, err := types.RegisteredEmailPostSubscribers()
+		emailIDs, err := types.RegisteredEmailPostSubscriberIDs()
 
 		if err == nil {
 
-			html := ""
-			buf := &bytes.Buffer{}
-			err = postEmailTemplateHTML.Execute(buf, postEmail)
-			if err == nil {
-				html = buf.String()
-			}
-
-			txt := ""
-			buf = &bytes.Buffer{}
-			err = postEmailTemplateTxt.Execute(buf, postEmail)
-			if err == nil {
-				txt = buf.String()
-			}
-
 			from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
 			subject := "✨📝✨ " + post.Title
-			// to := mail.NewEmail("", "adrien@duermael.com")
-			plainTextContent := txt
-			htmlContent := html
 			client := sendgrid.NewSendClient(config.SendgridAPIKey)
 
 			go func() {
-				for _, email := range emails {
-					to := mail.NewEmail("", email)
+
+				for _, emailID := range emailIDs {
+
+					email, found, err := types.RegisteredEmailGet(emailID)
+					if err != nil || found == false {
+						fmt.Println("❌ can't send newsletter to:", emailID)
+						continue
+					}
+
+					postEmail.EmailHash = email.ID
+					postEmail.EmailKey = email.Key
+
+					buf := &bytes.Buffer{}
+					err = postEmailTemplateHTML.Execute(buf, postEmail)
+					if err != nil {
+						fmt.Println("❌ EMAIL HTML TEMPLATE ERROR:", err)
+						continue
+					}
+					htmlContent := buf.String()
+
+					buf = &bytes.Buffer{}
+					err = postEmailTemplateTxt.Execute(buf, postEmail)
+					if err != nil {
+						fmt.Println("❌ EMAIL TXT TEMPLATE ERROR:", err)
+						continue
+					}
+					plainTextContent := buf.String()
+
+					to := mail.NewEmail("", email.Email)
+
 					message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 					_, err = client.Send(message)
 					if err != nil {
 						log.Println("SENDGRID ERROR:", err)
+						continue
 					}
 				}
 			}()
 
 		}
 	}
-
-	ok(c)
 }
 
 func adminUpload(c *gin.Context) {

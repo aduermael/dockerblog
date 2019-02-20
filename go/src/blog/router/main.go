@@ -169,7 +169,14 @@ func loadTemplates() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	postEmailTemplateHTML, err = template.New("post-email-html").Parse(string(b))
+
+	r := regexp.MustCompile("(?s)<!--.*?(-->)")
+
+	b2 := r.ReplaceAll(b, []byte(""))
+
+	fmt.Println(string(b2))
+
+	postEmailTemplateHTML, err = template.New("post-email-html").Parse(string(b2))
 }
 
 func main() {
@@ -595,42 +602,65 @@ func main() {
 		})
 	})
 
-	router.GET("/email-confirm/:hash/:key", func(c *gin.Context) {
-		ID := c.Param("hash")
-		key := c.Param("key")
-		re, found, err := types.RegisteredEmailGet(ID, key)
+	emailGroup := router.Group("/email")
+	{
+		emailGroup.GET("/confirm/:hash/:key", func(c *gin.Context) {
 
-		if err != nil {
-			c.Redirect(http.StatusSeeOther, "/")
-			return
-		}
+			ID := c.Param("hash")
+			key := c.Param("key")
 
-		if found == false {
-			c.Redirect(http.StatusSeeOther, "/")
-			return
-		}
+			re, found, err := types.RegisteredEmailGetWithKey(ID, key)
 
-		re.Valid = true
-		err = re.Save()
+			if err != nil {
+				c.Redirect(http.StatusSeeOther, "/")
+				return
+			}
 
-		if err != nil {
-			c.Redirect(http.StatusSeeOther, "/")
-			return
-		}
+			if found == false {
+				c.Redirect(http.StatusSeeOther, "/")
+				return
+			}
 
-		archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
+			re.Valid = true
+			err = re.Save()
 
-		c.HTML(http.StatusOK, "email-confirm.tmpl", gin.H{
-			"title":    ContextTitle(c),
-			"Message1": "Email bien enregistré pour la newsletter, merci ! ☺️",
-			"Message2": "Pour changer les préférences de réception, entrez à nouveau l'email dans le formulaire d'inscription. Pour se désinscrire, cliquez sur le lien en bas de l'un des emails reçus.",
-			"archives": archives,
+			if err != nil {
+				c.Redirect(http.StatusSeeOther, "/")
+				return
+			}
+
+			emailInfoResponse(c, "Email bien enregistré pour la newsletter, merci ! ☺️", "Pour changer les préférences de réception, entrez à nouveau l'email dans le formulaire d'inscription. Pour se désinscrire, cliquez sur le lien en bas de l'un des emails reçus.")
 		})
-	})
+
+		emailGroup.GET("/unsubscribe/:hash/:key", func(c *gin.Context) {
+
+			ID := c.Param("hash")
+			key := c.Param("key")
+
+			message1 := "" // "Email bien enregistré pour la newsletter, merci ! ☺️"
+			message2 := "Pour s'abonner à nouveau, utilisez le formulaire d'inscription."
+
+			re, found, err := types.RegisteredEmailGetWithKey(ID, key)
+
+			if err != nil || found == false {
+				message1 = "L'email n'a pas pu être trouvé dans la base de données. Il a probablement déjà été supprimé ! ☺️"
+				emailInfoResponse(c, message1, message2)
+				return
+			}
+
+			err = re.Delete()
+
+			if err != nil {
+				message1 = "Une erreur interne s'est produite. 😕"
+				message2 = "Merci de réessayer un peu plus tard. Si le problème persiste, vous pouvez nous contacter: support@bloglaurel.com."
+				emailInfoResponse(c, message1, message2)
+				return
+			}
+
+			message1 = "L'email a bien été totalement supprimé de la base de données! ✨"
+			emailInfoResponse(c, message1, message2)
+		})
+	}
 
 	type newsletterRegisterRequest struct {
 		Email string `json:"email"`
@@ -851,4 +881,25 @@ func join(arr []string) string {
 
 func rfc1123(utcSec int) string {
 	return time.Unix(int64(utcSec/1000), 0).Format(time.RFC1123)
+}
+
+func emailInfoResponse(c *gin.Context, m1, m2 string) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		m1 = "Une erreur interne s'est produite. 😕"
+		m2 = "Merci de réessayer un peu plus tard. Si le problème persiste, vous pouvez nous contacter: support@bloglaurel.com."
+	}
+
+	archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "email-info.tmpl", gin.H{
+		"title":    ContextTitle(c),
+		"Message1": m1,
+		"Message2": m2,
+		"archives": archives,
+	})
 }

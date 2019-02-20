@@ -1,25 +1,35 @@
+<style type="text/css">html{background-color:#EEE;min-height:100%;min-width:100%;}p{margin:0;padding:0;}a{text-decoration:none;color:#4089B8;}</style><!--
 
-<div style="font-size: 16px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; margin-left: auto; margin-right: auto;">
+--><div style="font-size: 16px; line-height: 18px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; margin-left: auto; margin-right: auto; background-color: #FFF; padding: 0;"><!--
 
-	<div style="text-align: center; padding: 0; margin: 0; margin-top: 10px;">
-		<div style="display: inline-block; padding: 0; margin: 0;">
-			<img style="float: left; width: 80px; height: 80px;" src="http://graph.facebook.com/100005287202424/picture?type=large"/>
-			<h1 style="float: left; margin: 0; margin-left: 20px; line-height: 80px;">{{ .Post.Title }}</h1>
-			<div style="clear: both;"></div>
-		</div>
-	</div>
+	--><div style="margin: 0; padding: 10px; background-color: #ccc;"><!--
+		--><table style="margin: 0; padding: 0; border: none; border-collapse: collapse;"><!--
+			--><tr style="margin: 0; padding: 0"><!--
+				--><td style="margin: 0; padding: 0; vertical-align: top;"><!--
+					--><img style="margin: 0; padding: 0; border: none; outline: none; width: 80px; height: 80px;" src="http://graph.facebook.com/100005287202424/picture?type=large"/><!--
+				--></td><!--
+				--><td style="margin: 0; padding: 0; padding-left: 20px;"><!--
+					--><h1 style="margin: 0;">{{ .Post.Title }}</h1><!--
+				--></td><!--
+			--></tr><!--
+		--></table><!--
+	--></div><!--
 
-	<div style="margin: 0; padding: 20px;">
-		{{ $host := .Host }}
-		{{ range .Post.Blocks }}
-			{{ if eq .type "text" }}
-				<p>{{ .text }}</p>
-			{{ else if eq .type "html" }}
-				{{ .data }}
-			{{ else if eq .type "image" }}
-				<p style="text-align: center;">{{ if ne .url "" }}<a clicktracking=off href="{{.url}}">{{end}}<img style="max-width: 100%; display: inline-block;" src="{{ $host }}{{ .path }}" alt="{{.description}}"{{ if .retina }} srcset="{{ $host }}{{ .retina }} 2x"{{ end }}>{{ if ne .url "" }}</a>{{end}}</p>
-			{{ end }}
-		{{ end }}
-	</div>
+	--><div style="margin: 0; padding: 20px;"><!--
+		-->{{ $host := .Host }}<!--
+		-->{{ range .Post.Blocks }}<!--
+		-->{{ if eq .type "text" }}<!--
+				--><div style="margin: 0; padding: 0; padding-bottom: 20px;">{{ .text }}</div><!--
+			-->{{ else if eq .type "html" }}<!--
+				-->{{ .data }}<!--
+			-->{{ else if eq .type "image" }}<!--
+				--><p style="margin: 0; padding: 0; padding-bottom: 20px; text-align: center;">{{ if ne .url "" }}<a clicktracking=off href="{{.url}}">{{end}}<img style="margin: 0; padding: 0; border: none; outline: none; max-width: 100%; display: inline-block;" src="{{ $host }}{{ .path }}" alt="{{.description}}"{{ if .retina }} srcset="{{ $host }}{{ .retina }} 2x"{{ end }}>{{ if ne .url "" }}</a>{{end}}</span><!--
+			-->{{ end }}<!--
+		-->{{ end }}<!--
+		--><a style="margin: 0; padding: 0;" clicktracking=off href="{{ $host }}/post/{{ .Post.Slug }}/{{ .Post.ID }}#comments"><h3 style="padding: 0; margin: 0; text-align: center;">{{ .Text.DisplayComments }}</h3></a><!--
+	--></div><!--
 
-</div>
+	--><div style="padding: 10px; background-color: #ccc;"><!--
+		--><p style="margin: 0; padding: 0; text-align: center;">{{ .Text.Why }}<br /><a style="text-decoration: none; color: #FF0000;" clicktracking=off href="{{ $host }}/email/unsubscribe/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Text.Unsubscribe }}</a></p><!--
+	--></div><!--
+--></div>
