@@ -508,7 +508,7 @@ func adminSavePost(c *gin.Context) {
 
 	// New Post has been saved successfully
 	// send email to subscribers
-	if wasNew {
+	if wasNew && post.IsPage == false {
 		postEmail := &PostEmail{
 			Post: post,
 			Host: "http://localhost",
@@ -567,7 +567,6 @@ func adminSavePost(c *gin.Context) {
 					}
 				}
 			}()
-
 		}
 	}
 }
