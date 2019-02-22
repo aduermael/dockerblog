@@ -12,6 +12,13 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
+// Commenter ...
+type Commenter struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Alias string `json:"alias"`
+}
+
 // Config describes general blog configuration
 type Config struct {
 	Langs                   []string                   `json:"langs"`
@@ -24,6 +31,9 @@ type Config struct {
 	FacebookAppID           string                     `json:"facebookAppID"`
 	SendgridAPIKey          string                     `json:"sendgridAPIKey"`
 	Localized               map[string]LocalizedConfig `json:"localized,omitempty"`
+	// A list of known commenters
+	// Can be used to highlight some comments based on who wrote them.
+	Commenters []*Commenter `json:"commenters,omitempty"`
 
 	ImageImportRetina bool   `json:"imageImportRetina"` // when true, all imported images are considered to be Retina
 	Host              string `json:"host"`

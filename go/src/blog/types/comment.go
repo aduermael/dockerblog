@@ -51,6 +51,10 @@ type Comment struct {
 	// Can be used to force comment lang
 	// (not saved in DB)
 	ForceLang string `json:"forceLang,omitempty"`
+
+	// Set to known commenter alias based on configuration
+	// Remains empty for other authors.
+	AuthorAlias string `json:"-"`
 }
 
 // CommentAndAnswer is used to store a comment and its answer

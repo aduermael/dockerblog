@@ -470,6 +470,14 @@ func main() {
 					return
 				}
 
+				for _, comment := range post.Comments {
+					for _, commenter := range config.Commenters {
+						if commenter.Email == comment.Email && commenter.Name == comment.Name {
+							comment.AuthorAlias = commenter.Alias
+						}
+					}
+				}
+
 				c.HTML(http.StatusOK, "post.tmpl", gin.H{
 					"title":    ContextTitle(c),
 					"post":     post,
