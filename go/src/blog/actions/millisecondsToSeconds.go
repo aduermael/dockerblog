@@ -41,6 +41,7 @@ func main() {
 	fmt.Printf("POSTS: %d/%d", 0, len(allPosts))
 
 	postWithID0 := false
+	postZeroNewID := 0
 
 	for i, post := range allPosts {
 
@@ -63,6 +64,7 @@ func main() {
 
 		if postWithID0 {
 			fmt.Printf("\nNew ID for post with ID == 0: %d\n", post.ID)
+			postZeroNewID = post.ID
 			// saving a post with ID == 0 will
 			// create a new post, since ID == 0 is not allowed anymore
 			// ID == 0 means "new post"
@@ -101,18 +103,50 @@ func main() {
 	}
 
 	skipped := 0
-	fmt.Printf("\nCOMMENTS: %d/%d (skipped: %d)", 0, len(allComments), skipped)
+	fmt.Printf("\nCOMMENTS (%s): %d/%d (skipped: %d)", LANG, 0, len(allComments), skipped)
 
 	for i, comment := range allComments {
+		comment.ForceLang = LANG
 		if comment.Date > 9999999999 {
 			comment.Date /= 1000
 		}
+		// update post ID if it used to be 0
+		if comment.PostID == 0 && postZeroNewID > 0 {
+			comment.PostID = postZeroNewID
+		}
 		err = comment.Save()
 		if err != nil {
+			fmt.Println("\nERROR:", err)
+			fmt.Println("COMMENT ID:", comment.ID)
 			skipped = skipped + 1
 		}
+		fmt.Printf("\rCOMMENTS (%s): %d/%d (skipped: %d)", LANG, i+1, len(allComments), skipped)
+	}
 
-		fmt.Printf("\rCOMMENTS: %d/%d (skipped: %d)", i+1, len(allComments), skipped)
+	allCommentsEN, err := types.ListAllComments("en", true, 0, 1000000)
+	if err != nil {
+		log.Fatalln("can't get all comments")
+	}
+
+	skipped = 0
+	fmt.Printf("\nCOMMENTS (%s): %d/%d (skipped: %d)", "en", 0, len(allCommentsEN), skipped)
+
+	for i, comment := range allCommentsEN {
+		comment.ForceLang = "en"
+		if comment.Date > 9999999999 {
+			comment.Date /= 1000
+		}
+		// update post ID if it used to be 0
+		if comment.PostID == 0 && postZeroNewID > 0 {
+			comment.PostID = postZeroNewID
+		}
+		err = comment.Save()
+		if err != nil {
+			fmt.Println("\nERROR:", err)
+			fmt.Println("COMMENT ID:", comment.ID)
+			skipped = skipped + 1
+		}
+		fmt.Printf("\rCOMMENTS (%s): %d/%d (skipped: %d)", "en", i+1, len(allCommentsEN), skipped)
 	}
 
 	fmt.Printf("\nDONE!\n")
