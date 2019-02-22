@@ -6,7 +6,8 @@ var savedFBPostID = ""
 $( document ).ready(function() {
     $(".date").each(function(index) {
     	$(this).show()
-    	$(this).html(moment($(this).html(), "x").format('- MM-DD-YYYY h:mm a (dddd)'))
+    	console.log("date", $(this).html())
+    	$(this).html(moment(parseInt($(this).html()) * 1000, "x").format('- MM-DD-YYYY h:mm a (dddd)'))
     })
     initExistingBlocks()
 });

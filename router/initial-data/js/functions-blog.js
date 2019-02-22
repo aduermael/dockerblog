@@ -6,14 +6,6 @@
 // var optionalColor = '#f5f5f5'
 // var errorColor = '#f78778'
 
-// turns urls into active links 
-// in the list of comments
-$(document).ready(function()
-{
-	$('.comment').linkify()
-	startGlitterEffect()
-})
-
 var resizeTimer;
 var resizeStarted = false
 
@@ -203,7 +195,13 @@ function answerComment(comID) {
 // to current email in the field.
 function emailChange(emailInput) {
 	var hash = getGravatarHash(emailInput.value)
-	$('#commentGravatar').attr("src",'http://www.gravatar.com/avatar/' + hash + '.jpg?s=80')
+
+	var suffix = ""
+	if (defaultGravar != null) {
+		suffix = "&d=" + defaultGravar
+	}
+
+	$('#commentGravatar').attr("src",'http://www.gravatar.com/avatar/' + hash + '.jpg?s=160' + suffix)
 }
 
 // getGravatarHash returns a Gravatar md5 hash 

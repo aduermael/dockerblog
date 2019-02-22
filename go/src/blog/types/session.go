@@ -1,8 +1,10 @@
 package types
 
 import (
+	"crypto/md5"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -91,6 +93,8 @@ type UserSession struct {
 	Twitter       string `json:"twitter,omitempty"`
 	RememberInfo  bool   `json:"remember-info,omitempty"`
 	EmailOnAnswer bool   `json:"email-on-answer,omitempty"`
+
+	GravatarHash string `json:"-"`
 }
 
 const (
@@ -118,6 +122,9 @@ func (us *UserSession) load() error {
 	if err != nil {
 		return err
 	}
+
+	hash := md5.Sum([]byte(us.Email))
+	us.GravatarHash = fmt.Sprintf("%x", hash)
 
 	return nil
 }

@@ -12,3 +12,11 @@ function setBackgroundColor(obj,color) {
 function toggleLire() {
 	$("#lire").toggle()
 }
+
+$(document).ready(function()
+{
+	$('.comment').linkify()
+	startGlitterEffect()
+})
+
+var defaultGravar = "https://bloglaurel.com/img/avatar.jpg"
