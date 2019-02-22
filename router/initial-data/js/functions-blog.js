@@ -216,7 +216,7 @@ function getGravatarHash(email) {
 // validateEmail tests wether given string in parameter
 // is a valid email or not.
 function validateEmail(email) {
-    var re = /^\S+@\S+\.\S+$/
+    var re = /^\S+@\S+\.\S\S+$/
     return re.test(email)
 }
 
@@ -240,9 +240,10 @@ function newsletterFormCheck(sender) {
 	if (emailIsValid && oneCheckedAtLeast) {
 		$("#newsletterButton").prop('disabled', false)
 		$("#newsletterButton").val("Enregistrer")
+		$("#newsletter-error").hide()
 		return true
 	} else {
-		$("#newsletterButton").prop('disabled', true)
+		// $("#newsletterButton").prop('disabled', true)
 		return false
 	}
 }
@@ -262,6 +263,8 @@ function newsletterRegister(sender) {
 		request.news = $("#newsletterNewsCheckbox").is(":checked")
 		request.posts = $("#newsletterPostsCheckbox").is(":checked")
 		Post('/newsletter-register',request,newsletterRegisterCallback,newsletterRegisterErrorCallback)
+	} else {
+		$("#newsletter-error").show()
 	}
 }
 

@@ -67,6 +67,11 @@ form input[type="button"] {
 	background-color: #a2f647;
 	cursor: pointer;
 	-webkit-appearance: none;
+	-webkit-transition:0.2s ease all;
+	   -moz-transition:0.2s ease all;
+	    -ms-transition:0.2s ease all;
+	     -o-transition:0.2s ease all;
+	        transition:0.2s ease all;
 }
 
 form input[type="button"]:hover:enabled {
@@ -74,7 +79,7 @@ form input[type="button"]:hover:enabled {
 }
 
 form input[type="button"]:active:enabled {
-    background-color: #24ff00;
+    background-color: #4edeed;
 }
 
 form input[type="button"]:disabled {
@@ -315,11 +320,16 @@ form input[type="button"]:disabled {
 #content #posts .post #commentForm input.error { background-color: #f78778 !important; }
 #content #posts .post #commentForm textarea.error { background-color: #f78778 !important; }
 
-#content #posts .post #commentForm input[type="button"] { 
+#content #posts .post #commentForm input[type="button"] {
+	display: block; 
 	text-align: center;
 	margin-bottom: 10px;
 	border-radius: 3px;
 	color: #3b304e;
+	margin-right: auto;
+	margin-left: auto;
+	max-width: 300px;
+	box-shadow: 0px 2px 3px rgba(59,48,78, 0.2);
 }
 
 /* BLOCKS */
@@ -477,6 +487,17 @@ form input[type="button"]:disabled {
 	margin: 5px;
 	background-color: #e0dbe9;
 	color: #3b304e;
+	-webkit-transition:0.2s ease all;
+	   -moz-transition:0.2s ease all;
+	    -ms-transition:0.2s ease all;
+	     -o-transition:0.2s ease all;
+	        transition:0.2s ease all;
+}
+
+#content #pages .page-link:hover {
+	text-decoration: none;
+	background-color: #ef6e51;
+	color: #f7eedf;
 }
 
 #content #pages .page-link.current {
@@ -592,6 +613,15 @@ form input[type="button"]:disabled {
 	margin-right: 8px;
 }
 
+#footer #sections .group .itemWrapper .item form input[type="button"]:disabled {
+	background-color: #251e31;
+}
+
+#footer #sections .group .itemWrapper .item p.newsletter-error {
+	display: none;
+	color: #ee508d;
+}
+
 select {
 	cursor: pointer;
 	font-size: 1rem;
@@ -611,11 +641,12 @@ select {
 	-webkit-border-radius:3px;
   	-webkit-appearance: none;
   	border:0;
-  	outline:0p  	-webkit-transition:0.3s ease all;
-	   -moz-transition:0.3s ease all;
-	    -ms-transition:0.3s ease all;
-	     -o-transition:0.3s ease all;
-	        transition:0.3s ease all;
+  	outline:0;
+  	-webkit-transition:0.2s ease all;
+	   -moz-transition:0.2s ease all;
+	    -ms-transition:0.2s ease all;
+	     -o-transition:0.2s ease all;
+	        transition:0.2s ease all;
 }
 
 select:hover {
@@ -824,7 +855,7 @@ select:active {
 	background-color: #555;
 }
 
-.image-bubbles a:hover img { border: 2px solid #555; }
+.image-bubbles a:hover img { border: 2px solid #45c5d2; }
 
 ::-webkit-input-placeholder { color: #888; } /* Chrome/Opera/Safari */
 ::-moz-placeholder { color: #888; } /* Firefox 19+ */
