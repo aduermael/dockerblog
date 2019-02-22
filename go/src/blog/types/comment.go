@@ -47,6 +47,10 @@ type Comment struct {
 	// Since is a formatted duration that can be
 	// computed from Date
 	Since string `json:"-"`
+
+	// Can be used to force comment lang
+	// (not saved in DB)
+	ForceLang string `json:"forceLang,omitempty"`
 }
 
 // CommentAndAnswer is used to store a comment and its answer
@@ -477,6 +481,9 @@ var (
 
 		-- get post lang (we suppose comment lang == post lang)
 		local lang = redis.call('hget', postID, 'lang')
+		if lang == nil or lang == false or lang == 0 then
+			lang = comment.forceLang
+		end
 
 		local isNew = false
 
