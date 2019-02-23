@@ -311,44 +311,50 @@ var (
 
 			local posts_key = "posts_" .. post_data.lang
 			local rank = redis.call('zrank', posts_key, post_id)
-			-- zrange could return less than 3 results
-			-- if there's no post before or after requested post
-			local neighbor_ids = redis.call('zrange', posts_key, rank - 1, rank + 1)
-			
-			-- lookingForPrevious == false means looking for next one
-			local lookingForPrevious = true
 
-			local previousPostID = nil
-			local nextPostID = nil
+			-- Some pages may not be correctly marked as pages
+			if rank == false then
+				post_data.previousID = -1
+				post_data.nextID = -1
+			else
+				-- zrange could return less than 3 results
+				-- if there's no post before or after requested post
+				local neighbor_ids = redis.call('zrange', posts_key, rank - 1, rank + 1)
+				
+				-- lookingForPrevious == false means looking for next one
+				local lookingForPrevious = true
 
-			for _, neighbor_id in ipairs(neighbor_ids) do
-				if neighbor_id == post_id then
-					lookingForPrevious = false
-				elseif lookingForPrevious then 
-					previousPostID = neighbor_id
+				local previousPostID = nil
+				local nextPostID = nil
+
+				for _, neighbor_id in ipairs(neighbor_ids) do
+					if neighbor_id == post_id then
+						lookingForPrevious = false
+					elseif lookingForPrevious then 
+						previousPostID = neighbor_id
+					else 
+						nextPostID = neighbor_id
+					end
+				end
+
+				if previousPostID ~= nil then
+					res = redis.call('hmget', previousPostID, 'ID', 'slug', 'title')
+					post_data.previousID = tonumber(res[1])
+					post_data.previousSlug = res[2]
+					post_data.previousTitle = res[3]
 				else 
-					nextPostID = neighbor_id
+					post_data.previousID = -1
+				end
+
+				if nextPostID ~= nil then
+					res = redis.call('hmget', nextPostID, 'ID', 'slug', 'title')
+					post_data.nextID = tonumber(res[1])
+					post_data.nextsSlug = res[2]
+					post_data.nextTitle = res[3]
+				else 
+					post_data.nextID = -1
 				end
 			end
-
-			if previousPostID ~= nil then
-				res = redis.call('hmget', previousPostID, 'ID', 'slug', 'title')
-				post_data.previousID = tonumber(res[1])
-				post_data.previousSlug = res[2]
-				post_data.previousTitle = res[3]
-			else 
-				post_data.previousID = -1
-			end
-
-			if nextPostID ~= nil then
-				res = redis.call('hmget', nextPostID, 'ID', 'slug', 'title')
-				post_data.nextID = tonumber(res[1])
-				post_data.nextsSlug = res[2]
-				post_data.nextTitle = res[3]
-			else 
-				post_data.nextID = -1
-			end
-
 		else 
 			post_data.previousID = -1
 			post_data.nextID = -1
@@ -595,14 +601,35 @@ var (
 		local post = cjson.decode(ARGV[1])
 
 		local kID = 'post_' .. post.ID
-		-- index (per date)
-		local kDateOrdered = 'posts_' .. post.lang
-		-- index (by slug)
-		local kSlugs = 'slugs_' .. post.lang
+
+		-- Try all langs, to make sure the post is removed
+		-- Old version of the engine did not attach the 
+		-- lang to the post
+
+		local kPagesForEachLang = redis.call('keys', 'pages_*')
+		for _, kPages in ipairs(kPagesForEachLang) do
+			redis.call('hdel', kPages, post.slug)
+			-- post used to have names instead of slugs (legacy)
+			if post.name ~= nil then
+				redis.call('hdel', kPages, post.name)
+			end
+		end
+
+		local kSlugsForEachLang = redis.call('keys', 'slugs_*')
+		for _, kSlugs in ipairs(kSlugsForEachLang) do
+			redis.call('hdel', kSlugs, post.slug)
+			-- post used to have names instead of slugs (legacy)
+			if post.name ~= nil then
+				redis.call('hdel', kSlugs, post.name)
+			end
+		end
+
+		local kDateOrderedForEachLang = redis.call('keys', 'posts_*')
+		for _, kDateOrdered in ipairs(kDateOrderedForEachLang) do
+			redis.call('zrem', kDateOrdered, kID)
+		end
 
 		redis.call('del', kID)
-		redis.call('zrem', kDateOrdered, kID)
-		redis.call('hdel', kSlugs, post.slug)
 
 		-- in case post is registered to sync fb comments
 		redis.call('hdel', 'fbcomments', post.ID)
