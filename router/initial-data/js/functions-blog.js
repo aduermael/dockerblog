@@ -216,11 +216,12 @@ function newsletterFormCheck(sender) {
 
 	if (emailIsValid && oneCheckedAtLeast) {
 		$("#newsletterButton").prop('disabled', false)
-		$("#newsletterButton").val("Enregistrer")
+		$("#newsletterButton").val("Envoyer")
 		$("#newsletter-error").hide()
 		return true
 	} else {
 		// $("#newsletterButton").prop('disabled', true)
+		$("#newsletterButton").val("S'abonner")
 		return false
 	}
 }
