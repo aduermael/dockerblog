@@ -214,7 +214,7 @@ form input[type="button"]:disabled {
 	float: left;
 }
 #content #posts .post .title h2 a {
-	color: #ef6e4f;
+	color: #3b304e;
 }
 
 /* date */
@@ -714,20 +714,21 @@ select:active {
 	background-repeat: no-repeat;
 	background-size: contain;
 	top: -9px;
-	left: 2.2rem;
+	left: 15px;
 	width: 100px;
 	height: 146px;
 	pointer-events: none;
 }
 
 .bookmark p {
-	padding-top: 2rem;
+	padding-top: 30px;
 	font-family: "Lobster", cursive;
 	font-weight: normal;
-	font-size: 2.5rem;
-	line-height: 3.0rem;
+	font-size: 28px;
+	line-height: 34px;
 	padding-left: 7px;
-	color: #fff
+	color: #FFF;
+	text-align: center;
 }
 
 .book p {
@@ -795,10 +796,10 @@ select:active {
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 4rem;
-	height: 4rem;
-	padding-top: 1rem;
-	padding-right: 1rem;
+	width: 40px;
+	height: 40px;
+	padding-top: 10px;
+	padding-right: 10px;
 }
 
 #reader a.close img {
@@ -818,26 +819,27 @@ select:active {
 	left: 0;
 	right: 0;
 	height: 50px;
-	background-color: #292b4b;
+	background-color: #3b304e;
 }
 
 #reader-navigation a {
+	font-size: 1.1rem;
 	display: inline-block;
-	font-size: 1.6rem;
-	color: #a8cada;
+	color: #f8f0e3;
 	line-height: 50px;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 
 #reader-navigation a:hover {
-	background-color: #3c3f6e;
+	background-color: #211a2e;
 	text-decoration: none;
 }
 
 #reader-navigation select {
+	font-size: 1.1rem;
 	display: inline-block;
-	color: #27a0dd;
+	color: #45c5d2;
 	border: none;
 	-webkit-appearance: none;
 	box-shadow: none !important;
@@ -848,18 +850,20 @@ select:active {
 	background-color: transparent;
 	border-radius: 0;
 	outline: none;
-	height: 4rem;
+	height: 50px;
 	padding: 0;
 	margin: 0;
-	padding-left: 1rem;
-	padding-right: 1rem;
+	padding-left: 10px;
+	padding-right: 10px;
 	text-align: center;
-	line-height: 4rem;
-	font-size: 1.6rem;
+	line-height: 50px;
+	max-width: auto;
+	width: auto;
+	background-image: none;
 }
 
 #reader-navigation select:hover {
-	background-color: #3c3f6e;
+	background-color: #211a2e;
 	text-decoration: none;
 }
 

@@ -4,8 +4,13 @@ var currentPage = 0
 var nbpages = 0
 var filePaths = []
 var title = ""
+var imgFileExtention = ""
+var retinaSuffix = ""
+var supportRetina = false
+var bookmark = null
 
 function openReader(gallery) {
+
 	$("#content").hide()
 
 	// reset everything
@@ -20,8 +25,8 @@ function openReader(gallery) {
 	$("#reader").show()
 	$("#reader-navigation").show()
 
-	if (gallery.nbpages == null) { return }
-	nbpages = gallery.nbpages
+	// if (gallery.nbpages == null) { return }
+	// nbpages = gallery.nbpages
 
 	if (gallery.filepaths == null) { return }
 	filePaths = gallery.filepaths
@@ -29,19 +34,43 @@ function openReader(gallery) {
 	if (gallery.title == null) { return }
 	title = gallery.title
 
-	if (nbpages == 0) { return }
+	if (gallery.imgFileExtention == null) { 
+		imgFileExtention = ".jpg"
+	} else {
+		imgFileExtention = gallery.imgFileExtention	
+	}
 
-	for (i=0; i<nbpages; i++) {
+	if (gallery.retinaSuffix == null) { 
+		retinaSuffix = "@2x"
+	} else {
+		retinaSuffix = gallery.retinaSuffix	
+	}
+
+	if (gallery.supportRetina == null) { 
+		supportRetina = false
+	} else {
+		supportRetina = gallery.supportRetina	
+	}
+
+	bookmark = gallery.bookmark
+
+	// if (nbpages == 0) { return }
+
+	for (i=0; i<filePaths.length; i++) {
 		$("#pages").append(
 			$('<option></option>').val(filePaths[i]).html("Page " + (i+1))
 		);
 	}
 
-	savedPage = getCookie("bookmark-" + title)
-	if (savedPage == "") {
-		currentPage = 0
-	} else {
-		currentPage = savedPage
+	currentPage = 0
+
+	if (bookmark != null) {  
+		var savedPage = getCookie(bookmark)
+		if (savedPage == "") {
+			currentPage = 0
+		} else {
+			currentPage = savedPage
+		}
 	}
 
 	loadCurrentPage()
@@ -53,16 +82,30 @@ function loadPage(control) {
 }
 
 function loadCurrentPage() {
-	setCookie("bookmark-" + title, currentPage, 365)
+
+	if (currentPage >= filePaths.length) {
+		currentPage = filePaths.length - 1
+	}
+	if (currentPage < 0) {
+		currentPage = 0
+	}
+
+	if (bookmark != null) {
+		setCookie(bookmark, currentPage, 365)
+	}
+	
 	$("#pageimage").attr('src', "/files/gallery/loader.gif")
-	$("#pageimage").attr('src', filePaths[currentPage])
+	$("#pageimage").attr('src', filePaths[currentPage] + imgFileExtention)
+	if (supportRetina) {
+		$("#pageimage").attr('srcset', filePaths[currentPage] + retinaSuffix + imgFileExtention + " 2x")
+	}
 	$("#pages").prop('selectedIndex', currentPage);
 }
 
 function nextPage() {
 	currentPage++
-	if (currentPage >= nbpages) {
-		currentPage = nbpages - 1
+	if (currentPage >= filePaths.length) {
+		currentPage = filePaths.length - 1
 	}
 	loadCurrentPage()
 	document.location.href="#top";
@@ -81,25 +124,28 @@ function closeReader() {
 	$("#reader").hide()
 	$("#reader-navigation").hide()
 	$("#content").show()
-	refreshBookmarks()
+	refreshBookmark(bookmark)
 }
 
-function refreshBookmarks() {
+function refreshBookmark(bookmark) {
 
-	$("#tome1-bookmark").hide()
-	$("#tome2-bookmark").hide()
+	if (bookmark == null) { return }
 
-	savedPageTome1 = getCookie("bookmark-tome1")
-	if (savedPageTome1 != "" && savedPageTome1 != 0) {
-		$("#tome1-bookmark-label").multiline("Page\n" + (parseInt(savedPageTome1) + 1))
-		$("#tome1-bookmark").show()
+	var bookmarkDiv = $("#" + bookmark)
+
+	if  (bookmarkDiv == null) { return }
+
+	bookmarkDiv.empty()
+
+	var savedPage = getCookie(bookmark)
+	if (savedPage != "" && savedPage != 0) {
+		bookmarkDiv.append($("<p>" + "Page<br>" + (parseInt(savedPage) + 1) + "</p>"))
+		bookmarkDiv.show()
+	} else {
+		bookmarkDiv.hide()
 	}
 
-	savedPageTome2 = getCookie("bookmark-tome2")
-	if (savedPageTome2 != "" && savedPageTome2 != 0) {
-		$("#tome2-bookmark-label").multiline("Page\n"+ (parseInt(savedPageTome2) + 1))
-		$("#tome2-bookmark").show()
-	}
+	console.log("refreshBookmark end")
 }
 
 // cookies
@@ -124,14 +170,6 @@ function getCookie(cname) {
         }
     }
     return "";
-}
-
-// utils
-
-$.fn.multiline = function(text){
-    this.text(text);
-    this.html(this.html().replace(/\n/g,'<br/>'));
-    return this;
 }
 
 // keys 
