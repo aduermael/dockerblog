@@ -511,7 +511,7 @@ func adminSavePost(c *gin.Context) {
 	if wasNew && post.IsPage == false {
 		postEmail := &PostEmail{
 			Post: post,
-			Host: "http://localhost",
+			Host: config.Host,
 			Text: PostEmailText{
 				DisplayComments: "Afficher les commentaires",
 				Unsubscribe:     "Je souhaite me désabonner.",
