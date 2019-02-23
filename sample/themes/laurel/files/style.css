@@ -385,6 +385,8 @@ form input[type="button"]:disabled {
 	background-color: rgba(0,0,0,0.01);
 	padding: 10px;
 	margin-left: 40%;
+	overflow-wrap: break-word;
+  	word-wrap: break-word;
 }
 
 #content #posts .post .comments .comment .options {
@@ -393,6 +395,28 @@ form input[type="button"]:disabled {
 	right: 10px;
 	z-index: 3;
 }
+
+#content #posts .post .comments .comment a {
+	color: #45c5d2;
+}
+
+#content #posts .post .comments .comment a.answer {
+	display: inline-block;
+	padding: 0;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 3px;
+	background-color: rgba(0,0,0,0.12);
+	color: #FFF;
+}
+
+#content #posts .post .comments .comment a.answer:hover {
+	text-decoration: none;
+	background-color: #3b304e;
+	color: #45c5d2;
+}
+
+
 
 #content #posts .post .comments .comment .options a.starred-on {
 	color: #FFFFFF;
@@ -418,10 +442,14 @@ form input[type="button"]:disabled {
 	color: #CC3333;
 }
 
-
 #content #posts .post .comments .comment.starred {
 	background-color: #FFD94A !important;
 }
+
+#content #posts .post .comments .comment.laurel {
+	background-color: #59fed1 !important;
+}
+
 #content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
 #content #posts .post .comments .comment.indent-1 { margin-left: 10%; background-color: rgba(0,0,0,0.07); }
 #content #posts .post .comments .comment.indent-2 { margin-left: 20%; background-color: rgba(0,0,0,0.05); }
