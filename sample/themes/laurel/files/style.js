@@ -20,3 +20,19 @@ $(document).ready(function()
 })
 
 var defaultGravar = "https://bloglaurel.com/img/avatar.jpg"
+
+var resizeTimer;
+var resizeStarted = false
+
+$(window).on('resize', function(e) {
+	if (resizeStarted == false) {
+		resizeStarted = true
+		stopGlitterEffect()
+	}
+
+	clearTimeout(resizeTimer);
+	resizeTimer = setTimeout(function() {
+		resizeStarted = false
+		startGlitterEffect()	
+	}, 250);
+});

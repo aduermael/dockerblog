@@ -1,26 +1,3 @@
-// ---------------
-// CONFIG
-// ---------------
-
-// var mandatoryColor = '#fff'
-// var optionalColor = '#f5f5f5'
-// var errorColor = '#f78778'
-
-var resizeTimer;
-var resizeStarted = false
-
-$(window).on('resize', function(e) {
-	if (resizeStarted == false) {
-		resizeStarted = true
-		stopGlitterEffect()
-	}
-
-	clearTimeout(resizeTimer);
-	resizeTimer = setTimeout(function() {
-		resizeStarted = false
-		startGlitterEffect()	
-	}, 250);
-});
 
 // ---------------
 // CONTACT FORMS
