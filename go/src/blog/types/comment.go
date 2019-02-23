@@ -590,13 +590,13 @@ var (
 
 		else -- post not found, but let's try to clean anyway
 
-			local all_comments_keys = redis.call('comments_all_*')
+			local all_comments_keys = redis.call('keys', 'comments_all_*')
 
 			for _, all_comments_key in ipairs(all_comments_keys) do
 				redis.call('zrem', all_comments_key, comment_key)
 			end
 
-			local unvalidated_comments_keys = redis.call('comments_unvalidated_*')
+			local unvalidated_comments_keys = redis.call('keys', 'comments_unvalidated_*')
 
 			for _, unvalidated_comments_key in ipairs(unvalidated_comments_keys) do
 				redis.call('zrem', unvalidated_comments_key, comment_key)
