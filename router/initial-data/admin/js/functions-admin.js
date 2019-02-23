@@ -318,9 +318,6 @@ function initTextBlock(block) {
   		}
 	});
 
-	// re-assigning html content...
-	block.children().first().html(htmlContent)
-
 	editor.on('selection-change', function(range, oldRange, source) {
 
 		if (!editingLink) {
@@ -383,6 +380,21 @@ function initExistingBlocks() {
 	$('#blocks').children().each(function ()
 	{
 		if ($(this).hasClass("block_text")) { initTextBlock($(this)) } 
+	})
+
+	// when initializing text blocks, empty lines are
+	// added at the end of each block. 
+	// This gets rid of them:
+	$(".ql-editor").each( function(index) {
+		while (true) {
+			var el = $( this ).children()[$( this ).children().length - 1]
+			console.log(el.tagName, el.innerHTML)
+			if (el.tagName == "P" && el.innerHTML == "<br>") {
+				el.remove()
+			} else {
+				break
+			}
+		}
 	})
 }
 
