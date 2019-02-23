@@ -368,6 +368,22 @@ function addTextBlock(sender) {
   	var block = $("<div id=\"" + blockName +"\" class=\"block block_text\"><p><br></p></div>");
 	block.appendTo($("#blocks"))
 	var editor = initTextBlock(block)
+
+	// when initializing text blocks, empty lines are
+	// added at the end of each block. 
+	// This gets rid of them:
+	$(".ql-editor").each( function(index) {
+		while (true) {
+			var el = $( this ).children()[$( this ).children().length - 1]
+			console.log(el.tagName, el.innerHTML)
+			if (el.tagName == "P" && el.innerHTML == "<br>") {
+				el.remove()
+			} else {
+				break
+			}
+		}
+	})
+
 	editor.focus()
 }
 
@@ -511,6 +527,20 @@ var editPostCallBack = function(data)
 	}
 }
 
+var editPageCallBack = function(data)
+{
+	var res = data;
+
+	if(res.success)
+	{
+		document.location = "/admin/pages";
+	}
+	else
+	{
+		alert("FAILED");
+	}
+}
+
 function sendPost(sender)
 {	
 	hideToolBar(activeEditor)
@@ -624,7 +654,11 @@ function sendPost(sender)
 
 	notDirty()
 
-	Post('/admin/save',postContent,editPostCallBack,errCallback);
+	if (postContent.isPage) {
+		Post('/admin/save',postContent,editPageCallBack,errCallback);	
+	} else {
+		Post('/admin/save',postContent,editPostCallBack,errCallback);	
+	}
 }
 
 function saveGeneralSettings() {
