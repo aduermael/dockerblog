@@ -203,10 +203,10 @@ function validateTwitterUsername(username) {
     return re.test(username)
 }
 
-function showArchives(sender) {
+function showArchives(sender, host) {
 	var optionSelected = $(sender).find(":selected")
 	if (optionSelected != null && optionSelected.val() != "") {
-		window.location.href = "/archives/" + optionSelected.val()
+		window.location.href = host + "/archives/" + optionSelected.val()
 	}
 }
 

@@ -1,6 +1,6 @@
 {{ define "archives" }}
 	{{ $months := array "Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet" "Aout" "Septembre" "Octobre" "Novembre" "Décembre" }}
-	<select onchange="showArchives(this);">
+	<select onchange="showArchives(this, '{{.host}}');">
 		<option value="">Archives</option>
 		{{ if and .month .year }}
 			{{ $month := .month }}

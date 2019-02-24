@@ -402,6 +402,18 @@ form input[type="button"]:disabled {
 
 #content #posts .post .comments .comment a.answer {
 	display: inline-block;
+	float: right;
+	padding: 0;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 3px;
+	background-color: rgba(0,0,0,0.12);
+	color: #FFF;
+}
+
+#content #posts .post .comments .comment a.answer-left {
+	display: inline-block;
+	float: left;
 	padding: 0;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -447,7 +459,7 @@ form input[type="button"]:disabled {
 }
 
 #content #posts .post .comments .comment.laurel {
-	background-color: #59fed1 !important;
+	background-color: #dcfff4 !important;
 }
 
 #content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
@@ -478,15 +490,24 @@ form input[type="button"]:disabled {
 }
 
 #content #posts .post .comments .comment p { 
-	padding-bottom: 8px;
+	padding-bottom: 10px;
 }
 
 #content #posts .post .comments .comment img.avatar {
 	float: left;
 	width: 80px;
 	height: 80px;
-	margin-right: 1rem;
-	margin-bottom: 1rem;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	border-radius: 3px;
+}
+
+#content #posts .post .comments .comment img.avatar-right {
+	float: right;
+	width: 80px;
+	height: 80px;
+	margin-left: 10px;
+	margin-bottom: 10px;
 	border-radius: 3px;
 }
 

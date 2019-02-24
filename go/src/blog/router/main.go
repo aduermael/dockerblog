@@ -231,6 +231,7 @@ func main() {
 
 	router.Use(ContextSetConfig)
 	router.Use(ContextSetLang)
+	router.Use(TestDomainPostAlias)
 
 	// ADMIN
 
@@ -412,6 +413,7 @@ func main() {
 			"year":        int(year),
 			"nbPages":     int(nbPages),
 			"currentPage": 0,
+			"host":        config.Host,
 		})
 	})
 
@@ -456,61 +458,10 @@ func main() {
 					return
 				}
 
-				post.ComputeSince()
-
-				archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
-				if err != nil {
-					c.AbortWithError(http.StatusInternalServerError, err)
-					return
-				}
-
-				user, err := types.GetUserSession(c.Request, c.Writer)
-				if err != nil {
-					c.AbortWithError(http.StatusInternalServerError, err)
-					return
-				}
-
-				for _, comment := range post.Comments {
-					for _, commenter := range config.Commenters {
-						if commenter.Email == comment.Email && commenter.Name == comment.Name {
-							comment.AuthorAlias = commenter.Alias
-						}
-					}
-				}
-
-				c.HTML(http.StatusOK, "post.tmpl", gin.H{
-					"title":    ContextTitle(c),
-					"post":     post,
-					"archives": archives,
-					"user":     user,
-				})
+				renderPost(post, c)
 				return
 			}
 		})
-
-		// postGroup.GET("/:slugOrID", func(c *gin.Context) {
-
-		// 	ID := c.Param("slugOrID")
-		// 	validID, err := regexp.MatchString("[0-9]+", ID)
-		// 	if err != nil {
-		// 		// if found == false {
-		// 		// 	fmt.Println("NOT FOUND")
-		// 		// 	// TODO: use slug instead
-		// 		// 	c.Redirect(http.StatusMovedPermanently, "/")
-		// 		// } else {
-		// 		c.AbortWithError(http.StatusInternalServerError, err)
-		// 		// }
-		// 	}
-
-		// 	if validID {
-		// 		post, found, err := types.PostGet(ID)
-		// 		if err != nil {
-		// 			c.AbortWithError(http.StatusInternalServerError, err)
-		// 			return
-		// 		}
-		// 	}
-
-		// })
 	}
 
 	router.GET("/posts/page/:page", func(c *gin.Context) {
@@ -798,28 +749,7 @@ func main() {
 			if err == nil {
 
 				if post.IsPage {
-
-					post.ComputeSince()
-
-					archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
-					if err != nil {
-						c.AbortWithError(http.StatusInternalServerError, err)
-						return
-					}
-
-					user, err := types.GetUserSession(c.Request, c.Writer)
-					if err != nil {
-						c.AbortWithError(http.StatusInternalServerError, err)
-						return
-					}
-
-					c.HTML(http.StatusOK, "post.tmpl", gin.H{
-						"title":    ContextTitle(c),
-						"post":     post,
-						"archives": archives,
-						"user":     user,
-					})
-
+					renderPost(post, c)
 				} else {
 					movedTo := filepath.Join("/post/", post.Slug, strconv.Itoa(post.ID))
 					c.Redirect(http.StatusMovedPermanently, movedTo)
@@ -909,5 +839,46 @@ func emailInfoResponse(c *gin.Context, m1, m2 string) {
 		"Message1": m1,
 		"Message2": m2,
 		"archives": archives,
+		"host":     config.Host,
+	})
+}
+
+func renderPost(post *types.Post, c *gin.Context) {
+
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		fmt.Println("RENDER POST ERROR, can't get config:", err.Error())
+		c.Redirect(http.StatusSeeOther, "/")
+		return
+	}
+
+	post.ComputeSince()
+
+	archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	user, err := types.GetUserSession(c.Request, c.Writer)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	for _, comment := range post.Comments {
+		for _, commenter := range config.Commenters {
+			if commenter.Email == comment.Email && commenter.Name == comment.Name {
+				comment.AuthorAlias = commenter.Alias
+			}
+		}
+	}
+
+	c.HTML(http.StatusOK, "post.tmpl", gin.H{
+		"title":    ContextTitle(c),
+		"post":     post,
+		"archives": archives,
+		"user":     user,
+		"host":     config.Host,
 	})
 }

@@ -301,8 +301,8 @@ function initTextBlock(block) {
 	// saving block's html content now to re-assign it after initialization.
 	var htmlContent = block.html()
 
-	console.log("initTextBlock")
-	console.log(htmlContent)
+	// console.log("initTextBlock")
+	// console.log(htmlContent)
 
 	// htmlContent = htmlContent.replace(/<[\/]*(div|span)[^>]*>/g, '')
 	htmlContent = htmlContent.replace(/<div>/g, '<p>')
@@ -317,6 +317,9 @@ function initTextBlock(block) {
 			"toolbar": false
   		}
 	});
+
+	// re-assigning html content...
+	block.children().first().html(htmlContent)
 
 	editor.on('selection-change', function(range, oldRange, source) {
 
@@ -375,7 +378,6 @@ function addTextBlock(sender) {
 	$(".ql-editor").each( function(index) {
 		while (true) {
 			var el = $( this ).children()[$( this ).children().length - 1]
-			console.log(el.tagName, el.innerHTML)
 			if (el.tagName == "P" && el.innerHTML == "<br>") {
 				el.remove()
 			} else {
@@ -404,7 +406,6 @@ function initExistingBlocks() {
 	$(".ql-editor").each( function(index) {
 		while (true) {
 			var el = $( this ).children()[$( this ).children().length - 1]
-			console.log(el.tagName, el.innerHTML)
 			if (el.tagName == "P" && el.innerHTML == "<br>") {
 				el.remove()
 			} else {

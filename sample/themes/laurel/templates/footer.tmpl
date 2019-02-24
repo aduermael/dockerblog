@@ -6,29 +6,15 @@
 				<div class="item">
 					<h2>Pages</h2>
 					<ul>
-						<li><a href="/">Qui suis-je ?</a></li>
-						<li><a href="/">Contact</a></li>
+						<li><a href="{{ .host }}/qui-suis-je">Qui suis-je ?</a></li>
+						<li><a href="{{ .host }}/contact">Contact</a></li>
 						<li><a href="https://fr.tipeee.com/laurel">Tipeee</a></li>
-						<li><a href="/">Presse</a></li>
+						<li><a href="{{ .host }}/presse">Presse</a></li>
 						<li>{{ template "archives" . }}</li>
 					</ul>
 				</div>
 			</div>
 
-			<div class="itemWrapper">
-				<div class="item">
-					<h2>Follow me</h2>
-					<ul>
-						<li><a href="https://twitter.com/bloglaurel"><span class="fab fa-twitter"></span> Twitter</a></li>
-						<li><a href="https://www.facebook.com/LaurelComics"><span class="fab fa-facebook-square"></span> Facebook</a></li>
-						<li><a href="https://instagram.com/bloglaurel/"><span class="fab fa-instagram"></span> Instagram</a></li>
-						<li><a href="https://500px.com/laurelduermael"><span class="fa fa-images"></span> Mes photos</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-
-		<div class="group">
 			<div class="itemWrapper">
 				<div class="item">
 					<h2>Newsletter</h2>
@@ -49,25 +35,39 @@
 					</form>
 				</div>
 			</div>
+		</div>
+
+		<div class="group">
+			<div class="itemWrapper">
+				<div class="item">
+					<h2>Follow me</h2>
+					<ul>
+						<li><a href="https://twitter.com/bloglaurel"><span class="fab fa-twitter"></span> Twitter</a></li>
+						<li><a href="https://www.facebook.com/LaurelComics"><span class="fab fa-facebook-square"></span> Facebook</a></li>
+						<li><a href="https://instagram.com/bloglaurel/"><span class="fab fa-instagram"></span> Instagram</a></li>
+						<li><a href="https://500px.com/laurelduermael"><span class="fa fa-images"></span> Mes photos</a></li>
+					</ul>
+				</div>
+			</div>
      	
 			<div class="itemWrapper">
 				<div class="item">
 					<h2>À voir</h2>
 					<div class="image-bubbles">
-						<a href="https://twitter.com/PenelopeB"><img src="/theme/img/penelope.jpg"/></a>
-						<a href="http://www.bouletcorp.com"><img src="/theme/img/boulet.png"/></a>
-						<a href="https://www.heidschoetter.com/illustrations-2017-18"><img src="/theme/img/heidschoetter.png"/></a>
-						<a href="http://maliki.com"><img src="/theme/img/maliki.jpg"/></a>
+						<a href="http://maliki.com"><img src="{{ .host }}/theme/img/maliki.jpg"/></a>
+						<a href="https://particubes.com"><img src="{{ .host }}/theme/img/particubes.jpg"/></a>
+						<a href="http://www.bouletcorp.com"><img src="{{ .host }}/theme/img/boulet.png"/></a>
+						<a href="http://www.muchpolitik.fr"><img src="{{ .host }}/theme/img/much-politik.png"/></a>
 
-						<a href="http://www.muchpolitik.fr"><img src="/theme/img/much-politik.png"/></a>
-						<a href="http://www.sophielambda.com"><img src="/theme/img/sophie-lambda.jpg"/></a>
-						<a href="http://webcomicname.com"><img src="/theme/img/ohno.png"/></a>
-						<a href="https://particubes.com"><img src="/theme/img/particubes.jpg"/></a>
+						<a href="https://unodieuxconnard.com"><img src="{{ .host }}/theme/img/odieux.jpg"/></a>
+						<a href="https://twitter.com/PenelopeB"><img src="{{ .host }}/theme/img/penelope.jpg"/></a>
+						<a href="https://500px.com/laurelduermael"><img src="{{ .host }}/theme/img/mes-photos.jpg"/></a>
+						<a href="http://pbfcomics.com"><img src="{{ .host }}/theme/img/perry-bible.png"/></a>
 
-						<a href="http://davidgilson.tumblr.com"><img src="/theme/img/david-gilson.jpg"/></a>
-						<a href="http://pbfcomics.com"><img src="/theme/img/perry-bible.png"/></a>
-						<a href="https://unodieuxconnard.com"><img src="/theme/img/odieux.png"/></a>
-						<a href="http://yatuu.fr"><img src="/theme/img/yatuu.jpg"/></a>
+						<a href="http://www.sophielambda.com"><img src="{{ .host }}/theme/img/sophie-lambda.jpg"/></a>
+						<a href="http://davidgilson.tumblr.com"><img src="{{ .host }}/theme/img/david-gilson.jpg"/></a>
+						<a href="http://webcomicname.com"><img src="{{ .host }}/theme/img/ohno.png"/></a>
+						<a href="http://yatuu.fr"><img src="{{ .host }}/theme/img/yatuu.jpg"/></a>
 
 					</div>
 				</div>

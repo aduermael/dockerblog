@@ -40,5 +40,6 @@ func posts(c *gin.Context, page int) {
 		"archives":    archives,
 		"nbPages":     int(nbPages),
 		"currentPage": page,
+		"host":        config.Host,
 	})
 }

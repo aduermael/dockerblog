@@ -35,6 +35,13 @@ type Config struct {
 	// Can be used to highlight some comments based on who wrote them.
 	Commenters []*Commenter `json:"commenters,omitempty"`
 
+	// Post to display when accessing the blog through a different domain name
+	// map is structured like this:
+	// {
+	//    "my-domain.com": "1234" <- post ID
+	// },
+	DomainPostAliases map[string]string `json:"domain-post-aliases,omitempty"`
+
 	ImageImportRetina bool   `json:"imageImportRetina"` // when true, all imported images are considered to be Retina
 	Host              string `json:"host"`
 

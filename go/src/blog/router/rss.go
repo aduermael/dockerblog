@@ -34,6 +34,7 @@ func rss(c *gin.Context) {
 		"description": "Description",
 		"buildDate":   int(now.Unix()),
 		"posts":       posts,
+		"host":        config.Host,
 	})
 
 	if err != nil {

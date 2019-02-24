@@ -4,13 +4,9 @@
 	<body>
 		<script type="text/javascript">
 			window.onload = function() {
-					initExistingBlocks()
-
-					$("#datepicker").datepicker()
-					$("#timepicker").timepicker()
-
-					notDirty()
-
+				$("#datepicker").datepicker()
+				$("#timepicker").timepicker()
+				notDirty()
 				window.addEventListener("beforeunload", function (e) {
 					return alertIfDirty()
 				})

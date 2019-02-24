@@ -5,6 +5,7 @@
 	<body>
 	 	{{ template "header" . }}
 		{{ template "menu" . }}
+		{{ $host := .host }}
 
 		<div id="content">
 		 	<div id="posts">
@@ -12,7 +13,7 @@
 
 					<div class="title">
 						<h2><a href="/{{.post.Slug}}/{{.post.ID}}">{{ .post.Title }}</a></h2>
-						<p class="post-date">{{ .post.Since }}</p>
+						{{ if not .post.IsPage }}<p class="post-date">{{ .post.Since }}</p>{{end}}
 						<div class="clear"></div>
 					</div>
 					 	
@@ -78,11 +79,11 @@
 								{{ range .post.Comments }}
 									<div id="com_{{.ID}}" class="{{ if .AuthorAlias }}{{ .AuthorAlias }} {{end}}comment comment-block indent-{{.Indent}}{{ if .Highlighted }} starred{{ end }}">
 
-										<img class="avatar" src="http://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
+										<img class="avatar{{ if .AuthorAlias }}-right{{end}}" src="{{ if eq .AuthorAlias "laurel" }}{{ $host }}/theme/img/laurel-avatar.jpg{{else}}http://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg{{end}}">
 										<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
 										<p>{{.Content}}</p>
-										<a class="answer" href="#" onclick="answerComment({{.ID}});return false;">Répondre</a>
-
+										<a class="answer{{ if .AuthorAlias }}-left{{end}}" href="#" onclick="answerComment({{.ID}});return false;">Répondre</a>
+										<div style="clear: both"></div>
 										{{ if false }}
 										<!-- TODO: edit in place for admins-->
 										<div class="options">
