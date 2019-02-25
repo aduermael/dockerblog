@@ -6,6 +6,7 @@ FROM golang:1.8.3-alpine3.5
 
 COPY go/src /go/src
 WORKDIR /go/src/blog/router
+RUN go get -d
 RUN go install
 
 # TODO: multistage build to only keep binary
