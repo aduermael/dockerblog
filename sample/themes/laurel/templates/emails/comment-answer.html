@@ -2,10 +2,8 @@
 
 <div style="font-size: 16px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; padding: 0;">
 
-	<p style="margin: 0; padding: 0; margin-bottom: 20px;">{{ .Message }}</p>
-
 	<!-- original -->
-	<div style=" background-color: #F7F7F7; border-radius: 4px; border: none; margin: 0; margin-bottom: 20px; padding: 10px;">
+	<div style=" background-color: rgba(0,0,0,0.09); border-radius: 3px; border: none; margin: 0; margin-bottom: 10px; padding: 10px;">
 	    <div style="padding: 4px; margin: 0">
 	        <strong>{{ .Original.Name }}</strong>
 	    </div>
@@ -13,13 +11,13 @@
 	</div>
 
 	<!-- answer -->
-	<div style="background-color: #F7F7F7; border-radius: 4px; border: none; margin: 0; margin-bottom: 20px; padding:10px;">
+	<div style="background-color: rgba(0,0,0,0.09); border-radius: 3px; border: none; margin: 0; margin-bottom: 10px; padding:10px;">
 	    <div style="padding: 4px; margin:0;">
 	        <strong>{{ .Answer.Name }}</strong>
 	    </div>
 	    <div style="padding: 4px; margin:0">{{ .Answer.Content }}</div>
 	</div>
 
-	<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 50px; background-color: #009CC2; display: block; max-width: 400px; margin: 0; margin-bottom: 20px; height: 50px; text-align: center;" href="{{ .Host }}/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}">{{ .Button }}</a>
+	<a style="box-shadow: 0px 2px 3px rgba(59,48,78, 0.2); color: #3b304e; text-decoration: none; border-radius: 3px; background-color: #a2f647; display: block; max-width: 400px; margin: 0; margin-bottom: 10px; padding: 10px; text-align: center;" clicktracking=off href="{{ .Host }}/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}">{{ .Button }}</a>
 
 </div>

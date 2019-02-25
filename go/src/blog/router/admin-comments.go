@@ -2,9 +2,14 @@ package main
 
 import (
 	"blog/types"
+	"bytes"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	sendgrid "github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
 func adminComments(page int, unvalidatedOnly bool, c *gin.Context) {
@@ -62,11 +67,17 @@ func adminAcceptComment(c *gin.Context) {
 		return
 	}
 
+	sendEmail := comment.Valid == false
+
 	comment.Valid = true
 	err = comment.Save()
 	if err != nil {
 		serverError(c, err.Error())
 		return
+	}
+
+	if sendEmail {
+		emailCommentResponse(comment, c)
 	}
 
 	ok(c)
@@ -125,4 +136,65 @@ func adminCommentHighlight(b bool, c *gin.Context) {
 	}
 
 	ok(c)
+}
+
+// Sends email if comment is an answer to another comment
+// that opted for email on response
+func emailCommentResponse(comment *types.Comment, c *gin.Context) {
+
+	if comment.AnswerComID != 0 && comment.Valid == true {
+
+		config, err := ContextGetConfig(c)
+		if err != nil {
+			log.Println("can't email comment response:", err.Error())
+			return
+		}
+
+		original, err := types.GetComment(strconv.Itoa(comment.AnswerComID))
+		if err != nil {
+			log.Println("COMMENT EMAIL ERROR:", err)
+			return
+		}
+
+		if original.EmailOnAnswer {
+			caa := &types.CommentAndAnswer{
+				Host:     config.Host,
+				Button:   "Répondre",
+				Original: original,
+				Answer:   comment,
+			}
+
+			html := ""
+			buf := &bytes.Buffer{}
+			err = answerEmailTemplateHTML.Execute(buf, caa)
+			if err != nil {
+				log.Println("answer email html template error:", err.Error())
+			} else {
+				html = buf.String()
+			}
+
+			txt := ""
+			buf = &bytes.Buffer{}
+			err = answerEmailTemplateTxt.Execute(buf, caa)
+			if err != nil {
+				log.Println("answer email txt template error:", err.Error())
+			} else {
+				txt = buf.String()
+			}
+
+			from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
+			subject := "✨✉️✨ " + comment.Name + " a répondu à votre commentaire sur bloglaurel.com"
+			to := mail.NewEmail(original.Name, original.Email)
+			plainTextContent := txt
+			htmlContent := html
+			message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+			client := sendgrid.NewSendClient(config.SendgridAPIKey)
+			_, err := client.Send(message)
+			if err != nil {
+				log.Println("SENDGRID ERROR:", err)
+			} else {
+				// fmt.Printf("SENT TO %s: \n%s\n\n%s\n", original.Email, html, txt)
+			}
+		}
+	}
 }

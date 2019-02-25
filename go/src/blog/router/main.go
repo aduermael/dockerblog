@@ -479,8 +479,8 @@ func main() {
 
 	// receiving comment
 	router.POST("/comment", func(c *gin.Context) {
-		var comment types.Comment
-		err := c.BindJSON(&comment)
+		comment := &types.Comment{}
+		err := c.BindJSON(comment)
 		if err != nil {
 			badRequest(c, err.Error())
 			return
@@ -505,55 +505,8 @@ func main() {
 			return
 		}
 
-		config, err := ContextGetConfig(c)
-		if err != nil {
-			serverError(c, err.Error())
-			return
-		}
-
-		// ⚠️ SHOULD BE DONE WITHIN "ACCEPT"
-
-		// email author of answered comment
-		if comment.AnswerComID != 0 {
-			original, err := types.GetComment(strconv.Itoa(comment.AnswerComID))
-			if err != nil {
-				log.Println("COMMENT EMAIL ERROR:", err)
-			} else {
-				if original.EmailOnAnswer {
-					caa := &types.CommentAndAnswer{Original: original, Answer: &comment}
-
-					html := ""
-					buf := &bytes.Buffer{}
-					err = answerEmailTemplateHTML.Execute(buf, caa)
-					if err == nil {
-						html = buf.String()
-					}
-
-					txt := ""
-					buf = &bytes.Buffer{}
-					err = answerEmailTemplateTxt.Execute(buf, caa)
-					if err == nil {
-						txt = buf.String()
-					}
-
-					from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
-					subject := "✨✉️✨ " + comment.Name + " a répondu à votre commentaire sur bloglaurel.com"
-					to := mail.NewEmail(original.Name, original.Email)
-					plainTextContent := txt
-					htmlContent := html
-					message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-					client := sendgrid.NewSendClient(config.SendgridAPIKey)
-					_, err := client.Send(message)
-					if err != nil {
-						log.Println("SENDGRID ERROR:", err)
-					} else {
-						// fmt.Printf("SENT TO %s: \n%s\n\n%s\n", original.Email, html, txt)
-					}
-				}
-			}
-		}
-
-		fmt.Println("comment created, id:", comment.ID)
+		// see if email needs to be sent
+		emailCommentResponse(comment, c)
 
 		c.JSON(http.StatusOK, gin.H{
 			"success":            true,

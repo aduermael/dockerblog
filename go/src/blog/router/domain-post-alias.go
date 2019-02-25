@@ -14,7 +14,11 @@ func TestDomainPostAlias(c *gin.Context) {
 	config, err := ContextGetConfig(c)
 	if err != nil {
 		fmt.Println("TestDomainPostAlias, can't get config:", err.Error())
-		c.Abort()
+		c.Next()
+		return
+	}
+
+	if c.Request.URL.Path != "/" && c.Request.URL.Path != "" {
 		c.Next()
 		return
 	}

@@ -4,4 +4,4 @@
 {{ .Answer.Name }}
 {{ .Answer.Content }}
 
-Répondre: http://bloglaurel.com/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}
+{{ .Button }}: {{ .Host }}/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}

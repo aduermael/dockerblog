@@ -60,6 +60,8 @@ type Comment struct {
 // CommentAndAnswer is used to store a comment and its answer
 // (processed by comment answer email templates)
 type CommentAndAnswer struct {
+	Host     string
+	Button   string
 	Original *Comment
 	Answer   *Comment
 }
@@ -199,6 +201,7 @@ func (c *Comment) Save() error {
 	}
 
 	savedComment, err := GetComment(strconv.FormatInt(commentID, 10))
+
 	c.Update(savedComment)
 
 	return nil
