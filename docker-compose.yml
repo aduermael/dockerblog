@@ -32,7 +32,7 @@ services:
       # - ./router/initial-data/js:/blog-data/js # DEV
       # - ./router/initial-data/robots.txt:/blog-data/robots.txt # DEV
       # - ./go/src:/go/src # DEV
-    command: ash # DEV
+    # command: ash # DEV
 
   # blog-fbcomments:
   #   build: 
