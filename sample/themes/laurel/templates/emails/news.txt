@@ -1,13 +1,16 @@
-{{ .Content.Title }}
+{{ .Post.Title }}
 
-{{ .Content.Message1 }}
-{{ range $i, $line := .AddrLines }}
-  {{ $line }}{{ end }}
+{{ $host := .Host }}
+{{ range .Post.Blocks }}
+	{{ if eq .type "text" }}
+		{{ .text }}
+	{{ else if eq .type "image" }}
+		{{ $host }}{{ .path }}
+	{{ end }}
+	
+{{ end }}
 
-{{ .Content.Message2 }}
+{{ .Text.DisplayComments }}: {{ $host }}/post/{{ .Post.Slug }}/{{ .Post.ID }}#comments
 
-https://www.laposte.fr/particulier/outils/suivre-vos-envois?code={{ .Order.TrackingNumber }}
-
-{{ .Content.Message3 }}
-
-{{ .Content.Signature }}
+{{ .Text.Why }}
+{{ .Text.Unsubscribe }}

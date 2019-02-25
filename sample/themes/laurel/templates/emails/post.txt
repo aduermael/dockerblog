@@ -1,7 +1,16 @@
 {{ .Post.Title }}
 
+{{ $host := .Host }}
 {{ range .Post.Blocks }}
 	{{ if eq .type "text" }}
 		{{ .text }}
+	{{ else if eq .type "image" }}
+		{{ $host }}{{ .path }}
 	{{ end }}
+	
 {{ end }}
+
+{{ .Text.DisplayComments }}: {{ $host }}/post/{{ .Post.Slug }}/{{ .Post.ID }}#comments
+
+{{ .Text.Why }}
+{{ .Text.Unsubscribe }}

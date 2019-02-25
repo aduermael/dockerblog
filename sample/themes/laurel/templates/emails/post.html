@@ -1,15 +1,15 @@
-<style type="text/css">html{background-color:#EEE;min-height:100%;min-width:100%;}p{margin:0;padding:0;}a{text-decoration:none;color:#4089B8;}</style><!--
+<style type="text/css">html{background-color:#EEE;min-height:100%;min-width:100%;}p{margin:0;padding:0;}a{text-decoration:none;color:#45c5d2;}</style><!--
 
---><div style="font-size: 16px; line-height: 18px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; margin-left: auto; margin-right: auto; background-color: #FFF; padding: 0;"><!--
+--><div style="font-size: 16px; line-height: 18px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; margin-left: auto; margin-right: auto; background-color: #FFF; padding: 0; border-radius: 3px;"><!--
 
-	--><div style="margin: 0; padding: 10px; background-color: #ccc;"><!--
+	--><div style="margin: 0; padding: 10px; background-color: #3b304e; border-top-right-radius: 3px; border-top-left-radius: 3px;"><!--
 		--><table style="margin: 0; padding: 0; border: none; border-collapse: collapse;"><!--
 			--><tr style="margin: 0; padding: 0"><!--
 				--><td style="margin: 0; padding: 0; vertical-align: top;"><!--
-					--><img style="margin: 0; padding: 0; border: none; outline: none; width: 80px; height: 80px;" src="http://graph.facebook.com/100005287202424/picture?type=large"/><!--
+					--><img style="margin: 0; padding: 0; border: none; outline: none; width: 80px; height: 80px; border-radius: 3px;" src="{{ .Host }}/theme/img/laurel-avatar.jpg"/><!--
 				--></td><!--
 				--><td style="margin: 0; padding: 0; padding-left: 20px;"><!--
-					--><h1 style="margin: 0;">{{ .Post.Title }}</h1><!--
+					--><h1 style="margin: 0; color: #45c5d2">{{ .Post.Title }}</h1><!--
 				--></td><!--
 			--></tr><!--
 		--></table><!--
@@ -26,10 +26,10 @@
 				--><p style="margin: 0; padding: 0; padding-bottom: 20px; text-align: center;">{{ if ne .url "" }}<a clicktracking=off href="{{.url}}">{{end}}<img style="margin: 0; padding: 0; border: none; outline: none; max-width: 100%; display: inline-block;" src="{{ $host }}{{ .path }}" alt="{{.description}}"{{ if .retina }} srcset="{{ $host }}{{ .retina }} 2x"{{ end }}>{{ if ne .url "" }}</a>{{end}}</span><!--
 			-->{{ end }}<!--
 		-->{{ end }}<!--
-		--><a style="margin: 0; padding: 0;" clicktracking=off href="{{ $host }}/post/{{ .Post.Slug }}/{{ .Post.ID }}#comments"><h3 style="padding: 0; margin: 0; text-align: center;">{{ .Text.DisplayComments }}</h3></a><!--
+		--><a style="margin: 0; padding: 0;" clicktracking=off href="{{ $host }}/post/{{ .Post.Slug }}/{{ .Post.ID }}#comments"><h3 style="padding: 0; margin: 0; text-align: center; font-size: 16px;">{{ .Text.DisplayComments }}</h3></a><!--
 	--></div><!--
 
-	--><div style="padding: 10px; background-color: #ccc;"><!--
-		--><p style="margin: 0; padding: 0; text-align: center;">{{ .Text.Why }}<br /><a style="text-decoration: none; color: #FF0000;" clicktracking=off href="{{ $host }}/email/unsubscribe/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Text.Unsubscribe }}</a></p><!--
+	--><div style="padding: 10px; background-color: #3b304e; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; color: #f7eedf;"><!--
+		--><p style="margin: 0; padding: 0; text-align: center;">{{ .Text.Why }}<br /><a style="text-decoration: none; color: #ee508d;" clicktracking=off href="{{ $host }}/email/unsubscribe/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Text.Unsubscribe }}</a></p><!--
 	--></div><!--
 --></div>
