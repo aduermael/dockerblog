@@ -9,9 +9,8 @@ services:
     tty: true
     restart: always
     volumes:
-      # - blog-data:/blog-data # PROD
-      - ./sample/db:/blog-data/db # DEV
-
+      - blog-data:/blog-data # PROD
+      # - ./sample/db:/blog-data/db # DEV
   blog-router:
     build:
       context: .
@@ -22,26 +21,26 @@ services:
     stdin_open: true
     tty: true
     restart: always
-    # environment: # PROD
-    #   - GIN_MODE=release # PROD
+    environment: # PROD
+      - GIN_MODE=release # PROD
     volumes:
-      # - blog-data:/blog-data # PROD
-      - ./sample/themes:/blog-data/themes # DEV
-      - ./sample/config.json:/blog-data/config.json # DEV
-      - ./sample/files:/blog-data/files # DEV
-      - ./router/initial-data/admin:/blog-data/admin # DEV
-      - ./router/initial-data/js:/blog-data/js # DEV
-      - ./router/initial-data/robots.txt:/blog-data/robots.txt # DEV
-      - ./go/src:/go/src # DEV
+      - blog-data:/blog-data # PROD
+      # - ./sample/themes:/blog-data/themes # DEV
+      # - ./sample/config.json:/blog-data/config.json # DEV
+      # - ./sample/files:/blog-data/files # DEV
+      # - ./router/initial-data/admin:/blog-data/admin # DEV
+      # - ./router/initial-data/js:/blog-data/js # DEV
+      # - ./router/initial-data/robots.txt:/blog-data/robots.txt # DEV
+      # - ./go/src:/go/src # DEV
     command: ash # DEV
 
-  blog-fbcomments:
-    build: 
-      context: ./plugins/fbcomments
-    container_name: blog-fbcomments
-    stdin_open: true
-    tty: true
-    restart: always
+  # blog-fbcomments:
+  #   build: 
+  #     context: ./plugins/fbcomments
+  #   container_name: blog-fbcomments
+  #   stdin_open: true
+  #   tty: true
+  #   restart: always
 
 volumes:
   blog-data:
