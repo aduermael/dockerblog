@@ -52,6 +52,10 @@ function openReader(gallery) {
 		supportRetina = gallery.supportRetina	
 	}
 
+	if (supportRetina) {
+		$("#pageimage").attr('srcset', "/files/gallery/loader.gif 2x")
+	}
+
 	bookmark = gallery.bookmark
 
 	// if (nbpages == 0) { return }
@@ -97,6 +101,7 @@ function loadCurrentPage() {
 	$("#pageimage").attr('src', "/files/gallery/loader.gif")
 	$("#pageimage").attr('src', filePaths[currentPage] + imgFileExtention)
 	if (supportRetina) {
+		$("#pageimage").attr('srcset', "/files/gallery/loader.gif 2x")
 		$("#pageimage").attr('srcset', filePaths[currentPage] + retinaSuffix + imgFileExtention + " 2x")
 	}
 	$("#pages").prop('selectedIndex', currentPage);
