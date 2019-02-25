@@ -3,7 +3,7 @@
 
 	<div style="text-align: center; padding: 0; margin: 0; margin-top: 10px;">
 		<div style="display: inline-block; padding: 0; margin: 0;">
-			<img style="float: left; width: 80px; height: 80px;" src="http://graph.facebook.com/100005287202424/picture?type=large"/>
+			<img style="float: left; width: 80px; height: 80px;" src="{{ .Host }}/theme/img/laurel-avatar.jpg"/>
 			<h1 style="float: left; margin: 0; margin-left: 20px; line-height: 80px;">{{ .Title }}</h1>
 			<div style="clear: both;"></div>
 		</div>
@@ -11,11 +11,9 @@
 
 	<div style="margin: 0; padding: 20px;">
 
-		<img style="display: block; width: 400px; height: 150px; margin: 0; padding: 0; margin-right: auto; margin-left: auto; margin-bottom: 20px;" src="{{ .Host }}/uploads/emails/confirmation.jpg"/>
-
 		<p style="margin: 0; padding: 0; margin-bottom: 20px; text-align: center;">{{ .Message1 }}</p>
 
-		<a style="color: #FFF; text-decoration: none; border-radius: 10px; line-height: 50px; background-color: #009CC2; display: block; max-width: 400px; margin: 0; margin-right: auto; margin-left: auto; margin-bottom: 20px; height: 50px; text-align: center;" clicktracking=off href="{{ .Host }}/email/confirm/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Confirm }}</a>
+		<a style="box-shadow: 0px 2px 3px rgba(59,48,78, 0.2); color: #3b304e; text-decoration: none; border-radius: 3px; background-color: #a2f647; display: block; max-width: 400px; margin: 0; margin-left: auto; margin-right: auto; margin-bottom: 20px; padding: 10px; text-align: center;" clicktracking=off href="{{ .Host }}/email/confirm/{{ .EmailHash }}/{{ .EmailKey }}">{{ .Confirm }}</a>
 
 		<p style="margin: 0; padding: 0; margin-bottom: 20px; text-align: center;">{{ .Message2 }}</p>
 

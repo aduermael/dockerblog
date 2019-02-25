@@ -609,12 +609,12 @@ func main() {
 
 		ec := &types.EmailConfirmation{
 			Title:     "Newsletter",
-			Message1:  "Demande d'abonnement à la Newsletter bien reçue ! Merci de bien vouloir confirmer cet adresse email. 🙂",
+			Message1:  "Demande d'abonnement à la newsletter bien reçue ! Merci de bien vouloir confirmer cette adresse email. 🙂",
 			Message2:  "Après quelques jours, si l'email n'est pas validé, il sera effacé de la base de données.",
 			Confirm:   "Confirmer",
 			EmailHash: re.ID,
 			EmailKey:  re.Key,
-			Host:      "http://localhost",
+			Host:      config.Host,
 			Signature: "🌿 Laurel 🌿",
 		}
 

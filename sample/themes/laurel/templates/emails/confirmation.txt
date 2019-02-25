@@ -2,7 +2,7 @@
 
 {{ .Message1 }}
 
-{{ .Host }}/email-confirm/{{ .EmailHash }}/{{ .EmailKey }}
+{{ .Host }}/email/confirm/{{ .EmailHash }}/{{ .EmailKey }}
 
 {{ .Message2 }}
 
