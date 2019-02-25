@@ -371,21 +371,6 @@ function addTextBlock(sender) {
   	var block = $("<div id=\"" + blockName +"\" class=\"block block_text\"><p><br></p></div>");
 	block.appendTo($("#blocks"))
 	var editor = initTextBlock(block)
-
-	// when initializing text blocks, empty lines are
-	// added at the end of each block. 
-	// This gets rid of them:
-	$(".ql-editor").each( function(index) {
-		while (true) {
-			var el = $( this ).children()[$( this ).children().length - 1]
-			if (el.tagName == "P" && el.innerHTML == "<br>") {
-				el.remove()
-			} else {
-				break
-			}
-		}
-	})
-
 	editor.focus()
 }
 
