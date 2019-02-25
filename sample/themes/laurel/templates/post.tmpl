@@ -78,8 +78,8 @@
 							<div>
 								{{ range .post.Comments }}
 									<div id="com_{{.ID}}" class="{{ if .AuthorAlias }}{{ .AuthorAlias }} {{end}}comment comment-block indent-{{.Indent}}{{ if .Highlighted }} starred{{ end }}">
-
-										<img class="avatar{{ if .AuthorAlias }}-right{{end}}" src="{{ if eq .AuthorAlias "laurel" }}{{ $host }}/theme/img/laurel-avatar.jpg{{else}}http://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg{{end}}">
+										<a id="com{{.ID}}"></a>
+										<img class="avatar{{ if .AuthorAlias }}-right{{end}}" src="{{ if eq .AuthorAlias "laurel" }}{{ $host }}/theme/img/laurel-avatar.jpg{{else}}http://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d={{ $host }}%2Ftheme%2Fimg%2Fanonymous.jpg{{end}}">
 										<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
 										<p>{{.Content}}</p>
 										<a class="answer{{ if .AuthorAlias }}-left{{end}}" href="#" onclick="answerComment({{.ID}});return false;">Répondre</a>
@@ -115,7 +115,7 @@
 										<input id="email" name="email" type="email" value="">
 										
 										<div class="header">
-											<img id="commentGravatar" src="http://www.gravatar.com/avatar/{{ .user.GravatarHash }}?s=160&amp;d=http%3A%2F%2Fbloglaurel.com%2Fimg%2Favatar.jpg">
+											<img id="commentGravatar" src="http://www.gravatar.com/avatar/{{ .user.GravatarHash }}?s=160&amp;d={{ $host }}%2Ftheme2Fimg%2Fanonymous.jpg">
 										
 											<div class="nameAndEmail">
 												<input id="commentName" type="text" value="{{ .user.Name }}" onfocus="backToOriginalBackground(this);" placeholder="name" class="mandatory">

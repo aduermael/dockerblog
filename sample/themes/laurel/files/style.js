@@ -19,7 +19,7 @@ $(document).ready(function()
 	startGlitterEffect()
 })
 
-var defaultGravar = "https://bloglaurel.com/img/avatar.jpg"
+var defaultGravar = "https://bloglaurel.com/theme/img/anonymous.jpg"
 
 var resizeTimer;
 var resizeStarted = false
