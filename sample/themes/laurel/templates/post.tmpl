@@ -123,6 +123,8 @@
 											</div>
 										</div><!-- header -->
 
+										<p class="avatar-info">Les avatars sont liés à l'email via <a href="https://gravatar.com">gravatar.com</a></p>
+
 										<div class="webProfile">
 											<div class="left">
 												<input id="commentWebsite" type="text" value="{{ .user.Website }}" onfocus="backToOriginalBackground(this);" placeholder="website" class="optional">
@@ -137,8 +139,6 @@
 
 										<label><input id="commentRemember" type="checkbox"{{ if .user.RememberInfo }} checked{{end}}>Se rappeler de mes informations.</label>
 										<label><input id="commentEmailOnAnswer" type="checkbox"{{ if .user.EmailOnAnswer }} checked{{end}}>Être tenu au courant des réponses par email.</label>
-
-										<p class="avatar-info">Les avatars sont basés sur l'email et proviennent de <a href="https://gravatar.com">gravatar.com</a></p>
 									</div><!-- commentFields -->
 								</form><!-- commentForm -->
 							</div>

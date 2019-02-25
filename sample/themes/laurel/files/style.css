@@ -36,7 +36,7 @@ h1, h2 {
 
 a {
 	text-decoration: none;
-	color: #777;
+	color: #42c4d1;
 }
 
 a:hover {
@@ -134,7 +134,7 @@ form input[type="button"]:disabled {
 	width: 60px;
 	height: 60px;
 
-	border: 1px solid #999;
+	border: 1px solid #3b304e;
 	border-radius: 3px;
 	padding: 3px;
 	background-color: #fff;
@@ -164,17 +164,56 @@ form input[type="button"]:disabled {
 
 #menu > #lire {
 	display: none;
-	background-color: #777;
-	/*max-width: 800px;
-	margin-right: auto;
-	margin-left: auto;*/
-	line-height: 40px;
+	background-color: #776d89;
+	padding: 10px;
 }
 
 #menu > #lire ul { text-align: center; }
-#menu > #lire li { display: inline-block; }
+#menu > #lire li { display: inline-block; padding: 0; margin: 0;}
 #menu > #lire li a { color: #eee; display: block; padding-left: 10px; padding-right: 10px;}
 #menu > #lire li a:hover { /**/ }
+
+#menu > #lire li > a {
+	cursor: pointer;
+	display: block;
+	text-align: left; 
+	border-radius: 3px;
+	padding: 10px;
+	margin: 5px;
+	background-color: #FFF;	
+	-webkit-transition:0.2s ease all;
+	   -moz-transition:0.2s ease all;
+	    -ms-transition:0.2s ease all;
+	     -o-transition:0.2s ease all;
+	        transition:0.2s ease all;
+}
+
+#menu > #lire li > a:hover {
+	background-color: #45c5d2;		
+}
+
+#menu > #lire li img {
+	float: left;
+	height: 200px;
+	margin: 0;
+	padding: 0;
+}
+
+#menu > #lire li .description {
+	width: 250px;
+	float: left;
+	margin: 0;
+	padding: 0;
+	margin-left: 10px;
+}
+
+#menu > #lire li .description p {
+	color: #000;
+}
+
+#menu > #lire li .description h2 {
+	color: #3b304e;
+}
 
 /* CONTENT */
 
@@ -246,7 +285,8 @@ form input[type="button"]:disabled {
 	text-align: center;
 	padding: 0;
 	margin: 0;
-	margin-top: 5px;
+	margin-top: 4px;
+	margin-bottom: 4px;
 }
 
 
