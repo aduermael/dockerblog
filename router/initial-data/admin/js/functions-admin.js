@@ -1,4 +1,6 @@
 
+var SERVER = location.protocol + "//" + location.host;
+
 var savedBlocksHTML = ""
 var savedTitle = ""
 var savedFBPostID = ""
@@ -87,7 +89,7 @@ function nextBlock() {
 
 function PostFiles(path,formData,callback,errorCallback)
 {
-	var url = 'http://' + location.host + path;
+	var url = SERVER + path;
 
 	$.ajax
 	(
