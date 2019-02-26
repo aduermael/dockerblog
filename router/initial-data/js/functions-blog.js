@@ -178,7 +178,7 @@ function emailChange(emailInput) {
 		suffix = "&d=" + defaultGravar
 	}
 
-	$('#commentGravatar').attr("src",'http://www.gravatar.com/avatar/' + hash + '.jpg?s=160' + suffix)
+	$('#commentGravatar').attr("src",'https://www.gravatar.com/avatar/' + hash + '.jpg?s=160' + suffix)
 }
 
 // getGravatarHash returns a Gravatar md5 hash 
