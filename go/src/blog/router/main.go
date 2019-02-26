@@ -222,6 +222,18 @@ func main() {
 
 	loadTemplates()
 
+	// favicon & friends
+	router.StaticFile("/android-chrome-192x192.png", filepath.Join(themePath, "favicon", "android-chrome-192x192.png"))
+	router.StaticFile("/android-chrome-384x384.png", filepath.Join(themePath, "favicon", "android-chrome-384x384.png"))
+	router.StaticFile("/apple-touch-icon.png", filepath.Join(themePath, "favicon", "apple-touch-icon.png"))
+	router.StaticFile("/browserconfig.xml", filepath.Join(themePath, "favicon", "browserconfig.xml"))
+	router.StaticFile("/favicon-16x16.png", filepath.Join(themePath, "favicon", "favicon-16x16.png"))
+	router.StaticFile("/favicon-32x32.png", filepath.Join(themePath, "favicon", "favicon-32x32.png"))
+	router.StaticFile("/favicon.ico", filepath.Join(themePath, "favicon", "favicon.ico"))
+	router.StaticFile("/mstile-150x150.png", filepath.Join(themePath, "favicon", "mstile-150x150.png"))
+	router.StaticFile("/safari-pinned-tab.svg", filepath.Join(themePath, "favicon", "safari-pinned-tab.svg"))
+	router.StaticFile("/site.webmanifest", filepath.Join(themePath, "favicon", "site.webmanifest"))
+
 	// redirect to clean path
 	router.Use(func(c *gin.Context) {
 		cleanPath := filepath.Clean(c.Request.URL.Path)
