@@ -802,7 +802,7 @@ func join(arr []string) string {
 }
 
 func rfc1123(utcSec int) string {
-	return time.Unix(int64(utcSec/1000), 0).Format(time.RFC1123)
+	return time.Unix(int64(utcSec), 0).Format(time.RFC1123)
 }
 
 func emailInfoResponse(c *gin.Context, m1, m2 string) {
