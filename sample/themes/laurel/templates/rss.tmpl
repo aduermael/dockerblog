@@ -11,7 +11,7 @@
 		{{ range .posts}}
 			<item>
 				<title>{{ .Title }}</title>
-				<link>https://bloglaurel.com/{{.Slug}}/{{.ID}}</link>
+				<link>https://bloglaurel.com/post/{{.Slug}}/{{.ID}}</link>
 				<description><![CDATA[{{ range .Blocks }}
 					{{ if eq .type "text" }}
 						<p>{{ .text }}</p>
@@ -23,7 +23,7 @@
 					{{ end }}
 					{{ end }}]]></description>
 				<pubDate>{{ rfc1123 .Date }}</pubDate>
-				<guid>https://bloglaurel.com/{{.Slug}}/{{.ID}}</guid>
+				<guid>https://bloglaurel.com/post/{{.Slug}}/{{.ID}}</guid>
 			</item>
 		{{ end }}
 	</channel>
