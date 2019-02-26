@@ -8,7 +8,7 @@
 	 		<div id="comments">
 				{{ range .comments }}
 					<div id="comment-{{ .ID }}" class="comment{{ if eq .Valid false }} unvalidated{{ end }}">
-						<div class="title"><b>{{ .Name }}</b><span style="display:none" class="date">{{ .Date }}</span> - <a href="/post/{{ .PostID }}">post #{{ .PostID }}</a> - com #{{ .ID }}</div>
+						<div class="title"><b>{{ .Name }}</b><span style="display:none" class="date">{{ .Date }}</span> - <a style="color: #3399ff;" href="/post/{{ .PostID }}">post #{{ .PostID }}</a> - <a style="color: #3399ff;" href="/post/{{ .PostID }}#com{{ .ID }}">com #{{ .ID }}</a></div>
 						<div class="options">
 							{{ if eq .Valid false }}<a class="primary-action accept" href="#" onclick="acceptComment('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
 							<a id="comment-highlight-btn-{{ .ID }}" {{ if .Highlighted }}class="starred"{{ end }} href="#" onclick="highlightComment('{{ .ID }}'); return false;"><span class="fas fa-star"></span></a>
