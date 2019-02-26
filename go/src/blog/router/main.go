@@ -253,6 +253,12 @@ func main() {
 	router.GET("/coeur/rss.php", rss)
 	router.GET("/coeur/atom.php", rss)
 
+	router.HEAD("/rss", rssHead)
+	router.HEAD("/rss/:lang", rssHead)
+	router.HEAD("/feed", rssHead)
+	router.HEAD("/coeur/rss.php", rssHead)
+	router.HEAD("/coeur/atom.php", rssHead)
+
 	adminGroup := router.Group("/admin")
 	{
 		adminGroup.Static("/theme", filepath.Join(adminThemePath, "files"))
@@ -481,6 +487,19 @@ func main() {
 		posts(c, pageInt)
 	})
 
+	router.HEAD("/posts/page/:page", func(c *gin.Context) {
+		page := c.Param("page")
+		pageInt, err := strconv.Atoi(page)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "/posts/:page - can't parse page: "+page+"\n")
+			c.Redirect(http.StatusMovedPermanently, "/")
+			return
+		}
+		// page indexes start at zero, not one
+		pageInt--
+		postsHead(c, pageInt)
+	})
+
 	// receiving comment
 	router.POST("/comment", func(c *gin.Context) {
 		comment := &types.Comment{}
@@ -655,6 +674,10 @@ func main() {
 
 	router.GET("/", func(c *gin.Context) {
 		posts(c, 0)
+	})
+
+	router.HEAD("/", func(c *gin.Context) {
+		postsHead(c, 0)
 	})
 
 	router.NoRoute(func(c *gin.Context) {

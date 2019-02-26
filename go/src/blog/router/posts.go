@@ -3,9 +3,30 @@ package main
 import (
 	"blog/types"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+func postsHead(c *gin.Context, page int) {
+	config, err := ContextGetConfig(c)
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	posts, err := types.PostsList(false, page, config.PostsPerPage, -1, -1, config.TimeLocation, false)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	if len(posts) > 0 {
+		c.Header("Last-Modified", posts[0].DateTime().Format(time.RFC1123))
+	}
+	c.AbortWithStatus(http.StatusOK)
+}
 
 func posts(c *gin.Context, page int) {
 	config, err := ContextGetConfig(c)
