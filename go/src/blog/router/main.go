@@ -225,9 +225,13 @@ func main() {
 	// redirect to clean path
 	router.Use(func(c *gin.Context) {
 		cleanPath := filepath.Clean(c.Request.URL.Path)
-		if c.Request.URL.Path != cleanPath {
+		// trailing "/" suffixes are accepted
+		if c.Request.URL.Path != cleanPath && c.Request.URL.Path != cleanPath+"/" {
 			c.Redirect(http.StatusMovedPermanently, cleanPath)
+			c.Abort()
+			return
 		}
+		c.Next()
 	})
 
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
