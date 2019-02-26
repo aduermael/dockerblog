@@ -237,17 +237,11 @@ func main() {
 
 	router.POST("admin-login", adminLogin)
 
-	rssGroup := router.Group("/rss")
-	{
-		// TODO: support different languages
-		rssGroup.GET("/", func(c *gin.Context) {
-			rss(c)
-		})
-
-		rssGroup.GET("/:lang", func(c *gin.Context) {
-			rss(c)
-		})
-	}
+	// TODO: rss paths should be in config
+	router.GET("/rss", rss)
+	router.GET("/rss/:lang", rss)
+	router.GET("/feed", rss)
+	router.GET("/coeur/rss.php", rss)
 
 	adminGroup := router.Group("/admin")
 	{
@@ -655,8 +649,6 @@ func main() {
 
 	router.NoRoute(func(c *gin.Context) {
 
-		log.Println("no route:", c.Request.URL.Path)
-
 		p := strings.TrimSpace(path.Clean(c.Request.URL.Path))
 
 		//Cut off the leading slash
@@ -710,6 +702,8 @@ func main() {
 				return
 			}
 		}
+
+		log.Println("no route:", c.Request.URL.Path)
 
 		c.Redirect(http.StatusMovedPermanently, "/")
 	})
