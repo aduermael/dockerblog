@@ -226,6 +226,7 @@ func main() {
 
 	router.Use(static.ServeRoot("/files/", filepath.Join(blogDataRootDir, "files")))
 	router.Use(static.ServeRoot("/uploads/", filepath.Join(blogDataRootDir, "files")))
+	router.StaticFile("/robots.txt", filepath.Join(blogDataRootDir, "robots.txt"))
 
 	router.Use(static.ServeRoot("/js/", jsPath))
 
@@ -242,6 +243,7 @@ func main() {
 	router.GET("/rss/:lang", rss)
 	router.GET("/feed", rss)
 	router.GET("/coeur/rss.php", rss)
+	router.GET("/coeur/atom.php", rss)
 
 	adminGroup := router.Group("/admin")
 	{
@@ -703,7 +705,7 @@ func main() {
 			}
 		}
 
-		log.Println("no route:", c.Request.URL.Path)
+		log.Println("no route:", c.Request.Method, c.Request.URL.Path)
 
 		c.Redirect(http.StatusMovedPermanently, "/")
 	})
