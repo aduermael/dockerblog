@@ -222,6 +222,14 @@ func main() {
 
 	loadTemplates()
 
+	// redirect to clean path
+	router.Use(func(c *gin.Context) {
+		cleanPath := filepath.Clean(c.Request.URL.Path)
+		if c.Request.URL.Path != cleanPath {
+			c.Redirect(http.StatusMovedPermanently, cleanPath)
+		}
+	})
+
 	router.Use(static.ServeRoot("/theme/", filepath.Join(themePath, "files")))
 
 	router.Use(static.ServeRoot("/files/", filepath.Join(blogDataRootDir, "files")))
