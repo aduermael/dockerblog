@@ -352,17 +352,21 @@ a:hover {
 	color: #777;
 }
 
+.options-table {
+	width: 100%;
+}
+
 #content #posts .post .title,
 #content #comments .comment .title {
-	display: inline-block;
-	float: left;
 }
 
 #content #posts .post .options,
 #content #comments .comment .options {
-	display: inline-block;
-	float: right;
+	table-layout: fixed;
+	width:100px;
+	text-align: right;
 }
+
 
 #content #pages {
 	max-width: 800px;
