@@ -9,13 +9,16 @@
 	 		<div id="posts">
 				{{ range .posts }}
 					<div id="post-{{ .ID }}" class="post">
-						<div class="title">
-							<a href="/admin/post/edit/{{ .ID }}">{{ .Title }}</a><span style="display:none" class="date">{{ .Date }}</span> - <a href="/post/{{ .Slug }}/{{ .ID }}">post #{{ .ID }}</a>
-						</div>
-						<div class="options">
-							<a class="trash" href="#" onclick="removePost('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
-						</div>
-						<div class="clear"></div>
+						<table class="options-table">
+							<tr>
+							<td class="title">
+								<a href="/admin/post/edit/{{ .ID }}">{{ .Title }}</a><span style="display:none" class="date">{{ .Date }}</span> - <a href="/post/{{ .Slug }}/{{ .ID }}">post #{{ .ID }}</a>
+							</td>
+							<td class="options">
+								<a class="trash" href="#" onclick="removePost('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
+							</td>
+							</tr>
+						</table>
 					</div>
 				{{ else }}
 					<p>no posts</p>
