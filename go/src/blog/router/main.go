@@ -301,12 +301,18 @@ func main() {
 	router.GET("/feed", rss)
 	router.GET("/coeur/rss.php", rss)
 	router.GET("/coeur/atom.php", rss)
+	router.GET("/feed=rss2", rss)
+	router.GET("/rss.xml", rss)
+	router.GET("/atom.xml", rss)
 
 	router.HEAD("/rss", rssHead)
 	router.HEAD("/rss/:lang", rssHead)
 	router.HEAD("/feed", rssHead)
 	router.HEAD("/coeur/rss.php", rssHead)
 	router.HEAD("/coeur/atom.php", rssHead)
+	router.HEAD("/feed=rss2", rssHead)
+	router.HEAD("/rss.xml", rssHead)
+	router.HEAD("/atom.xml", rssHead)
 
 	adminGroup := router.Group("/admin")
 	{
