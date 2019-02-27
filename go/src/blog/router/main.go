@@ -106,6 +106,7 @@ func loadTemplates() {
 		"pagesAroundCurrent": pagesAroundCurrent,
 		"join":               join,
 		"rfc1123":            rfc1123,
+		"nl2br":              nl2br,
 	})
 
 	rssTemplate, err = rssTemplate.Parse(string(b))
@@ -127,7 +128,17 @@ func loadTemplates() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	answerEmailTemplateHTML, err = template.New("comment-answer-email-html").Parse(string(b))
+	answerEmailTemplateHTML = template.New("comment-answer-email-html")
+
+	answerEmailTemplateHTML.Funcs(template.FuncMap{
+		"rfc1123": rfc1123,
+		"nl2br":   nl2br,
+	})
+
+	answerEmailTemplateHTML, err = answerEmailTemplateHTML.Parse(string(b))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// confirmation
 
@@ -135,13 +146,21 @@ func loadTemplates() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	confirmationEmailTemplateTxt, err = template.New("confirmation-email-txt").Parse(string(b))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	b, err = ioutil.ReadFile(filepath.Join(themePath, confirmationTemplateHTMLPath))
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	confirmationEmailTemplateHTML, err = template.New("confirmation-email-html").Parse(string(b))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// news
 
@@ -149,13 +168,21 @@ func loadTemplates() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	newsEmailTemplateTxt, err = template.New("news-email-txt").Parse(string(b))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	b, err = ioutil.ReadFile(filepath.Join(themePath, newsTemplateHTMLPath))
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	newsEmailTemplateHTML, err = template.New("news-email-html").Parse(string(b))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// post
 
@@ -163,20 +190,25 @@ func loadTemplates() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	postEmailTemplateTxt, err = template.New("post-email-txt").Parse(string(b))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	b, err = ioutil.ReadFile(filepath.Join(themePath, postTemplateHTMLPath))
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// remove html comments
 	r := regexp.MustCompile("(?s)<!--.*?(-->)")
-
 	b2 := r.ReplaceAll(b, []byte(""))
 
-	fmt.Println(string(b2))
-
 	postEmailTemplateHTML, err = template.New("post-email-html").Parse(string(b2))
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
@@ -218,6 +250,7 @@ func main() {
 		"pagesAroundCurrent": pagesAroundCurrent,
 		"join":               join,
 		"rfc1123":            rfc1123,
+		"nl2br":              nl2br,
 	})
 
 	loadTemplates()
@@ -815,6 +848,14 @@ func join(arr []string) string {
 
 func rfc1123(utcSec int) string {
 	return time.Unix(int64(utcSec), 0).Format(time.RFC1123)
+}
+
+// nl2br replaces \n with <br>
+// only \n & \n\n are allowed not more.
+func nl2br(text string) template.HTML {
+	re := regexp.MustCompile("\n{2,}")
+	text = re.ReplaceAllString(text, "\n\n")
+	return template.HTML(strings.Replace(template.HTMLEscapeString(text), "\n", "<br>", -1))
 }
 
 func emailInfoResponse(c *gin.Context, m1, m2 string) {

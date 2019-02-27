@@ -81,7 +81,7 @@
 										<a id="com{{.ID}}"></a>
 										<img class="avatar{{ if .AuthorAlias }}-right{{end}}" src="{{ if eq .AuthorAlias "laurel" }}{{ $host }}/theme/img/laurel-avatar.jpg{{else}}https://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d={{ $host }}%2Ftheme%2Fimg%2Fanonymous.jpg{{end}}">
 										<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
-										<p>{{.Content}}</p>
+										<p>{{nl2br .Content}}</p>
 										<a class="answer{{ if .AuthorAlias }}-left{{end}}" href="#" onclick="answerComment({{.ID}});return false;">Répondre</a>
 										<div style="clear: both"></div>
 										{{ if false }}
