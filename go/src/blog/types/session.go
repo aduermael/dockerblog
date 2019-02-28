@@ -41,14 +41,8 @@ func GetAdminSession(r *http.Request, w http.ResponseWriter) (*AdminSession, err
 }
 
 func GetUserSession(r *http.Request, w http.ResponseWriter) (*UserSession, error) {
-	// session, err := sessionStore.Get(r, "session")
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	userSession := &UserSession{ /*session: session,*/ reader: r, writer: w}
+	userSession := &UserSession{reader: r, writer: w}
 	userSession.load()
-
 	return userSession, nil
 }
 
@@ -108,6 +102,14 @@ const (
 
 func (us *UserSession) load() error {
 
+	// set default value in case cookie can't be found
+	us.Name = userNameDefault
+	us.Email = userEmailDefault
+	us.Website = userWebsiteDefault
+	us.Twitter = userTwitterDefault
+	us.RememberInfo = userRememberInfoDefault
+	us.EmailOnAnswer = userEmailOnAnswerDefault
+
 	cookie, err := us.reader.Cookie("preferences")
 	if err != nil {
 		return err
@@ -138,6 +140,7 @@ func (us *UserSession) Save() error {
 	cookie.Name = "preferences"
 	cookie.MaxAge = 0 // never expires
 	// cookie.Secure = true
+	cookie.HttpOnly = true
 
 	// only save that info shouldn't be remembered
 	// + EmailOnAnswer
@@ -146,20 +149,12 @@ func (us *UserSession) Save() error {
 		if err != nil {
 			return err
 		}
+		cookie.Value = base64.StdEncoding.EncodeToString(jsonBytes)
 	} else {
-		emptyUserSession := &UserSession{}
-		emptyUserSession.RememberInfo = false
-		emptyUserSession.EmailOnAnswer = us.EmailOnAnswer
-
-		jsonBytes, err = json.Marshal(emptyUserSession)
-		if err != nil {
-			return err
-		}
+		cookie.MaxAge = -1 // delete cookie
+		cookie.Value = ""
 	}
 
-	cookie.Value = base64.StdEncoding.EncodeToString(jsonBytes)
-
 	http.SetCookie(us.writer, cookie)
-
 	return nil
 }
