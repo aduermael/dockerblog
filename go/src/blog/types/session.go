@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/sessions"
 	store "gopkg.in/boj/redistore.v1"
@@ -145,7 +146,6 @@ func (us *UserSession) Save() error {
 
 	cookie := &http.Cookie{}
 	cookie.Name = "preferences"
-	cookie.MaxAge = 0 // never expires
 	// cookie.Secure = true
 	cookie.HttpOnly = true
 
@@ -157,6 +157,7 @@ func (us *UserSession) Save() error {
 			return err
 		}
 		cookie.Value = base64.StdEncoding.EncodeToString(jsonBytes)
+		cookie.Expires = time.Now().Add(time.Hour * 24 * 365)
 	} else {
 		cookie.MaxAge = -1 // delete cookie
 		cookie.Value = ""
