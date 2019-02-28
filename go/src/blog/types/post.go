@@ -810,7 +810,6 @@ func PostGetWithSlug(slug string) (*Post, bool, error) {
 	}
 
 	if post.Error == "not found" {
-		fmt.Println("NOT FOUND")
 		return post, false, errors.New("not found")
 	}
 

@@ -112,16 +112,23 @@ func (us *UserSession) load() error {
 
 	cookie, err := us.reader.Cookie("preferences")
 	if err != nil {
+		// http: named cookie not present
+		if err.Error() == "http: named cookie not present" {
+			return nil
+		}
+		fmt.Println("can't read cookie:", err.Error())
 		return err
 	}
 
 	jsonBytes, err := base64.StdEncoding.DecodeString(cookie.Value)
 	if err != nil {
+		fmt.Println("can't decode cookie:", err.Error())
 		return err
 	}
 
 	err = json.Unmarshal(jsonBytes, us)
 	if err != nil {
+		fmt.Println("can't unmarshal json:", err.Error())
 		return err
 	}
 
