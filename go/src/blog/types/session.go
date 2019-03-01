@@ -103,18 +103,17 @@ const (
 
 func (us *UserSession) load() error {
 
-	// set default value in case cookie can't be found
-	us.Name = userNameDefault
-	us.Email = userEmailDefault
-	us.Website = userWebsiteDefault
-	us.Twitter = userTwitterDefault
-	us.RememberInfo = userRememberInfoDefault
-	us.EmailOnAnswer = userEmailOnAnswerDefault
-
 	cookie, err := us.reader.Cookie("preferences")
 	if err != nil {
 		// http: named cookie not present
 		if err.Error() == "http: named cookie not present" {
+			// set default values in that case
+			us.Name = userNameDefault
+			us.Email = userEmailDefault
+			us.Website = userWebsiteDefault
+			us.Twitter = userTwitterDefault
+			us.RememberInfo = userRememberInfoDefault
+			us.EmailOnAnswer = userEmailOnAnswerDefault
 			return nil
 		}
 		fmt.Println("can't read cookie:", err.Error())
