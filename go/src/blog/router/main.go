@@ -895,6 +895,24 @@ func renderPost(post *types.Post, c *gin.Context) {
 		return
 	}
 
+	// check password if needed
+	if post.SecretKey != "" {
+		accept := false
+		params := c.Request.URL.Query()
+		if secretKey, ok := params["secret"]; ok {
+			if len(secretKey) > 0 {
+				if secretKey[0] == post.SecretKey {
+					accept = true
+				}
+			}
+		}
+		if accept == false {
+			fmt.Println("Tried to see secret post without key.")
+			c.Redirect(http.StatusSeeOther, "/")
+			return
+		}
+	}
+
 	post.ComputeSince()
 
 	archives, err := types.PostGetArchiveMonths(hardcodedLang, config.TimeLocation, nil)

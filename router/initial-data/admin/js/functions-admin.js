@@ -545,10 +545,15 @@ function sendPost(sender)
 
 	// to link post with a FB post and merge comments
 	var fbPostID = $('#fbpostID').val()
-
 	if (fbPostID && fbPostID != "") // not empty
 	{
-		postContent.fbpostID = $('#fbpostID').val()
+		postContent.fbpostID = fbPostID
+	}
+
+	var secretKey = $('#secretKey').val()
+	if (secretKey && secretKey != "") // not empty
+	{
+		postContent.secretKey = secretKey
 	}
 
 	// date

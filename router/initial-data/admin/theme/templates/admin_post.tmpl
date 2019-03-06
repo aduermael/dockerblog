@@ -80,7 +80,7 @@
 			</div>
 
 			<div>
-				<input autocomplete="off" id="secretKey" type="text" placeholder="Secret key (to make note private)" onfocus="this.placeholder =''" onblur="this.placeholder = 'Secret key (to make note private)'">
+				<input {{ if .post.SecretKey }}value="{{ .post.SecretKey }}"{{end}} autocomplete="off" id="secretKey" type="text" placeholder="Secret key (to make note private)" onfocus="this.placeholder =''" onblur="this.placeholder = 'Secret key (to make note private)'">
 			</div>
 
 			<div>

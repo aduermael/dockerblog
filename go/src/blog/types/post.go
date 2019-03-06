@@ -67,6 +67,7 @@ type Post struct {
 	ShowComments            bool        `json:"showComs,omitempty"`
 	AcceptComments          bool        `json:"acceptComs,omitempty"`
 	CommentsRequireApproval bool        `json:"approveComs,omitempty"`
+	SecretKey               string      `json:"secretKey,omitempty"`
 
 	// previous/next post information
 	// can be empty, used to display previous/next links in UI
@@ -566,6 +567,10 @@ var (
 		local isPage = post.isPage and 1 or 0
 
 		redis.call('hmset', kID, 'blocks', blocksStr, 'date', post.date, 'update', post.update, 'ID', post.ID, 'slug', post.slug, 'title', post.title, 'lang', post.lang, 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, 'isPage', isPage)
+
+		if post.secretKey ~= nil and post.secretKey ~= '' then
+			redis.call('hset', kID, 'secretKey', post.secretKey)
+		end
 
 		-- index by slug
 		local kSlugs = 'slugs_' .. post.lang
