@@ -22,7 +22,7 @@
 						</div>
 						{{ range .Blocks }}	
 							{{ if eq .type "text" }}	
-								<div class="block text"><p>{{ .text }}</p></div>	
+								<div class="block text">{{ .text }}</div>	
 							{{ else if eq .type "html" }}
 								<div class="block html">{{ .data }}</div>
 							{{ else if eq .type "image" }}	
