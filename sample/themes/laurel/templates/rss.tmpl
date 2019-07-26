@@ -18,8 +18,7 @@
 					{{ else if eq .type "image" }}	
 						{{ if ne .url "" }}<a href="{{.url}}">{{end}}	
 						<img src="https://bloglaurel.com{{ .path }}" alt="{{.description}}">	
-						{{ if ne .url "" }}</a>{{end}}	
-						</div>	
+						{{ if ne .url "" }}</a>{{end}}
 					{{ end }}
 					{{ end }}]]></description>
 				<pubDate>{{ rfc1123 .Date }}</pubDate>
