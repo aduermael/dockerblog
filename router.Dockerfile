@@ -1,15 +1,11 @@
-FROM golang:1.8.3-alpine3.5
-
-RUN apk update && apk upgrade && \
-    apk add --no-cache git
+FROM golang:1.12.6-alpine3.10
 
 # -----------------------
-# Install router
+# Install
 # -----------------------
 
 COPY go/src /go/src
-WORKDIR /go/src/blog/router
-RUN go get -d
+WORKDIR /go/src/blog
 RUN go install
 
 # TODO: multistage build to only keep binary
@@ -31,7 +27,7 @@ COPY sample/config.json /initial-data/config.json
 COPY sample/themes /initial-data/themes
 
 # -----------------------
-# Start router
+# Start blog
 # -----------------------
 
-CMD router
+CMD blog
