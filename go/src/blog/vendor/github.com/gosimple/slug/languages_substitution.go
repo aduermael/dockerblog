@@ -7,7 +7,9 @@ package slug
 
 func init() {
 	// Merge language subs with the default one
-	for _, sub := range []*map[rune]string{&deSub, &enSub, &plSub, &esSub} {
+	for _, sub := range []*map[rune]string{
+		&deSub, &enSub, &esSub, &fiSub, &grSub, &nlSub, &plSub,
+	} {
 		for key, value := range defaultSub {
 			(*sub)[key] = value
 		}
@@ -27,6 +29,12 @@ var defaultSub = map[rune]string{
 var deSub = map[rune]string{
 	'&': "und",
 	'@': "an",
+	'ä': "ae",
+	'Ä': "Ae",
+	'ö': "oe",
+	'Ö': "Oe",
+	'ü': "ue",
+	'Ü': "Ue",
 }
 
 var enSub = map[rune]string{
@@ -34,14 +42,14 @@ var enSub = map[rune]string{
 	'@': "at",
 }
 
-var plSub = map[rune]string{
-	'&': "i",
-	'@': "na",
-}
-
 var esSub = map[rune]string{
 	'&': "y",
 	'@': "en",
+}
+
+var fiSub = map[rune]string{
+	'&': "ja",
+	'@': "at",
 }
 
 var grSub = map[rune]string{
@@ -51,7 +59,39 @@ var grSub = map[rune]string{
 	'Η': "i",
 	'ι': "i",
 	'ί': "i",
+	'ϊ': "i",
 	'Ι': "i",
 	'χ': "x",
 	'Χ': "x",
+	'ω': "w",
+	'ώ': "w",
+	'Ω': "w",
+	'ϋ': "u",
+}
+
+var nlSub = map[rune]string{
+	'&': "en",
+	'@': "at",
+}
+
+var plSub = map[rune]string{
+	'&': "i",
+	'@': "na",
+}
+
+var trSub = map[rune]string{
+	'&': "ve",
+	'@': "et",
+	'ş': "s",
+	'Ş': "S",
+	'ü': "u",
+	'Ü': "U",
+	'ö': "o",
+	'Ö': "O",
+	'İ': "I",
+	'ı': "i",
+	'ğ': "g",
+	'Ğ': "G",
+	'ç': "c",
+	'Ç': "C",
 }

@@ -27,6 +27,7 @@ Each author is responsible of maintaining his own code, although if you submit a
 + [gin-location](https://github.com/drone/gin-location) - middleware for exposing the server's hostname and scheme
 + [gin-nice-recovery](https://github.com/ekyoung/gin-nice-recovery) - panic recovery middleware that let's you build a nicer user experience
 + [gin-limit](https://github.com/aviddiviner/gin-limit) - limits simultaneous requests; can help with high traffic load
++ [gin-limit-by-key](https://github.com/yangxikun/gin-limit-by-key) - An in-memory middleware to limit access rate by custom key and rate.
 + [ez-gin-template](https://github.com/michelloworld/ez-gin-template) - easy template wrap for gin
 + [gin-hydra](https://github.com/janekolszak/gin-hydra) - [Hydra](https://github.com/ory-am/hydra) middleware for Gin
 + [gin-glog](https://github.com/zalando/gin-glog) - meant as drop-in replacement for Gin's default logger
@@ -38,3 +39,15 @@ Each author is responsible of maintaining his own code, although if you submit a
 + [gin-jwt-session](https://github.com/ScottHuangZL/gin-jwt-session) - middleware to provide JWT/Session/Flashes, easy to use while also provide options for adjust if necessary. Provide sample too.
 + [gin-template](https://github.com/foolin/gin-template) - Easy and simple to use html/template for gin framework.
 + [gin-redis-ip-limiter](https://github.com/Salvatore-Giordano/gin-redis-ip-limiter) - Request limiter based on ip address. It works with redis and with a sliding-window mechanism.
++ [gin-method-override](https://github.com/bu/gin-method-override) - Method override by POST form param `_method`, inspired by Ruby's same name rack
++ [gin-access-limit](https://github.com/bu/gin-access-limit) - An access-control middleware by specifying allowed source CIDR notations.
++ [gin-session](https://github.com/go-session/gin-session) - Session middleware for Gin
++ [gin-stats](https://github.com/semihalev/gin-stats) - Lightweight and useful request metrics middleware
++ [gin-statsd](https://github.com/amalfra/gin-statsd) - A Gin middleware for reporting to statsd deamon
++ [gin-health-check](https://github.com/RaMin0/gin-health-check) - A health check middleware for Gin
++ [gin-session-middleware](https://github.com/go-session/gin-session) - A efficient, safely and easy-to-use session library for Go.
++ [ginception](https://github.com/kubastick/ginception) - Nice looking exception page
++ [gin-inspector](https://github.com/fatihkahveci/gin-inspector) - Gin middleware for investigating http request.
++ [gin-dump](https://github.com/tpkeeper/gin-dump) - Gin middleware/handler to dump header/body of request and response. Very helpful for debugging your applications.
++ [go-gin-prometheus](https://github.com/zsais/go-gin-prometheus) - Gin Prometheus metrics exporter 
++ [gin-go-metrics](https://github.com/bmc-toolbox/gin-go-metrics) - Gin middleware to gather and store metrics using [rcrowley/go-metrics](https://github.com/rcrowley/go-metrics)
