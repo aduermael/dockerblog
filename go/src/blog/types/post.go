@@ -185,10 +185,12 @@ var (
 			local post_data = toStruct(redis.call('hgetall', post_id))
 
 			-- blocks are stored in raw json format
-			post_data.blocks = cjson.decode(post_data.blocks)
-			-- remove if empty to avoid table to be serialized as '{}'
-			if next(post_data.blocks) == nil then
-				post_data.blocks = nil
+			if post_data.blocks ~= nil then
+				post_data.blocks = cjson.decode(post_data.blocks)
+				-- remove if empty to avoid table to be serialized as '{}'
+				if next(post_data.blocks) == nil then
+					post_data.blocks = nil
+				end
 			end
 
 			-- use default values for comments if can't be found
