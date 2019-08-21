@@ -211,59 +211,88 @@ function showArchives(sender, host) {
 }
 
 function newsletterFormCheck(sender) {
-	var emailIsValid = validateEmail($("#newsletterEmail").val())
-	var oneCheckedAtLeast = $("#newsletterNewsCheckbox").is(":checked") || $("#newsletterPostsCheckbox").is(":checked")
+
+	var form = $(sender).closest('form');
+
+	var emailInput = form.find(".newsletterEmail");
+	var newsCheckbox = form.find(".newsletterNewsCheckbox");
+	var postsCheckbox = form.find(".newsletterPostsCheckbox");
+	var button = form.find(".newsletterButton")
+	var errorMessage = form.find(".newsletter-error")
+
+	if (!emailInput || emailInput.length == 0 ||
+		!newsCheckbox || newsCheckbox.length == 0 ||
+		!postsCheckbox || postsCheckbox.length == 0 ||
+		!button || button.length == 0 ||
+		!errorMessage || errorMessage.length == 0) {
+		console.log("missing field")
+		return false
+	}
+
+	var emailIsValid = validateEmail(emailInput.val())
+	var oneCheckedAtLeast = newsCheckbox.is(":checked") || postsCheckbox.is(":checked")
 
 	if (emailIsValid && oneCheckedAtLeast) {
-		$("#newsletterButton").prop('disabled', false)
-		$("#newsletterButton").val("Envoyer")
-		$("#newsletter-error").hide()
+		button.prop('disabled', false)
+		button.val("Envoyer")
+		errorMessage.hide()
 		return true
 	} else {
-		// $("#newsletterButton").prop('disabled', true)
-		$("#newsletterButton").val("S'abonner")
+		button.val("S'abonner")
 		return false
 	}
 }
 
 function newsletterRegister(sender) {
+
+	var form = $(sender).closest('form');
+
+	var emailInput = form.find(".newsletterEmail");
+	var newsCheckbox = form.find(".newsletterNewsCheckbox");
+	var postsCheckbox = form.find(".newsletterPostsCheckbox");
+	var button = form.find(".newsletterButton")
+	var errorMessage = form.find(".newsletter-error")
+
+	if (!emailInput || emailInput.length == 0 ||
+		!newsCheckbox || newsCheckbox.length == 0 ||
+		!postsCheckbox || postsCheckbox.length == 0 ||
+		!button || button.length == 0 ||
+		!errorMessage || errorMessage.length == 0) {
+		console.log("missing field")
+		return false
+	}
+
 	if (newsletterFormCheck(sender) == true) {
 
-		$("#newsletterEmail").prop('disabled', true)
-		$("#newsletterNewsCheckbox").prop('disabled', true)
-		$("#newsletterPostsCheckbox").prop('disabled', true)
+		emailInput.prop('disabled', true)
+		newsCheckbox.prop('disabled', true)
+		postsCheckbox.prop('disabled', true)
 
-		$("#newsletterButton").prop('disabled', true)
-		$("#newsletterButton").val("⏳")
+		button.prop('disabled', true)
+		button.val("⏳")
 
 		var request = new Object()
-		request.email = $("#newsletterEmail").val()
-		request.news = $("#newsletterNewsCheckbox").is(":checked")
-		request.posts = $("#newsletterPostsCheckbox").is(":checked")
-		Post('/newsletter-register',request,newsletterRegisterCallback,newsletterRegisterErrorCallback)
+		request.email = emailInput.val()
+		request.news = newsCheckbox.is(":checked")
+		request.posts = postsCheckbox.is(":checked")
+
+		Post('/newsletter-register', request, function(data) {
+			// success
+			emailInput.prop('disabled', false)
+			newsCheckbox.prop('disabled', false)
+			postsCheckbox.prop('disabled', false)
+			button.val("✅")
+
+		}, function(data) {
+			// error
+			emailInput.prop('disabled', false)
+			newsCheckbox.prop('disabled', false)
+			postsCheckbox.prop('disabled', false)
+			button.val("❌")
+			alert("Erreur, l'email n'a pas pu être enregistré. 😕")
+		})
+
 	} else {
-		$("#newsletter-error").show()
+		errorMessage.show()
 	}
 }
-
-function newsletterRegisterCallback(data) {
-
-	$("#newsletterEmail").prop('disabled', false)
-	$("#newsletterNewsCheckbox").prop('disabled', false)
-	$("#newsletterPostsCheckbox").prop('disabled', false)
-
-	$("#newsletterButton").val("✅")
-}
-
-function newsletterRegisterErrorCallback(data) {
-
-	$("#newsletterEmail").prop('disabled', false)
-	$("#newsletterNewsCheckbox").prop('disabled', false)
-	$("#newsletterPostsCheckbox").prop('disabled', false)
-
-	$("#newsletterButton").val("❌")
-	alert("Erreur, l'email n'a pas pu être enregistré. 😕")
-}
-
-
-
