@@ -14,13 +14,13 @@ func installInitialData(overrides []string) {
 
 	// remove all files that are supposed to be overridden
 	// (we don't want to keep existing ones)
-	// for _, override := range overrides {
-	// 	fPath := filepath.Join(blogDataRootDir, override)
-	// 	err := os.RemoveAll(fPath)
-	// 	if err != nil {
-	// 		log.Fatalln("can't remove files to be overridden:", err)
-	// 	}
-	// }
+	for _, override := range overrides {
+		fPath := filepath.Join(blogDataRootDir, override)
+		err := os.RemoveAll(fPath)
+		if err != nil {
+			log.Fatalln("can't remove files to be overridden:", err)
+		}
+	}
 
 	fmt.Println("install initial data:")
 
