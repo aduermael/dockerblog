@@ -1,11 +1,96 @@
 <!DOCTYPE html>
+{{ $secondsToEvent := secondsTo 2019 9 5 10 0 0 "Europe/Paris" }}
 <html lang="{{ .lang }}">
+{{ if le $secondsToEvent 0 }}
+	<head>
+		<title>Redirection vers Ulule</title>
+		<meta http-equiv="refresh" content="0;url=https://fr.ulule.com/californid/" />
+	</head>
+	<body>
+		<p>Redirection vers Ulule... (<a href="https://fr.ulule.com/californid/">cliquez ici</a>  si rien ne se passe.)</p>
+	</body>
+</html>
+{{ else }}
  	{{ template "head" . }}
 
 	<body>
 	 	{{ template "header" . }}
 		{{ template "menu" . }}
 		{{ $host := .host }}
+
+		<script type="text/javascript">
+			$(function() {
+				totalSeconds = parseInt($("#seconds").text())
+				setInterval(function(){
+					totalSeconds -= 1
+					if (totalSeconds < 0) {
+						location.reload();
+						return
+					}
+					seconds = totalSeconds
+					days = parseInt(seconds / 86400)
+					seconds = seconds % 86400
+					hours = parseInt(seconds / 3600)
+					seconds = seconds % 3600
+					minutes = parseInt(seconds / 60)
+					seconds = seconds % 60
+
+					remaining = ""
+					shouldAddLastPart = false
+					lastPartAdded = false
+
+					if (seconds > 0) {
+						remaining = "" + seconds + (seconds>1?" secondes":" seconde")
+						shouldAddLastPart = lastPartAdded == false
+					}
+					if (minutes > 0) {
+						if (shouldAddLastPart) {
+							remaining = "et " + remaining
+							lastPartAdded = true
+							shouldAddLastPart = false	
+						}
+
+						if (remaining != "") {
+							remaining = " " + remaining
+						}
+
+						remaining = "" + minutes + (minutes>1?" minutes":" minute") + remaining
+
+						shouldAddLastPart = lastPartAdded == false
+					}
+					if (hours > 0) {
+						if (shouldAddLastPart) {
+							remaining = "et " + remaining
+							lastPartAdded = true
+							shouldAddLastPart = false	
+						}
+
+						if (remaining != "") {
+							remaining = " " + remaining
+						}
+
+						remaining = "" + hours + (hours>1?" heures":" heure") + remaining
+
+						shouldAddLastPart = lastPartAdded == false
+					}
+					if (days > 0) {
+						if (shouldAddLastPart) {
+							remaining = "et " + remaining
+							lastPartAdded = true
+							shouldAddLastPart = false	
+						}
+
+						if (remaining != "") {
+							remaining = " " + remaining
+						}
+
+						remaining = "" + days + (days>1?" jours":" jour") + remaining
+					}
+
+					$("#remaining").text(remaining)
+				}, 1000)
+			});
+		</script>
 
 		<div id="content">
 		 	<div id="posts">
@@ -20,7 +105,8 @@
 					{{ range .post.Blocks }}
 						{{ if eq .type "text" }}
 							{{ if eq .text "<p>timer</p>" }}
-								<div class="block text"><p>La page de la campagne s'ouvrira automatiquement dans&nbsp;<strong>15 jours 11 heures 54 minutes et 27 secondes</strong>.</p></div>
+								<div id="seconds" style="display:none;">{{ $secondsToEvent }}</div>
+								<div class="block text"><p>La page de la campagne s'ouvrira automatiquement dans <strong style="color:#ff3300;" id="remaining">{{ remainingTime $secondsToEvent }}</strong>.</p></div>
 							{{ else }}
 								<div class="block text">{{ .text }}</div>
 							{{ end }}
@@ -157,3 +243,4 @@
 		{{ template "reader" . }}
 	</body>
 </html>
+{{ end }}

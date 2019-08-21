@@ -251,6 +251,8 @@ func main() {
 		"join":               join,
 		"rfc1123":            rfc1123,
 		"nl2br":              nl2br,
+		"secondsTo":          secondsTo,
+		"remainingTime":      remainingTime,
 	})
 
 	loadTemplates()
@@ -942,4 +944,81 @@ func renderPost(post *types.Post, c *gin.Context) {
 		"user":     user,
 		"host":     config.Host,
 	})
+}
+
+func secondsTo(year int, month int, day int, hour int, minute int, seconds int, location string) int {
+
+	loc, err := time.LoadLocation(location)
+	if err != nil {
+		return 0
+	}
+
+	// 10-1 because Paris = UTC+1
+	launchDate := time.Date(year, time.Month(month), day, hour, minute, seconds, 0, loc)
+	remaining := launchDate.Sub(time.Now())
+	secondsRemaining := int(remaining.Seconds())
+
+	return secondsRemaining
+}
+
+func remainingTime(secondsRemaining int) string {
+
+	if secondsRemaining <= 0 {
+		return ""
+	}
+
+	days := secondsRemaining / 86400
+	secondsRemaining = secondsRemaining % 86400
+	hours := secondsRemaining / 3600
+	secondsRemaining = secondsRemaining % 3600
+	minutes := secondsRemaining / 60
+	seconds := secondsRemaining % 60
+
+	remainingTime := ""
+	lastPartAdded := false
+
+	if seconds > 0 {
+		word := " secondes"
+		if seconds == 1 {
+			word = " seconde"
+		}
+		prefix := " "
+		if !lastPartAdded {
+			prefix = " et "
+		}
+		remainingTime = prefix + strconv.Itoa(seconds) + word + remainingTime
+		lastPartAdded = true
+	}
+	if minutes > 0 {
+		word := " minutes"
+		if minutes == 1 {
+			word = " minute"
+		}
+		prefix := " "
+		if !lastPartAdded {
+			prefix = " et "
+		}
+		remainingTime = prefix + strconv.Itoa(minutes) + word + remainingTime
+		lastPartAdded = true
+	}
+	if hours > 0 {
+		word := " heures"
+		if hours == 1 {
+			word = " heure"
+		}
+		prefix := " "
+		if !lastPartAdded {
+			prefix = " et "
+		}
+		remainingTime = prefix + strconv.Itoa(hours) + word + remainingTime
+	}
+	if days > 0 {
+		word := " jours"
+		if days == 1 {
+			word = " jour"
+		}
+		remainingTime = " " + strconv.Itoa(days) + word + remainingTime
+	}
+
+	return remainingTime
 }

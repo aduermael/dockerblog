@@ -438,6 +438,10 @@ form input[type="button"]:disabled {
 	border-radius: 3px;
 }
 
+#content #posts .post .block ul {
+	margin-left: 20px;
+}
+
 /* COMMENTS */
 
 #initial-comment-form-container {
@@ -502,8 +506,6 @@ form input[type="button"]:disabled {
 	background-color: #3b304e;
 	color: #45c5d2;
 }
-
-
 
 #content #posts .post .comments .comment .options a.starred-on {
 	color: #FFFFFF;
