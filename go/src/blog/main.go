@@ -975,6 +975,7 @@ func remainingTime(secondsRemaining int) string {
 	seconds := secondsRemaining % 60
 
 	remainingTime := ""
+	shouldAddLastPart := false
 	lastPartAdded := false
 
 	if seconds > 0 {
@@ -982,42 +983,66 @@ func remainingTime(secondsRemaining int) string {
 		if seconds == 1 {
 			word = " seconde"
 		}
-		prefix := " "
-		if !lastPartAdded {
-			prefix = " et "
-		}
-		remainingTime = prefix + strconv.Itoa(seconds) + word + remainingTime
-		lastPartAdded = true
+		remainingTime = strconv.Itoa(seconds) + word
+		shouldAddLastPart = lastPartAdded == false
 	}
 	if minutes > 0 {
+		if shouldAddLastPart {
+			remainingTime = "et " + remainingTime
+			lastPartAdded = true
+			shouldAddLastPart = false
+		}
+
 		word := " minutes"
 		if minutes == 1 {
 			word = " minute"
 		}
-		prefix := " "
-		if !lastPartAdded {
-			prefix = " et "
+
+		if remainingTime != "" {
+			remainingTime = " " + remainingTime
 		}
-		remainingTime = prefix + strconv.Itoa(minutes) + word + remainingTime
-		lastPartAdded = true
+
+		remainingTime = strconv.Itoa(minutes) + word + remainingTime
+
+		shouldAddLastPart = lastPartAdded == false
 	}
 	if hours > 0 {
+		if shouldAddLastPart {
+			remainingTime = "et " + remainingTime
+			lastPartAdded = true
+			shouldAddLastPart = false
+		}
+
 		word := " heures"
 		if hours == 1 {
 			word = " heure"
 		}
-		prefix := " "
-		if !lastPartAdded {
-			prefix = " et "
+
+		if remainingTime != "" {
+			remainingTime = " " + remainingTime
 		}
-		remainingTime = prefix + strconv.Itoa(hours) + word + remainingTime
+
+		remainingTime = strconv.Itoa(hours) + word + remainingTime
+
+		shouldAddLastPart = lastPartAdded == false
 	}
 	if days > 0 {
+		if shouldAddLastPart {
+			remainingTime = "et " + remainingTime
+			lastPartAdded = true
+			shouldAddLastPart = false
+		}
+
 		word := " jours"
 		if days == 1 {
 			word = " jour"
 		}
-		remainingTime = " " + strconv.Itoa(days) + word + remainingTime
+
+		if remainingTime != "" {
+			remainingTime = " " + remainingTime
+		}
+
+		remainingTime = strconv.Itoa(days) + word + remainingTime
 	}
 
 	return remainingTime
