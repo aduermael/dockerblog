@@ -16,8 +16,12 @@
         }
     },
     "domain-post-aliases": {
-        "commeconvenu.com": "780",
-        "californid.com": "1260"
+        "californid.com": "1260",
+        "californid.com/ulule": "1327",
+        "commeconvenu.com": "780"
+    },
+    "post-templates": {
+        "1327": "californid-ulule.tmpl"
     },
     "imageImportRetina": true,
     "host": "http://localhost",

@@ -45,6 +45,41 @@ a:hover {
 
 /* FORMS */
 
+.post-form {
+	max-width: 400px;
+	padding: 10px;
+	text-align: center;
+	/*border: 1px solid #999;*/
+	background-color: #F6EEDF;
+	border-radius: 3px;
+	color: #555;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid #E5D3B3;
+}
+
+.post-form form input {
+	padding: 10px;
+	border-radius: 3px;
+	border: none;
+}
+
+.post-form form input.newsletterEmail {
+	background-color: #FFFCF7;
+	color: #000;
+	margin-bottom: 10px;
+}
+
+.post-form h1,
+.post-form h2,
+.post-form h3,
+.post-form h4,
+.post-form h5,
+.post-form h6,
+.post-form p {
+	padding-bottom: 8px;
+}
+
 form input {
 	width: 100%;
 	font-size: 1rem;
@@ -706,7 +741,7 @@ form input[type="button"]:disabled {
 	background-color: #251e31;
 }
 
-#footer #sections .group .itemWrapper .item p.newsletter-error {
+p.newsletter-error {
 	display: none;
 	color: #ee508d;
 }
