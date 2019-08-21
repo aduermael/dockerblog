@@ -935,7 +935,7 @@ func renderPost(post *types.Post, c *gin.Context) {
 		}
 	}
 
-	c.HTML(http.StatusOK, "post.tmpl", gin.H{
+	c.HTML(http.StatusOK, config.PostTmpl(post.ID), gin.H{
 		"title":    ContextTitle(c),
 		"post":     post,
 		"archives": archives,

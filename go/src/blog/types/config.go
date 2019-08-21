@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
@@ -35,12 +37,21 @@ type Config struct {
 	// Can be used to highlight some comments based on who wrote them.
 	Commenters []*Commenter `json:"commenters,omitempty"`
 
-	// Post to display when accessing the blog through a different domain name
-	// map is structured like this:
+	// Post to display when accessing the blog through a different domain name.
+	// It's also possible to provide a route (domain + / + route)
+	// Map is structured like this:
 	// {
-	//    "my-domain.com": "1234" <- post ID
+	//    "my-domain.com": "1234", <- post ID
+	//    "my-domain.com/route": "1235" <- post ID
 	// },
 	DomainPostAliases map[string]string `json:"domain-post-aliases,omitempty"`
+
+	// Template to use for specific posts
+	// Structured like this:
+	// {
+	//    "1234": "post-1234.tmpl"
+	// },
+	PostTemplates map[string]string `json:"post-templates,omitempty"`
 
 	ImageImportRetina bool   `json:"imageImportRetina"` // when true, all imported images are considered to be Retina
 	Host              string `json:"host"`
@@ -65,6 +76,7 @@ const (
 	randCookieStoreKeyLen = 32 // AES-256
 )
 
+// RandStringRunes ...
 func RandStringRunes(n int) string {
 	b := make([]rune, n)
 	for i := range b {
@@ -122,6 +134,22 @@ func (c *Config) Title(lang string) string {
 		return ""
 	}
 	return localizedConf.Title
+}
+
+// HostWithoutScheme returns config's host without scheme prefix
+func (c *Config) HostWithoutScheme() string {
+	u, _ := url.Parse(c.Host)
+	return u.Host
+}
+
+// PostTmpl returns template to use for given post ID.
+// ("post.tmpl" by default)
+func (c *Config) PostTmpl(postID int) string {
+	strID := strconv.Itoa(postID)
+	if tmpl, exists := c.PostTemplates[strID]; exists {
+		return tmpl
+	}
+	return "post.tmpl"
 }
 
 // CurrentConfig loads current config from database

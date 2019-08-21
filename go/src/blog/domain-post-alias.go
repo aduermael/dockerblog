@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"path"
 
 	"blog/types"
 
@@ -18,12 +19,9 @@ func TestDomainPostAlias(c *gin.Context) {
 		return
 	}
 
-	if c.Request.URL.Path != "/" && c.Request.URL.Path != "" {
-		c.Next()
-		return
-	}
+	key := path.Clean(path.Join(c.Request.Host, c.Request.URL.Path))
 
-	if postID, exists := config.DomainPostAliases[c.Request.Host]; exists {
+	if postID, exists := config.DomainPostAliases[key]; exists {
 		post, found, err := types.PostGet(postID)
 		if err != nil {
 			c.Redirect(http.StatusSeeOther, "/")
@@ -36,6 +34,14 @@ func TestDomainPostAlias(c *gin.Context) {
 			return
 		}
 		renderPost(post, c)
+		c.Abort()
+		return
+	} else if c.Request.Host != config.HostWithoutScheme() {
+		if c.Request.URL.Path == "/" || c.Request.URL.Path == "" {
+			c.Redirect(http.StatusSeeOther, config.Host)
+		} else {
+			c.Redirect(http.StatusSeeOther, "/")
+		}
 		c.Abort()
 		return
 	}
