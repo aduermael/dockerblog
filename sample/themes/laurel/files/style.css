@@ -442,6 +442,10 @@ form input[type="button"]:disabled {
 	margin-left: 20px;
 }
 
+#content #posts .post .block ul li {
+	padding-bottom: 10px;
+}
+
 /* COMMENTS */
 
 #initial-comment-form-container {
@@ -991,3 +995,4 @@ select:active {
 ::-moz-placeholder { color: #888; } /* Firefox 19+ */
 :-ms-input-placeholder { color: #888; } /* IE 10+ */
 :-moz-placeholder { color: #888; } /* Firefox 18- */
+
