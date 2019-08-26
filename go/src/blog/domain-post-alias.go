@@ -37,13 +37,15 @@ func TestDomainPostAlias(c *gin.Context) {
 		c.Abort()
 		return
 	} else if c.Request.Host != config.HostWithoutScheme() {
+		// if root path can not resolve, then redirect to default domain
 		if c.Request.URL.Path == "/" || c.Request.URL.Path == "" {
 			c.Redirect(http.StatusSeeOther, config.Host)
-		} else {
-			c.Redirect(http.StatusSeeOther, "/")
+			c.Abort()
+			return
 		}
-		c.Abort()
-		return
+		// continue otherwise
+		// if the path is not handled, visitor will be redirected to "/"
+		// and will then eventually be redirected again to the default domain.
 	}
 
 	c.Next()
