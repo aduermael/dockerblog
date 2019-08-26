@@ -276,7 +276,7 @@ function newsletterRegister(sender) {
 		request.news = newsCheckbox.is(":checked")
 		request.posts = postsCheckbox.is(":checked")
 
-		Post('/newsletter-register', request, function(data) {
+		Post('https://bloglaurel.com/newsletter-register', request, function(data) {
 			// success
 			emailInput.prop('disabled', false)
 			newsCheckbox.prop('disabled', false)
