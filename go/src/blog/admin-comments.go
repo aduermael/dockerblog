@@ -156,6 +156,17 @@ func emailCommentResponse(comment *types.Comment, c *gin.Context) {
 			return
 		}
 
+		// Some commenters may be flagged because we don't
+		// want them to generate emails when they answer comments.
+		for _, commenter := range config.CommentersNotGeneratingEmails {
+			if commenter.Name != "" && commenter.Name == comment.Name {
+				return
+			}
+			if commenter.Email != "" && commenter.Email == comment.Email {
+				return
+			}
+		}
+
 		if original.EmailOnAnswer {
 			caa := &types.CommentAndAnswer{
 				Host:     config.Host,

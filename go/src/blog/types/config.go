@@ -35,7 +35,8 @@ type Config struct {
 	Localized               map[string]LocalizedConfig `json:"localized,omitempty"`
 	// A list of known commenters
 	// Can be used to highlight some comments based on who wrote them.
-	Commenters []*Commenter `json:"commenters,omitempty"`
+	Commenters                    []*Commenter `json:"commenters,omitempty"`
+	CommentersNotGeneratingEmails []*Commenter `json:"commenters-no-emails,omitempty"`
 
 	// Post to display when accessing the blog through a different domain name.
 	// It's also possible to provide a route (domain + / + route)
