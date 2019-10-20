@@ -214,6 +214,11 @@ func loadTemplates() {
 func main() {
 	var err error
 
+	err = loadAcceptedRunes()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	rand.Seed(time.Now().UnixNano())
 
 	// do not override everything when debugging
@@ -315,6 +320,9 @@ func main() {
 	router.HEAD("/feed=rss2", rssHead)
 	router.HEAD("/rss.xml", rssHead)
 	router.HEAD("/atom.xml", rssHead)
+
+	router.GET("/californid-noms", californidNames)
+	router.POST("/californid-noms", californidNamesSave)
 
 	adminGroup := router.Group("/admin")
 	{

@@ -58,7 +58,7 @@ a:hover {
 	border: 1px solid #E5D3B3;
 }
 
-.post-form form input {
+.post-form form input, form.nameForm input {
 	padding: 10px;
 	border-radius: 3px;
 	border: none;
@@ -122,6 +122,51 @@ form input[type="button"]:disabled {
 	background-color: #3b304e;
 	cursor: default;
 }
+
+form.nameForm input {
+	max-width: 400px;
+	margin-right: auto;
+	margin-left: auto;
+	display: block;
+}
+
+form.nameForm input#nameInput {
+	background-color: #EEEEEE;
+	color: #000;
+	margin-bottom: 10px;
+}
+
+form.nameForm input#message {
+	background-color: transparent;
+	color: #000;
+	margin-bottom: 20px;
+}
+
+form.nameForm input#button {
+	background-color: #00A6F0;
+	color: #FFF;
+	font-weight: bold;
+	cursor: pointer;
+	margin-bottom: 20px;
+}
+
+a.button-ulule {
+	max-width: 400px;
+	margin-right: auto;
+	margin-left: auto;
+	display: block;
+	text-align: center;
+
+	padding: 10px;
+	border-radius: 3px;
+	border: none;
+	background-color: #00A6F0;
+	color: #FFF;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+
 
 /* HEADER */
 

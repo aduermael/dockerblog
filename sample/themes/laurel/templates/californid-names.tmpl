@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="{{ .lang }}">
+ 	{{ template "head" . }}
+
+	<body>
+	 	{{ template "header" . }}
+		{{ template "menu" . }}
+		{{ $host := .host }}
+
+		<div id="content">
+		 	<div id="posts">
+			 	<div class="post">
+
+					<div class="title">
+						<h2>Les noms imprimés dans Californid</h2>
+						<div class="clear"></div>
+					</div>
+
+					<p>Si vous avez contribué à la campagne de Californid, vous pouvez choisir comment votre nom va apparaître dans le livre.</p>
+
+					<p>Par défaut, le prénom et le nom renseignés sur votre profil seront récupérés.</p>
+
+					<p>Vous pouvez utiliser cette page pour vérifier et modifier la façon dont votre nom sera imprimé. Si vous préférez utiliser un pseudo, ou passer une majuscule en minuscule, c'est ici que ça se passe ! 😊</p>
+
+					<p>Connectez-vous avec vos identifiants Ulule en cliquant sur ce bouton :</p>
+
+					<p><a class="button-ulule" href="https://connect.ulule.com/oauth2/authorize/?client_id=mA471FjmyAdicSgaRbjpIAeVTU7vU5AIA5LVlPbr&response_type=token&redirect_uri={{ .redirectUri }}?ulule-redirect=californid-noms" class="ulule-button">Se connecter avec Ulule</a></p>
+					 	
+				</div>
+			</div>
+		</div><!-- content -->
+		{{ template "footer" . }}
+
+		{{ template "reader" . }}
+	</body>
+</html>

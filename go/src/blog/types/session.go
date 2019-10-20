@@ -89,6 +89,10 @@ type UserSession struct {
 	RememberInfo  bool   `json:"remember-info,omitempty"`
 	EmailOnAnswer bool   `json:"email-on-answer,omitempty"`
 
+	// for Ulule sessions
+	UluleUserID string `json:"ulule-user-id,omitempty"`
+	UluleToken  string `json:"ulule-token,omitempty"`
+
 	GravatarHash string `json:"-"`
 }
 

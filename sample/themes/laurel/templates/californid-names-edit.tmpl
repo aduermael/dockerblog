@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="{{ .lang }}">
+ 	{{ template "head" . }}
+
+	<body>
+	 	{{ template "header" . }}
+		{{ template "menu" . }}
+		{{ $host := .host }}
+
+		<div id="content">
+		 	<div id="posts">
+			 	<div class="post">
+
+					<div class="title">
+						<h2>Les noms imprimés dans Californid</h2>
+						<div class="clear"></div>
+					</div>
+
+					<p>Voici votre nom tel qu'il sera affiché dans le livre :</p>
+
+					<form class="nameForm" action="/californid-noms" method="post">
+						<input id="nameInput" type="text" name="name" value="{{ .name }}">
+						{{ if .saved }}<input id="message" type="text" name="name" value="Enregistré ! 🙂" readonly>{{ end }}
+						<input {{ if .saved }}style="display:none;"{{ end }} id="button" type="submit" value="Enregistrer"/>
+					</form>
+
+					<script type="text/javascript">
+						originalValue = $('#nameInput').val()
+						$('#nameInput').keyup(function() {
+							if($(this).val() != '') {
+								if ($('#nameInput').val() != originalValue) {
+									if ($('#message').is(':visible')) {
+										$('#message').hide()
+										$('#button').show()
+									}
+								}
+							}
+						});
+					</script>
+
+					<p>👻 Si vous ne voulez pas que votre nom soit listé, il suffit de soumettre un champ vide.</p>
+
+					<p>⚠️ Certains caractères spéciaux ne peuvent pas être pris en compte et disparaîtront quand vous cliquez sur "Enregistrer".</p>
+
+					<p>⚠️ Votre nom ne sera affiché dans le livre que si le paiement pour votre commande est accepté (à la fin de la campagne).</p>
+					 	
+				</div>
+			</div>
+		</div><!-- content -->
+		{{ template "footer" . }}
+
+		{{ template "reader" . }}
+	</body>
+</html>
