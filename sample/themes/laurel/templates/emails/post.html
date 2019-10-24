@@ -2,6 +2,7 @@
 
 --><div style="font-size: 16px; line-height: 18px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; margin-left: auto; margin-right: auto; background-color: #FFF; padding: 0; border-radius: 3px;"><!--
 
+	-->{{ $host := .Host }}<!--
 	--><div style="margin: 0; padding: 10px; background-color: #3b304e; border-top-right-radius: 3px; border-top-left-radius: 3px;"><!--
 		--><table style="margin: 0; padding: 0; border: none; border-collapse: collapse;"><!--
 			--><tr style="margin: 0; padding: 0"><!--
@@ -9,14 +10,13 @@
 					--><img style="margin: 0; padding: 0; border: none; outline: none; width: 80px; height: 80px; border-radius: 3px;" src="{{ .Host }}/theme/img/laurel-avatar.jpg"/><!--
 				--></td><!--
 				--><td style="margin: 0; padding: 0; padding-left: 20px;"><!--
-					--><h1 style="margin: 0; color: #45c5d2">{{ .Post.Title }}</h1><!--
+					--><a style="text-decoration: none" clicktracking=off href="{{ $host }}/post/{{ .Post.Slug }}/{{ .Post.ID }}"><h1 style="margin: 0; color: #45c5d2 ">{{ .Post.Title }}</h1></a><!--
 				--></td><!--
 			--></tr><!--
 		--></table><!--
 	--></div><!--
 
 	--><div style="margin: 0; padding: 20px;"><!--
-		-->{{ $host := .Host }}<!--
 		-->{{ range .Post.Blocks }}<!--
 		-->{{ if eq .type "text" }}<!--
 				--><div style="margin: 0; padding: 0; padding-bottom: 20px;">{{ .text }}</div><!--
