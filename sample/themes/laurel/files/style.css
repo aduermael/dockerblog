@@ -274,7 +274,7 @@ a.button-ulule {
 
 #menu > #lire li img {
 	float: left;
-	height: 200px;
+	height: 240px;
 	margin: 0;
 	padding: 0;
 }
@@ -586,6 +586,10 @@ a.button-ulule {
 
 #content #posts .post .comments .comment.laurel {
 	background-color: #dcfff4 !important;
+}
+
+#content #posts .post .comments .comment.adrien {
+	background-color: #dcedff !important;
 }
 
 #content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
