@@ -31,7 +31,9 @@ type Config struct {
 	AcceptComments          bool                       `json:"acceptComments"`
 	CommentsRequireApproval bool                       `json:"approveComments"`
 	FacebookAppID           string                     `json:"facebookAppID"`
-	SendgridAPIKey          string                     `json:"sendgridAPIKey"`
+	SendgridAPIKey          string                     `json:"sendgridAPIKey,omitempty"`
+	MailJetAPIKey           string                     `json:"mailjet-api-key,omitempty"`
+	MailJetAPISecret        string                     `json:"mailjet-api-secret,omitempty"`
 	Localized               map[string]LocalizedConfig `json:"localized,omitempty"`
 	// A list of known commenters
 	// Can be used to highlight some comments based on who wrote them.
