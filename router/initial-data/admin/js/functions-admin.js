@@ -208,7 +208,8 @@ function showToolBar(sender) {
 	// stop focusing on text editor if active
 	if (activeEditor != null) {
 		activeEditor.blur()
-	}	
+		activeEditor = null
+	}
 }
 
 // return true only if clicking on text input

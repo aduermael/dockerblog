@@ -7,9 +7,9 @@
 				$("#datepicker").datepicker()
 				$("#timepicker").timepicker()
 				notDirty()
-				window.addEventListener("beforeunload", function (e) {
-					return alertIfDirty()
-				})
+				window.onbeforeunload = function() {
+					return alertIfDirty()	
+				}
 			}
 		</script>
 
