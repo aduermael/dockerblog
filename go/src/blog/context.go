@@ -8,6 +8,24 @@ import (
 	"golang.org/x/text/language"
 )
 
+func ContextSetCORSHeaders(c *gin.Context) {
+	// c.Header("Cross-Origin-Embedder-Policy", "require-corp")
+	// c.Header("Cross-Origin-Opener-Policy", "same-origin")
+	c.Next()
+}
+
+func AllowOrigins(c *gin.Context) {
+	// fmt.Println("Request Headers:")
+	// for k, v := range c.Request.Header {
+	// 	fmt.Println(k, ":", v[0])
+	// }
+	//host := c.Request.Header.Get("Host")
+	// fmt.Println("Host:", c.Request.Header.Get("Host"))
+	// fmt.Println("Referer:", c.Request.Header.Get("Referer"))
+	// c.Header("Access-Control-Allow-Origin", host)
+	c.Next()
+}
+
 // ContextSetConfig ...
 func ContextSetConfig(c *gin.Context) {
 	config, err := types.CurrentConfig()

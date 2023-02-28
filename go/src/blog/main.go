@@ -294,6 +294,9 @@ func main() {
 
 	router.Use(static.ServeRoot("/js/", jsPath))
 
+	router.Use(ContextSetCORSHeaders)
+	router.Use(AllowOrigins)
+
 	router.Use(ContextSetConfig)
 	router.Use(ContextSetLang)
 	router.Use(TestDomainPostAlias)
