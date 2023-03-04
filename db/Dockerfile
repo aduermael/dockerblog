@@ -1,4 +1,4 @@
-FROM redis:3.2.9-alpine
+FROM redis:7.0.9-alpine
 
 ADD redis.conf /redis/redis.conf
 

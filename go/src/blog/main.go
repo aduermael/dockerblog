@@ -21,7 +21,8 @@ import (
 	"time"
 
 	"github.com/garyburd/redigo/redis"
-	"github.com/gin-gonic/contrib/static"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
@@ -294,8 +295,25 @@ func main() {
 
 	router.Use(static.ServeRoot("/js/", jsPath))
 
-	router.Use(ContextSetCORSHeaders)
-	router.Use(AllowOrigins)
+	// SET CORS HEADERS
+	router.Use(func(c *gin.Context) {
+		c.Header("Cross-Origin-Embedder-Policy", "require-corp")
+		c.Header("Cross-Origin-Opener-Policy", "same-origin")
+		c.Header("Cross-Origin-Resource-Policy", "cross-origin") // same-site | same-origin | cross-origin
+		c.Next()
+	})
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"https://bloglaurel.com"},
+		AllowMethods: []string{"GET", "POST"},
+		// AllowHeaders:     []string{"Origin"},
+		// ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false,
+		// AllowOriginFunc: func(origin string) bool {
+		// 	return origin == "https://github.com"
+		// },
+		MaxAge: 12 * time.Hour, // preflight requests cached for 12 hours
+	}))
 
 	router.Use(ContextSetConfig)
 	router.Use(ContextSetLang)

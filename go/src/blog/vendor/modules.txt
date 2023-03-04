@@ -1,0 +1,133 @@
+# github.com/garyburd/redigo v1.6.2
+## explicit
+github.com/garyburd/redigo/internal
+github.com/garyburd/redigo/redis
+# github.com/gin-contrib/cors v1.4.0
+## explicit; go 1.13
+github.com/gin-contrib/cors
+# github.com/gin-contrib/sse v0.1.0
+## explicit; go 1.12
+github.com/gin-contrib/sse
+# github.com/gin-contrib/static v0.0.1
+## explicit; go 1.15
+github.com/gin-contrib/static
+# github.com/gin-gonic/gin v1.8.1
+## explicit; go 1.18
+github.com/gin-gonic/gin
+github.com/gin-gonic/gin/binding
+github.com/gin-gonic/gin/internal/bytesconv
+github.com/gin-gonic/gin/internal/json
+github.com/gin-gonic/gin/render
+# github.com/go-playground/locales v0.14.0
+## explicit; go 1.13
+github.com/go-playground/locales
+github.com/go-playground/locales/currency
+# github.com/go-playground/universal-translator v0.18.0
+## explicit; go 1.13
+github.com/go-playground/universal-translator
+# github.com/go-playground/validator/v10 v10.10.0
+## explicit; go 1.13
+github.com/go-playground/validator/v10
+# github.com/goccy/go-json v0.9.7
+## explicit; go 1.12
+github.com/goccy/go-json
+github.com/goccy/go-json/internal/decoder
+github.com/goccy/go-json/internal/encoder
+github.com/goccy/go-json/internal/encoder/vm
+github.com/goccy/go-json/internal/encoder/vm_color
+github.com/goccy/go-json/internal/encoder/vm_color_indent
+github.com/goccy/go-json/internal/encoder/vm_indent
+github.com/goccy/go-json/internal/errors
+github.com/goccy/go-json/internal/runtime
+# github.com/gorilla/securecookie v1.1.2-0.20190707033817-86450627d8e6
+## explicit
+github.com/gorilla/securecookie
+# github.com/gorilla/sessions v1.2.1-0.20190720202136-9c6b24ee2dee
+## explicit
+github.com/gorilla/sessions
+# github.com/gosimple/slug v1.7.0
+## explicit
+github.com/gosimple/slug
+# github.com/json-iterator/go v1.1.12
+## explicit; go 1.12
+github.com/json-iterator/go
+# github.com/leodido/go-urn v1.2.1
+## explicit; go 1.13
+github.com/leodido/go-urn
+# github.com/mattn/go-isatty v0.0.14
+## explicit; go 1.12
+github.com/mattn/go-isatty
+# github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
+## explicit
+github.com/modern-go/concurrent
+# github.com/modern-go/reflect2 v1.0.2
+## explicit; go 1.12
+github.com/modern-go/reflect2
+# github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+## explicit
+github.com/nfnt/resize
+# github.com/pelletier/go-toml/v2 v2.0.1
+## explicit; go 1.16
+github.com/pelletier/go-toml/v2
+github.com/pelletier/go-toml/v2/internal/ast
+github.com/pelletier/go-toml/v2/internal/danger
+github.com/pelletier/go-toml/v2/internal/tracker
+# github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be
+## explicit
+github.com/rainycape/unidecode
+# github.com/sendgrid/rest v2.4.2-0.20190603221508-ed616c851bdc+incompatible
+## explicit
+github.com/sendgrid/rest
+# github.com/sendgrid/sendgrid-go v3.5.1-0.20190704043350-d1c72cf7d640+incompatible
+## explicit
+github.com/sendgrid/sendgrid-go
+github.com/sendgrid/sendgrid-go/helpers/mail
+# github.com/ugorji/go/codec v1.2.7
+## explicit; go 1.11
+github.com/ugorji/go/codec
+# golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
+## explicit; go 1.17
+golang.org/x/crypto/sha3
+# golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
+## explicit; go 1.11
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2
+golang.org/x/net/http2/h2c
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+# golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069
+## explicit; go 1.17
+golang.org/x/sys/cpu
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+# golang.org/x/text v0.3.6
+## explicit; go 1.11
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/language
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+# google.golang.org/protobuf v1.28.0
+## explicit; go 1.11
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genid
+google.golang.org/protobuf/internal/order
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+# gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b
+## explicit
+gopkg.in/boj/redistore.v1
+# gopkg.in/yaml.v2 v2.4.0
+## explicit; go 1.15
+gopkg.in/yaml.v2
