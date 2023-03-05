@@ -19,7 +19,7 @@ EXPOSE 80
 
 FROM build-env AS builder
 
-RUN go install
+RUN go build
 
 #################################
 
@@ -30,6 +30,7 @@ RUN apk update && apk add --no-cache \
 	&& rm -rf /var/cache/apk/*
 
 COPY --from=builder /go/src/blog/blog /blog
+COPY --from=builder /go/src/blog/helvetica-char-codes.txt /helvetica-char-codes.txt
 COPY --from=builder /initial-data /initial-data
 
 EXPOSE 80

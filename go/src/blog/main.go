@@ -296,24 +296,40 @@ func main() {
 	router.Use(static.ServeRoot("/js/", jsPath))
 
 	// SET CORS HEADERS
-	router.Use(func(c *gin.Context) {
-		c.Header("Cross-Origin-Embedder-Policy", "require-corp")
-		c.Header("Cross-Origin-Opener-Policy", "same-origin")
-		c.Header("Cross-Origin-Resource-Policy", "cross-origin") // same-site | same-origin | cross-origin
-		c.Next()
-	})
+	// router.Use(func(c *gin.Context) {
+	// 	c.Header("Cross-Origin-Embedder-Policy", "require-corp")
+	// 	c.Header("Cross-Origin-Opener-Policy", "same-origin")
+	// 	c.Header("Cross-Origin-Resource-Policy", "cross-origin") // same-site | same-origin | cross-origin
+	// 	c.Next()
+	// })
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://bloglaurel.com"},
-		AllowMethods: []string{"GET", "POST"},
-		// AllowHeaders:     []string{"Origin"},
-		// ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: false,
-		// AllowOriginFunc: func(origin string) bool {
-		// 	return origin == "https://github.com"
-		// },
-		MaxAge: 12 * time.Hour, // preflight requests cached for 12 hours
-	}))
+	// https://www.gravatar.com/avatar/?s=160&d=https%3a%2f%2fbloglaurel.com%2Ftheme%2Fimg%2Fanonymous.jpg
+	// https://cu.bzh/img/tree.png
+
+	corsConf := cors.DefaultConfig()
+	// - No origin allowed by default
+	// - GET,POST, PUT, HEAD methods
+	// - Credentials share disabled
+	// - Preflight requests cached for 12 hours
+
+	// config.AllowOrigins = []string{"http://google.com"}
+	// config.AllowOrigins = []string{"http://google.com", "http://facebook.com"}
+	corsConf.AllowAllOrigins = true
+
+	router.Use(cors.New(corsConf))
+
+	// router.Use(cors.New(cors.Config{
+	// 	// AllowOrigins: []string{"https://bloglaurel.com"},
+	// 	AllowOrigins: []string{"*"},
+	// 	AllowMethods: []string{"GET", "POST"},
+	// 	// AllowHeaders:     []string{"Origin"},
+	// 	// ExposeHeaders:    []string{"Content-Length"},
+	// 	AllowCredentials: false,
+	// 	// AllowOriginFunc: func(origin string) bool {
+	// 	// 	return origin == "https://github.com"
+	// 	// },
+	// 	MaxAge: 12 * time.Hour, // preflight requests cached for 12 hours
+	// }))
 
 	router.Use(ContextSetConfig)
 	router.Use(ContextSetLang)
