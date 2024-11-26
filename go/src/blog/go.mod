@@ -11,7 +11,7 @@ require (
 	github.com/gosimple/slug v1.7.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/sendgrid/sendgrid-go v3.5.1-0.20190704043350-d1c72cf7d640+incompatible
-	golang.org/x/text v0.3.6
+	golang.org/x/text v0.7.0
 	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b
 )
 
@@ -32,8 +32,8 @@ require (
 	github.com/sendgrid/rest v2.4.2-0.20190603221508-ed616c851bdc+incompatible // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
-	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069 // indirect
+	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
