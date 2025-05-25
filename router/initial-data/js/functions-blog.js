@@ -215,14 +215,10 @@ function newsletterFormCheck(sender) {
 	var form = $(sender).closest('form');
 
 	var emailInput = form.find(".newsletterEmail");
-	var newsCheckbox = form.find(".newsletterNewsCheckbox");
-	var postsCheckbox = form.find(".newsletterPostsCheckbox");
 	var button = form.find(".newsletterButton")
 	var errorMessage = form.find(".newsletter-error")
 
 	if (!emailInput || emailInput.length == 0 ||
-		!newsCheckbox || newsCheckbox.length == 0 ||
-		!postsCheckbox || postsCheckbox.length == 0 ||
 		!button || button.length == 0 ||
 		!errorMessage || errorMessage.length == 0) {
 		console.log("missing field")
@@ -230,9 +226,8 @@ function newsletterFormCheck(sender) {
 	}
 
 	var emailIsValid = validateEmail(emailInput.val())
-	var oneCheckedAtLeast = newsCheckbox.is(":checked") || postsCheckbox.is(":checked")
 
-	if (emailIsValid && oneCheckedAtLeast) {
+	if (emailIsValid) {
 		button.prop('disabled', false)
 		button.val("Envoyer")
 		errorMessage.hide()
@@ -248,14 +243,10 @@ function newsletterRegister(sender) {
 	var form = $(sender).closest('form');
 
 	var emailInput = form.find(".newsletterEmail");
-	var newsCheckbox = form.find(".newsletterNewsCheckbox");
-	var postsCheckbox = form.find(".newsletterPostsCheckbox");
 	var button = form.find(".newsletterButton")
 	var errorMessage = form.find(".newsletter-error")
 
 	if (!emailInput || emailInput.length == 0 ||
-		!newsCheckbox || newsCheckbox.length == 0 ||
-		!postsCheckbox || postsCheckbox.length == 0 ||
 		!button || button.length == 0 ||
 		!errorMessage || errorMessage.length == 0) {
 		console.log("missing field")
@@ -265,29 +256,23 @@ function newsletterRegister(sender) {
 	if (newsletterFormCheck(sender) == true) {
 
 		emailInput.prop('disabled', true)
-		newsCheckbox.prop('disabled', true)
-		postsCheckbox.prop('disabled', true)
 
 		button.prop('disabled', true)
 		button.val("⏳")
 
 		var request = new Object()
 		request.email = emailInput.val()
-		request.news = newsCheckbox.is(":checked")
-		request.posts = postsCheckbox.is(":checked")
+		request.posts = true // automatically subscribe to all posts
+		request.news = true // automatically subscribe to all news
 
 		Post('/newsletter-register', request, function(data) {
 			// success
 			emailInput.prop('disabled', false)
-			newsCheckbox.prop('disabled', false)
-			postsCheckbox.prop('disabled', false)
 			button.val("✅")
 
 		}, function(data) {
 			// error
 			emailInput.prop('disabled', false)
-			newsCheckbox.prop('disabled', false)
-			postsCheckbox.prop('disabled', false)
 			button.val("❌")
 			alert("Erreur, l'email n'a pas pu être enregistré. 😕")
 		})
