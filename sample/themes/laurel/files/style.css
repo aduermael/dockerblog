@@ -117,10 +117,11 @@ form input[type="button"]:active:enabled {
     background-color: #4edeed;
 }
 
+form input[type="button"].disabled,
 form input[type="button"]:disabled {
-	color: #251e31;
-	background-color: #3b304e;
-	cursor: default;
+	color: #FFF !important;
+	background-color: #3b304e !important;
+	cursor: pointer;
 }
 
 form.nameForm input {
@@ -730,89 +731,76 @@ a.button-ulule {
 	color: #c3a7ff;
 }
 
-#footer #sections {
+#footer #cards {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	position: relative;
-	margin-bottom: 2rem;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }
 
-#footer #sections .group {
-	width: 50%;
-	float: left; 
-}
-
-#footer #sections .group .itemWrapper {
-	width: 100%;
-	padding-top: 10px;
-	padding-left: 5px;
-	padding-right: 5px;
-	float:left;
-}
-
-#footer #sections .group .item {
-	padding: 10px;
+#footer #cards .card {
+	width: auto;
+	min-width: 15rem;
+	padding: 1rem;
 	text-align: center;
-	/*border: 1px solid #999;*/
 	background-color: #324349;
 	border-radius: 5px;
 	color: #89afb8;
+	margin-bottom: 1rem;
 }
 
-#footer #sections .group .item a {
+#footer #cards .card:last-child {
+	margin-bottom: 0;
+}
+
+#footer #cards .card a {
 	color: #e3d7fd;
 }
 
-#footer #sections .group .item a:hover {
+#footer #cards .card a:hover {
 	color: #c3a7ff;
 }
 
-#footer #sections .group .item ul { list-style: none; }
+#footer #cards .card ul { list-style: none; }
 
-#footer #sections .group .item h2 {
+#footer #cards .card h2 {
 	font-size: 1.3rem; color: #f7eedf;
-	/* background-image: linear-gradient(15deg, #ffc107, #fffbeb);
-	-webkit-background-clip: text;
-	-moz-background-clip: text;
-	background-clip: text;
-	color: transparent; */
 }
 
-#footer #sections .group .item ul li span {
+#footer #cards .card ul li span {
 	color: #f7eedf;
-	padding-right: 5px;
 }
 
-#footer #sections .group .item ul li select {
-	margin-top: 10px;
+#footer #cards .card ul li select {
+	margin-top: 0.5rem;
 }
 
-#footer #sections .group .item h1,
-#footer #sections .group .item h2,
-#footer #sections .group .item h3,
-#footer #sections .group .item h4,
-#footer #sections .group .item h5,
-#footer #sections .group .item h6,
-#footer #sections .group .item p {
+#footer #cards .card h1,
+#footer #cards .card h2,
+#footer #cards .card h3,
+#footer #cards .card h4,
+#footer #cards .card h5,
+#footer #cards .card h6,
+#footer #cards .card p {
 	padding-bottom: 0.5rem;
 }
 
-#footer #sections .group .item form input {
+#footer #cards .card form input {
 	max-width: 150px;
-	padding: 5px;
+	padding: 0.5rem;
 	border-radius: 5px;
 	border: none;
 }
 
-#footer #sections .group .itemWrapper .item form input[type="email"] {
+#footer #cards .card form input[type="email"] {
 	background-color: #f7eedf !important;
 	color: #3b304e !important;
 }
 
-#footer #sections .group .itemWrapper .item form input[type="checkbox"] {
+#footer #cards .card form input[type="checkbox"] {
 	margin-right: 8px;
-}
-
-#footer #sections .group .itemWrapper .item form input[type="button"]:disabled {
-	background-color: #251e31;
 }
 
 p.newsletter-error {
@@ -857,8 +845,18 @@ select:active {
   outline:0;
 }
 
-@media (min-width: 700px) {
-	#footer #sections .group .itemWrapper { width: 50%; }
+@media (min-width: 600px) {
+	#footer #cards {
+		flex-direction: row;
+		align-items: start;
+	}
+	#footer #cards .card {
+		flex: 1;
+		margin-bottom: 0;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
+		min-width: 10rem;
+	}
 }
 
 .book {
