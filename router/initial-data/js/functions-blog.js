@@ -228,12 +228,11 @@ function newsletterFormCheck(sender) {
 	var emailIsValid = validateEmail(emailInput.val())
 
 	if (emailIsValid) {
-		button.prop('disabled', false)
-		button.val("Envoyer")
+		button.removeClass('disabled');
 		errorMessage.hide()
 		return true
 	} else {
-		button.val("S'abonner")
+		button.addClass('disabled');
 		return false
 	}
 }

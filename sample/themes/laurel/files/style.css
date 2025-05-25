@@ -22,7 +22,7 @@ body {
 	font-weight: 400;
 	font-family: "Montserrat", sans-serif;
 	height: 100%;
-	background-color: #4f686f;
+	background-color: #8ea6ff;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -174,7 +174,7 @@ a.button-ulule {
 #header {
 	width: 100%;
 	padding: 20px;
-	background-color: #8192a6;
+	background-color: #8ea6ff;
 	text-align: center;
 }
 
@@ -186,17 +186,13 @@ a.button-ulule {
 }
 
 #header h1 a {
-	background-image: linear-gradient(15deg, #ffd043, #fff7d7);
-	-webkit-background-clip: text;
-	-moz-background-clip: text;
-	background-clip: text;
-	color: transparent;
+	color: #FFF;
 }
 
 /* MENU */
 
 #menu {
-	background-color: #4f686f;
+	background-color: #6c84d8;
 	color: #f7eedf;
 }
 
@@ -206,7 +202,6 @@ a.button-ulule {
 
 #menu > #area {
 	max-width: 800px;
-	/*height: 40px;*/
 	margin-right: auto;
 	margin-left: auto;
 	line-height: 40px;
@@ -244,6 +239,11 @@ a.button-ulule {
 #menu > #area li { display: inline-block; }
 #menu > #area li a { display: block; padding-left: 10px; padding-right: 10px;}
 #menu > #area li a:hover { background-color: #c7879f; }
+#menu > #area li a img {
+	height: 2rem;
+	padding-right: 0.5rem;
+	vertical-align: middle;
+}
 
 #menu > #area ul.fa-ul {
 	margin: 0;
@@ -305,8 +305,9 @@ a.button-ulule {
 /* CONTENT */
 
 #content {
-	background-color: #fff;
+	background-color: #ecf0ff;
 	padding: 0;
+	margin: 0;
 }
 
 /*@media (min-width: 600px) {
@@ -324,10 +325,12 @@ a.button-ulule {
 }
 
 #content #posts .post{
+	background-color: #fff;
 	padding: 1.5rem;
 	padding-top: 1rem;
 	padding-bottom: 1rem;
-	box-shadow: 0 0px 6px rgba(0,0,0,0.1);
+	/* box-shadow: 0 0px 6px rgba(0,0,0,0.1); */
+	border: 1px solid #eee;
 	border-radius: 5px;
 	margin-bottom: 1.4rem;
 }
@@ -745,7 +748,7 @@ a.button-ulule {
 	min-width: 15rem;
 	padding: 1rem;
 	text-align: center;
-	background-color: #324349;
+	background-color: #4d6ad1;
 	border-radius: 5px;
 	color: #89afb8;
 	margin-bottom: 1rem;
@@ -771,6 +774,21 @@ a.button-ulule {
 
 #footer #cards .card ul li span {
 	color: #f7eedf;
+}
+
+#footer #cards .card ul li a img {
+	display: inline-block;
+	height: 1rem;
+	vertical-align: middle;
+	margin-right: 0.5rem;
+	/* margin-bottom: 0.1rem; */
+}
+
+#footer #cards .card ul li a p {
+	/* display: inline; */
+	vertical-align: middle;
+	padding: 0;
+	margin: 0;
 }
 
 #footer #cards .card ul li select {
