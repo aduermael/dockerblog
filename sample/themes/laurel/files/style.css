@@ -1,3 +1,8 @@
+:root {
+	--link-color: #ff8beb;
+	--link-color-secondary: #ffc4f5;
+}
+
 .devBounds {
 	width: 800px;
 	border-left: 1px solid #f00;
@@ -192,12 +197,12 @@ a.button-ulule {
 /* MENU */
 
 #menu {
-	background-color: #6c84d8;
-	color: #f7eedf;
+	background-color: #4E6AD1;
+	color: #ffffff;
 }
 
 #menu a {
-	color: #f7eedf;
+	color: #ffffff;
 }
 
 #menu > #area {
@@ -238,7 +243,7 @@ a.button-ulule {
 #menu > #area ul { text-align: center; }
 #menu > #area li { display: inline-block; }
 #menu > #area li a { display: block; padding-left: 10px; padding-right: 10px;}
-#menu > #area li a:hover { background-color: #c7879f; }
+#menu > #area li a:hover { background-color: var(--link-color); }
 #menu > #area li a img {
 	height: 2rem;
 	padding-right: 0.5rem;
@@ -731,7 +736,7 @@ a.button-ulule {
 }
 
 #footer a:hover {
-	color: #c3a7ff;
+	color: var(--link-color);
 }
 
 #footer #cards {
@@ -759,21 +764,37 @@ a.button-ulule {
 }
 
 #footer #cards .card a {
-	color: #e3d7fd;
+	color: var(--link-color-secondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #footer #cards .card a:hover {
-	color: #c3a7ff;
+	color: var(--link-color);
 }
 
 #footer #cards .card ul { list-style: none; }
 
 #footer #cards .card h2 {
 	font-size: 1.3rem; color: #f7eedf;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-#footer #cards .card ul li span {
-	color: #f7eedf;
+#footer #cards .card h2 img {
+	display: inline-block;
+	height: 2rem;
+	padding-right: 0.6rem;
+	vertical-align: middle;
+}
+
+#footer #cards .card h2 p {
+	display: inline-block;
+	vertical-align: middle;
+	padding: 0;
+	margin: 0;
 }
 
 #footer #cards .card ul li a img {
@@ -781,11 +802,23 @@ a.button-ulule {
 	height: 1rem;
 	vertical-align: middle;
 	margin-right: 0.5rem;
-	/* margin-bottom: 0.1rem; */
+}
+
+#footer #cards .card ul li a svg {
+	display: inline-block;
+	height: 1rem;
+	width: auto;
+	vertical-align: middle;
+	margin-right: 0.5rem;
+}
+
+#footer #cards .card ul li a svg path {
+	fill: var(--link-color-secondary);
+	stroke: var(--link-color-secondary);
 }
 
 #footer #cards .card ul li a p {
-	/* display: inline; */
+	display: inline-block;
 	vertical-align: middle;
 	padding: 0;
 	margin: 0;
