@@ -20,18 +20,18 @@ html {
 
 body {
 	font-weight: 400;
-	font-family: "Raleway", sans-serif;
+	font-family: "Montserrat", sans-serif;
 	height: 100%;
-	background-color: #3b304e;
+	background-color: #4f686f;
 }
 
 h1, h2, h3, h4, h5, h6, p {
-	padding-bottom: 20px;
+	padding-bottom: 1rem;
 }
 
 h1, h2 {
 	font-weight: normal;
-	font-family: "Lobster", cursive;
+	font-family: "Amarante", cursive;
 }
 
 a {
@@ -51,7 +51,7 @@ a:hover {
 	text-align: center;
 	/*border: 1px solid #999;*/
 	background-color: #F6EEDF;
-	border-radius: 3px;
+	border-radius: 5px;
 	color: #555;
 	margin-left: auto;
 	margin-right: auto;
@@ -60,7 +60,7 @@ a:hover {
 
 .post-form form input, form.nameForm input {
 	padding: 10px;
-	border-radius: 3px;
+	border-radius: 5px;
 	border: none;
 }
 
@@ -158,7 +158,7 @@ a.button-ulule {
 	text-align: center;
 
 	padding: 10px;
-	border-radius: 3px;
+	border-radius: 5px;
 	border: none;
 	background-color: #00A6F0;
 	color: #FFF;
@@ -173,7 +173,7 @@ a.button-ulule {
 #header {
 	width: 100%;
 	padding: 20px;
-	background-color: #3b304e;
+	background-color: #8192a6;
 	text-align: center;
 }
 
@@ -181,16 +181,21 @@ a.button-ulule {
 	margin: 0;
 	padding: 0;
 	font-size: 2rem;
+	/* text-shadow: 0 0px 6px rgba(68, 92, 98, 0.5); */
 }
 
 #header h1 a {
-	color: #45c5d2;
+	background-image: linear-gradient(15deg, #ffd043, #fff7d7);
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }
 
 /* MENU */
 
 #menu {
-	background-color: #ef6e4f;
+	background-color: #4f686f;
 	color: #f7eedf;
 }
 
@@ -214,10 +219,11 @@ a.button-ulule {
 	width: 60px;
 	height: 60px;
 
-	border: 1px solid #3b304e;
-	border-radius: 3px;
-	padding: 3px;
+	border: 0;
+	border-radius: 50%;
+	padding: 5px;
 	background-color: #fff;
+	box-shadow: 0 0px 6px rgba(0,0,0,0.5);
 }
 
 @media (min-width: 700px) {
@@ -236,7 +242,7 @@ a.button-ulule {
 #menu > #area ul { text-align: center; }
 #menu > #area li { display: inline-block; }
 #menu > #area li a { display: block; padding-left: 10px; padding-right: 10px;}
-#menu > #area li a:hover { background-color: #d7593a; }
+#menu > #area li a:hover { background-color: #c7879f; }
 
 #menu > #area ul.fa-ul {
 	margin: 0;
@@ -257,7 +263,7 @@ a.button-ulule {
 	cursor: pointer;
 	display: block;
 	text-align: left; 
-	border-radius: 3px;
+	border-radius: 5px;
 	padding: 10px;
 	margin: 5px;
 	background-color: #FFF;	
@@ -292,7 +298,7 @@ a.button-ulule {
 }
 
 #menu > #lire li .description h2 {
-	color: #3b304e;
+	color: #324349;
 }
 
 /* CONTENT */
@@ -312,17 +318,21 @@ a.button-ulule {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
+	padding-top: 1.4rem;
+	padding-bottom: 1.4rem;
 }
 
 #content #posts .post{
-	padding: 10px;
-	padding-top: 20px;
-	padding-bottom: 20px;
-	border-bottom: 1px solid #ddd;
+	padding: 1.5rem;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	box-shadow: 0 0px 6px rgba(0,0,0,0.1);
+	border-radius: 5px;
+	margin-bottom: 1.4rem;
 }
 
 #content #posts .post:last-child { 
-	border-bottom: none;
+	margin-bottom: 0;
 }
 
 
@@ -333,7 +343,7 @@ a.button-ulule {
 	float: left;
 }
 #content #posts .post .title h2 a {
-	color: #3b304e;
+	color: #324349;
 }
 
 /* date */
@@ -341,7 +351,7 @@ a.button-ulule {
 	padding: 0;
 	margin: 0;
 	float: right;
-	color: #999;
+	color: #8192a6;
 }
 
 /* CONTENT - POSTS - COMMENT FORM */
@@ -389,7 +399,7 @@ a.button-ulule {
 	margin-bottom: 8px;
 	width: 80px;
 	height: 80px; 
-	border-radius: 3px;
+	border-radius: 5px;
 }
 
 #content #posts .post #commentForm .header .nameAndEmail {
@@ -403,7 +413,7 @@ a.button-ulule {
 #content #posts .post #commentForm textarea,
 #content #posts .post #commentForm input[type="text"],
 #content #posts .post #commentForm input[type="email"] {
-	border-radius: 3px;
+	border-radius: 5px;
 }
 
 #content #posts .post #commentForm input[type="text"],
@@ -444,7 +454,7 @@ a.button-ulule {
 	display: block; 
 	text-align: center;
 	margin-bottom: 10px;
-	border-radius: 3px;
+	border-radius: 5px;
 	color: #3b304e;
 	margin-right: auto;
 	margin-left: auto;
@@ -460,11 +470,10 @@ a.button-ulule {
 
 #content #posts .post .number-of-comments {
 	text-align: center;
-	/*margin-bottom: 20px;*/
 }
 
 #content #posts .post .block {
-	margin-bottom: 20px;
+	margin-bottom: 1rem;
 }
 #content #posts .post .block:last-child {
 	margin-bottom: 0;
@@ -480,7 +489,7 @@ a.button-ulule {
 	display: inline-block;
 	vertical-align: middle;
 	max-width: 100%;
-	border-radius: 3px;
+	border-radius: 5px;
 }
 
 #content #posts .post .block ul {
@@ -503,7 +512,7 @@ a.button-ulule {
 
 #content #posts .post .comments .comment-block {
 	margin-bottom: 10px;
-	border-radius: 3px;
+	border-radius: 5px;
 }
 
 #content #posts .post .comments .comment-block:last-child { margin-bottom: 0px !important; }
@@ -534,9 +543,10 @@ a.button-ulule {
 	padding: 0;
 	padding-left: 5px;
 	padding-right: 5px;
-	border-radius: 3px;
-	background-color: rgba(0,0,0,0.12);
-	color: #FFF;
+	border-radius: 5px;
+	background-color: rgba(129,146,166,0.07);
+	color:  rgba(129,146,166,0.5);
+	border: 1px solid rgba(129,146,166,0.2);
 }
 
 #content #posts .post .comments .comment a.answer-left {
@@ -545,15 +555,15 @@ a.button-ulule {
 	padding: 0;
 	padding-left: 5px;
 	padding-right: 5px;
-	border-radius: 3px;
+	border-radius: 5px;
 	background-color: rgba(0,0,0,0.12);
 	color: #FFF;
 }
 
 #content #posts .post .comments .comment a.answer:hover {
 	text-decoration: none;
-	background-color: #3b304e;
-	color: #45c5d2;
+	background-color: rgba(129,146,166,0.5);
+	color: #FFF;
 }
 
 #content #posts .post .comments .comment .options a.starred-on {
@@ -592,14 +602,14 @@ a.button-ulule {
 	background-color: #dcedff !important;
 }
 
-#content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(0,0,0,0.09); }
-#content #posts .post .comments .comment.indent-1 { margin-left: 10%; background-color: rgba(0,0,0,0.07); }
-#content #posts .post .comments .comment.indent-2 { margin-left: 20%; background-color: rgba(0,0,0,0.05); }
-#content #posts .post .comments .comment.indent-3 { margin-left: 30%; background-color: rgba(0,0,0,0.03); }
+#content #posts .post .comments .comment.indent-0 { margin-left: 0; background-color: rgba(129,146,166,0.07); }
+#content #posts .post .comments .comment.indent-1 { margin-left: 7%; background-color: rgba(129,146,166,0.06); }
+#content #posts .post .comments .comment.indent-2 { margin-left: 14%; background-color: rgba(129,146,166,0.05); }
+#content #posts .post .comments .comment.indent-3 { margin-left: 21%; background-color: rgba(129,146,166,0.04); }
 
 #content #posts .post .comments .comment h3 {
 	font-weight: normal;
-	font-family: "Lobster", cursive;
+	font-family: "Amarante", cursive;
 	color: #333;
 	padding-bottom: 8px;
 }
@@ -615,7 +625,7 @@ a.button-ulule {
 #content #posts .post .comments .comment h3 .date {
 	font-size: 1rem;
 	color: #666;
-	font-family: "Raleway", sans-serif;
+	font-family: "Montserrat", sans-serif;
 	font-weight: normal;
 }
 
@@ -629,7 +639,7 @@ a.button-ulule {
 	height: 80px;
 	margin-right: 10px;
 	margin-bottom: 10px;
-	border-radius: 3px;
+	border-radius: 5px;
 }
 
 #content #posts .post .comments .comment img.avatar-right {
@@ -638,7 +648,7 @@ a.button-ulule {
 	height: 80px;
 	margin-left: 10px;
 	margin-bottom: 10px;
-	border-radius: 3px;
+	border-radius: 5px;
 }
 
 #content #archives-info {
@@ -662,10 +672,12 @@ a.button-ulule {
 
 #content #pages .page-link {
 	display: inline-block;
+	border-radius: 5px;
 	padding: 10px;
 	margin: 5px;
 	background-color: #e0dbe9;
 	color: #3b304e;
+	border: 1px solid #cbc3d8;
 	-webkit-transition:0.2s ease all;
 	   -moz-transition:0.2s ease all;
 	    -ms-transition:0.2s ease all;
@@ -677,11 +689,13 @@ a.button-ulule {
 	text-decoration: none;
 	background-color: #ef6e51;
 	color: #f7eedf;
+	border: 1px solid #dc6449;
 }
 
 #content #pages .page-link.current {
 	background-color: #ef6e51;
 	color: #f7eedf;
+	border: 1px solid #dc6449;
 }
 
 #content #newsletterSettings {
@@ -703,17 +717,17 @@ a.button-ulule {
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
-	color: #f6a647;
+	color: #FFFFFF;
 	padding-right: 5px;
 	padding-left: 5px;
 }
 
 #footer a {
-	color: #ef6e4f;
+	color: #c3a7ff;
 }
 
 #footer a:hover {
-	color: #45c5d2;
+	color: #c3a7ff;
 }
 
 #footer #sections {
@@ -738,23 +752,28 @@ a.button-ulule {
 	padding: 10px;
 	text-align: center;
 	/*border: 1px solid #999;*/
-	background-color: #251e31;
-	border-radius: 3px;
-	color: #f6a647;
+	background-color: #324349;
+	border-radius: 5px;
+	color: #89afb8;
 }
 
 #footer #sections .group .item a {
-	color: #ef6e4f;
+	color: #e3d7fd;
 }
 
 #footer #sections .group .item a:hover {
-	color: #45c5d2;
+	color: #c3a7ff;
 }
 
 #footer #sections .group .item ul { list-style: none; }
 
 #footer #sections .group .item h2 {
 	font-size: 1.3rem; color: #f7eedf;
+	/* background-image: linear-gradient(15deg, #ffc107, #fffbeb);
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+	background-clip: text;
+	color: transparent; */
 }
 
 #footer #sections .group .item ul li span {
@@ -773,13 +792,13 @@ a.button-ulule {
 #footer #sections .group .item h5,
 #footer #sections .group .item h6,
 #footer #sections .group .item p {
-	padding-bottom: 8px;
+	padding-bottom: 0.5rem;
 }
 
 #footer #sections .group .item form input {
 	max-width: 150px;
 	padding: 5px;
-	border-radius: 3px;
+	border-radius: 5px;
 	border: none;
 }
 
@@ -805,13 +824,13 @@ select {
 	cursor: pointer;
 	font-size: 1rem;
 	font-weight: 400;
-	font-family: "Raleway", sans-serif;
+	font-family: "Montserrat", sans-serif;
 	background:url("data:image/svg+xml;utf8,<svg fill='#FFF' xmlns='http://www.w3.org/2000/svg' width='50px' height='50px'><polyline points='46.139,15.518 25.166,36.49 4.193,15.519'/></svg>");
-	background-color: #ef6e4f;
+	background-color: #e3d7fd;
 	background-repeat:no-repeat;
   	background-position: right 5px top 5px;
   	background-size: 16px 16px;
-	color:#FFF;
+	color:#3b304e;
 	padding: 5px;
 	padding-left: 7px;
 	max-width: 150px;
@@ -829,7 +848,7 @@ select {
 }
 
 select:hover {
-  background-color:#45c5d2;
+  background-color:#c3a7ff;
 }
 
 select:focus,
@@ -873,7 +892,7 @@ select:active {
 
 .bookmark p {
 	padding-top: 30px;
-	font-family: "Lobster", cursive;
+	font-family: "Amarante", cursive;
 	font-weight: normal;
 	font-size: 28px;
 	line-height: 34px;

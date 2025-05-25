@@ -33,12 +33,12 @@
 						<div class="navigation">
 							<div style="width: 33%; float: left;">
 								{{ if ne .post.PreviousPostID -1 }}
-									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> Avant</a>
+									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> La note d'avant</a>
 								{{ end }}
 							</div>
 							<div style="width: 33%; float: right;">
 								{{ if ne .post.NextPostID -1 }}
-									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">Après <span class="far fa-hand-point-right"></span></a>
+									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">La note d'après <span class="far fa-hand-point-right"></span></a>
 								{{ end }}
 							</div>
 							<div class="clear"></div>
@@ -48,10 +48,10 @@
 						<div class="number-of-comments">
 							<div style="width: 33%; min-height: 10px; float: left;">
 								{{ if ne .post.PreviousPostID -1 }}
-									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> Avant</a>
+									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> La note d'avant</a>
 								{{ end }}
 							</div>
-							<div style="width: 33%; min-height: 10px; float: left;">
+							<div style="width: 33%; min-height: 10px; float: left; font-size: 1.1rem;">
 
 								{{ if .post.IsPage }}
 								<a href="/{{.post.Slug}}#comments">
@@ -68,7 +68,7 @@
 							</div>
 							<div style="width: 33%; float: left;">
 								{{ if ne .post.NextPostID -1 }}
-									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">Après <span class="far fa-hand-point-right"></span></a>
+									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">La note d'après <span class="far fa-hand-point-right"></span></a>
 								{{ end }}
 							</div>
 							<div class="clear"></div>

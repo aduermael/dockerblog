@@ -34,7 +34,7 @@
 							{{ end }}	
 						{{ end }}
 						{{ if .ShowComments }}
-						<div class="number-of-comments">
+						<div class="number-of-comments" style="font-size: 1.1rem;">
 							<a href="/{{.Slug}}/{{.ID}}#comments">
 								{{ if eq .NbComments 1 }}<strong>1</strong> commentaire{{ else if gt .NbComments 1 }}<strong>{{ .NbComments }}</strong> commentaires{{ else }}Commentaires{{ end }}
 							</a>

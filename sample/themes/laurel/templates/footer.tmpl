@@ -8,8 +8,6 @@
 					<ul>
 						<li><a href="{{ .host }}/qui-suis-je">Qui suis-je ?</a></li>
 						<li><a href="{{ .host }}/contact">Contact</a></li>
-						<li><a href="https://fr.tipeee.com/laurel">Tipeee</a></li>
-						<li><a href="{{ .host }}/presse">Presse</a></li>
 						<li><a href="{{ .host }}/rss">RSS</a></li>
 						<li>{{ template "archives" . }}</li>
 					</ul>
@@ -20,14 +18,10 @@
 				<div class="item">
 					<h2>Newsletter</h2>
 					<form>
-						<input class="newsletterEmail" style="background-color: rgb(102, 102, 102); color: #FFF; margin-bottom: 10px;" onfocus="this.placeholder=''" onblur="if (this.value==''){this.placeholder = 'mon email'}" type="email" placeholder="mon email" onkeydown="newsletterFormCheck(this);" onpaste="newsletterFormCheck(this);" oninput="newsletterFormCheck(this);">
+						<input class="newsletterEmail" style="background-color: rgb(102, 102, 102); color: #FFF; margin-bottom: 0.5rem;" onfocus="this.placeholder=''" onblur="if (this.value==''){this.placeholder = 'mon email'}" type="email" placeholder="mon email" onkeydown="newsletterFormCheck(this);" onpaste="newsletterFormCheck(this);" oninput="newsletterFormCheck(this);">
 						
-						<div style="margin-bottom: 10px; margin-left: auto; margin-right: auto; max-width: 150px; width: 100%;">
-							<input class="newsletterNewsCheckbox" style="width: auto;" name="email-checkbox-1" type="checkbox" onchange="newsletterFormCheck(this);" checked> <label for="email-checkbox-1">Informations générales (très rarement).</label>
-						</div>
-
-						<div style="margin-bottom: 10px; margin-left: auto; margin-right: auto; max-width: 150px; width: 100%;">
-							<input class="newsletterPostsCheckbox" style="width: auto;" name="email-checkbox-2" type="checkbox" onchange="newsletterFormCheck(this);" checked> <label style="margin-bottom: 10px;" for="email-checkbox-2">Pour chaque nouvelle note.</label>
+						<div style="margin-bottom: 0.5rem; margin-left: auto; margin-right: auto; max-width: 150px; width: 100%;">
+							<p style="margin:0; padding: 0;">Un email à chaque nouvelle note!</p>
 						</div>
 
 						<p class="newsletter-error" class="newsletter-error">L'email doit être valide et au moins une option doit être cochée.</p>
@@ -41,41 +35,18 @@
 		<div class="group">
 			<div class="itemWrapper">
 				<div class="item">
-					<h2>Follow me</h2>
+					<h2>Me suivre</h2>
 					<ul>
-						<li><a href="https://twitter.com/bloglaurel"><span class="fab fa-twitter"></span> Twitter</a></li>
+						<li><a href="https://x.com/bloglaurel"><span class="fab fa-twitter"></span> X</a></li>
 						<li><a href="https://www.facebook.com/LaurelComics"><span class="fab fa-facebook-square"></span> Facebook</a></li>
 						<li><a href="https://instagram.com/bloglaurel/"><span class="fab fa-instagram"></span> Instagram</a></li>
-						<li><a href="https://500px.com/laurelduermael"><span class="fa fa-images"></span> Mes photos</a></li>
+						<li><a href="https://fr.tipeee.com/laurel">Tipeee</a></li>
 					</ul>
-				</div>
-			</div>
-     	
-			<div class="itemWrapper">
-				<div class="item">
-					<h2>À voir</h2>
-					<div class="image-bubbles">
-						<a href="http://maliki.com"><img src="{{ .host }}/theme/img/maliki.jpg"/></a>
-						<a href="https://particubes.com"><img src="{{ .host }}/theme/img/particubes.jpg"/></a>
-						<a href="http://www.bouletcorp.com"><img src="{{ .host }}/theme/img/boulet.png"/></a>
-						<a href="http://www.muchpolitik.fr"><img src="{{ .host }}/theme/img/much-politik.png"/></a>
-
-						<a href="https://unodieuxconnard.com"><img src="{{ .host }}/theme/img/odieux.jpg"/></a>
-						<a href="https://twitter.com/PenelopeB"><img src="{{ .host }}/theme/img/penelope.jpg"/></a>
-						<a href="https://500px.com/laurelduermael"><img src="{{ .host }}/theme/img/mes-photos.jpg"/></a>
-						<a href="http://pbfcomics.com"><img src="{{ .host }}/theme/img/perry-bible.png"/></a>
-
-						<a href="http://www.sophielambda.com"><img src="{{ .host }}/theme/img/sophie-lambda.jpg"/></a>
-						<a href="http://davidgilson.tumblr.com"><img src="{{ .host }}/theme/img/david-gilson.jpg"/></a>
-						<a href="http://webcomicname.com"><img src="{{ .host }}/theme/img/ohno.png"/></a>
-						<a href="http://yatuu.fr"><img src="{{ .host }}/theme/img/yatuu.jpg"/></a>
-
-					</div>
 				</div>
 			</div>
 		</div>
 		<div class="clear"></div>
 	</div>
-	<p>© 2003-2019 Laurel<br />Créé par <a href="https://twitter.com/aduermael">@aduermael</a></p>
+	<p>© 2003-2025 Laurel<br />Créé par <a href="https://x.com/aduermael">@aduermael</a></p>
 </div>
 {{ end }}
