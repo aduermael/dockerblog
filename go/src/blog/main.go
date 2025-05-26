@@ -666,7 +666,7 @@ func main() {
 				return
 			}
 
-			emailInfoResponse(c, "Email bien enregistré pour la newsletter, merci ! ☺️", "Pour changer les préférences de réception, entrez à nouveau l'email dans le formulaire d'inscription. Pour se désinscrire, cliquez sur le lien en bas de l'un des emails reçus.")
+			emailInfoResponse(c, "Email bien enregistré pour la newsletter, merci ! ☺️", "Pour se désinscrire, il suffit de cliquer sur le lien en bas de l'un des emails reçus.")
 		})
 
 		emailGroup.GET("/unsubscribe/:hash/:key", func(c *gin.Context) {
@@ -733,7 +733,6 @@ func main() {
 		}
 
 		ec := &types.EmailConfirmation{
-			Title:     "Newsletter",
 			Message1:  "Demande d'abonnement à la newsletter bien reçue ! Merci de bien vouloir confirmer cette adresse email. 🙂",
 			Message2:  "Après quelques jours, si l'email n'est pas validé, il sera effacé de la base de données.",
 			Confirm:   "Confirmer",
@@ -757,8 +756,8 @@ func main() {
 			txt = buf.String()
 		}
 
-		from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
-		subject := "✉️ Merci de confirmer votre email."
+		from := mail.NewEmail("Laurel", "noreply@bloglaurel.com")
+		subject := "✉️ Merci de confirmer ton email."
 		to := mail.NewEmail("", re.Email)
 		plainTextContent := txt
 		htmlContent := html

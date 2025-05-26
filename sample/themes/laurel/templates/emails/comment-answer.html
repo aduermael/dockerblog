@@ -1,9 +1,6 @@
-<!-- original comment -->
-
-<div style="font-size: 16px; font-family: Helvetica; min-width: 100px; max-width: 800px; margin: 0; padding: 0;">
-
+<div style="min-width: 100px; max-width: 800px; margin: 0; padding: 0;">
 	<!-- original -->
-	<div style=" background-color: rgba(0,0,0,0.09); border-radius: 3px; border: none; margin: 0; margin-bottom: 10px; padding: 10px;">
+	<div style="border: 1px solid rgb(209, 219, 231); box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1); background-color: rgb(255, 255, 255); border-radius: 5px; margin: 0; margin-bottom: 10px; padding: 10px;">
 	    <div style="padding: 4px; margin: 0">
 	        <strong>{{ .Original.Name }}</strong>
 	    </div>
@@ -11,13 +8,13 @@
 	</div>
 
 	<!-- answer -->
-	<div style="background-color: rgba(0,0,0,0.09); border-radius: 3px; border: none; margin: 0; margin-bottom: 10px; padding:10px;">
+	<div style="border: 1px solid rgb(209, 219, 231); box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1); background-color: rgb(255, 255, 255); border-radius: 5px; margin: 0; margin-left: 20px; margin-bottom: 10px; padding: 10px;">
 	    <div style="padding: 4px; margin:0;">
 	        <strong>{{ .Answer.Name }}</strong>
 	    </div>
 	    <div style="padding: 4px; margin:0">{{ nl2br .Answer.Content }}</div>
 	</div>
 
-	<a style="box-shadow: 0px 2px 3px rgba(59,48,78, 0.2); color: #3b304e; text-decoration: none; border-radius: 3px; background-color: #a2f647; display: block; max-width: 400px; margin: 0; margin-bottom: 10px; padding: 10px; text-align: center;" clicktracking=off href="{{ .Host }}/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}">{{ .Button }}</a>
+	<a style="font-weight: bold; border: 2px solid #8a74cd; box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1); color: #ffffff; text-decoration: none; border-radius: 5px; background-color: #b299ff; display: block; max-width: 400px; margin: 0; margin-left: auto; margin-right: auto; margin-bottom: 10px; padding: 10px; text-align: center;" clicktracking=off href="{{ .Host }}/post/{{ .Answer.PostID }}#com{{ .Answer.ID }}">{{ .Button }}</a>
 
 </div>

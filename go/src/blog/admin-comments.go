@@ -3,6 +3,7 @@ package main
 import (
 	"blog/types"
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -193,8 +194,8 @@ func emailCommentResponse(comment *types.Comment, c *gin.Context) {
 				txt = buf.String()
 			}
 
-			from := mail.NewEmail("Le blog de Laurel", "noreply@bloglaurel.com")
-			subject := "✨✉️✨ " + comment.Name + " a répondu à votre commentaire sur bloglaurel.com"
+			from := mail.NewEmail("Laurel", "noreply@bloglaurel.com")
+			subject := "✨✉️✨ " + comment.Name + " a répondu à ton commentaire!"
 			to := mail.NewEmail(original.Name, original.Email)
 			plainTextContent := txt
 			htmlContent := html
@@ -204,7 +205,7 @@ func emailCommentResponse(comment *types.Comment, c *gin.Context) {
 			if err != nil {
 				log.Println("SENDGRID ERROR:", err)
 			} else {
-				// fmt.Printf("SENT TO %s: \n%s\n\n%s\n", original.Email, html, txt)
+				fmt.Printf("SENT TO %s: \n%s\n\n%s\n", original.Email, html, txt)
 			}
 		}
 	}
