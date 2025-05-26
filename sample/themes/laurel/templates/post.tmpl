@@ -45,107 +45,109 @@
 						</div>
 					{{ else }}
 						<a id="comments" name="comments" class="anchor"></a>
-						<div class="number-of-comments">
-							<div style="width: 33%; min-height: 10px; float: left;">
-								{{ if ne .post.PreviousPostID -1 }}
-									<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><span class="far fa-hand-point-left"></span> La note d'avant</a>
-								{{ end }}
-							</div>
-							<div style="width: 33%; min-height: 10px; float: left; font-size: 1.1rem;">
 
-								{{ if .post.IsPage }}
-								<a href="/{{.post.Slug}}#comments">
-								{{ else }}
-								<a href="/post/{{.post.Slug}}/{{.post.ID}}#comments">
-								{{ end }}
-
-									{{ if eq .post.NbComments 1 }}
-										<strong>1</strong> commentaire{{ else if gt .post.NbComments 1 }}<strong>{{ .post.NbComments }}</strong> commentaires
-									{{ else }}
-										Commentaires
-									{{ end }}
-								</a>
-							</div>
-							<div style="width: 33%; float: left;">
-								{{ if ne .post.NextPostID -1 }}
-									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">La note d'après <span class="far fa-hand-point-right"></span></a>
-								{{ end }}
-							</div>
-							<div class="clear"></div>
+						<div class="post-ctas">
+							<ul>
+								<li><a href="/newsletter"><img src="/theme/img/icon-newsletter.png" alt="">Newsletter</a></li>
+								<li><a href="/soutenir"><img src="/theme/img/icon-donate.png" alt="">Soutenir avec un don</a></li>
+								<li><a href="/boutique"><img src="/theme/img/icon-pdfs.png" alt="">Acheter mes histoires en PDF</a></li>
+							</ul>
 						</div>
-						<div class="comments">
-							<div id="empty-div"></div>
-							<div>
-								{{ range .post.Comments }}
-									<div id="com_{{.ID}}" class="{{ if .AuthorAlias }}{{ .AuthorAlias }} {{end}}comment comment-block indent-{{.Indent}}{{ if .Highlighted }} starred{{ end }}">
-										<a id="com{{.ID}}"></a>
-										<img alt="gravatar" class="avatar{{ if .AuthorAlias }}-right{{end}}" src="{{ if eq .AuthorAlias "laurel" }}{{ $host }}/theme/img/laurel-avatar.jpg{{else}}https://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d={{ $host }}%2Ftheme%2Fimg%2Fanonymous.jpg{{end}}">
-										<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
-										<p>{{nl2br .Content}}</p>
-										<a class="answer{{ if .AuthorAlias }}-left{{end}}" href="#" onclick="answerComment({{.ID}});return false;">Répondre</a>
-										<div style="clear: both"></div>
-										{{ if false }}
-										<!-- TODO: edit in place for admins-->
-										<div class="options">
-											{{ if eq .Valid false }}<a class="primary-action accept" href="#" onclick="acceptComment('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
-											<a id="comment-highlight-btn-{{ .ID }}" class="starred-{{ if .Highlighted }}on{{ else }}off{{ end }}" href="#" onclick="highlightComment('{{ .ID }}'); return false;"><span class="fas fa-star"></span></a>
-											<a class="trash" href="#" onclick="deleteComment('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
-										</div>
-										{{ end }}
-
-									</div>
-								{{ end }}
-							</div>
-
-							{{ if .post.AcceptComments }}
-							<div id="initial-comment-form-container">
-								<form id="commentForm" class="comment-block">
-								 	<div id="commentSending" class="comment-post-info" style="display: none"><p>Envoi du commentaire...</p></div>
-							 		<div id="commentSent" class="comment-post-info" style="display: none"><p>Commentaire bien reçu, merci ! 🙂</p></div>
-							 		<div id="commentWaitingForApproval" class="comment-post-info" style="display: none"><p>Commentaire envoyé, en attente de validation ! 🙂</p></div>
-							 		<div id="commentError" class="comment-post-info" style="display: none"><p>Erreur lors de l'envoi du commentaire ! 😕</p></div>
-								 	
-								 	<div id="commentFields">
-										
-										<input id="answerComID" type="hidden" value="-1">
-										<input id="postID" type="hidden" value="{{.post.ID}}">
-
-										<!-- simple trap for stupid robots -->
-										<input id="url" name="url" type="text" value="">
-										<input id="email" name="email" type="email" value="">
-										
-										<div class="header">
-											<img id="commentGravatar" src="https://www.gravatar.com/avatar/{{ .user.GravatarHash }}?s=160&amp;d={{ $host }}%2Ftheme%2Fimg%2Fanonymous.jpg">
-										
-											<div class="nameAndEmail">
-												<input id="commentName" type="text" value="{{ .user.Name }}" onfocus="backToOriginalBackground(this);" placeholder="name" class="mandatory">
-												<input id="commentEmail" type="email" value="{{ .user.Email }}" onkeyup="emailChange(this);" onfocus="backToOriginalBackground(this);" placeholder="email" class="optional">
-											</div>
-										</div><!-- header -->
-
-										<p class="avatar-info">Les avatars sont liés à l'email via <a href="https://gravatar.com">gravatar.com</a></p>
-
-										<div class="webProfile">
-											<div class="left">
-												<input id="commentWebsite" type="text" value="{{ .user.Website }}" onfocus="backToOriginalBackground(this);" placeholder="website" class="optional">
-											</div>
-											<div class="right">
-												<input id="commentTwitter" type="text" value="{{ .user.Twitter }}" onfocus="backToOriginalBackground(this);" placeholder="twitter" class="optional">
-											</div>
-										</div><!-- webProfile -->
-									 		
-										<textarea id="commentContent" onfocus="backToOriginalBackground(this);"></textarea>
-										<input type="button" value="Envoyer" onclick="postComment('name','email','website','twitter')">
-
-										<label><input id="commentRemember" type="checkbox"{{ if .user.RememberInfo }} checked{{end}}>Se rappeler de mes informations.</label>
-										<label><input id="commentEmailOnAnswer" type="checkbox"{{ if .user.EmailOnAnswer }} checked{{end}}>Être tenu au courant des réponses par email.</label>
-									</div><!-- commentFields -->
-								</form><!-- commentForm -->
-							</div>
-							{{ end }}
-						</div><!-- comments -->
 					{{ end }}
+				</div> <!-- post -->
+
+				<div class="post-navigation">
+					<div class="post-navigation-block left">
+						{{ if ne .post.PreviousPostID -1 }}
+							<a href="/post/{{ .post.PreviousPostSlug }}/{{ .post.PreviousPostID }}"><img src="/theme/img/icon-previous.png" alt="">La note d'avant</a>
+						{{ end }}
+					</div>
+					<div class="post-navigation-block center">
+					{{ if .post.ShowComments }}
+						<a class="comments-link" href="/{{.post.Slug}}/{{.post.ID}}#comments">
+							<img src="/theme/img/icon-comments.png" alt="">
+							{{ if eq .post.NbComments 1 }}1 commentaire{{ else if gt .post.NbComments 1 }}{{ .post.NbComments }} commentaires{{ else }}Commentaires{{ end }}
+						</a>
+					{{ end }}
+					</div>
+					<div class="post-navigation-block right">
+						{{ if ne .post.NextPostID -1 }}
+							<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">La note d'après<img src="/theme/img/icon-next.png" alt=""></a>
+						{{ end }}
+					</div>
 				</div>
+
+				<div class="comments">
+					<div id="empty-div"></div>
+					<div>
+						{{ range .post.Comments }}
+							<div id="com_{{.ID}}" class="{{ if .AuthorAlias }}{{ .AuthorAlias }} {{end}}comment comment-block indent-{{.Indent}}{{ if .Highlighted }} starred{{ end }}">
+								<a id="com{{.ID}}"></a>
+								<img alt="gravatar" class="avatar{{ if .AuthorAlias }}-right{{end}}" src="{{ if eq .AuthorAlias "laurel" }}{{ $host }}/theme/img/laurel-avatar.jpg{{else}}https://www.gravatar.com/avatar/{{.GravatarHash}}?s=160&d={{ $host }}%2Ftheme%2Fimg%2Fanonymous.jpg{{end}}">
+								<h3>{{.Name}}<span class="date"> - {{ .Since }}</span></h3>
+								<p>{{nl2br .Content}}</p>
+								<a class="answer{{ if .AuthorAlias }}-left{{end}}" href="#" onclick="answerComment({{.ID}});return false;">Répondre</a>
+								<div style="clear: both"></div>
+								{{ if false }}
+								<!-- TODO: edit in place for admins-->
+								<div class="options">
+									{{ if eq .Valid false }}<a class="primary-action accept" href="#" onclick="acceptComment('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
+									<a id="comment-highlight-btn-{{ .ID }}" class="starred-{{ if .Highlighted }}on{{ else }}off{{ end }}" href="#" onclick="highlightComment('{{ .ID }}'); return false;"><span class="fas fa-star"></span></a>
+									<a class="trash" href="#" onclick="deleteComment('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
+								</div>
+								{{ end }}
+
+							</div>
+						{{ end }}
+					</div>
+
+					{{ if .post.AcceptComments }}
+					<div id="initial-comment-form-container">
+						<form id="commentForm" class="comment-block">
+							<div id="commentSending" class="comment-post-info" style="display: none"><p>Envoi du commentaire...</p></div>
+							<div id="commentSent" class="comment-post-info" style="display: none"><p>Commentaire bien reçu, merci ! 🙂</p></div>
+							<div id="commentWaitingForApproval" class="comment-post-info" style="display: none"><p>Commentaire envoyé, en attente de validation ! 🙂</p></div>
+							<div id="commentError" class="comment-post-info" style="display: none"><p>Erreur lors de l'envoi du commentaire ! 😕</p></div>
+							
+							<div id="commentFields">
+								
+								<input id="answerComID" type="hidden" value="-1">
+								<input id="postID" type="hidden" value="{{.post.ID}}">
+
+								<!-- simple trap for stupid robots -->
+								<input id="url" name="url" type="text" value="">
+								<input id="email" name="email" type="email" value="">
+								
+								<div class="header">
+									<img id="commentGravatar" src="https://www.gravatar.com/avatar/{{ .user.GravatarHash }}?s=160&amp;d={{ $host }}%2Ftheme%2Fimg%2Fanonymous.jpg">
+								
+									<div class="nameAndEmail">
+										<input id="commentName" type="text" value="{{ .user.Name }}" onfocus="backToOriginalBackground(this);" placeholder="name" class="mandatory">
+										<input id="commentEmail" type="email" value="{{ .user.Email }}" onkeyup="emailChange(this);" onfocus="backToOriginalBackground(this);" placeholder="email" class="optional">
+									</div>
+								</div><!-- header -->
+
+								<p class="avatar-info">Les avatars sont liés à l'email via <a href="https://gravatar.com">gravatar.com</a></p>
+
+								<div class="webProfile">
+									<div class="left">
+										<input id="commentWebsite" type="text" value="{{ .user.Website }}" onfocus="backToOriginalBackground(this);" placeholder="website" class="optional">
+									</div>
+									<div class="right">
+										<input id="commentTwitter" type="text" value="{{ .user.Twitter }}" onfocus="backToOriginalBackground(this);" placeholder="twitter" class="optional">
+									</div>
+								</div><!-- webProfile -->
+									
+								<textarea id="commentContent" onfocus="backToOriginalBackground(this);"></textarea>
+								<input type="button" value="Envoyer" onclick="postComment('name','email','website','twitter')">
+
+								<label><input id="commentRemember" type="checkbox"{{ if .user.RememberInfo }} checked{{end}}>Se rappeler de mes informations.</label>
+								<label><input id="commentEmailOnAnswer" type="checkbox"{{ if .user.EmailOnAnswer }} checked{{end}}>Être tenu au courant des réponses par email.</label>
+							</div><!-- commentFields -->
+						</form><!-- commentForm -->
+					</div>
+					{{ end }}
+				</div><!-- comments -->
 			</div>
 		</div><!-- content -->
 		{{ template "footer" . }}

@@ -33,10 +33,18 @@
 								</div>	
 							{{ end }}	
 						{{ end }}
+						<div class="post-ctas">
+							<ul>
+								<li><a href="/newsletter"><img src="/theme/img/icon-newsletter.png" alt="">Newsletter</a></li>
+								<li><a href="/soutenir"><img src="/theme/img/icon-donate.png" alt="">Soutenir avec un don</a></li>
+								<li><a href="/boutique"><img src="/theme/img/icon-pdfs.png" alt="">Acheter mes histoires en PDF</a></li>
+							</ul>
+						</div>
 						{{ if .ShowComments }}
-						<div class="number-of-comments" style="font-size: 1.1rem;">
-							<a href="/{{.Slug}}/{{.ID}}#comments">
-								{{ if eq .NbComments 1 }}<strong>1</strong> commentaire{{ else if gt .NbComments 1 }}<strong>{{ .NbComments }}</strong> commentaires{{ else }}Commentaires{{ end }}
+						<div class="post-navigation center">
+							<a class="comments-link" href="/{{.Slug}}/{{.ID}}#comments">
+								<img src="/theme/img/icon-comments.png" alt="">
+								{{ if eq .NbComments 1 }}1 commentaire{{ else if gt .NbComments 1 }}{{ .NbComments }} commentaires{{ else }}Commentaires{{ end }}
 							</a>
 						</div>
 						{{ end }}
