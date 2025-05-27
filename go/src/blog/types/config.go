@@ -21,6 +21,17 @@ type Commenter struct {
 	Alias string `json:"alias"`
 }
 
+type Product struct {
+	Name         string   `json:"name,omitempty"`
+	Description  string   `json:"description,omitempty"`
+	Images       []string `json:"images,omitempty"`
+	Price        int      `json:"price,omitempty"` // in cents
+	Currency     string   `json:"currency,omitempty"`
+	AnyCurrency  bool     `json:"anyCurrency,omitempty"`
+	AnyPrice     bool     `json:"anyPrice,omitempty"`
+	Subscription bool     `json:"subscription,omitempty"`
+}
+
 // Config describes general blog configuration
 type Config struct {
 	Langs                   []string                   `json:"langs"`
@@ -32,6 +43,7 @@ type Config struct {
 	CommentsRequireApproval bool                       `json:"approveComments"`
 	FacebookAppID           string                     `json:"facebookAppID"`
 	SendgridAPIKey          string                     `json:"sendgridAPIKey,omitempty"`
+	StripeAPIKey            string                     `json:"stripeAPIKey,omitempty"`
 	Localized               map[string]LocalizedConfig `json:"localized,omitempty"`
 	// A list of known commenters
 	// Can be used to highlight some comments based on who wrote them.
@@ -62,6 +74,8 @@ type Config struct {
 	Salt     string `json:"salt,omitempty"`
 
 	CookieStoreKey string `json:"cookieStoreKey,omitempty"`
+
+	Products map[string]*Product `json:"products,omitempty"`
 
 	TimeLocation *time.Location `json:"-"`
 }
@@ -104,7 +118,7 @@ var (
 		local acceptComs = config.acceptComments and 1 or 0
 		local approveComs = config.approveComments and 1 or 0
 
-		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', config.timezone, 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey, 'username', config.username, 'salt', config.salt, 'password', config.password)
+		redis.call('hmset', 'config', 'postsPerPage', config.postsPerPage, 'theme', config.theme, 'timezone', config.timezone, 'showComs', showComs, 'acceptComs', acceptComs, 'approveComs', approveComs, 'facebookAppID', config.facebookAppID, 'sendgridAPIKey', config.sendgridAPIKey, 'stripeAPIKey', config.stripeAPIKey, 'username', config.username, 'salt', config.salt, 'password', config.password)
 
 		redis.call('del', 'config_langs')
 		redis.call('sadd', 'config_langs', unpack(config.langs))
