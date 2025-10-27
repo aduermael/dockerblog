@@ -71,6 +71,30 @@ body {
 	background-color: var(--background-color-primary);
 }
 
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+	width: 12px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.3);
+	border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.5);
+}
+
+/* Firefox scrollbar */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
 h1, h2, h3, h4, h5, h6, p {
 	padding-bottom: 1rem;
 }
@@ -368,10 +392,12 @@ a.button-ulule {
 
 #menu > #lire li > a {
 	cursor: pointer;
-	display: block;
-	text-align: left;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
 	border-radius: 5px;
-	padding: 10px;
+	padding: 15px 15px 15px 15px;
 	margin: 5px;
 	background-color: #FFF;
 	-webkit-transition:0.2s ease all;
@@ -381,31 +407,53 @@ a.button-ulule {
 	        transition:0.2s ease all;
 }
 
+@media (min-width: 600px) {
+	#menu > #lire li > a {
+		flex-direction: row;
+		align-items: flex-start;
+		text-align: left;
+		padding: 10px;
+	}
+}
+
 #menu > #lire li > a:hover {
 	background-color: #45c5d2;
+	text-decoration: none;
 }
 
 #menu > #lire li img {
-	float: left;
 	height: 240px;
 	margin: 0;
 	padding: 0;
+	margin-bottom: 10px;
+}
+
+@media (min-width: 600px) {
+	#menu > #lire li img {
+		margin-bottom: 0;
+		margin-right: 10px;
+	}
 }
 
 #menu > #lire li .description {
-	width: 250px;
-	float: left;
+	width: 100%;
+	max-width: 250px;
 	margin: 0;
 	padding: 0;
-	margin-left: 10px;
 }
 
 #menu > #lire li .description p {
 	color: #000;
+	padding-bottom: 0.5rem;
+}
+
+#menu > #lire li .description p:last-child {
+	padding-bottom: 0;
 }
 
 #menu > #lire li .description h2 {
 	color: #324349;
+	padding-bottom: 0.5rem;
 }
 
 /* CONTENT */
