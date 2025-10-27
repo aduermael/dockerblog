@@ -4,6 +4,7 @@ import (
 	"blog/types"
 	"blog/util"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -26,6 +27,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+
+	"github.com/stripe/stripe-go/v74"
+	"github.com/stripe/stripe-go/v74/checkout/session"
 )
 
 const (
@@ -236,6 +240,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	stripe.Key = config.StripeAPIKey
+
 	redisPool = util.NewRedisPool("blog-db:6379")
 
 	types.InitSessionStore(config)
@@ -360,6 +366,8 @@ func main() {
 
 	router.GET("/californid-noms", californidNames)
 	router.POST("/californid-noms", californidNamesSave)
+
+	router.POST("/stripe-checkout", stripeCheckout)
 
 	adminGroup := router.Group("/admin")
 	{
@@ -1090,4 +1098,114 @@ func remainingTime(secondsRemaining int) string {
 	}
 
 	return remainingTime
+}
+
+func stripeCheckout(c *gin.Context) {
+
+	type StripeCheckoutRequest struct {
+		Amount     int64  `json:"amount,omitempty"`
+		ProductID  string `json:"productID,omitempty"`
+		CancelURL  string `json:"cancelURL,omitempty"`
+		SuccessURL string `json:"successURL,omitempty"`
+		Frequency  string `json:"frequency,omitempty"`
+	}
+
+	checkout := &StripeCheckoutRequest{}
+
+	err := c.BindJSON(&checkout)
+	if err != nil {
+		fmt.Println("BIND JSON ERROR:", err.Error())
+		c.AbortWithError(http.StatusBadRequest, errors.New("invalid parameter"))
+		return
+	}
+
+	var params *stripe.CheckoutSessionParams
+
+	fmt.Println("Product ID:", checkout.ProductID)
+
+	if checkout.ProductID == "donation" {
+		if checkout.Amount <= 0 {
+			c.AbortWithError(http.StatusBadRequest, errors.New("amount must be greater than 0"))
+			return
+		}
+
+		if checkout.Frequency == "monthly" {
+			params = &stripe.CheckoutSessionParams{
+				PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
+				LineItems: []*stripe.CheckoutSessionLineItemParams{
+					{
+						PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+							ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+								Name:        stripe.String("Don mensuel"),
+								Description: stripe.String("Don mensuel pour soutenir Laurel 🌿"),
+								Images:      stripe.StringSlice([]string{"https://bloglaurel.com/uploads/comme-convenu-1/couverture.jpg"}),
+							},
+							Currency:   stripe.String("eur"),
+							UnitAmount: stripe.Int64(checkout.Amount * 100),
+							Recurring: &stripe.CheckoutSessionLineItemPriceDataRecurringParams{
+								Interval: stripe.String("month"),
+							},
+						},
+						Quantity: stripe.Int64(1),
+					},
+				},
+				Mode:       stripe.String("subscription"),
+				SuccessURL: stripe.String(checkout.SuccessURL + "?session_id={CHECKOUT_SESSION_ID}"),
+				CancelURL:  stripe.String(checkout.CancelURL),
+			}
+		} else {
+			params = &stripe.CheckoutSessionParams{
+				PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
+				LineItems: []*stripe.CheckoutSessionLineItemParams{
+					{
+						PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+							ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+								Name:        stripe.String("Don"),
+								Description: stripe.String("Don pour soutenir Laurel 🌿"),
+								Images:      stripe.StringSlice([]string{"https://bloglaurel.com/uploads/comme-convenu-1/couverture.jpg"}),
+							},
+							Currency:   stripe.String("eur"),
+							UnitAmount: stripe.Int64(checkout.Amount * 100),
+						},
+						Quantity: stripe.Int64(1),
+					},
+				},
+				Mode:       stripe.String("payment"),
+				SuccessURL: stripe.String(checkout.SuccessURL + "?session_id={CHECKOUT_SESSION_ID}"),
+				CancelURL:  stripe.String(checkout.CancelURL),
+			}
+		}
+
+	} else {
+		params = &stripe.CheckoutSessionParams{
+			PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
+			LineItems: []*stripe.CheckoutSessionLineItemParams{
+				{
+					PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+						ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+							Name:        stripe.String("Comme Convenu 1 (PDF)"),
+							Description: stripe.String("Le PDF de Comme Convenu, tome 1 (250 pages)"),
+							Images:      stripe.StringSlice([]string{"https://bloglaurel.com/uploads/comme-convenu-1/couverture.jpg"}),
+						},
+						Currency:   stripe.String("eur"),
+						UnitAmount: stripe.Int64(500), // $10.00
+					},
+					Quantity: stripe.Int64(1),
+				},
+			},
+			Mode:       stripe.String("payment"),
+			SuccessURL: stripe.String(checkout.SuccessURL + "?session_id={CHECKOUT_SESSION_ID}"),
+			CancelURL:  stripe.String(checkout.CancelURL),
+		}
+	}
+
+	s, err := session.New(params)
+	if err != nil {
+		fmt.Println("STRIPE ERROR:", err.Error())
+		http.Error(c.Writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(c.Writer).Encode(map[string]string{"sessionId": s.ID})
 }
