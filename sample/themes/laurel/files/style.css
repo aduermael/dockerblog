@@ -302,28 +302,41 @@ a.button-ulule {
 	}
 }
 
-#menu > #area ul { 
-	text-align: center; 
+#menu > #area ul {
+	text-align: center;
 }
-#menu > #area li { 
-	display: inline-block; 
+#menu > #area li {
+	display: inline-block;
 }
-#menu > #area li a { 
-	display: inline-block; 
+#menu > #area li a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	margin-top: var(--small-space);
 	margin-bottom: var(--small-space);
-	padding-left: var(--space); 
+	padding-left: var(--space);
 	padding-right: var(--space);
 	border-radius: var(--border-radius);
 	transition: background-color 0.2s ease;
+	font-size: 0.9rem;
 }
-#menu > #area li a:hover { 
-	background-color: var(--link-color); 
+#menu > #area li a:hover {
+	background-color: var(--link-color);
 }
 #menu > #area li a img {
-	height: 2rem;
-	padding-right: 0.5rem;
+	height: 1.5rem;
+	padding-right: 0.3rem;
 	vertical-align: middle;
+}
+
+@media (min-width: 700px) {
+	#menu > #area li a {
+		font-size: 1rem;
+	}
+	#menu > #area li a img {
+		height: 2rem;
+		padding-right: 0.5rem;
+	}
 }
 
 #menu > #area ul.fa-ul {
@@ -401,8 +414,13 @@ a.button-ulule {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
-	padding-top: 1.4rem;
-	padding-bottom: 1.4rem;
+	padding: 1.4rem 0.5rem;
+}
+
+@media (min-width: 600px) {
+	#content #posts {
+		padding: 1.4rem;
+	}
 }
 
 #content #posts .post{
@@ -600,8 +618,11 @@ a.button-ulule {
 .post-ctas ul {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
+	padding: 0;
+	margin: 0;
 }
 
 .post-ctas ul li {
@@ -612,15 +633,34 @@ a.button-ulule {
 	background-color: var(--post-ctas-background-color);
 	color: var(--post-ctas-color);
 	border: 1px solid var(--post-ctas-border-color);
+	font-size: 0.85rem;
 	/* box-shadow: var(--box-shadow); */
 }
 
+@media (min-width: 600px) {
+	.post-ctas ul li {
+		font-size: 1rem;
+	}
+}
+
 .post-ctas ul li:first-child {
-	margin-left: 1rem;
+	margin-left: var(--small-space);
+}
+
+@media (min-width: 600px) {
+	.post-ctas ul li:first-child {
+		margin-left: 1rem;
+	}
 }
 
 .post-ctas ul li:last-child {
-	margin-right: 1rem;
+	margin-right: var(--small-space);
+}
+
+@media (min-width: 600px) {
+	.post-ctas ul li:last-child {
+		margin-right: 1rem;
+	}
 }
 
 .post-ctas ul li a {
@@ -634,11 +674,18 @@ a.button-ulule {
 
 .post-ctas ul li a img {
 	display: inline-block;
-	height: 1.4rem;
+	height: 1.2rem;
 	vertical-align: middle;
 	margin: 0;
 	padding: 0;
-	margin-right: 0.5rem;
+	margin-right: 0.4rem;
+}
+
+@media (min-width: 600px) {
+	.post-ctas ul li a img {
+		height: 1.4rem;
+		margin-right: 0.5rem;
+	}
 }
 
 /* POST NAVIGATION (previous, next and comments links) */
@@ -955,21 +1002,24 @@ a.button-ulule {
 #footer #cards {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: stretch;
 	position: relative;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }
 
 #footer #cards .card {
-	width: auto;
-	min-width: 15rem;
+	width: 100%;
 	padding: 1rem;
 	text-align: center;
 	background-color: var(--background-color-secondary);
 	border-radius: 5px;
 	color: var(--text-color-over-secondary);
 	margin-bottom: 1rem;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 #footer #cards .card:last-child {
@@ -990,18 +1040,32 @@ a.button-ulule {
 #footer #cards .card ul { list-style: none; }
 
 #footer #cards .card h2 {
-	font-size: 1.3rem; 
+	font-size: 1.1rem;
 	color: var(--title-color-over-secondary);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-wrap: wrap;
+}
+
+@media (min-width: 600px) {
+	#footer #cards .card h2 {
+		font-size: 1.3rem;
+	}
 }
 
 #footer #cards .card h2 img {
 	display: inline-block;
-	height: 2rem;
-	padding-right: 0.6rem;
+	height: 1.5rem;
+	padding-right: 0.5rem;
 	vertical-align: middle;
+}
+
+@media (min-width: 600px) {
+	#footer #cards .card h2 img {
+		height: 2rem;
+		padding-right: 0.6rem;
+	}
 }
 
 #footer #cards .card h2 p {
@@ -1011,19 +1075,44 @@ a.button-ulule {
 	margin: 0;
 }
 
+#footer #cards .card ul li a {
+	font-size: 0.9rem;
+	word-break: break-word;
+}
+
+@media (min-width: 600px) {
+	#footer #cards .card ul li a {
+		font-size: 1rem;
+	}
+}
+
 #footer #cards .card ul li a img {
 	display: inline-block;
-	height: 1rem;
+	height: 0.9rem;
 	vertical-align: middle;
-	margin-right: 0.5rem;
+	margin-right: 0.4rem;
+}
+
+@media (min-width: 600px) {
+	#footer #cards .card ul li a img {
+		height: 1rem;
+		margin-right: 0.5rem;
+	}
 }
 
 #footer #cards .card ul li a svg {
 	display: inline-block;
-	height: 1rem;
+	height: 0.9rem;
 	width: auto;
 	vertical-align: middle;
-	margin-right: 0.5rem;
+	margin-right: 0.4rem;
+}
+
+@media (min-width: 600px) {
+	#footer #cards .card ul li a svg {
+		height: 1rem;
+		margin-right: 0.5rem;
+	}
 }
 
 #footer #cards .card ul li a svg path {
@@ -1050,13 +1139,35 @@ a.button-ulule {
 #footer #cards .card h6,
 #footer #cards .card p {
 	padding-bottom: 0.5rem;
+	font-size: 0.9rem;
+}
+
+@media (min-width: 600px) {
+	#footer #cards .card h1,
+	#footer #cards .card h2,
+	#footer #cards .card h3,
+	#footer #cards .card h4,
+	#footer #cards .card h5,
+	#footer #cards .card h6,
+	#footer #cards .card p {
+		font-size: 1rem;
+	}
 }
 
 #footer #cards .card form input {
-	max-width: 150px;
+	max-width: 200px;
+	width: 100%;
 	padding: 0.5rem;
 	border-radius: 5px;
 	border: none;
+	font-size: 0.9rem;
+}
+
+@media (min-width: 600px) {
+	#footer #cards .card form input {
+		max-width: 150px;
+		font-size: 1rem;
+	}
 }
 
 #footer #cards .card form input[type="email"] {
