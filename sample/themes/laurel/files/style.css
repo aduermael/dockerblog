@@ -445,7 +445,15 @@ a.button-ulule {
 }
 #content #posts .post .title h2 {
 	float: left;
+	font-size: 1.4rem;
 }
+
+@media (min-width: 600px) {
+	#content #posts .post .title h2 {
+		font-size: 2rem;
+	}
+}
+
 #content #posts .post .title h2 a {
 	color: #324349;
 }
@@ -1002,7 +1010,7 @@ a.button-ulule {
 #footer #cards {
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
+	align-items: center;
 	position: relative;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
@@ -1011,8 +1019,11 @@ a.button-ulule {
 }
 
 #footer #cards .card {
-	width: 100%;
+	width: fit-content;
+	max-width: calc(100% - 1rem);
 	padding: 1rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
 	text-align: center;
 	background-color: var(--background-color-secondary);
 	border-radius: 5px;
@@ -1040,7 +1051,7 @@ a.button-ulule {
 #footer #cards .card ul { list-style: none; }
 
 #footer #cards .card h2 {
-	font-size: 1.1rem;
+	font-size: 1.2rem;
 	color: var(--title-color-over-secondary);
 	display: flex;
 	align-items: center;
@@ -1056,14 +1067,14 @@ a.button-ulule {
 
 #footer #cards .card h2 img {
 	display: inline-block;
-	height: 1.5rem;
+	height: 1.6rem;
 	padding-right: 0.5rem;
 	vertical-align: middle;
 }
 
 @media (min-width: 600px) {
 	#footer #cards .card h2 img {
-		height: 2rem;
+		height: 1.8rem;
 		padding-right: 0.6rem;
 	}
 }
@@ -1132,7 +1143,6 @@ a.button-ulule {
 }
 
 #footer #cards .card h1,
-#footer #cards .card h2,
 #footer #cards .card h3,
 #footer #cards .card h4,
 #footer #cards .card h5,
@@ -1144,7 +1154,6 @@ a.button-ulule {
 
 @media (min-width: 600px) {
 	#footer #cards .card h1,
-	#footer #cards .card h2,
 	#footer #cards .card h3,
 	#footer #cards .card h4,
 	#footer #cards .card h5,
@@ -1154,9 +1163,16 @@ a.button-ulule {
 	}
 }
 
-#footer #cards .card form input {
-	max-width: 200px;
+#footer #cards .card form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	width: 100%;
+}
+
+#footer #cards .card form input {
+	max-width: 180px;
+	width: 180px;
 	padding: 0.5rem;
 	border-radius: 5px;
 	border: none;
@@ -1165,7 +1181,8 @@ a.button-ulule {
 
 @media (min-width: 600px) {
 	#footer #cards .card form input {
-		max-width: 150px;
+		max-width: 160px;
+		width: 160px;
 		font-size: 1rem;
 	}
 }
