@@ -7,3 +7,5 @@ app/srv/node_modules
 volume/dockerblog_files/private/email_config.json
 volume/dockerblog_files/private/fbcomments_config.json
 go/src/blog/blog
+sample/themes/laurel/TODO.md
+sample/themes/laurel/README.md
