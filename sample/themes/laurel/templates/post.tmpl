@@ -76,7 +76,9 @@
 						{{ end }}
 					</div>
 				</div>
-
+			</div>
+			{{ if .post.ShowComments }}
+			<div id="comments">
 				<div class="comments">
 					<div id="empty-div"></div>
 					<div>
@@ -89,7 +91,6 @@
 								<a class="answer{{ if .AuthorAlias }}-left{{end}}" href="#" onclick="answerComment({{.ID}});return false;">Répondre</a>
 								<div style="clear: both"></div>
 								{{ if false }}
-								<!-- TODO: edit in place for admins-->
 								<div class="options">
 									{{ if eq .Valid false }}<a class="primary-action accept" href="#" onclick="acceptComment('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
 									<a id="comment-highlight-btn-{{ .ID }}" class="starred-{{ if .Highlighted }}on{{ else }}off{{ end }}" href="#" onclick="highlightComment('{{ .ID }}'); return false;"><span class="fas fa-star"></span></a>
@@ -149,6 +150,7 @@
 					{{ end }}
 				</div><!-- comments -->
 			</div>
+			{{ end }}
 		</div><!-- content -->
 		{{ template "footer" . }}
 

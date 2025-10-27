@@ -1,15 +1,15 @@
 {{ define "menu" }}
 <nav id="menu">
+	<div class="wavy-border-top"></div>
 	<div id="area">
 		<!-- <div class="devBounds"></div> -->
 		<img alt="Laurel avatar" src="/theme/img/avatar.jpg"/>
 		<ul class="fa-ul">
 			<li><a href="{{ .host }}"><img src="/theme/img/icon-home.png">Accueil</a></li><!--
-			--><li><a href="https://fr.tipeee.com/laurel"><img src="/theme/img/icon-donate.png">Soutenir</a></li><!--
+			--><li><a href="/soutenir"><img src="/theme/img/icon-donate.png">Soutenir</a></li><!--
 			--><li><a href="#" onclick="toggleLire(); return false;"><img src="/theme/img/icon-read.png">Lire mon histoire (BD gratuite)</a></li>
 		</ul>
 	</div>
-
 	<div id="lire">
 		<ul>
 			<li>
@@ -38,5 +38,6 @@
 			</li>
 		</ul>
 	</div>
+	<div class="wavy-border"></div>
 </nav>
 {{ end }}
