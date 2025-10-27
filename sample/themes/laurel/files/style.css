@@ -218,16 +218,48 @@ a.button-ulule {
 
 #header {
 	width: 100%;
-	padding: 20px;
+	padding: 14px 20px;
 	background-color: var(--background-color-primary);
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+}
+
+@media (min-width: 600px) {
+	#header {
+		gap: 1.5rem;
+	}
+}
+
+#header img {
+	width: 60px;
+	height: 60px;
+	border: 0;
+	border-radius: 50%;
+	padding: 5px;
+	background-color: #fff;
+	box-shadow: 0 0px 6px rgba(0,0,0,0.5);
+}
+
+@media (min-width: 600px) {
+	#header img {
+		width: 80px;
+		height: 80px;
+	}
 }
 
 #header h1 {
 	margin: 0;
 	padding: 0;
-	font-size: 2rem;
+	font-size: 1.7rem;
 	/* text-shadow: 0 0px 6px rgba(68, 92, 98, 0.5); */
+}
+
+@media (min-width: 600px) {
+	#header h1 {
+		font-size: 2rem;
+	}
 }
 
 #header h1 a {
@@ -271,39 +303,17 @@ a.button-ulule {
 	max-width: 800px;
 	margin-right: auto;
 	margin-left: auto;
-	line-height: 40px;
 }
 
 #menu > #area > img {
-	position:absolute;
-	top:10px;
-	left:10px;
-
-	width: 60px;
-	height: 60px;
-
-	border: 0;
-	border-radius: 50%;
-	padding: 5px;
-	background-color: #fff;
-	box-shadow: 0 0px 6px rgba(0,0,0,0.5);
-}
-
-@media (min-width: 700px) {
-	#menu > #area {
-		position: relative;
-	}
-	#menu > #area > img { 
-		top: auto;
-		bottom:10px;
-		left:10px;
-		width: 100px;
-		height: 100px; 
-	}
+	display: none;
 }
 
 #menu > #area ul {
 	text-align: center;
+	line-height: 0;
+	padding-top: var(--space);
+	padding-bottom: var(--space);
 }
 #menu > #area li {
 	display: inline-block;
@@ -312,13 +322,15 @@ a.button-ulule {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	margin-top: var(--small-space);
-	margin-bottom: var(--small-space);
+	margin-top: 0;
+	margin-bottom: 0;
+	padding: var(--small-space);
 	padding-left: var(--space);
 	padding-right: var(--space);
 	border-radius: var(--border-radius);
 	transition: background-color 0.2s ease;
 	font-size: 0.9rem;
+	line-height: normal;
 }
 #menu > #area li a:hover {
 	background-color: var(--link-color);
@@ -357,11 +369,11 @@ a.button-ulule {
 #menu > #lire li > a {
 	cursor: pointer;
 	display: block;
-	text-align: left; 
+	text-align: left;
 	border-radius: 5px;
 	padding: 10px;
 	margin: 5px;
-	background-color: #FFF;	
+	background-color: #FFF;
 	-webkit-transition:0.2s ease all;
 	   -moz-transition:0.2s ease all;
 	    -ms-transition:0.2s ease all;
@@ -370,7 +382,7 @@ a.button-ulule {
 }
 
 #menu > #lire li > a:hover {
-	background-color: #45c5d2;		
+	background-color: #45c5d2;
 }
 
 #menu > #lire li img {
@@ -435,7 +447,7 @@ a.button-ulule {
 	box-shadow: var(--box-shadow);
 }
 
-#content #posts .post:last-child { 
+#content #posts .post:last-child {
 	margin-bottom: 0;
 }
 
@@ -512,7 +524,7 @@ a.button-ulule {
 #content #comments #commentForm .header #commentGravatar {
 	margin-bottom: 8px;
 	width: 80px;
-	height: 80px; 
+	height: 80px;
 	border-radius: 5px;
 }
 
@@ -565,7 +577,7 @@ a.button-ulule {
 #content #comments #commentForm textarea.error { background-color: #f78778 !important; }
 
 #content #comments #commentForm input[type="button"] {
-	display: block; 
+	display: block;
 	text-align: center;
 	margin-bottom: 10px;
 	border-radius: 5px;
@@ -906,7 +918,7 @@ a.button-ulule {
 	font-weight: normal;
 }
 
-#content #comments .comments .comment p { 
+#content #comments .comments .comment p {
 	padding-bottom: 10px;
 }
 
@@ -1325,11 +1337,11 @@ select:active {
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
 	-ms-user-select: none;      /* IE 10+ */
-	user-select: none;          /* Likely future */ 
+	user-select: none;          /* Likely future */
 	position: absolute;
 	top: 0;
 	left: 0;
-	
+
 	width: 100%;
 	height: 100%;
 
@@ -1540,7 +1552,7 @@ form .donate-frequency .frequency-option > * {
 	border-radius: var(--border-radius);
 	overflow: hidden;
 	object-fit: cover;
-	object-position: center; 
+	object-position: center;
 }
 
 .shop-articles .shop-article .shop-article-button {
@@ -1574,4 +1586,3 @@ form .donate-frequency .frequency-option > * {
 ::-moz-placeholder { color: #888; } /* Firefox 19+ */
 :-ms-input-placeholder { color: #888; } /* IE 10+ */
 :-moz-placeholder { color: #888; } /* Firefox 18- */
-
