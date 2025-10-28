@@ -1,5 +1,5 @@
-<!DOCTYPE html>	
- <html lang="fr">	
+<!DOCTYPE html>
+ <html lang="fr">
 	{{ template "head" . }}
 	<body>
 		{{ $months := array "Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet" "Aout" "Septembre" "Octobre" "Novembre" "Décembre" }}
@@ -14,24 +14,23 @@
 			{{ end }}
 			<div id="posts">
 				{{ range .posts }}
-					<div class="post">	
+					<div class="post">
 						<div class="title">
-							<h2><a href="/{{.Slug}}/{{.ID}}">{{ .Title }}</a></h2>	
+							<h2><a href="/{{.Slug}}/{{.ID}}">{{ .Title }}</a></h2>
 							<p class="post-date">{{ .Since }}</p>
-							<div class="clear"></div>
 						</div>
-						{{ range .Blocks }}	
-							{{ if eq .type "text" }}	
-								<div class="block text">{{ .text }}</div>	
+						{{ range .Blocks }}
+							{{ if eq .type "text" }}
+								<div class="block text">{{ .text }}</div>
 							{{ else if eq .type "html" }}
 								<div class="block html">{{ .data }}</div>
-							{{ else if eq .type "image" }}	
-								<div class="block image">	
-									{{ if ne .url "" }}<a href="{{.url}}">{{end}}	
-									<img src="{{ .path }}" alt="{{.description}}"{{ if .retina }} srcset="{{ .retina }} 2x"{{ end }}>	
-									{{ if ne .url "" }}</a>{{end}}	
-								</div>	
-							{{ end }}	
+							{{ else if eq .type "image" }}
+								<div class="block image">
+									{{ if ne .url "" }}<a href="{{.url}}">{{end}}
+									<img src="{{ .path }}" alt="{{.description}}"{{ if .retina }} srcset="{{ .retina }} 2x"{{ end }}>
+									{{ if ne .url "" }}</a>{{end}}
+								</div>
+							{{ end }}
 						{{ end }}
 						<div class="post-ctas">
 							<ul>
@@ -48,8 +47,8 @@
 							</a>
 						</div>
 						{{ end }}
-					</div>	
-				{{ end }}	
+					</div>
+				{{ end }}
 			</div>
 			{{ if .nbPages }}
 				{{ if gt .nbPages 1}}
@@ -82,5 +81,5 @@
 		{{ template "footer" . }}
 
 		{{ template "reader" . }}
-	</body>	
+	</body>
  </html>

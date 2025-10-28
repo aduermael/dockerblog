@@ -474,18 +474,16 @@ a.button-ulule {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
-	padding: 1.4rem 0.5rem;
-}
-
-@media (min-width: 600px) {
-	#content #posts {
-		padding: 1.4rem;
-	}
+	/* padding: 1.4rem 0.5rem; */
+	padding-top: 1.4rem;
+	padding-bottom: 0;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }
 
 #content #posts .post{
 	background-color: #fff;
-	padding: var(--bigger-space);
+	padding: var(--big-space);
 	padding-top: var(--big-space);
 	padding-bottom: var(--big-space);
 	border-radius: 5px;
@@ -499,19 +497,20 @@ a.button-ulule {
 	margin-bottom: 0;
 }
 
-
 #content #posts .post .title {
-	/*background-color: #eee;*/
+	display: flex;
+	/* align-items: stretch; */
+	align-content: space-between;
+	gap: 1.2rem;
+	padding: 0;
 }
 #content #posts .post .title h2 {
-	float: left;
+	flex: 1;
 	font-size: 1.4rem;
-}
-
-@media (min-width: 600px) {
-	#content #posts .post .title h2 {
-		font-size: 2rem;
-	}
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	margin-bottom: 1rem;
 }
 
 #content #posts .post .title h2 a {
@@ -520,10 +519,40 @@ a.button-ulule {
 
 /* date */
 #content #posts .post .title p {
+	cursor: pointer;
 	padding: 0;
 	margin: 0;
-	float: right;
-	color: #8192a6;
+	flex-shrink: 0;
+	white-space: nowrap;
+	color: #8192a8;
+	font-size: 1rem;
+}
+
+#content #posts .post .title p:hover {
+	text-decoration: underline;
+}
+
+@media (min-width: 600px) {
+	#content #posts {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	#content #posts .post {
+		padding: var(--bigger-space);
+		padding-top: var(--big-space);
+		padding-bottom: var(--big-space);
+	}
+
+	#content #posts .post .title h2 {
+		font-size: 1.7rem;
+	}
+
+	#content #posts .post .title p {
+		font-size: 1rem;
+		padding-right: 0;
+		margin-right: 0;
+	}
 }
 
 /* CONTENT - POSTS - COMMENT FORM */
@@ -535,7 +564,8 @@ a.button-ulule {
 	box-shadow: var(--box-shadow);
 	margin-left: auto;
 	margin-right: auto;
-	padding: 10px;
+	padding: 1rem;
+	margin-top: 1rem;
 }
 
 #content #comments #commentForm .comment-post-info p {
@@ -552,7 +582,6 @@ a.button-ulule {
 	margin-top: 4px;
 	margin-bottom: 4px;
 }
-
 
 #content #comments #commentForm #url,
 #content #comments #commentForm #email {
@@ -767,6 +796,11 @@ a.button-ulule {
 	margin-top: 1rem;
 	gap: 0.75rem;
 	row-gap: 1rem;
+	padding-bottom: 1rem;
+}
+
+.post .post-navigation {
+	padding-bottom: 0;
 }
 
 @media (min-width: 600px) {
@@ -894,9 +928,7 @@ a.button-ulule {
 
 /* COMMENTS */
 
-#initial-comment-form-container {
-	padding-top: 20px;
-}
+#initial-comment-form-container {}
 
 #content #comments {
 	padding: 0;
@@ -906,6 +938,7 @@ a.button-ulule {
 	background-size: auto 4rem;
 	background-position-y: -2rem;
 	background-position-x: -2rem;
+	box-shadow: inset 0 0 10px rgba(255, 151, 217, 0.6);
 }
 
 #content #comments .comments {
@@ -920,7 +953,7 @@ a.button-ulule {
 	border-radius: 5px;
 }
 
-#content #comments .comments .comment-block:last-child { margin-bottom: 0px !important; }
+#content #comments .comments .comment-block:last-child {}
 
 #content #comments .comments .comment {
 	position: relative;

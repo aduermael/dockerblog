@@ -14,9 +14,8 @@
 					<div class="title">
 						<h2><a href="/{{.post.Slug}}/{{.post.ID}}">{{ .post.Title }}</a></h2>
 						{{ if not .post.IsPage }}<p class="post-date">{{ .post.Since }}</p>{{end}}
-						<div class="clear"></div>
 					</div>
-					 	
+
 					{{ range .post.Blocks }}
 						{{ if eq .type "text" }}
 							<div class="block text">{{ .text }}</div>
@@ -28,7 +27,7 @@
 							</div>
 						{{ end }}
 					{{ end }}
-					 	
+
 					{{ if eq .post.ShowComments false }}
 						<div class="navigation">
 							<div style="width: 33%; float: left;">
@@ -41,7 +40,6 @@
 									<a href="/post/{{ .post.NextPostSlug }}/{{ .post.NextPostID }}">La note d'après <span class="far fa-hand-point-right"></span></a>
 								{{ end }}
 							</div>
-							<div class="clear"></div>
 						</div>
 					{{ else }}
 						<a id="comments" name="comments" class="anchor"></a>
@@ -109,19 +107,19 @@
 							<div id="commentSent" class="comment-post-info" style="display: none"><p>Commentaire bien reçu, merci ! 🙂</p></div>
 							<div id="commentWaitingForApproval" class="comment-post-info" style="display: none"><p>Commentaire envoyé, en attente de validation ! 🙂</p></div>
 							<div id="commentError" class="comment-post-info" style="display: none"><p>Erreur lors de l'envoi du commentaire ! 😕</p></div>
-							
+
 							<div id="commentFields">
-								
+
 								<input id="answerComID" type="hidden" value="-1">
 								<input id="postID" type="hidden" value="{{.post.ID}}">
 
 								<!-- simple trap for stupid robots -->
 								<input id="url" name="url" type="text" value="">
 								<input id="email" name="email" type="email" value="">
-								
+
 								<div class="header">
 									<img id="commentGravatar" src="https://www.gravatar.com/avatar/{{ .user.GravatarHash }}?s=160&amp;d={{ $host }}%2Ftheme%2Fimg%2Fanonymous.jpg">
-								
+
 									<div class="nameAndEmail">
 										<input id="commentName" type="text" value="{{ .user.Name }}" onfocus="backToOriginalBackground(this);" placeholder="name" class="mandatory">
 										<input id="commentEmail" type="email" value="{{ .user.Email }}" onkeyup="emailChange(this);" onfocus="backToOriginalBackground(this);" placeholder="email" class="optional">
@@ -138,7 +136,7 @@
 										<input id="commentTwitter" type="text" value="{{ .user.Twitter }}" onfocus="backToOriginalBackground(this);" placeholder="twitter" class="optional">
 									</div>
 								</div><!-- webProfile -->
-									
+
 								<textarea id="commentContent" onfocus="backToOriginalBackground(this);"></textarea>
 								<input type="button" value="Envoyer" onclick="postComment('name','email','website','twitter')">
 
