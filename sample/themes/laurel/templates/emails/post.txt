@@ -1,6 +1,6 @@
-{{ .Post.Title }}
-
 {{ $host := .Host }}
+{{ .Post.Title }}: {{ $host }}/post/{{ .Post.Slug }}/{{ .Post.ID }}
+
 {{ range .Post.Blocks }}
 	{{ if eq .type "text" }}
 		{{ .text }}
