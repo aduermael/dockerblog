@@ -108,6 +108,7 @@ func loadTemplates() {
 		"join":               join,
 		"rfc1123":            rfc1123,
 		"nl2br":              nl2br,
+		"xmlEscape":          xmlEscape,
 	})
 
 	rssTemplate, err = rssTemplate.Parse(string(b))
@@ -900,7 +901,11 @@ func join(arr []string) string {
 }
 
 func rfc1123(utcSec int) string {
-	return time.Unix(int64(utcSec), 0).Format(time.RFC1123)
+	return time.Unix(int64(utcSec), 0).UTC().Format(time.RFC1123Z)
+}
+
+func xmlEscape(s string) string {
+	return template.HTMLEscapeString(s)
 }
 
 // nl2br replaces \n with <br>

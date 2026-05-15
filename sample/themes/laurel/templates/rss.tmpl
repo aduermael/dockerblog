@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 	<channel>
-		<title>{{ .title }}</title>
-		<link>https://bloglaurel.com</link>
-		<atom:link href="https://bloglaurel.com/rss" rel="self" type="application/rss+xml"/>
-		<description>{{ .description }}</description>
+		<title>{{ xmlEscape .title }}</title>
+		<link>{{ .host }}</link>
+		<atom:link href="{{ .host }}/feed" rel="self" type="application/rss+xml"/>
+		<description>{{ xmlEscape .description }}</description>
 		<language>fr</language>
 		<lastBuildDate>{{ rfc1123 .buildDate }}</lastBuildDate>
 
 		{{ range .posts}}
 			<item>
-				<title>{{ .Title }}</title>
-				<link>https://bloglaurel.com/post/{{.Slug}}/{{.ID}}</link>
+				<title>{{ xmlEscape .Title }}</title>
+				<link>{{ $.host }}/post/{{.Slug}}/{{.ID}}</link>
 				<description><![CDATA[{{ range .Blocks }}
 					{{ if eq .type "text" }}
 						<p>{{ .text }}</p>
-					{{ else if eq .type "image" }}	
-						{{ if ne .url "" }}<a href="{{.url}}">{{end}}	
-						<img src="https://bloglaurel.com{{ .path }}" alt="{{.description}}">	
+					{{ else if eq .type "image" }}
+						{{ if ne .url "" }}<a href="{{.url}}">{{end}}
+						<img src="{{ $.host }}{{ .path }}" alt="{{.description}}">
 						{{ if ne .url "" }}</a>{{end}}
 					{{ end }}
 					{{ end }}]]></description>
 				<pubDate>{{ rfc1123 .Date }}</pubDate>
-				<guid>https://bloglaurel.com/post/{{.Slug}}/{{.ID}}</guid>
+				<guid>{{ $.host }}/post/{{.Slug}}/{{.ID}}</guid>
 			</item>
 		{{ end }}
 	</channel>
