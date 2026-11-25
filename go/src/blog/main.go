@@ -72,9 +72,11 @@ func loadTemplates() {
 	templates := []string{}
 
 	// current theme's templates
+	// rss.tmpl is XML and is parsed on its own as a text template below.
+	// Loading it here fails: html/template does not have xmlEscape.
 	filepath.Walk(filepath.Join(themePath, "templates"),
 		func(path string, info os.FileInfo, err error) error {
-			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" {
+			if info.IsDir() == false && filepath.Ext(path) == ".tmpl" && filepath.Base(path) != "rss.tmpl" {
 				templates = append(templates, path)
 			}
 			return nil
