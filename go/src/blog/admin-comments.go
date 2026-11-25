@@ -5,7 +5,9 @@ import (
 	"bytes"
 	"log"
 	"net/http"
+	netmail "net/mail"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	sendgrid "github.com/sendgrid/sendgrid-go"
@@ -38,13 +40,21 @@ func adminComments(page int, unvalidatedOnly bool, c *gin.Context) {
 		return
 	}
 
+	// Needs Approval must stay on /admin/newcomments. Linking that pager at
+	// /admin/comments shows the full list, including comments already approved.
+	scope := "comments"
+	if unvalidatedOnly {
+		scope = "newcomments"
+	}
+
 	c.HTML(http.StatusOK, "admin_comments.tmpl", gin.H{
 		"title":                 "Admin - comments",
 		"lang":                  ContextLang(c),
 		"comments":              comments,
 		"nbPages":               int(nbPages),
 		"currentPage":           page,
-		"scope":                 "comments",
+		"scope":                 scope,
+		"unvalidatedOnly":       unvalidatedOnly,
 		"nbUnvalidatedComments": types.NbUnvalidatedComments(),
 	})
 }
@@ -98,6 +108,33 @@ func adminDeleteComment(c *gin.Context) {
 	}
 
 	err = comment.Delete()
+	if err != nil {
+		serverError(c, err.Error())
+		return
+	}
+
+	ok(c)
+}
+
+type deleteUnvalidatedCommentsByEmailRequest struct {
+	Email string `json:"email"`
+}
+
+func adminDeleteUnvalidatedCommentsByEmail(c *gin.Context) {
+	req := &deleteUnvalidatedCommentsByEmailRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		badRequest(c, err.Error())
+		return
+	}
+
+	address, err := netmail.ParseAddress(strings.TrimSpace(req.Email))
+	if err != nil || address.Address == "" {
+		badRequest(c, "email is not valid")
+		return
+	}
+
+	_, err = types.DeleteUnvalidatedCommentsByEmail(strings.ToLower(address.Address))
 	if err != nil {
 		serverError(c, err.Error())
 		return

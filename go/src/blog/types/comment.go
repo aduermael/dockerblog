@@ -224,6 +224,30 @@ func (c *Comment) Delete() error {
 	return err
 }
 
+// DeleteUnvalidatedCommentsByEmail removes every comment still waiting for
+// approval whose email matches. Approved comments are left in place.
+func DeleteUnvalidatedCommentsByEmail(email string) (int64, error) {
+	email = strings.ToLower(strings.TrimSpace(email))
+	if email == "" {
+		return 0, errors.New("email is empty")
+	}
+
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+
+	res, err := scriptDeleteUnvalidatedCommentsByEmail.Do(redisConn, email)
+	if err != nil {
+		return 0, err
+	}
+
+	n, ok := res.(int64)
+	if !ok {
+		return 0, errors.New("can't cast response")
+	}
+
+	return n, nil
+}
+
 func NbUnvalidatedComments() int64 {
 	n, err := nbComments(true)
 	if err != nil {
@@ -607,6 +631,67 @@ var (
 		end
 
 		redis.call('del', comment_key)
+	`)
+
+	// Only walks comments_unvalidated_fr. A comment is deleted when its stored
+	// email matches and it is still not approved (valid != "1").
+	scriptDeleteUnvalidatedCommentsByEmail = redis.NewScript(0, `
+		local email = string.lower(ARGV[1] or "")
+		if email == "" then
+			return 0
+		end
+
+		local lang = "fr"
+		local unvalidated_key = "comments_unvalidated_" .. lang
+		local comment_keys = redis.call('zrange', unvalidated_key, 0, -1)
+		local deleted = 0
+
+		local all_comments_keys = nil
+		local unvalidated_comments_keys = nil
+
+		for _, comment_key in ipairs(comment_keys) do
+			local comment_email = redis.call('hget', comment_key, 'email')
+			local valid = redis.call('hget', comment_key, 'valid')
+
+			if comment_email ~= nil and comment_email ~= false and string.lower(comment_email) == email and valid ~= "1" then
+				local post_id_num = redis.call('hget', comment_key, 'postID')
+				local postID = "post_" .. (post_id_num or "")
+
+				if redis.call('exists', postID) == 1 then
+					local post_lang = redis.call('hget', postID, 'lang')
+					local all_comments_key = "comments_all_" .. (post_lang or "")
+					local unvalidated_comments_key = "comments_unvalidated_" .. (post_lang or "")
+					local post_comments_key = "comments_" .. (post_id_num or "")
+
+					redis.call('zrem', unvalidated_comments_key, comment_key)
+					redis.call('zrem', all_comments_key, comment_key)
+					redis.call('zrem', post_comments_key, comment_key)
+
+					local nbComs = redis.call('zcard', post_comments_key)
+					redis.call('hset', postID, 'nbComs', nbComs)
+				else
+					if all_comments_keys == nil then
+						all_comments_keys = redis.call('keys', 'comments_all_*')
+						unvalidated_comments_keys = redis.call('keys', 'comments_unvalidated_*')
+					end
+
+					for _, all_comments_key in ipairs(all_comments_keys) do
+						redis.call('zrem', all_comments_key, comment_key)
+					end
+
+					for _, unvalidated_comments_key in ipairs(unvalidated_comments_keys) do
+						redis.call('zrem', unvalidated_comments_key, comment_key)
+					end
+				end
+
+				-- The queue we scanned is always the fr one, even if the post lang differs.
+				redis.call('zrem', unvalidated_key, comment_key)
+				redis.call('del', comment_key)
+				deleted = deleted + 1
+			end
+		end
+
+		return deleted
 	`)
 
 	scriptNbComments = redis.NewScript(0, `

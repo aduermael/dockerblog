@@ -455,6 +455,7 @@ func main() {
 
 		adminGroup.POST("/comments/accept", adminAcceptComment)
 		adminGroup.POST("/comments/delete", adminDeleteComment)
+		adminGroup.POST("/comments/delete-unvalidated-by-email", adminDeleteUnvalidatedCommentsByEmail)
 
 		adminGroup.POST("/comments/highlight", adminHighlightComment)
 		adminGroup.POST("/comments/unhighlight", adminUnhighlightComment)

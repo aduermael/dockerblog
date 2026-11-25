@@ -5,7 +5,7 @@
 	 	{{ template "admin_menu" . }}
 	 	<div id="content">
 	 		<h1>Comments</h1>
-	 		<div id="comments">
+	 		<div id="comments"{{ if .unvalidatedOnly }} class="needs-approval"{{ end }}>
 				{{ range .comments }}
 					<div id="comment-{{ .ID }}" class="comment{{ if eq .Valid false }} unvalidated{{ end }}">
 						<table class="options-table">
@@ -15,9 +15,11 @@
 								{{ if eq .Valid false }}<a class="primary-action accept" href="#" onclick="acceptComment('{{ .ID }}'); return false;"><span class="fas fa-check-circle"></span></a>{{ end }}
 								<a id="comment-highlight-btn-{{ .ID }}" {{ if .Highlighted }}class="starred"{{ end }} href="#" onclick="highlightComment('{{ .ID }}'); return false;"><span class="fas fa-star"></span></a>
 								<a class="trash" href="#" onclick="deleteComment('{{ .ID }}'); return false;"><span class="fas fa-trash-alt"></span></a>
+								{{ if and $.unvalidatedOnly .Email }}<a class="more-toggle" href="#" onclick="toggleCommentMoreMenu(event, this); return false;">...</a>{{ end }}
 							</td>
 						</tr>
 						</table>
+						{{ if and $.unvalidatedOnly .Email }}<div class="more-menu"><a href="#" data-email="{{ .Email }}" onclick="deleteUnvalidatedCommentsFromEmail(this); return false;">remove all from {{ .Email }}</a></div>{{ end }}
 						<div class="comment-content">{{ nl2br .Content }}</div>
 					</div>
 				{{ else }}

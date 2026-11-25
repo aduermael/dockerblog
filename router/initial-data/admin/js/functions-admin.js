@@ -790,6 +790,45 @@ function deleteComment(comID)
 	else { /* do nothing */ }
 }
 
+function toggleCommentMoreMenu(event, el) {
+	event.stopPropagation()
+	var comment = $(el).closest('.comment')
+	var wasOpen = comment.hasClass('menu-open')
+	$('#comments .comment.menu-open').removeClass('menu-open')
+	if (!wasOpen) {
+		comment.addClass('menu-open')
+	}
+}
+
+function deleteUnvalidatedCommentsFromEmail(el) {
+	var email = el.getAttribute('data-email')
+	if (!email) {
+		return
+	}
+
+	var r = confirm("Remove all comments waiting for approval from " + email + "?")
+	if (r != true) {
+		return
+	}
+
+	var popup = popupLoading()
+
+	Post('/admin/comments/delete-unvalidated-by-email', { email: email }, function(response) {
+		location.reload()
+	}, function(errorResponse) {
+		popup.remove()
+		if (errorResponse.message) {
+			alert(errorResponse.message)
+		} else {
+			alert("error!")
+		}
+	})
+}
+
+$(document).on('click', function() {
+	$('#comments .comment.menu-open').removeClass('menu-open')
+})
+
 function highlightComment(comID) {
 	var obj = {}
 	obj["id"] = comID

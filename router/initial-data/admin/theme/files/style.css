@@ -367,6 +367,51 @@ a:hover {
 	text-align: right;
 }
 
+#content #comments.needs-approval .comment .options {
+	width: 150px;
+	overflow: visible;
+}
+
+#content #comments .comment {
+	position: relative;
+}
+
+#content #comments .comment.menu-open {
+	z-index: 2;
+}
+
+#content #comments .comment .options .more-toggle {
+	margin-left: 8px;
+	letter-spacing: 1px;
+	font-weight: 700;
+}
+
+#content #comments .comment .more-menu {
+	display: none;
+	position: absolute;
+	right: 10px;
+	top: 34px;
+	z-index: 3;
+	background: #fff;
+	border: 1px solid #ccc;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+	text-align: left;
+	min-width: 220px;
+	max-width: 420px;
+}
+
+#content #comments .comment.menu-open .more-menu {
+	display: block;
+}
+
+#content #comments .comment .more-menu a {
+	display: block;
+	padding: 8px 12px;
+	color: #cc3333;
+	white-space: normal;
+	line-height: 1.4em;
+}
+
 
 #content #pages {
 	max-width: 800px;
